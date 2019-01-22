@@ -1,0 +1,17 @@
+[all]
+admin.uct.ac.za
+db.uct.ac.za
+ingest.uct.ac.za
+worker.uct.ac.za
+
+[dbservers]
+db.uct.ac.za
+
+[adminpresentation]
+admin.uct.ac.za
+
+[ingest]
+ingest.uct.ac.za
+
+[worker]
+worker.uct.ac.za

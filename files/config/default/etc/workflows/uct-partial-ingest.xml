@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definition xmlns="http://workflow.opencastproject.org">
+
+  <id>uct-partial-ingest</id>
+  <title>UCT - Ingest asset</title>
+  <tags/>
+  <description/>
+
+  <configuration_panel></configuration_panel>
+
+  <operations>
+
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <!-- Finalize ingest                                                   -->
+    <!--                                                                   -->
+    <!-- Ingest the external elements, apply access control entries,       -->
+    <!-- inspect the media and tag everything for archival.                -->
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+
+    <!-- Ingest elements from external working file repositories and file servers -->
+    <operation
+      id="ingest-download"
+      exception-handler-workflow="partial-error"
+      description="Ingesting external elements">
+      <configurations>
+        <configuration key="delete-external">true</configuration>
+      </configurations>
+    </operation>
+
+    <!-- Inspect the media -->
+    <operation
+        id="inspect"
+        exception-handler-workflow="partial-error"
+        description="Inspecting audio and video streams">
+        <configurations>
+            <configuration key="overwrite">true</configuration>
+            <configuration key="accept-no-media">false</configuration>
+            <configuration key="accurate-frame-count">false</configuration>
+        </configurations>
+    </operation>
+
+    <!--
+      Apply access control lists from series to the mediapackage.
+      Only runs if Event is linked to Series, SKIPPED if not.
+    -->
+    <operation
+      id="series"
+      exception-handler-workflow="partial-error"
+      description="Applying access control entries">
+      <configurations>
+        <configuration key="attach">*</configuration>
+        <configuration key="apply-acl">true</configuration>
+      </configurations>
+    </operation>
+
+    <!-- Run track4k on presenter-4k/source to presenter/source -->
+    <operation
+      id="execute-many"
+      fail-on-error="true"
+      retry-strategy="hold"
+      exception-handler-workflow="partial-error"
+      description="Track4K">
+      <configurations>
+        <configuration key="exec">/opt/opencast/wfexec/track4k.pl</configuration>
+        <configuration key="params">#{in} #{out} ${event_location}</configuration>
+        <configuration key="source-flavor">presenter4k/source</configuration>
+        <configuration key="source-video">true</configuration>
+        <configuration key="output-filename">tracked.mkv</configuration>
+        <configuration key="target-flavor">presenter/source</configuration>
+        <configuration key="target-tags">archive</configuration>
+        <configuration key="expected-type">Track</configuration>
+        <configuration key="load">2.0</configuration>
+      </configurations>
+    </operation>
+
+    <!-- Analyze Tracks: set flavor_source workflow properties -->
+    <operation
+      id="analyze-tracks"
+      fail-on-error="false"
+      exception-handler-workflow="partial-error"
+      description="Analyze: SOURCE">
+      <configurations>
+        <configuration key="source-flavor">*/source</configuration>
+        <configuration key="aspect-ratio">4/3,16/9</configuration>
+      </configurations>
+    </operation>
+
+    <!-- Tag the sources for archival -->
+    <operation
+      id="tag"
+      description="Tagging source material for archival">
+      <configurations>
+        <configuration key="source-flavors">*/*</configuration>
+        <configuration key="target-tags">+archive</configuration>
+      </configurations>
+    </operation>
+
+    <!-- Untag track4k -->
+    <operation
+      id="tag"
+      description="Exclude 4K presenter source from archive">
+      <configurations>
+        <configuration key="source-flavors">presenter4k/source</configuration>
+        <configuration key="target-tags">-archive</configuration>
+      </configurations>
+    </operation>
+
+    <!-- Tag any optionally uploaded assets -->
+    <operation
+      id="tag"
+      if="${downloadSourceflavorsExist}"
+      exception-handler-workflow="partial-error"
+      description="Tagging uploaded assets for distribution">
+      <configurations>
+        <configuration key="source-flavors">${download-source-flavors}</configuration>
+        <configuration key="target-tags">+engage-download</configuration>
+      </configurations>
+    </operation>
+
+    <!-- Tag the incoming metadata catalogs for publishing -->
+    <operation
+      id="tag"
+      description="Tagging metadata catalogs for publication">
+      <configurations>
+        <configuration key="source-flavors">dublincore/*</configuration>
+        <configuration key="target-tags">+engage-download</configuration>
+      </configurations>
+    </operation>
+
+    <!-- Tagging captions for publication -->
+    <operation
+      id="tag"
+      description="Tagging captions for publication">
+      <configurations>
+        <configuration key="source-flavors">*/captions</configuration>
+        <configuration key="target-tags">+engage-download</configuration>
+      </configurations>
+    </operation>
+
+  </operations>
+
+</definition>

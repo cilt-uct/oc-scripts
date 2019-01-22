@@ -1,0 +1,15 @@
+# Start All Opencast Services
+---
+- name: Start All Opencast Services
+  hosts: all
+  become: true
+
+  pre_tasks:
+
+  roles:
+
+  post_tasks:
+    - name: Start Opencast
+      service: name=opencast state=started
+      #when: start_service
+      ignore_errors: yes

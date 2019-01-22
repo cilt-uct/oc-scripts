@@ -1,0 +1,9 @@
+# Deploy LTI Static files to Admin+Presentation
+---
+- name: Deploy LTI static files
+  hosts: all
+  become: true
+
+  roles:
+    - { role: deploy_lti, when: "'adminpresentation' in group_names" }
+

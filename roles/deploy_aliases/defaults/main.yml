@@ -1,0 +1,3 @@
+---
+alias_src: files/bash_aliases.sh
+perl_src: files/fix_manifest.pl

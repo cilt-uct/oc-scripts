@@ -1,0 +1,5 @@
+---
+hunspell_src: /usr/local/src/hunspell-data/data/
+hunspell_dest: /usr/share/hunspell/
+system_user: opencast
+system_group: opencast

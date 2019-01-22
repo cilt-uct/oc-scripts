@@ -1,0 +1,75 @@
+---
+# file: group_vars/all
+ansible_connection: ssh
+
+# SSH username and password for the various servers > should be able to use sudo
+ansible_ssh_user: tmpl_ansible_ssh_user
+ansible_user: tmpl_ansible_ssh_user
+ansible_ssh_pass: tmpl_ansible_ssh_password
+ansible_pass: tmpl_ansible_ssh_password
+
+# Current version of opencast distribution snapshot e.g 2.3-SNAPSHOT
+oc_version: tmpl_src_version
+
+# Local folders:
+folder_src: tmpl_folder_src
+folder_script: tmpl_folder_script
+
+# Distribution folders:
+folder_app: tmpl_folder_app
+folder_data: tmpl_folder_data
+
+# Variables for the dbservers group.
+# MySQL access
+db_user: tmpl_db_user
+db_pass: tmpl_db_pass
+
+# Opencast database access details
+oc_username: tmpl_oc_username
+oc_password: tmpl_oc_password
+
+# JIRA user
+jira_server: tmpl_jira_server
+jira_user: tmpl_jira_user
+jira_pass: tmpl_jira_pass
+jira_issue: tmpl_jira_issue
+
+# Opencast system access details
+oc_system_url: tmpl_deploy_server_admin_url
+oc_system_username: tmpl_deploy_server_admin_user
+oc_system_password: tmpl_deploy_server_admin_password
+
+# Stop a running opencast service
+stop_service: tmpl_stop_service
+
+# Start the opencast service after whatever
+start_service: tmpl_start_service
+
+# Fully clean all folders for opencast - shared workspace, index, archive, distribution
+full_clean: tmpl_full_clean
+clean_db: tmpl_clean_db
+
+# Folders that are used on the servers to clean (should be the same for all of them)
+folder_ui: "{{ folder_app }}data/adminui/"
+folder_log: "{{ folder_app }}data/log/"
+
+folder_index: "{{ folder_data }}local/index/"
+folder_solr_index: "{{ folder_data }}local/solr-indexes/"
+folder_shared: "{{ folder_data }}work/shared/"
+folder_archive: "{{ folder_data }}archive"
+folder_distribution_downloads: "{{ folder_data }}distribution/downloads"
+folder_distribution_streams: "{{ folder_data }}distribution/streams"
+
+# Deploy variables - Applicable to all servers
+folder_config: "{{ folder_script }}files/config/" 
+
+deploy_lti_static: "{{ folder_script }}files/lti.tar.gz"
+deploy_lti_script: "{{ folder_script }}files/lti.sh"
+
+deploy_assembly_allinone: "{{ folder_src }}build/opencast-dist-allinone-{{ oc_version }}.tar.gz"
+deploy_assembly_admin: "{{ folder_src }}build/opencast-dist-admin-{{oc_version}}.tar.gz"
+deploy_assembly_adminpresentation: "{{ folder_src }}build/opencast-dist-adminpresentation-{{ oc_version }}.tar.gz"
+deploy_assembly_adminworker: "{{ folder_src }}build/opencast-dist-adminworker-{{ oc_version }}.tar.gz"
+deploy_assembly_presentation: "{{ folder_src }}build/opencast-dist-presentation-{{ oc_version }}.tar.gz"
+deploy_assembly_ingest: "{{ folder_src }}build/opencast-dist-ingest-{{ oc_version }}.tar.gz"
+deploy_assembly_worker: "{{ folder_src }}build/opencast-dist-worker-{{ oc_version }}.tar.gz"

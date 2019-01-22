@@ -1,0 +1,34 @@
+---
+# This playbook will:
+# 1. Create the folder where hunspell data should be on a worker node
+# 2. Copy over the appropriate aff and dic files
+
+    - file:
+        path: "{{ hunspell_dest }}"
+        state: directory
+        owner: "{{ system_user }}"
+        group: "{{ system_group }}"
+        mode: 0755
+
+    - name: Copy Hunspell Data (aff)
+      copy:
+        src: "{{ item }}"
+        dest: "{{ hunspell_dest }}{{ item.split('/')[-1] }}"
+        owner: "{{ system_user }}"
+        group: "{{ system_group }}"        
+        mode: 0644
+      with_fileglob: "{{ hunspell_src }}*.aff"
+
+    - name: Copy Hunspell Data (dic)
+      copy:
+        src: "{{ item }}"
+        dest: "{{ hunspell_dest }}{{ item.split('/')[-1] }}"
+        owner: "{{ system_user }}"
+        group: "{{ system_group }}"
+        mode: 0644
+      register: result
+      with_fileglob: "{{ hunspell_src }}*.dic"
+
+    - name: Append Deployment
+      local_action: shell echo "* {{inventory_hostname}} (Hunspell)" >> "{{ deploy_logfile }}"
+      when: result is succeeded

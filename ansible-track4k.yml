@@ -1,0 +1,10 @@
+# Deploy Track4k to the various nodes
+---
+- name: Deploy Track4K binary
+  hosts: all
+  become: true
+
+  roles:
+    - { role: deploy_track4k, when: "'worker' in group_names or 'adminpresentation' in group_names or 'allinone' in group_names or 'adminworker' in group_names" }
+
+

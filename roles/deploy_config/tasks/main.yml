@@ -1,0 +1,28 @@
+---
+# This playbook will run the deploy config script on the node
+
+  - name: Copy script assembly
+    copy: src="{{ folder_config }}conf-{{ ansible_hostname }}.tar.gz" dest=/opt/deploy.tar.gz owner="{{ system_user }}" group="{{ system_group }}" mode=0644
+
+  - name: Copy script configuration
+    copy: src="{{ folder_config }}conf-{{ ansible_hostname }}.cfg" dest=/opt/deploy.cfg owner="{{ system_user }}" group="{{ system_group }}" mode=0644
+
+  - name: Copy script
+    copy: src="{{ deploy_script }}" dest="/opt/deploy.sh" owner="{{ system_user }}" group="{{ system_group }}" mode=0775
+
+  # fire and forget
+  - name: Run Script
+    shell: /opt/deploy.sh
+    async: 500
+    poll: 0
+    register: run_script
+
+  - async_status: jid={{ run_script.ansible_job_id }}
+    register: log
+    until: log.finished
+    retries: 30
+
+  - name: Append Deployment
+    local_action: shell echo "* {{inventory_hostname}}" >> "{{ deploy_logfile }}"
+    when: log is succeeded
+

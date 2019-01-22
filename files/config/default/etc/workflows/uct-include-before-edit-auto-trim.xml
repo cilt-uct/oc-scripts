@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definition xmlns="http://workflow.opencastproject.org">
+
+  <id>uct-include-before-edit-auto-trim</id>
+  <title>UCT - Process for Editing (Auto Trim)</title>
+  <tags/>
+  <description>
+    REQUIRES:
+      Flavors:
+        */work
+        smil/cutting
+
+    Using the work flavors this workflow runs the publish workflow to cut and publish to engage.
+  </description>
+
+  <configuration_panel></configuration_panel>
+
+  <operations>
+    <!-- Mark the recording as auto trimmed -->
+    <operation
+      id="comment"
+      fail-on-error="false"
+      description="Mark the recording as being automatically trimmed and published (create)">
+      <configurations>
+        <configuration key="description">Auto trimmed</configuration>
+        <configuration key="reason">EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.AUTOTRIM</configuration>
+        <configuration key="action">create</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="comment"
+      fail-on-error="false"
+      description="Mark the recording as being automatically trimmed and published (resolve)">
+      <configurations>
+        <configuration key="reason">EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.AUTOTRIM</configuration>
+        <configuration key="action">resolve</configuration>
+      </configurations>
+    </operation>
+
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <!-- Publish                                                           -->
+    <!--                                                                   -->
+    <!-- Encode and publish the recording to the selected publication      -->
+    <!-- channels, unless review for cutting has been selected.            -->
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <operation
+      id="include"
+      description="Publish the recording">
+      <configurations>
+        <configuration key="workflow-id">uct-partial-publish</configuration>
+      </configurations>
+    </operation>
+
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <!-- Transcription / Caption Services                                  -->
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <operation
+      id="include"
+      if="${use_watson} and ${audio_trim_lapel}"
+      description="Do captioning with IBM Watson">
+      <configurations>
+        <configuration key="workflow-id">uct-include-transcription-watson</configuration>
+      </configurations>
+    </operation>
+
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <!-- Archive                                                           -->
+    <!--                                                                   -->
+    <!-- Download from external ingest nodes, tag, inspect and and prepare -->
+    <!-- source recording and metadata catalogs.                           -->
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <!-- Save workflow properties -->
+    <operation
+      id="export-wf-properties"
+      fail-on-error="true"
+      exception-handler-workflow="partial-error"
+      description="Export workflow settings to Java properties file">
+      <configurations>
+        <configuration key="target-flavor">processing/defaults</configuration>
+        <configuration key="target-tags">archive</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="snapshot"
+      description="Archive publishing information">
+      <configurations>
+        <configuration key="source-tags">archive</configuration>
+      </configurations>
+    </operation>
+
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <!-- Cleanup                                                           -->
+    <!--                                                                   -->
+    <!-- Remove work artifacts in /data/opencast/work/shared/...           -->
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <operation
+      id="include"
+      description="Remove temporary processing artifacts">
+      <configurations>
+        <configuration key="workflow-id">partial-cleanup</configuration>
+      </configurations>
+    </operation>
+
+  </operations>
+</definition>

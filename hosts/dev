@@ -1,0 +1,16 @@
+[dev]
+devubuopc001.uct.ac.za
+devubuopc003.uct.ac.za
+devubuopc201.uct.ac.za
+
+[dbservers]
+devubuopc001.uct.ac.za
+
+[adminpresentation]
+devubuopc001.uct.ac.za
+
+[ingest]
+devubuopc201.uct.ac.za
+
+[worker]
+devubuopc003.uct.ac.za

@@ -1,0 +1,41 @@
+---
+# This playbook will:
+# 1. Remove indexes
+# 2. Clean shared workspace folders
+# 3. Clean Archive and Distribution - if we are full_clean
+
+- name: Remove the admin ui data folder
+  file: path={{ folder_ui }} state=absent
+
+- name: Remove the solr-indexes folder
+  file: path={{ folder_solr_index }} state=absent
+
+- name: Remove the index folder
+  file: path={{ folder_index }} state=absent
+
+- name: Find shared work folders
+  find: paths="{{ folder_shared }}" patterns="*" file_type=directory
+  register: shared
+
+#- debug: var=shared
+
+- name: Remove shared work folders
+  file:
+    path: "{{ item.path }}"
+    state: absent
+  with_items: "{{ shared.files|default([]) }}"
+  when: shared.matched|int > 0
+
+- name: Find archive and distribution (downloads/streams) folders
+  find: paths="{{ folder_archive }},{{ folder_distribution_downloads }},{{ folder_distribution_streams}}" patterns="*" file_type=directory
+  register: result
+  when: full_clean
+
+#- debug: var=result
+
+- name: Remove the folders from archive and distribution
+  file:
+    path: "{{ item.path }}"
+    state: absent
+  with_items: "{{ result.files|default([]) }}"
+  when: full_clean and result.matched|int > 0

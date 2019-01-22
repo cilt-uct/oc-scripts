@@ -1,0 +1,508 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definition xmlns="http://workflow.opencastproject.org">
+
+  <id>uct-partial-publish</id>
+  <title>Publish the recording</title>
+  <tags/>
+  <description/>
+
+  <configuration_panel/>
+
+  <operations>
+
+    <operation
+      id="analyze-tracks"
+      exception-handler-workflow="partial-error"
+      description="Analyze tracks in media package a set control variables">
+      <configurations>
+        <configuration key="source-flavor">*/work</configuration>
+      </configurations>
+    </operation>
+
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <!-- Cut the video according the SMIL file                             -->
+    <!--                                                                   -->
+    <!-- Perform cutting according to the edit decision list.              -->
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+
+    <operation id="editor"
+      exception-handler-workflow="partial-error"
+      description="Cut the recording according to the edit decision list">
+      <configurations>
+        <configuration key="source-flavors">*/work</configuration>
+        <configuration key="smil-flavors">smil/cutting</configuration>
+        <configuration key="target-smil-flavor">smil/cutting</configuration>
+        <configuration key="target-flavor-subtype">trimmed</configuration>
+        <configuration key="interactive">false</configuration>
+      </configurations>
+    </operation>
+
+    <!-- Tag smil/cutting for later re-use in case of re-publishing of the event
+         Note that WOH editor will re-use target-smil-flavor instead of adding a new one -->
+    <operation
+      id="tag"
+      description="Tagging cutting information for archival">
+      <configurations>
+        <configuration key="source-flavors">smil/cutting</configuration>
+        <configuration key="target-tags">archive</configuration>
+      </configurations>
+    </operation>
+
+    <!--
+      Clean out any previous */normalized-trimmed media
+      because we might be re-publishing them.
+    -->
+    <operation
+        id="tag"
+        max-attempts="2"
+        fail-on-error="true"
+        exception-handler-workflow="partial-error"
+        description="Removing tags for */normalized-trimmed">
+        <configurations>
+            <configuration key="source-flavors">*/normalized-trimmed</configuration>
+            <configuration key="target-tags">-archive</configuration>
+        </configurations>
+    </operation>
+
+    <operation
+      id="tag"
+      description="Removing previous presenter-cover from download publication">
+      <configurations>
+        <configuration key="source-flavors">presenter/player+preview</configuration>
+        <configuration key="target-tags">-engage-download</configuration>
+      </configurations>
+    </operation>
+
+    <!-- Archive smil/cutting right now information to ensure we don't loose it in case later operations fail -->
+    <operation
+      id="snapshot"
+      description="Archive cutting information">
+      <configurations>
+        <configuration key="source-tags">archive</configuration>
+      </configurations>
+    </operation>
+
+    <!--
+      Normalize Audio (*/trimmed > */normalized-trimmed)
+      Tag for archiving. [TESTING]
+    -->
+    <operation
+      id="normalize-audio"
+      fail-on-error="true"
+      exception-handler-workflow="uct-error"
+      description="Normalize audio stream">
+      <configurations>
+        <configuration key="source-flavor">*/trimmed</configuration>
+        <configuration key="target-flavor">*/normalized-trimmed</configuration>
+        <!--configuration key="target-tags">archive</configuration-->
+        <configuration key="target-decibel">-25</configuration>
+        <configuration key="force-transcode">true</configuration>
+      </configurations>
+    </operation>
+
+    <!-- Tag any optionally uploaded assets -->
+    <operation
+      id="tag"
+      if="${downloadSourceflavorsExist}"
+      exception-handler-workflow="partial-error"
+      description="Tagging uploaded assets for distribution">
+      <configurations>
+        <configuration key="source-flavors">${download-source-flavors}</configuration>
+        <configuration key="target-tags">+engage-download</configuration>
+      </configurations>
+    </operation>
+
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <!-- Extract preview images                                            -->
+    <!--                                                                   -->
+    <!-- From the edited recording, take preview images for the player,    -->
+    <!-- search results etc.                                               -->
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+
+    <!-- Encode to engage search result thumbnails -->
+    <operation
+      id="image"
+      if="NOT (${uploadedSearchPreview}) AND ${thumbnailType}==0 AND ${presenter_work_video}"
+      exception-handler-workflow="partial-error"
+      description="Creating search result default thumbnails">
+      <configurations>
+        <configuration key="source-flavor">presenter/normalized-trimmed</configuration>
+        <configuration key="target-flavor">presenter/search+preview</configuration>
+        <configuration key="target-tags">engage-download</configuration>
+        <configuration key="encoding-profile">search-cover.http</configuration>
+        <configuration key="time">${thumbnailPosition}</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="image"
+      if="NOT (${uploadedSearchPreview}) AND ${thumbnailType}==0 AND (${presentation_work_video} AND NOT (${presenter_work_video}))"
+      exception-handler-workflow="partial-error"
+      description="Creating search result default thumbnails">
+      <configurations>
+        <configuration key="source-flavor">presentation/normalized-trimmed</configuration>
+        <configuration key="target-flavor">presentation/search+preview</configuration>
+        <configuration key="target-tags">engage-download</configuration>
+        <configuration key="encoding-profile">search-cover.http</configuration>
+        <configuration key="time">${thumbnailPosition}</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="image"
+      if="NOT (${uploadedSearchPreview}) AND ${thumbnailType}==2"
+      exception-handler-workflow="partial-error"
+      description="Creating search result thumbnail from saved position">
+      <configurations>
+        <configuration key="source-flavor">${thumbnailTrack}/work</configuration>
+        <configuration key="target-flavor">*/search+preview</configuration>
+        <configuration key="target-tags">engage-download</configuration>
+        <configuration key="encoding-profile">search-cover.http</configuration>
+        <configuration key="time">${thumbnailPosition}</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="image-convert"
+      if="NOT (${uploadedSearchPreview}) AND ${thumbnailType}==1 AND ${presenter_work_video}"
+      exception-handler-workflow="partial-error"
+      description="Convert uploaded thumbnail to search result thumbnail (presenter track)">
+      <configurations>
+        <configuration key="source-flavors">thumbnail/source</configuration>
+        <configuration key="target-tags">engage-download</configuration>
+        <configuration key="target-flavor">presenter/search+preview</configuration>
+        <configuration key="encoding-profiles">search-cover.http.downscale</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="image-convert"
+      if="NOT (${uploadedSearchPreview}) AND ${thumbnailType}==1 AND ${presentation_work_video}"
+      exception-handler-workflow="partial-error"
+      description="Convert uploaded thumbnail to search result thumbnail (presentation track)">
+      <configurations>
+        <configuration key="source-flavors">thumbnail/source</configuration>
+        <configuration key="target-tags">engage-download</configuration>
+        <configuration key="target-flavor">presentation/search+preview</configuration>
+        <configuration key="encoding-profiles">search-cover.http.downscale</configuration>
+      </configurations>
+    </operation>
+
+    <!-- Encode to engage player preview images -->
+    <operation
+      id="image"
+      exception-handler-workflow="partial-error"
+      description="Creating player preview image">
+      <configurations>
+        <configuration key="source-flavor">*/normalized-trimmed</configuration>
+        <configuration key="source-tags"></configuration>
+        <configuration key="target-flavor">*/player+preview</configuration>
+        <configuration key="target-tags">engage-download</configuration>
+        <configuration key="encoding-profile">player-preview.http</configuration>
+        <configuration key="time">1</configuration>
+      </configurations>
+    </operation>
+
+    <!-- Encode to feed cover images -->
+    <operation
+      id="image"
+      exception-handler-workflow="partial-error"
+      description="Creating feed cover image">
+      <configurations>
+        <configuration key="source-flavor">*/normalized-trimmed</configuration>
+        <configuration key="source-tags"></configuration>
+        <configuration key="target-flavor">*/feed+preview</configuration>
+        <configuration key="target-tags">atom,rss</configuration>
+        <configuration key="encoding-profile">feed-cover.http</configuration>
+        <configuration key="time">1</configuration>
+      </configurations>
+    </operation>
+
+
+    <!-- Create a cover image with the default template -->
+    <operation
+      id="tag"
+      description="Removing unneeded presenter-cover from download publication">
+      <configurations>
+        <configuration key="source-flavors">presenter/player+preview</configuration>
+        <configuration key="target-tags">-engage-download</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="image"
+      exception-handler-workflow="partial-error"
+      description="Creating player preview image">
+      <configurations>
+        <configuration key="source-flavor">presenter/normalized-trimmed</configuration>
+        <configuration key="source-tags"></configuration>
+        <configuration key="target-flavor">presenter/coverbackground</configuration>
+        <configuration key="encoding-profile">player-preview.http</configuration>
+        <configuration key="time">1</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="cover-image"
+      fail-on-error="true"
+      exception-handler-workflow="partial-error"
+      description="Create a cover image">
+      <configurations>
+        <configuration key="stylesheet">file://${karaf.etc}/branding/coverimage.xsl</configuration>
+        <configuration key="width">1920</configuration>
+        <configuration key="height">1080</configuration>
+        <configuration key="posterimage-flavor">presenter/coverbackground</configuration>
+        <configuration key="target-flavor">presenter/player+preview</configuration>
+        <configuration key="target-tags">archive, engage-download</configuration>
+     </configurations>
+    </operation>
+
+    <!-- Generate timeline preview images -->
+    <operation
+      id="timelinepreviews"
+      fail-on-error="false"
+      exception-handler-workflow="error"
+      description="Creating timeline preview images">
+      <configurations>
+        <configuration key="source-flavor">*/normalized-trimmed</configuration>
+        <configuration key="target-flavor">*/timeline+preview</configuration>
+        <configuration key="target-tags">engage-download</configuration>
+        <configuration key="image-count">100</configuration>
+      </configurations>
+    </operation>
+
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <!-- Encode for publication to Engage                                  -->
+    <!--                                                                   -->
+    <!-- Encode audio and video formats to the distribution formats that   -->
+    <!-- are required by the Engage publication channel.                   -->
+    <!-- Also encode them for publication to rss and atom feeds.           -->
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+
+    <!--
+      Encoding presenter, presentation and presentation2 for Engage player and feeds
+
+      Video: MP4 container, H264 codec. [2160p, 1080p, 720p, 480p, 360p]
+      Audio: 44100Hz 128k, normalized to -25db
+
+    -->
+    <operation
+      if="(${presenter_source_resolution_y} &gt; 2159)"
+      id="encode"
+      fail-on-error="true"
+      exception-handler-workflow="partial-error"
+      description="Encoding for player and feeds (MP4) [2160p, 1080p, 720p, 480p]: adaptive-parallel-2160-480.http">
+      <configurations>
+        <configuration key="source-flavor">*/normalized-trimmed</configuration>
+        <configuration key="target-flavor">*/delivery</configuration>
+        <configuration key="target-tags">engage-download,engage-streaming,rss,atom</configuration>
+        <configuration key="encoding-profile">adaptive-parallel-2160-480.http</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="encode"
+      if="(${presenter_source_resolution_y} &lt; 2160) and (${presenter_source_resolution_y} &gt; 1079)"
+      fail-on-error="true"
+      exception-handler-workflow="partial-error"
+      description="Encoding for player and feeds (MP4) [1080p, 720p, 480p]: adaptive-parallel-1080-480.http">
+      <configurations>
+        <configuration key="source-flavor">*/normalized-trimmed</configuration>
+        <configuration key="target-flavor">*/delivery</configuration>
+        <configuration key="target-tags">engage-download,engage-streaming,rss,atom</configuration>
+        <configuration key="encoding-profile">adaptive-parallel-1080-480.http</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="encode"
+      if="(${presenter_source_resolution_y} &lt; 1080) and (${presenter_source_resolution_y} &gt; 719)"
+      fail-on-error="true"
+      exception-handler-workflow="partial-error"
+      description="Encoding for player and feeds (MP4) [720p, 480p]: adaptive-parallel-720-480.http">
+      <configurations>
+        <configuration key="source-flavor">*/normalized-trimmed</configuration>
+        <configuration key="target-flavor">*/delivery</configuration>
+        <configuration key="target-tags">engage-download,engage-streaming,rss,atom</configuration>
+        <configuration key="encoding-profile">adaptive-parallel-720-480.http</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="compose"
+      if="(${presenter_source_resolution_y} &lt; 720) and (${presenter_source_resolution_y} &gt; 479)"
+      fail-on-error="true"
+      exception-handler-workflow="partial-error"
+      description="Encoding for player and feeds (MP4) [480p]: adaptive-480p.http">
+      <configurations>
+        <configuration key="source-flavor">*/normalized-trimmed</configuration>
+        <configuration key="target-flavor">*/delivery</configuration>
+        <configuration key="target-tags">engage-download,engage-streaming,rss,atom</configuration>
+        <configuration key="encoding-profile">adaptive-480p.http</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="compose"
+      if="(${presenter_source_resolution_y} &lt; 480)"
+      fail-on-error="true"
+      exception-handler-workflow="partial-error"
+      description="Encoding for player and feeds (MP4) [other]: adaptive-360p.http">
+      <configurations>
+        <configuration key="source-flavor">*/normalized-trimmed</configuration>
+        <configuration key="target-flavor">*/delivery</configuration>
+        <configuration key="target-tags">engage-download,engage-streaming,rss,atom</configuration>
+        <configuration key="encoding-profile">adaptive-360p.http</configuration>
+      </configurations>
+    </operation>
+
+    <!--
+      Encoding audio for Engage player and feeds
+
+      Audio: MP4 container, 44.1khz 128Kbps
+
+      Note: We are not using themes yet
+            <configuration key="source-flavor">*/normalized-trimmed</configuration>
+    -->
+    <operation
+      id="compose"
+      fail-on-error="false"
+      exception-handler-workflow="partial-error"
+      description="Encoding audio for Engage player (MP3)">
+      <configurations>
+        <configuration key="source-flavor">presenter/normalized-trimmed</configuration>
+        <configuration key="target-flavor">presenter/delivery</configuration>
+        <configuration key="target-tags">engage-download,engage-streaming,rss,atom</configuration>
+        <configuration key="encoding-profile">mp3.http</configuration>
+        <configuration key="process-first-match-only">true</configuration>
+      </configurations>
+    </operation>
+
+    <!-- TODO: skipped this part since */themed flavors are used, and still being developed
+         See OPENCAST-2289, OPENCAST-2333
+     -->
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      Create Composite download versions of presenter, presentation and
+      presentation2 in either 2 panel or 3 panel variant.
+
+       In: */normalized-trimmed
+      Out: composite/delivery
+    -->
+    <!--operation
+      id="include"
+      description="Include publishing for downloads">
+      <configurations>
+        <configuration key="workflow-id">uct-partial-publish-downloads</configuration>
+      </configurations>
+    </operation-->
+
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <!-- Segment video streams and extract metadata                        -->
+    <!--                                                                   -->
+    <!-- Apply the video segmentation algorithm to the presentation tracks -->
+    <!-- and extract segment preview images and metadata.                  -->
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+
+    <operation
+      id="segment-video"
+      fail-on-error="false"
+      if="${presentation_work_video}"
+      description="Detecting slide transitions in presentation track">
+      <configurations>
+        <configuration key="source-flavor">presentation/normalized-trimmed</configuration>
+        <configuration key="target-tags">engage-download</configuration>
+      </configurations>
+    </operation>
+
+    <!-- If there is a presentation2 video but not a presentation video -->
+    <operation
+      id="segment-video"
+      fail-on-error="false"
+      if="NOT(${presentation_work_video}) AND ${presentation2_work_video}"
+      description="Detecting slide transitions in presentation2 track">
+      <configurations>
+        <configuration key="source-flavor">presentation2/normalized-trimmed</configuration>
+        <configuration key="target-tags">engage-download</configuration>
+      </configurations>
+    </operation>
+
+    <!-- Generate segment preview images -->
+    <operation
+      id="segmentpreviews"
+      fail-on-error="false"
+      if="${presentation_work_video}"
+      description="Creating preview images for presentation segments">
+      <configurations>
+        <configuration key="source-flavor">presentation/normalized-trimmed</configuration>
+        <configuration key="target-flavor">presentation/segment+preview</configuration>
+        <configuration key="reference-flavor">presentation/delivery</configuration>
+        <configuration key="reference-tags">engage-download</configuration>
+        <configuration key="target-tags">engage-download</configuration>
+        <configuration key="encoding-profile">player-slides.http</configuration>
+      </configurations>
+    </operation>
+
+    <!-- If there is a presentation2 video but not a presentation video -->
+    <operation
+      id="segmentpreviews"
+      fail-on-error="false"
+      if="NOT(${presentation_work_video}) AND ${presentation2_work_video}"
+      description="Creating preview images for presentation2 segments">
+      <configurations>
+        <configuration key="source-flavor">presentation2/normalized-trimmed</configuration>
+        <configuration key="target-flavor">presentation/segment+preview</configuration>
+        <configuration key="reference-flavor">presentation2/delivery</configuration>
+        <configuration key="reference-tags">engage-download</configuration>
+        <configuration key="target-tags">engage-download</configuration>
+        <configuration key="encoding-profile">player-slides.http</configuration>
+      </configurations>
+    </operation>
+
+    <!-- Extract text form slide preview images -->
+    <operation
+      id="extract-text"
+      fail-on-error="false"
+      if="${presentation_work_video}"
+      description="Extracting text from presentation segments">
+      <configurations>
+        <configuration key="source-flavor">presentation/normalized-trimmed</configuration>
+        <configuration key="target-tags">engage-download,archive</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="extract-text"
+      fail-on-error="false"
+      if="${presentation2_work_video} and not(${presentation_work_video})"
+      description="Extracting text from presentation2 segments">
+      <configurations>
+        <configuration key="source-flavor">presentation2/normalized-trimmed</configuration>
+        <configuration key="target-tags">engage-download,archive</configuration>
+      </configurations>
+    </operation>
+
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <!-- Publish to publication channels                                   -->
+    <!--                                                                   -->
+    <!-- Send the encoded material along with the metadata to the          -->
+    <!-- publication channels.                                             -->
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+
+    <!-- Publish to engage player -->
+    <operation
+      id="publish-engage"
+      if="${publishToEngage}"
+      max-attempts="2"
+      exception-handler-workflow="partial-error"
+      description="Publishing to Opencast Media Module">
+      <configurations>
+        <configuration key="download-source-flavors">dublincore/*,security/*</configuration>
+        <configuration key="download-source-tags">engage-download,atom,rss,mobile</configuration>
+        <configuration key="streaming-source-tags">engage-streaming</configuration>
+        <configuration key="check-availability">true</configuration>
+      </configurations>
+    </operation>
+
+  </operations>
+
+</definition>

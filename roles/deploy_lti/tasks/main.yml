@@ -1,0 +1,36 @@
+---
+# This playbook will deploy LTI tools to a static folder according to configuration of server
+# Deployed for Admin and Presentation
+
+  - name: Copy LTI assembly
+    copy: src={{ deploy_lti_static }} dest=/opt/lti.tar.gz owner="{{system_user}}" group="{{system_group}}" mode=0644
+
+  - name: Copy deployment configuration
+    copy: src={{ folder_config }}conf-{{ ansible_hostname }}.cfg dest=/opt/lti.cfg owner="{{system_user}}" group="{{system_group}}" mode=0644
+
+  - name: Copy deploy script
+    copy: src={{ deploy_lti_script }} dest=/opt/lti.sh owner="{{system_user}}" group="{{system_group}}" mode=0775
+
+  # fire and forget
+  - name: Deploy LTI files
+    shell: /opt/lti.sh
+    async: 500
+    poll: 0
+    register: run_lti
+
+  - async_status: jid={{ run_lti.ansible_job_id }}
+    register: log
+    until: log.finished
+    retries: 30
+
+  #- debug: var=log
+
+  - name: Comment on issue
+    jira:
+      uri: "{{ jira_server }}"
+      username: "{{ jira_user }}"
+      password: "{{ jira_pass }}"
+      issue: "{{ jira_issue }}"
+      operation: comment
+      comment: "Deployed LTI Tools to _*{{inventory_hostname}}*_."
+    when: production

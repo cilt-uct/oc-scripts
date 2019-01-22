@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definition xmlns="http://workflow.opencastproject.org">
+
+  <id>uct-partial-publish-downloads</id>
+  <title>UCT Publish Downloads</title>
+  <tags/>
+  <description/>
+
+  <configuration_panel></configuration_panel>
+
+  <operations>
+
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      Create composite media for downloading on LTI tool and
+      for publication to feeds (Atom / RSS).
+
+      Video: MP4 container, H264 codec.
+
+      2 Panel > (presenter and/or presentation and/or presentation2): 1280x360 (640x360 x 2)
+      3 Panel > (presenter and 2 x presentation): 1920 x 720 (1280 x 720 for presenter, stacked 640x360 for presentation)
+    -->
+
+    <operation
+      id="composite"
+      description="Downloads: Presenter + Presentation"
+      if="NOT(${presentation2_work_video}) AND ${presenter_work_video} AND ${presentation_work_video}"
+      fail-on-error="false"
+      exception-handler-workflow="partial-error">
+      <configurations>
+        <configuration key="source-flavor-lower">presentation/themed</configuration>
+        <configuration key="source-flavor-upper">presenter/themed</configuration>
+        <configuration key="encoding-profile">mp4-download.dual.http</configuration>
+        <configuration key="target-flavor">composite/delivery</configuration>
+        <configuration key="target-tags">rss,atom,composite</configuration>
+        <configuration key="output-resolution">1280x360</configuration>
+        <configuration key="output-background">0x000000FF</configuration>
+        <configuration key="layout">preview</configuration>
+        <configuration key="layout-single">
+          {"horizontalCoverage":1.0,"anchorOffset":{"referring":{"left":0.0,"top":0.0},"reference":{"left":0.0,"top":0.0},"offset":{"x":0,"y":0}}};
+        </configuration>
+        <configuration key="layout-preview">
+          {"horizontalCoverage":0.5,"anchorOffset":{"referring":{"left":1.0,"top":0.0},"reference":{"left":1.0,"top":0.0},"offset":{"x":0,"y":0}}};
+          {"horizontalCoverage":0.5,"anchorOffset":{"referring":{"left":0.0,"top":0.0},"reference":{"left":0.0,"top":0.0},"offset":{"x":0,"y":0}}};
+        </configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="composite"
+      description="Downloads: Presenter + Presentation2"
+      if="NOT(${presentation_work_video}) AND ${presenter_work_video} AND ${presentation2_work_video}"
+      fail-on-error="false"
+      exception-handler-workflow="partial-error">
+      <configurations>
+        <configuration key="source-flavor-lower">presentation2/themed</configuration>
+        <configuration key="source-flavor-upper">presenter/themed</configuration>
+        <configuration key="encoding-profile">mp4-download.dual.http</configuration>
+        <configuration key="target-flavor">composite/delivery</configuration>
+        <configuration key="target-tags">rss,atom,composite</configuration>
+        <configuration key="output-resolution">1280x360</configuration>
+        <configuration key="output-background">0x000000FF</configuration>
+        <configuration key="layout">preview</configuration>
+        <configuration key="layout-single">
+          {"horizontalCoverage":1.0,"anchorOffset":{"referring":{"left":0.0,"top":0.0},"reference":{"left":0.0,"top":0.0},"offset":{"x":0,"y":0}}};
+        </configuration>
+        <configuration key="layout-preview">
+          {"horizontalCoverage":0.5,"anchorOffset":{"referring":{"left":1.0,"top":0.0},"reference":{"left":1.0,"top":0.0},"offset":{"x":0,"y":0}}};
+          {"horizontalCoverage":0.5,"anchorOffset":{"referring":{"left":0.0,"top":0.0},"reference":{"left":0.0,"top":0.0},"offset":{"x":0,"y":0}}};
+        </configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="composite"
+      description="Downloads: Presentation + Presentation2"
+      if="NOT(${presenter_work_video}) AND ${presentation_work_video} AND ${presentation2_work_video}"
+      fail-on-error="false"
+      exception-handler-workflow="partial-error">
+      <configurations>
+        <configuration key="source-flavor-lower">presentation2/themed</configuration>
+        <configuration key="source-flavor-upper">presentation/themed</configuration>
+        <configuration key="encoding-profile">mp4-download.dual.http</configuration>
+        <configuration key="target-flavor">composite/delivery</configuration>
+        <configuration key="target-tags">rss,atom,composite</configuration>
+        <configuration key="output-resolution">1280x360</configuration>
+        <configuration key="output-background">0x000000FF</configuration>
+        <configuration key="layout">preview</configuration>
+        <configuration key="layout-single">
+          {"horizontalCoverage":1.0,"anchorOffset":{"referring":{"left":0.0,"top":0.0},"reference":{"left":0.0,"top":0.0},"offset":{"x":0,"y":0}}};
+        </configuration>
+        <configuration key="layout-preview">
+          {"horizontalCoverage":0.5,"anchorOffset":{"referring":{"left":1.0,"top":0.0},"reference":{"left":1.0,"top":0.0},"offset":{"x":0,"y":0}}};
+          {"horizontalCoverage":0.5,"anchorOffset":{"referring":{"left":0.0,"top":0.0},"reference":{"left":0.0,"top":0.0},"offset":{"x":0,"y":0}}};
+        </configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="include"
+      if="${presenter_work_video} AND ${presentation_work_video} AND ${presentation2_work_video}"
+      description="Downloads: Include composite for tri-stream">
+      <configurations>
+        <configuration key="workflow-id">uct-include-partial-download-abde</configuration>
+      </configurations>
+    </operation>
+
+
+  </operations>
+
+</definition>

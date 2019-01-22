@@ -1,0 +1,8 @@
+# Check servers
+---
+- name: Check the versions on all the servers
+  hosts: all
+  become: true
+
+  roles:
+    - { role: check_software_versions,  when: "'ingest' not in group_names"} # not for ingest nodes

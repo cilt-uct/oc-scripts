@@ -1,0 +1,23 @@
+---
+# This playbook will:
+# 1. Delete the database
+# 2. Create a clean database
+# 3. Import the new table structure into the database
+
+- name: Transfer SQL script
+  copy: src={{ sql_source }} dest={{ sql_dest }} mode=0644
+
+- name: Remove DB
+  mysql_db: name={{ source_db }} state=absent login_user={{ db_user }} login_password={{ db_pass }} config_file={{ db_config }}
+
+- name: Create DB
+  mysql_db: name={{ target_db }} state=present login_user={{ db_user }} login_password={{ db_pass }} config_file={{ db_config }}
+
+- name: Restore DB
+  mysql_db: name={{ target_db }} state=import target={{ sql_dest }} login_user={{ db_user }} login_password={{ db_pass }} config_file={{ db_config }}
+
+- name: Set User privileges
+  mysql_user: name={{ oc_username }} password={{ oc_password }} host_all=yes priv={{ target_db }}.*:ALL state=present login_user={{ db_user }} login_password={{ db_pass }} config_file={{ db_config }}
+
+- name: Remove SQL script
+  file: path={{ sql_dest }} state=absent

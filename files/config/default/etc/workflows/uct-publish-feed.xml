@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<definition xmlns="http://workflow.opencastproject.org">
+
+  <id>uct-publish-feed</id>
+  <title>UCT - Publish feed</title>
+  <tags>
+    <!--tag>archive</tag-->
+  </tags>
+  <description/>
+  <configuration_panel />
+
+  <operations>
+
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <!-- Encode for publication to feeds                                   -->
+    <!--                                                                   -->
+    <!-- Encode audio and video formats to the distribution formats that   -->
+    <!-- are required by the feeds publication channel.                    -->
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <operation
+      id="include"
+      description="Include publishing for downloads">
+      <configurations>
+        <configuration key="workflow-id">uct-partial-publish-downloads</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="tag"
+      description="Tagging metadata catalogs for archival and publication">
+      <configurations>
+        <configuration key="source-flavors">dublincore/*</configuration>
+        <configuration key="target-tags">+archive,+engage-download,+rss,+atom</configuration>
+      </configurations>
+    </operation>
+
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <!-- Archive                                                           -->
+    <!--                                                                   -->
+    <!-- Download from external ingest nodes, tag, inspect and and prepare -->
+    <!-- source recording and metadata catalogs.                           -->
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+
+    <!-- Archive the recording -->
+    <operation
+      id="snapshot"
+      description="Archive publishing information">
+      <configurations>
+        <configuration key="source-tags">archive</configuration>
+      </configurations>
+    </operation>
+
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <!-- Cleanup                                                           -->
+    <!--                                                                   -->
+    <!-- Remove work artifacts.                                            -->
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+
+    <!-- Clean the system from work artifacts -->
+    <operation
+      id="include"
+      description="Remove temporary processing artifacts">
+      <configurations>
+        <configuration key="workflow-id">ng-partial-cleanup</configuration>
+      </configurations>
+    </operation>
+
+  </operations>
+</definition>

@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<definition xmlns="http://workflow.opencastproject.org">
+
+  <id>uct-clean</id>
+  <title>UCT - Retract and Cleanup</title>
+  <tags>
+    <tag>archive</tag>
+  </tags>
+  <description>Retract a recording and clean out media files.</description>
+  <configuration_panel>
+      <![CDATA[
+        <style type="text/css">
+        <!--
+            #workflow-configuration legend { padding-top:20px; padding-bottom:5px; }
+            #workflow-configuration li { padding-top:5px; padding-bottom:5px; line-height:14px }
+        -->
+        </style>
+        <div id="workflow-configuration">
+          <fieldset>
+            <legend>Remove:</legend>
+            <ul>
+              <!--li>
+                <span>
+                  <input id="removeSource" type="checkbox" checked="checked" class="configField" value="false" />
+                  <span>&nbsp;Source</span>
+                </span>
+              </li-->
+              <li>
+                <span>
+                  <input id="removeNormalizedTrimmed" type="checkbox" class="configField" value="true" />
+                  <span>&nbsp;Normalized-Trimmed</span>
+                </span>
+              </li>
+            </ul>
+          </fieldset>
+          <fieldset>
+            <legend>Retract the recording from:</legend>
+            <ul>
+              <li>
+                <span>
+                  <input id="retractPreview" type="checkbox" checked="checked" class="configField" value="false" />
+                  <span>&nbsp;Preview and Editing Media</span>
+                </span>
+              </li>
+              <li>
+                <span>
+                  <input id="retractFromEngage" type="checkbox" checked="checked" class="configField" value="true" />
+                  <span>&nbsp;Opencast Media Module</span>
+                </span>
+              </li>
+              <li>
+                <span>
+                  <input id="retractFromApi" type="checkbox" checked="checked" class="configField" value="true" />
+                  <span>&nbsp;External Applications</span>
+                </span>
+              </li>
+              <li>
+                <span>
+                  <input id="retractFromYouTube" type="checkbox" class="configField" value="true" />
+                  <span>&nbsp;YouTube</span>
+                </span>
+              </li>
+            </ul>
+          </fieldset>
+        </div>
+      ]]>
+  </configuration_panel>
+  <operations>
+
+    <!-- Make sure the workflow contains at least a default configuration -->
+    <operation
+      id="defaults"
+      description="Applying default configuration values">
+      <configurations>
+        <configuration key="removeSource">false</configuration>
+        <configuration key="removePreview">true</configuration>
+        <configuration key="removeWork">true</configuration>
+        <configuration key="removeTrimmed">true</configuration>
+        <configuration key="removeNormalizedTrimmed">true</configuration>
+
+        <configuration key="retractFromEngage">true</configuration>
+        <configuration key="retractFromApi">true</configuration>
+        <configuration key="retractPreview">false</configuration>
+        <configuration key="retractFromYouTube">false</configuration>
+      </configurations>
+    </operation>
+
+    <!-- Retract from engage player -->
+    <operation
+      id="retract-engage"
+      fail-on-error="true"
+      exception-handler-workflow="partial-error"
+      if="${retractFromEngage}"
+      description="Retract recording from Engage">
+    </operation>
+
+    <!-- Retract from external applications -->
+    <operation
+      id="retract-configure"
+      if="${retractFromApi}"
+      fail-on-error="true"
+      exception-handler-workflow="partial-error"
+      description="Retract recording from external application">
+      <configurations>
+        <configuration key="channel-id">api</configuration>
+      </configurations>
+    </operation>
+
+    <!-- Remove the internal publication if the mediapackage is being deleted. -->
+    <operation
+      id="retract-configure"
+      if="${retractPreview}"
+      exception-handler-workflow="partial-error"
+      description="Retract from internal publication channel">
+      <configurations>
+        <configuration key="channel-id">internal</configuration>
+      </configurations>
+    </operation>
+
+    <!-- Retract from YouTube -->
+    <operation
+      id="retract-youtube"
+      if="${retractFromYouTube}"
+      fail-on-error="true"
+      exception-handler-workflow="partial-error"
+      description="Retract recording from YouTube">
+    </operation>
+
+    <operation
+        id="tag"
+        max-attempts="2"
+        fail-on-error="true"
+        if="${removeSource}"
+        exception-handler-workflow="partial-error"
+        description="Removing archive tags for */source">
+        <configurations>
+            <configuration key="source-flavors">*/source</configuration>
+            <configuration key="target-tags">-archive</configuration>
+        </configurations>
+    </operation>
+
+    <operation
+        id="tag"
+        max-attempts="2"
+        fail-on-error="true"
+        if="${removePreview}"
+        exception-handler-workflow="partial-error"
+        description="Removing archive tags for */preview">
+        <configurations>
+            <configuration key="source-flavors">*/preview</configuration>
+            <configuration key="target-tags">-archive</configuration>
+        </configurations>
+    </operation>
+
+    <operation
+        id="tag"
+        max-attempts="2"
+        fail-on-error="true"
+        if="${removeWork}"
+        exception-handler-workflow="partial-error"
+        description="Removing archive tags for */work">
+        <configurations>
+            <configuration key="source-flavors">*/work</configuration>
+            <configuration key="target-tags">-archive</configuration>
+        </configurations>
+    </operation>
+
+    <operation
+        id="tag"
+        max-attempts="2"
+        fail-on-error="true"
+        if="${removeTrimmed}"
+        exception-handler-workflow="partial-error"
+        description="Removing archive tags for */trimmed">
+        <configurations>
+            <configuration key="source-flavors">*/trimmed</configuration>
+            <configuration key="target-tags">-archive</configuration>
+        </configurations>
+    </operation>
+
+    <operation
+        id="tag"
+        max-attempts="2"
+        fail-on-error="true"
+        if="${removeNormalizedTrimmed}"
+        exception-handler-workflow="partial-error"
+        description="Removing archive tags for */normalized-trimmed">
+        <configurations>
+            <configuration key="source-flavors">*/normalized-trimmed</configuration>
+            <configuration key="target-tags">-archive</configuration>
+        </configurations>
+    </operation>
+
+    <operation
+      id="snapshot"
+      description="Archive current state of recording">
+      <configurations>
+        <configuration key="source-tags">archive</configuration>
+      </configurations>
+    </operation>
+
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <!-- Cleanup                                                           -->
+    <!--                                                                   -->
+    <!-- Remove work artifacts in /data/opencast/work/shared/...           -->
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <operation
+      id="include"
+      description="Remove temporary processing artifacts">
+      <configurations>
+        <configuration key="workflow-id">partial-cleanup</configuration>
+      </configurations>
+    </operation>
+
+  </operations>
+</definition>

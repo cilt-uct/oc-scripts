@@ -1,0 +1,9 @@
+---
+track4k_binary: /usr/local/bin/track4k
+track4k_cropvid: /usr/local/bin/cropvid
+track4k_script_src: files/worker/wfexec/track4k.pl
+track4k_script_dest: /opt/opencast/wfexec/track4k.pl
+track4k_json_src: files/worker/wfexec/track4k.json
+track4k_json_dest: /opt/opencast/wfexec/track4k.json
+system_user: opencast
+system_group: opencast

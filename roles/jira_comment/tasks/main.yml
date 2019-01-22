@@ -1,0 +1,13 @@
+---
+# This playbook will run the submission of a comment to ansible
+
+  - local_action:
+      module: jira
+      uri: "{{ jira_server }}"
+      username: "{{ jira_user }}"
+      password: "{{ jira_pass }}"
+      issue: "{{ jira_issue }}"
+      operation: comment
+      comment: "{{ lookup('file', '{{ deploy_logfile }}') }}"
+    run_once: True
+

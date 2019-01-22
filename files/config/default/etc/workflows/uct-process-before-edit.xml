@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<definition xmlns="http://workflow.opencastproject.org">
+
+  <id>uct-process-before-edit</id>
+  <title>UCT - Process for Editing</title>
+  <tags>
+    <tag>upload</tag>
+    <tag>schedule</tag>
+  </tags>
+  <description/>
+  <configuration_panel />
+
+  <operations>
+    <!-- Apply the default workflow configuration -->
+    <operation
+      id="defaults"
+      description="Applying default configuration values">
+      <configurations>
+        <configuration key="straightToPublishing">false</configuration>
+        <configuration key="publishToEngage">true</configuration>
+        <configuration key="publishToAws">false</configuration>
+        <configuration key="publishToApi">false</configuration>
+        <configuration key="publishToOaiPmh">false</configuration>
+        <configuration key="publishToYouTube">false</configuration>
+
+        <configuration key="flagForCutting">false</configuration>
+        <configuration key="flagForReview">false</configuration>
+        <configuration key="uploadedSearchPreview">false</configuration>
+        <configuration key="downloadSourceflavorsExist">false</configuration>
+
+        <configuration key="thumbnailType">0</configuration>
+        <configuration key="thumbnailPosition">1</configuration>
+
+        <configuration key="use_watson">false</configuration>
+        <configuration key="use_waywithwords">false</configuration>
+
+        <configuration key="timetabled">false</configuration>
+        <configuration key="audio_trim_autotrim">false</configuration>
+        <configuration key="audio_trim_valid_venue">false</configuration>
+        <configuration key="audio_trim_lapel">false</configuration>
+        <configuration key="audio_trim_ishour">false</configuration>
+      </configurations>
+    </operation>
+
+    <!-- Check whether this is a timetabled course event and get location -->
+    <operation
+      id="execute-once"
+      max-attempts="3"
+      retry-strategy="hold"
+      fail-on-error="true"
+      exception-handler-workflow="partial-error"
+      description="Check timetable status">
+      <configurations>
+        <configuration key="exec">/opt/opencast/wfexec/event-timetable.pl</configuration>
+        <configuration key="load">0.1</configuration>
+        <configuration key="params">#{id} #{out}</configuration>
+        <configuration key="output-filename">ttinfo.txt</configuration>
+        <configuration key="set-workflow-properties">true</configuration>
+        <configuration key="expected-type">Attachment</configuration>
+      </configurations>
+    </operation>
+
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      Finalize ingest
+      Make sure all elements are downloaded from external sources,
+      inspect, analyze tracks (*/*), apply series access control
+      archive */source, and tag metadata for archive and publish.
+    -->
+    <operation
+      id="include"
+      description="Finalize upload and ingest">
+      <configurations>
+        <configuration key="workflow-id">uct-partial-ingest</configuration>
+      </configurations>
+    </operation>
+
+    <!-- Archive source material and generated items -->
+    <operation
+      id="snapshot"
+      description="Archive source">
+      <configurations>
+        <configuration key="source-tags">archive</configuration>
+      </configurations>
+    </operation>
+
+    <!--
+      Resolve the recording failure comment if this was a missed ingest (OPENCAST-1836)
+    -->
+    <operation
+      id="comment"
+      description="Resolve recording failure (if present)">
+      <configurations>
+        <configuration key="reason">EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.RECORDING_FAILURE</configuration>
+        <configuration key="action">resolve</configuration>
+      </configurations>
+    </operation>
+
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      Prepare work versions of the source material for further processing.
+      Preview and Publish use Work versions. (*/work)
+    -->
+    <operation
+      id="include"
+      description="Prepare work version for processing">
+      <configurations>
+        <configuration key="workflow-id">uct-partial-work</configuration>
+      </configurations>
+    </operation>
+
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      Run the script to detect the audio points and create a smil/cutting if possible
+    -->
+    <operation
+      id="include"
+      description="Run the audio analysis for (possible) autotrimming of the recording">
+      <configurations>
+        <configuration key="workflow-id">uct-include-autotrim-detection</configuration>
+      </configurations>
+    </operation>
+
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      Decide Auto trimming and publish or Review
+      If a recording has a good_start, good_end, isHour and non speech used
+      segments is 0 then it is marked to be auto trimmed and published
+      It also depends on if the recording is timetabled and it is a valid venue
+      Else it goes into the normal queue to be reviewed
+    -->
+    <operation
+      id="include"
+      if="${timetabled} AND ${audio_trim_autotrim} AND ${audio_trim_valid_venue}"
+      description="RECORDING: Auto trim and publish (no preview)">
+      <configurations>
+        <configuration key="workflow-id">uct-include-before-edit-auto-trim</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="include"
+      if="NOT(${timetabled} AND ${audio_trim_autotrim} AND ${audio_trim_valid_venue})"
+      description="RECORDING: Review">
+      <configurations>
+        <configuration key="workflow-id">uct-include-before-edit-review</configuration>
+      </configurations>
+    </operation>
+
+  </operations>
+
+</definition>

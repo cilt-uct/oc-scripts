@@ -1,0 +1,14 @@
+---
+# Handlers for common notifications
+
+- name: stop opencast
+  service: name=opencast state=stopped
+  become: true
+
+- name: start opencast
+  service: name=opencast state=started
+  become: true
+
+- name: restart opencast
+  service: name=opencast state=restarted
+  become: true

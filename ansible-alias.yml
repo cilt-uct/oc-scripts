@@ -1,0 +1,8 @@
+# Add alias definition file to servers
+---
+- name: Add bash_alias to servers
+  hosts: all
+  become: true
+
+  roles:
+    - deploy_aliases

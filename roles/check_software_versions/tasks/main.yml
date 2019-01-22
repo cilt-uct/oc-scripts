@@ -1,0 +1,22 @@
+---
+# This playbook will copy a script to return all the software versions running on each node
+
+  - name: Copy check script
+    copy: src=files/check.sh dest=/opt/check.sh owner=root group=root mode=0775
+
+  - name: Copy check configuration
+    copy: src=files/tmp/conf-{{ ansible_hostname }}.cfg dest=/opt/check.cfg owner=root group=root mode=0644
+
+  # fire and forget
+  - name: Run version check
+    shell: /opt/check.sh
+    async: 500
+    poll: 0
+    register: run_check
+
+  - async_status: jid={{ run_check.ansible_job_id }}
+    register: log
+    until: log.finished
+    retries: 30
+
+#  - debug: var=log

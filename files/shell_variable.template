@@ -1,0 +1,6 @@
+#! /bin/bash
+
+# New Relic Variables
+NEWRELIC_USE=tmpl_new_relic_use
+NEWRELIC_APP=tmpl_new_relic_app
+NEWRELIC_API=tmpl_new_relic_api

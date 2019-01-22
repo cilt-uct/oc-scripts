@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<definition xmlns="http://workflow.opencastproject.org">
+
+  <id>uct-publish-after-edit</id>
+  <title>UCT - Publish</title>
+  <tags>
+    <tag>editor</tag>
+  </tags>
+  <description/>
+  <configuration_panel/>
+
+  <operations>
+
+    <!-- Apply the default workflow configuration -->
+    <operation
+      id="defaults"
+      description="Applying default configuration values">
+      <configurations>
+        <configuration key="publishToEngage">true</configuration>
+        <configuration key="publishToAws">false</configuration>
+        <configuration key="publishToApi">false</configuration>
+        <configuration key="publishToOaiPmh">false</configuration>
+        <configuration key="publishToYouTube">false</configuration>
+
+        <configuration key="thumbnailType">0</configuration>
+        <configuration key="thumbnailPosition">1</configuration>
+
+        <configuration key="presenter_work_video">false</configuration>
+        <configuration key="presenter_source_resolution_y">1080</configuration>
+
+        <configuration key="presentation_work_video">false</configuration>
+        <configuration key="presentation2_work_video">false</configuration>
+
+        <configuration key="use_watson">false</configuration>
+        <configuration key="use_waywithwords">false</configuration>
+        <configuration key="audio_trim_lapel">false</configuration>
+      </configurations>
+    </operation>
+
+    <!-- load the values from before -->
+    <operation
+      id="import-wf-properties"
+      fail-on-error="true"
+      exception-handler-workflow="partial-error"
+      description="Load processing settings">
+      <configurations>
+        <configuration key="source-flavor">processing/defaults</configuration>
+      </configurations>
+    </operation>
+
+    <!-- Load workflow properties from metadata: update some workflow properties -->
+    <operation
+      id="execute-once"
+      max-attempts="3"
+      retry-strategy="hold"
+      fail-on-error="true"
+      exception-handler-workflow="partial-error"
+      description="Load workflow properties from settings in series">
+      <configurations>
+        <configuration key="exec">/opt/opencast/wfexec/load-from-metadata.pl</configuration>
+        <configuration key="load">0.1</configuration>
+        <configuration key="params">#{id} #{out}</configuration>
+        <configuration key="output-filename">metadata_workflow.txt</configuration>
+        <configuration key="set-workflow-properties">true</configuration>
+        <configuration key="expected-type">Attachment</configuration>
+      </configurations>
+    </operation>
+
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <!-- Remove tag for cutting                                            -->
+    <!--                                                                   -->
+    <!-- Remove the comments that marked the recording for cutting.        -->
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <operation
+      id="comment"
+      description="Resolve the cutting flag">
+      <configurations>
+        <configuration key="reason">EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.CUTTING</configuration>
+        <configuration key="action">resolve</configuration>
+      </configurations>
+    </operation>
+
+    <!--
+      Resolve the consent flag if present (OPENCAST-1836)
+    -->
+    <operation
+      id="comment"
+      description="Resolve the consent flag">
+      <configurations>
+        <configuration key="reason">EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.CONSENT</configuration>
+        <configuration key="action">resolve</configuration>
+      </configurations>
+     </operation>
+
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      Prepare work versions of the source material for archive and processing.
+      Preview and Publish use Work versions. (*/work)
+    -->
+    <operation
+      id="include"
+      description="Prepare work version for processing">
+      <configurations>
+        <configuration key="workflow-id">uct-partial-work</configuration>
+      </configurations>
+    </operation>
+
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <!-- Publish                                                           -->
+    <!--                                                                   -->
+    <!-- Encode and publish the recording to the selected publication      -->
+    <!-- channels, unless review for cutting has been selected.            -->
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <operation
+      id="include"
+      description="Publish the recording">
+      <configurations>
+        <configuration key="workflow-id">uct-partial-publish</configuration>
+      </configurations>
+    </operation>
+
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <!-- Transcription / Caption Services                                  -->
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <operation
+      id="include"
+      if="${use_watson} and ${audio_trim_lapel}"
+      description="Do captioning with IBM Watson">
+      <configurations>
+        <configuration key="workflow-id">uct-include-transcription-watson</configuration>
+      </configurations>
+    </operation>
+
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <!-- Archive                                                           -->
+    <!--                                                                   -->
+    <!-- Download from external ingest nodes, tag, inspect and and prepare -->
+    <!-- source recording and metadata catalogs.                           -->
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <operation
+      id="snapshot"
+      description="Archive publishing information">
+      <configurations>
+        <configuration key="source-tags">archive</configuration>
+      </configurations>
+    </operation>
+
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <!-- Cleanup                                                           -->
+    <!--                                                                   -->
+    <!-- Remove work artifacts in /data/opencast/work/shared/...           -->
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <operation
+      id="include"
+      description="Remove temporary processing artifacts">
+      <configurations>
+        <configuration key="workflow-id">partial-cleanup</configuration>
+      </configurations>
+    </operation>
+
+  </operations>
+
+</definition>

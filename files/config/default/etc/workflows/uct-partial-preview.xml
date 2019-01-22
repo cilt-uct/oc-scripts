@@ -1,0 +1,366 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definition xmlns="http://workflow.opencastproject.org">
+
+  <id>uct-partial-preview</id>
+  <title>Prepare preview artifacts (*/work > */preview)</title>
+  <tags/>
+  <description/>
+
+  <configuration_panel></configuration_panel>
+
+  <operations>
+
+    <operation
+      id="analyze-tracks"
+      exception-handler-workflow="partial-error"
+      description="Analyze tracks in media package an set control variables">
+      <configurations>
+        <configuration key="source-flavor">*/work</configuration>
+      </configurations>
+    </operation>
+
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      Compose or Composite previews, create waveform, tag and
+      publish internally (Editor).
+    -->
+    <operation id="compose"
+      description="a. i. Create single-stream preview - presenter_work_video / audio"
+      if="${presenter_work_video} AND NOT(${presentation_work_video}) and NOT(${presentation2_work_video})"
+      fail-on-error="true"
+      exception-handler-workflow="partial-error">
+      <configurations>
+        <configuration key="source-flavors">presenter/work</configuration>
+        <configuration key="target-flavor">presenter/preview</configuration>
+        <configuration key="target-tags">preview</configuration>
+        <configuration key="encoding-profile">mp4-preview.http</configuration>
+      </configurations>
+    </operation>
+
+    <operation id="compose"
+      description="a. ii. Create audio only preview - presenter_source_audio"
+      if="${presenter_source_audio} and NOT(${presenter_work_video}) AND NOT(${presentation_work_video}) and NOT(${presentation2_work_video})"
+      fail-on-error="true"
+      exception-handler-workflow="partial-error">
+      <configurations>
+        <configuration key="source-flavors">presenter/work</configuration>
+        <configuration key="target-flavor">presenter/preview</configuration>
+        <configuration key="target-tags">preview</configuration>
+        <configuration key="encoding-profile">copy.audio</configuration>
+      </configurations>
+    </operation>
+
+    <operation id="compose"
+      description="b. Create single-stream preview - presentation_work_video / audio"
+      if="${presentation_work_video} AND NOT(${presenter_work_video}) and NOT(${presentation2_work_video})"
+      fail-on-error="true"
+      exception-handler-workflow="partial-error">
+      <configurations>
+        <configuration key="source-flavors">presentation/work</configuration>
+        <configuration key="target-flavor">presentation/preview</configuration>
+        <configuration key="target-tags">preview</configuration>
+        <configuration key="encoding-profile">mp4-preview.http</configuration>
+      </configurations>
+    </operation>
+
+    <operation id="compose"
+      description="c. Create single-stream preview - presentation2_work_video / audio"
+      if="${presentation2_work_video} AND NOT(${presentation_work_video}) and NOT(${presenter_work_video})"
+      fail-on-error="true"
+      exception-handler-workflow="partial-error">
+      <configurations>
+        <configuration key="source-flavors">presentation2/work</configuration>
+        <configuration key="target-flavor">presentation2/preview</configuration>
+        <configuration key="target-tags">preview</configuration>
+        <configuration key="encoding-profile">mp4-preview.http</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="composite"
+      description="d. Create dual-stream preview (Presenter + Presentation)"
+      if="NOT(${presentation2_work_video}) AND ${presenter_work_video} AND ${presentation_work_video}"
+      fail-on-error="true"
+      exception-handler-workflow="partial-error">
+      <configurations>
+        <configuration key="source-flavor-lower">presentation/work</configuration>
+        <configuration key="source-flavor-upper">presenter/work</configuration>
+        <configuration key="encoding-profile">mp4-preview.dual.http</configuration>
+        <configuration key="target-flavor">composite/preview</configuration>
+        <configuration key="target-tags">preview</configuration>
+        <configuration key="output-resolution">1280x360</configuration>
+        <configuration key="output-background">0x000000FF</configuration>
+        <configuration key="layout">preview</configuration>
+        <configuration key="layout-single">
+          {"horizontalCoverage":1.0,"anchorOffset":{"referring":{"left":0.0,"top":0.0},"reference":{"left":0.0,"top":0.0},"offset":{"x":0,"y":0}}};
+        </configuration>
+        <configuration key="layout-preview">
+          {"horizontalCoverage":0.5,"anchorOffset":{"referring":{"left":1.0,"top":0.0},"reference":{"left":1.0,"top":0.0},"offset":{"x":0,"y":0}}};
+          {"horizontalCoverage":0.5,"anchorOffset":{"referring":{"left":0.0,"top":0.0},"reference":{"left":0.0,"top":0.0},"offset":{"x":0,"y":0}}};
+        </configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="composite"
+      description="e. Create dual-stream preview (Presenter + Presentation2)"
+      if="NOT(${presentation_work_video}) AND ${presenter_work_video} AND ${presentation2_work_video}"
+      fail-on-error="true"
+      exception-handler-workflow="partial-error">
+      <configurations>
+        <configuration key="source-flavor-lower">presentation2/work</configuration>
+        <configuration key="source-flavor-upper">presenter/work</configuration>
+        <configuration key="encoding-profile">mp4-preview.dual.http</configuration>
+        <configuration key="target-flavor">composite/preview</configuration>
+        <configuration key="target-tags">preview</configuration>
+        <configuration key="output-resolution">1280x360</configuration>
+        <configuration key="output-background">0x000000FF</configuration>
+        <configuration key="layout">preview</configuration>
+        <configuration key="layout-single">
+          {"horizontalCoverage":1.0,"anchorOffset":{"referring":{"left":0.0,"top":0.0},"reference":{"left":0.0,"top":0.0},"offset":{"x":0,"y":0}}};
+        </configuration>
+        <configuration key="layout-preview">
+          {"horizontalCoverage":0.5,"anchorOffset":{"referring":{"left":1.0,"top":0.0},"reference":{"left":1.0,"top":0.0},"offset":{"x":0,"y":0}}};
+          {"horizontalCoverage":0.5,"anchorOffset":{"referring":{"left":0.0,"top":0.0},"reference":{"left":0.0,"top":0.0},"offset":{"x":0,"y":0}}};
+        </configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="composite"
+      description="f. Create dual-stream preview (Presentation + Presentation2)"
+      if="NOT(${presenter_work_video}) AND ${presentation_work_video} AND ${presentation2_work_video}"
+      fail-on-error="true"
+      exception-handler-workflow="partial-error">
+      <configurations>
+        <configuration key="source-flavor-lower">presentation2/work</configuration>
+        <configuration key="source-flavor-upper">presentation/work</configuration>
+        <configuration key="encoding-profile">mp4-preview.dual.http</configuration>
+        <configuration key="target-flavor">composite/preview</configuration>
+        <configuration key="target-tags">preview</configuration>
+        <configuration key="output-resolution">1280x360</configuration>
+        <configuration key="output-background">0x000000FF</configuration>
+        <configuration key="layout">preview</configuration>
+        <configuration key="layout-single">
+          {"horizontalCoverage":1.0,"anchorOffset":{"referring":{"left":0.0,"top":0.0},"reference":{"left":0.0,"top":0.0},"offset":{"x":0,"y":0}}};
+        </configuration>
+        <configuration key="layout-preview">
+          {"horizontalCoverage":0.5,"anchorOffset":{"referring":{"left":1.0,"top":0.0},"reference":{"left":1.0,"top":0.0},"offset":{"x":0,"y":0}}};
+          {"horizontalCoverage":0.5,"anchorOffset":{"referring":{"left":0.0,"top":0.0},"reference":{"left":0.0,"top":0.0},"offset":{"x":0,"y":0}}};
+        </configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="include"
+      if="${presenter_work_video} AND ${presentation_work_video} AND ${presentation2_work_video}"
+      description="g. Include composite for tri-stream">
+      <configurations>
+        <configuration key="workflow-id">uct-include-partial-preview-abde</configuration>
+      </configurations>
+    </operation>
+
+    <!-- for [Testing] we archive -->
+    <!-- operation
+      id="tag"
+      description="All previews get tagged">
+      <configurations>
+        <configuration key="source-flavors">*/preview</configuration>
+        <configuration key="target-tags">archive</configuration>
+      </configurations>
+    </operation-->
+
+    <!-- Analyze Tracks :p -->
+    <operation
+        id="analyze-tracks"
+        fail-on-error="false"
+        exception-handler-workflow="partial-error"
+        description="Analyze: Preview">
+        <configurations>
+        <configuration key="source-flavor">*/preview</configuration>
+        </configurations>
+    </operation>
+
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <!-- Audio waveform                                                    -->
+    <!--                                                                   -->
+    <!-- Create the waveform.                                              -->
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+
+    <operation
+      id="waveform"
+      fail-on-error="false"
+      description="Generating waveform">
+      <configurations>
+        <configuration key="source-flavor">*/preview</configuration>
+        <configuration key="target-flavor">*/waveform</configuration>
+        <configuration key="target-tags">preview</configuration>
+      </configurations>
+    </operation>
+
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <!-- Track previews                                                    -->
+    <!--                                                                   -->
+    <!-- Create track previews for video editor stream selection feature   -->
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <operation
+      id="image"
+      description="Create video preview images for presenter and presentation"
+      exception-handler-workflow="partial-error">
+      <configurations>
+        <configuration key="source-flavor">*/work</configuration>
+        <configuration key="target-flavor">*/video+preview</configuration>
+        <configuration key="target-tags">preview</configuration>
+        <configuration key="encoding-profile">editor.tracks.preview</configuration>
+        <configuration key="time">50%</configuration>
+      </configurations>
+    </operation>
+
+    <!-- Once WOH waveform supports setting the image size of the waveform image,
+         those preview images should be way smaller than the preview image used for the timeline
+         as those previews cannot be zoomed -->
+    <operation
+      id="waveform"
+      fail-on-error="false"
+      description="Generating waveform">
+      <configurations>
+        <configuration key="source-flavor">*/work</configuration>
+        <configuration key="target-flavor">*/audio+preview</configuration>
+        <configuration key="target-tags">preview</configuration>
+      </configurations>
+    </operation>
+
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <!-- Extract the thumbnail preview image for the video editor          -->
+    <!-- Depending on the processing settings of the event, this might be  -->
+    <!-- either the default thumbnail, an uploaded thumbnail or a          -->
+    <!-- snapshot thumbnail.                                               -->
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+
+    <!-- Default Thumbnail (0)
+         The default thumbnail needs to be extracted from fixed offset (in seconds) relative to the cutted media.
+         The variable thumbnailPosition contains the respective absolute position relative to the uncutted media
+         so we don't need access to the cutted media for extraction here. -->
+
+    <!-- If we have a presenter track, we extract the default thumbnail from the presenter track -->
+
+    <operation id="image"
+               if="${thumbnailType} == 0 AND ${presenter_work_video}"
+               exception-handler-workflow="partial-error"
+               description="Extract default thumbnail preview image from presenter track">
+      <configurations>
+        <configuration key="source-flavor">presenter/work</configuration>
+        <configuration key="target-flavor">thumbnail/preview</configuration>
+        <configuration key="target-tags">preview</configuration>
+        <configuration key="encoding-profile">editor.thumbnail.preview</configuration>
+        <configuration key="time">${thumbnailPosition}</configuration>
+      </configurations>
+    </operation>
+
+    <!-- If we don't have a presenter track, but we do have a presentation track, we extract the thumbnail from the
+         presentation track -->
+
+    <operation id="image"
+               if="${thumbnailType} == 0 AND ${presentation_work_video} AND NOT (${presenter_work_video})"
+              exception-handler-workflow="partial-error"
+              description="Extract thumbnail preview image from presentation track">
+      <configurations>
+        <configuration key="source-flavor">presentation/work</configuration>
+        <configuration key="target-flavor">thumbnail/preview</configuration>
+        <configuration key="target-tags">preview</configuration>
+        <configuration key="encoding-profile">editor.thumbnail.preview</configuration>
+        <configuration key="time">${thumbnailPosition}</configuration>
+        </configurations>
+    </operation>
+
+    <!-- Upload thumbnail (1)
+         The uploaded thumbnail is archived in the media package. We just need to convert the image
+         to a resolution optimized for the video editor here -->
+
+    <operation
+      id="image-convert"
+      description="Convert uploaded thumbnail to thumbnail preview image">
+      <configurations>
+        <configuration key="source-flavors">thumbnail/source</configuration>
+        <configuration key="target-flavor">thumbnail/preview</configuration>
+        <configuration key="target-tags">preview</configuration>
+        <configuration key="encoding-profiles">editor.thumbnail.preview.downscale</configuration>
+      </configurations>
+    </operation>
+
+    <!-- Snapshot Thumbnail (2)
+         The snapshot thumbnail is extracted from the flavor type as provided by the variable
+         thumbnailTrack at position thumbnailPosition relative to the uncutted media. -->
+
+    <operation id="image"
+               if="${thumbnailType} == 2"
+               exception-handler-workflow="partial-error"
+               description="Extract snapshot thumbnail preview image">
+      <configurations>
+        <configuration key="source-flavor">${thumbnailTrack}/source</configuration>
+        <configuration key="target-flavor">thumbnail/preview</configuration>
+        <configuration key="target-tags">preview</configuration>
+        <configuration key="encoding-profile">editor.thumbnail.preview</configuration>
+        <configuration key="time">${thumbnailPosition}</configuration>
+      </configurations>
+    </operation>
+
+
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <!-- Silence detection                                                 -->
+    <!--                                                                   -->
+    <!-- Run silence detection to provide hints to the video editor.       -->
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+
+    <!-- Run silence detection -->
+
+    <operation
+      id="silence"
+      fail-on-error="false"
+      description="Detecting silence">
+      <configurations>
+        <configuration key="source-flavors">*/preview</configuration>
+        <configuration key="smil-flavor-subtype">silence</configuration>
+        <configuration key="reference-tracks-flavor">*/work</configuration>
+      </configurations>
+    </operation>
+
+    <!-- Tag the results for internal publishing -->
+    <!-- Fixme: remove once "silence" operation supports target-tags -->
+
+    <operation
+      id="tag"
+      description="Preparing silence detection for preview">
+      <configurations>
+        <configuration key="source-flavors">*/silence</configuration>
+        <configuration key="target-tags">+archive</configuration>
+      </configurations>
+    </operation>
+
+
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <!-- Publish previews                                                  -->
+    <!--                                                                   -->
+    <!-- Distributing preview artifacts to preview publication channel.    -->
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+
+    <!--
+      Publish previews
+      Take all the flavors tagged as "preview" and publish.
+
+      The url-pattern includes "deploy_server_admin_url" that will be
+      replaced on building and deploying of the files.
+    -->
+    <operation
+      id="publish-configure"
+      exception-handler-workflow="partial-error"
+      description="Publish to preview publication channel">
+      <configurations>
+        <configuration key="source-tags">preview</configuration>
+        <configuration key="channel-id">internal</configuration>
+        <configuration key="url-pattern">deploy_server_admin_url/deploy_publish_internal_path/events/events/${event_id}/tools/playback</configuration>
+      </configurations>
+    </operation>
+
+  </operations>
+
+</definition>

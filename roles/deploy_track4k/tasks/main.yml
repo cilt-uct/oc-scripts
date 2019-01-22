@@ -1,0 +1,16 @@
+---
+# This playbook will deploy Track 4k binaries and scripts to their appropriate locations
+# The server it is run on has Track 4K deployed in it's location and is coppied to all the other servers
+# Deployed for Admin, Presentation and Worker
+
+  - name: Copy Track4k binary
+    copy: src="{{ track4k_binary }}" dest="{{ track4k_binary }}" owner="{{system_user}}" group="{{system_group}}" mode=0755
+
+  - name: Copy cropvid binary
+    copy: src="{{ track4k_cropvid }}" dest="{{ track4k_cropvid }}" owner="{{system_user}}" group="{{system_group}}" mode=0755
+
+  - name: Copy Track4k wrapper script
+    copy: src="{{ track4k_script_src }}" dest="{{ track4k_script_dest }}" owner="{{system_user}}" group="{{system_group}}" mode=0755
+
+  - name: Copy Track4k wrapper config
+    copy: src="{{ track4k_json_src }}" dest="{{ track4k_json_dest }}" owner="{{system_user}}" group="{{system_group}}" mode=0644

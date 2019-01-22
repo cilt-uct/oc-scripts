@@ -1,0 +1,15 @@
+# Deploy/Update trimpointdetector on the worker nodes
+---
+    - name: Update trimdectector repo
+      git:
+        repo: "{{ repo_url }}"
+        dest: "{{ repo_dest }}"
+        remote: "{{ repo_name }}"
+        clone: yes
+        update: yes
+      register: result
+      when: "'worker' in group_names"
+
+    - name: Append Deployment
+      local_action: shell echo "* {{inventory_hostname}}" >> "{{ deploy_logfile }}"
+      when: result is succeeded   

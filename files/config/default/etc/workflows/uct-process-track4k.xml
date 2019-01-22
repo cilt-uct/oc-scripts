@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<definition xmlns="http://workflow.opencastproject.org">
+
+  <id>uct-process-track4k</id>
+  <title>UCT - Process Source with Track4K</title>
+  <tags>
+    <tag>archive</tag>
+  </tags>
+  <description/>
+  <configuration_panel/>
+
+  <operations>
+
+    <!-- Run track4k on presenter/source to presenter/tracked -->
+    <operation
+      id="execute-many"
+      fail-on-error="true"
+      exception-handler-workflow="partial-error"
+      description="Track4K">
+      <configurations>
+        <configuration key="exec">/opt/opencast/wfexec/track4k.pl</configuration>
+        <configuration key="params">#{in} #{out}</configuration>
+        <configuration key="source-flavor">presenter/source</configuration>
+        <configuration key="source-video">true</configuration>
+        <configuration key="output-filename">tracked.mp4</configuration>
+        <configuration key="target-flavor">presenter/tracked</configuration>
+        <configuration key="target-tags">archive</configuration>
+        <configuration key="expected-type">Track</configuration>
+      </configurations>
+    </operation>
+
+    <!-- Archive generated items -->
+    <operation
+      id="snapshot"
+      description="Archive work and preview information">
+      <configurations>
+        <configuration key="source-tags">archive</configuration>
+      </configurations>
+    </operation>
+
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <!-- Cleanup                                                           -->
+    <!--                                                                   -->
+    <!-- Remove work artifacts in /data/opencast/work/shared/...           -->
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <operation
+      id="include"
+      description="Remove temporary processing artifacts">
+      <configurations>
+        <configuration key="workflow-id">partial-cleanup</configuration>
+      </configurations>
+    </operation>
+
+  </operations>
+
+</definition>

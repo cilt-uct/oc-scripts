@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<definition xmlns="http://workflow.opencastproject.org">
+
+  <id>test</id>
+  <title>Test analyze all</title>
+  <tags>
+    <tag>archive</tag>
+  </tags>
+  <description/>
+  <configuration_panel />
+
+  <operations>
+    <operation
+      id="select-tracks"
+      exception-handler-workflow="partial-error"
+      description="Preparing audio and video work versions">
+      <configurations>
+        <configuration key="source-flavor">*/source</configuration>
+        <configuration key="target-flavor">*/work</configuration>
+        <configuration key="audio-muxing">duplicate</configuration>
+        <configuration key="target-tags">-archive</configuration>
+      </configurations>
+    </operation>
+
+    <!-- Analyze Tracks -->
+    <operation
+      id="analyze-tracks"
+      fail-on-error="false"
+      exception-handler-workflow="partial-error"
+      description="Analyze: All">
+      <configurations>
+        <configuration key="source-flavor">*/*</configuration>
+      </configurations>
+    </operation>
+
+  </operations>
+
+</definition>
