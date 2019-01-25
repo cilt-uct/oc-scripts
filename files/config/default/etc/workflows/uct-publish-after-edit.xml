@@ -60,6 +60,7 @@
 
         <configuration key="result_publish_process">normalized-trimmed</configuration>
         <configuration key="workProfile">uct-av-left.work</configuration>
+        <configuration key="workProfileChannel">left</configuration>
       </configurations>
     </operation>
 

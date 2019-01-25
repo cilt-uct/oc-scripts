@@ -7,6 +7,7 @@
     <tag>editor</tag>
   </tags>
   <description/>
+  <displayOrder>2</displayOrder>
   <configuration_panel />
 
   <operations>
@@ -14,7 +15,7 @@
       id="defaults"
       description="Select right channel for publication">
       <configurations>
-        <configuration key="workProfile">uct-av-right.work</configuration>
+        <configuration key="workProfileChannel">right</configuration>
       </configurations>
     </operation>
 

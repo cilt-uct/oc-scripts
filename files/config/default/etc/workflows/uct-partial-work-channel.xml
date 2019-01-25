@@ -9,14 +9,36 @@
   <configuration_panel></configuration_panel>
 
   <operations>
-    <!-- Analyze Tracks: set flavor_source workflow properties -->
+
+    <!-- extract audio from the first of the source streams, encode to wav for analysis to be run properly -->
     <operation
-      id="analyze-tracks"
+      id="compose"
       fail-on-error="false"
-      exception-handler-workflow="partial-error"
-      description="Analyze: SOURCE">
+      description="Extracting audio for channel selection">
       <configurations>
-        <configuration key="source-flavor">*/source</configuration>
+        <configuration key="source-flavor">presenter/source</configuration>
+        <configuration key="target-flavor">presenter/tmp</configuration>
+        <configuration key="encoding-profile">copy.audio</configuration>
+
+        <!-- If there is more than one file that match the source-tags, use only the first one -->
+        <configuration key="process-first-match-only">true</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="execute-once"
+      max-attempts="3"
+      retry-strategy="hold"
+      fail-on-error="true"
+      exception-handler-workflow="partial-error"
+      description="Choose correct channel">
+      <configurations>
+        <configuration key="exec">/opt/opencast/wfexec/detect-stereo.sh</configuration>
+        <configuration key="load">1.0</configuration>
+        <configuration key="params">-i #{flavor(presenter/tmp)} -o #{out} --channel ${workProfileChannel}</configuration>
+        <configuration key="output-filename">audio-output.flac</configuration>
+        <configuration key="target-flavor">presenter/audio</configuration>
+        <configuration key="expected-type">Track</configuration>
       </configurations>
     </operation>
 
@@ -49,8 +71,8 @@
         <configuration key="source-flavor">presenter/source</configuration>
         <configuration key="target-flavor">presenter/work</configuration>
         <configuration key="rewrite">false</configuration>
-        <configuration key="audio-muxing-source-flavors">presenter/source</configuration>
-        <configuration key="mux-encoding-profile">${workProfile}</configuration>
+        <configuration key="audio-muxing-source-flavors">presenter/audio</configuration>
+        <configuration key="mux-encoding-profile">uct-av.work</configuration>
       </configurations>
     </operation>
 
@@ -62,8 +84,8 @@
         <configuration key="source-flavor">presentation/source</configuration>
         <configuration key="target-flavor">presentation/work</configuration>
         <configuration key="rewrite">false</configuration>
-        <configuration key="audio-muxing-source-flavors">presenter/?,presentation/?,*/*</configuration>
-        <configuration key="mux-encoding-profile">${workProfile}</configuration>
+        <configuration key="audio-muxing-source-flavors">presenter/audio</configuration>
+        <configuration key="mux-encoding-profile">uct-av.work</configuration>
       </configurations>
     </operation>
 
@@ -75,8 +97,8 @@
         <configuration key="source-flavor">presentation2/source</configuration>
         <configuration key="target-flavor">presentation2/work</configuration>
         <configuration key="rewrite">false</configuration>
-        <configuration key="audio-muxing-source-flavors">presenter/?,presentation2/?,*/*</configuration>
-        <configuration key="mux-encoding-profile">${workProfile}</configuration>
+        <configuration key="audio-muxing-source-flavors">presenter/audio</configuration>
+        <configuration key="mux-encoding-profile">uct-av.work</configuration>
       </configurations>
     </operation>
 
