@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<definition xmlns="http://workflow.opencastproject.org">
+
+  <id>uct-publish-after-edit-left</id>
+  <title>UCT - Publish</title>
+  <tags>
+    <tag>editor</tag>
+  </tags>
+  <description/>
+  <configuration_panel />
+
+  <operations>
+
+    <operation
+      id="include"
+      description="Process publish - left channel">
+      <configurations>
+        <configuration key="workflow-id">uct-publish-after-edit</configuration>
+      </configurations>
+    </operation>
+
+  </operations>
+
+</definition>

@@ -4,8 +4,12 @@
   <id>uct-publish-after-edit</id>
   <title>UCT - Publish</title>
   <tags>
+<<<<<<< HEAD
     <tag>editor</tag>
     <tag>archive</tag>
+=======
+    <!--tag>editor</tag-->
+>>>>>>> 072ef66... OPENCAST-1643: workflow and encoding profiles.
   </tags>
   <description/>
   <configuration_panel>
@@ -55,6 +59,7 @@
         <configuration key="doPictureInPicture">false</configuration>
 
         <configuration key="result_publish_process">normalized-trimmed</configuration>
+        <configuration key="workProfile">uct-av-left.work</configuration>
       </configurations>
     </operation>
 
@@ -119,9 +124,9 @@
     -->
     <operation
       id="include"
-      description="Prepare work version for processing">
+      description="Prepare work version for processing (channel selection)">
       <configurations>
-        <configuration key="workflow-id">uct-partial-work</configuration>
+        <configuration key="workflow-id">uct-partial-work-channel</configuration>
       </configurations>
     </operation>
 
