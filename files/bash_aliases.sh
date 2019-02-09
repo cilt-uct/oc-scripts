@@ -12,8 +12,8 @@ showmedia () {
   printf "Mediapackage_id: "
   read media
 
-  tree /data/opencast/work/shared/workspace/mediapackage/$media
-  tree /data/opencast/work/shared/files/mediapackage/$media
+  tree /data/opencast/archive/shared/workspace/mediapackage/$media
+  tree /data/opencast/archive/shared/files/mediapackage/$media
   tree /data/opencast/archive/mh_default_org/$media
   tree /data/opencast/distribution/downloads/mh_default_org/engage-player/$media
   tree /data/opencast/distribution/downloads/mh_default_org/internal/$media
@@ -24,8 +24,8 @@ rmworkmedia() {
   printf "Mediapackage_id: "
   read media
 
-  rm -rf /data/opencast/work/shared/workspace/mediapackage/$media
-  rm -rf /data/opencast/work/shared/files/mediapackage/$media
+  rm -rf /data/opencast/archive/shared/workspace/mediapackage/$media
+  rm -rf /data/opencast/archive/shared/files/mediapackage/$media
 }
 
 movemedia () {
@@ -67,7 +67,7 @@ movemedia () {
 
   if [ -d "$src" ]; then
 
-      dest="/data/opencast/work/shared/qa/$(date +"%s")"
+      dest="/data/opencast/archive/shared/qa/$(date +"%s")"
       mkdir -p $dest
 
       cp $src/* $dest

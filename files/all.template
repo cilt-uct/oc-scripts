@@ -55,7 +55,7 @@ folder_log: "{{ folder_app }}data/log/"
 
 folder_index: "{{ folder_data }}local/index/"
 folder_solr_index: "{{ folder_data }}local/solr-indexes/"
-folder_shared: "{{ folder_data }}work/shared/"
+folder_shared: "{{ folder_data }}archive/shared/"
 folder_archive: "{{ folder_data }}archive"
 folder_distribution_downloads: "{{ folder_data }}distribution/downloads"
 folder_distribution_streams: "{{ folder_data }}distribution/streams"
