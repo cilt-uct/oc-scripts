@@ -34,6 +34,10 @@
         <configuration key="use_watson">false</configuration>
         <configuration key="use_waywithwords">false</configuration>
         <configuration key="audio_trim_lapel">false</configuration>
+
+        <configuration key="doPictureInPicture">false</configuration>
+
+        <configuration key="result_publish_process">normalized-trimmed</configuration>
       </configurations>
     </operation>
 

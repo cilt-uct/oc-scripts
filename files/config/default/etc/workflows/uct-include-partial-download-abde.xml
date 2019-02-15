@@ -19,8 +19,8 @@
           exception-handler-workflow="partial-error"
           description="Downloads: Presentation + Presentation2 (Temporary)">
           <configurations>
-            <configuration key="source-flavor-lower">presentation/themed</configuration>
-            <configuration key="source-flavor-upper">presentation2/themed</configuration>
+            <configuration key="source-flavor-lower">presentation/${result_publish_process}</configuration>
+            <configuration key="source-flavor-upper">presentation2/${result_publish_process}</configuration>
             <configuration key="encoding-profile">mp4-download.dual.http</configuration>
             <configuration key="target-flavor">composite/inter</configuration>
             <configuration key="output-resolution">640x720</configuration>
@@ -48,7 +48,7 @@
           exception-handler-workflow="partial-error"
           description="Downloads: Presenter + Presentation + Presentation2">
           <configurations>
-            <configuration key="source-flavor-upper">presenter/themed</configuration>
+            <configuration key="source-flavor-upper">presenter/${result_publish_process}</configuration>
             <configuration key="source-flavor-lower">composite/inter</configuration>
             <configuration key="encoding-profile">mp4-download.dual.http</configuration>
             <configuration key="target-flavor">composite/delivery</configuration>
