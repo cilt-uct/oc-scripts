@@ -16,6 +16,36 @@
   <configuration_panel></configuration_panel>
 
   <operations>
+    <!-- Apply the default workflow configuration -->
+    <operation
+      id="defaults"
+      description="Applying default configuration values">
+      <configurations>
+        <configuration key="publishToEngage">true</configuration>
+        <configuration key="publishToAws">false</configuration>
+        <configuration key="publishToApi">false</configuration>
+        <configuration key="publishToOaiPmh">false</configuration>
+        <configuration key="publishToYouTube">false</configuration>
+
+        <configuration key="thumbnailType">0</configuration>
+        <configuration key="thumbnailPosition">1</configuration>
+
+        <configuration key="presenter_work_video">false</configuration>
+        <configuration key="presenter_source_resolution_y">1080</configuration>
+
+        <configuration key="presentation_work_video">false</configuration>
+        <configuration key="presentation2_work_video">false</configuration>
+
+        <configuration key="use_watson">false</configuration>
+        <configuration key="use_waywithwords">false</configuration>
+        <configuration key="audio_trim_lapel">false</configuration>
+
+        <configuration key="doPictureInPicture">false</configuration>
+
+        <configuration key="result_publish_process">normalized-trimmed</configuration>
+      </configurations>
+    </operation>
+
     <!-- Mark the recording as auto trimmed -->
     <operation
       id="comment"

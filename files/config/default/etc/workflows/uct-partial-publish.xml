@@ -112,6 +112,8 @@
       </configurations>
     </operation>
 
+    <!-- normalized-trimmed is the falvor for all workflow steps -->
+
     <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
     <!-- Extract preview images                                            -->
     <!--                                                                   -->
@@ -385,16 +387,31 @@
       Create Composite download versions of presenter, presentation and
       presentation2 in either 2 panel or 3 panel variant.
 
-       In: */normalized-trimmed
+       In: */${result_publish_process} default: normalized-trimmed
       Out: composite/delivery
     -->
-    <!--operation
+    <operation
       id="include"
       description="Include publishing for downloads">
       <configurations>
         <configuration key="workflow-id">uct-partial-publish-downloads</configuration>
       </configurations>
-    </operation-->
+    </operation>
+
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      Create a picture-in-picture variant of
+
+       In: */${result_publish_process} default: trimmed
+      Out: pic-in-pic/delivery
+    -->
+    <operation
+      id="include"
+      if="${doPictureInPicture}"
+      description="Include compose picture-in-picture">
+      <configurations>
+        <configuration key="workflow-id">uct-include-picture-in-picture</configuration>
+      </configurations>
+    </operation>
 
     <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
     <!-- Segment video streams and extract metadata                        -->
