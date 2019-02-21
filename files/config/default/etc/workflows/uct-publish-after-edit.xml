@@ -5,9 +5,25 @@
   <title>UCT - Publish</title>
   <tags>
     <tag>editor</tag>
+    <tag>archive</tag>
   </tags>
   <description/>
-  <configuration_panel/>
+  <configuration_panel>
+    <![CDATA[
+      <div id="workflow-configuration">
+
+        <fieldset>
+          <legend>Publication Options:</legend>
+          <ul>
+            <li>
+              <input id="doNormalizeAudio" name="doNormalizeAudio" type="checkbox" checked="checked" class="configField" value="true" />
+              <label for="doNormalizeAudio">Normalize Audio</label>
+            </li>
+          </ul>
+        </fieldset>
+      </div>
+    ]]>
+  </configuration_panel>
 
   <operations>
 
@@ -35,6 +51,7 @@
         <configuration key="use_waywithwords">false</configuration>
         <configuration key="audio_trim_lapel">false</configuration>
 
+        <configuration key="doNormalizeAudio">true</configuration>
         <configuration key="doPictureInPicture">false</configuration>
 
         <configuration key="result_publish_process">normalized-trimmed</configuration>
