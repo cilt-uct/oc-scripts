@@ -58,9 +58,10 @@
         <configuration key="doNormalizeAudio">true</configuration>
         <configuration key="doPictureInPicture">false</configuration>
 
-        <configuration key="result_publish_process">normalized-trimmed</configuration>
         <configuration key="workProfile">uct-av-left.work</configuration>
         <configuration key="workProfileChannel">left</configuration>
+
+        <configuration key="result_publish_process">normalized-trimmed</configuration>
       </configurations>
     </operation>
 
