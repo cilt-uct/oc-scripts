@@ -235,7 +235,7 @@
 
 
     <!-- Create a cover image with the default template -->
-    <operation
+    <!--operation
       id="tag"
       description="Removing unneeded presenter-cover from download publication">
       <configurations>
@@ -270,7 +270,7 @@
         <configuration key="target-flavor">presenter/player+preview</configuration>
         <configuration key="target-tags">archive, engage-download</configuration>
      </configurations>
-    </operation>
+    </operation-->
 
     <!-- Generate timeline preview images -->
     <operation
