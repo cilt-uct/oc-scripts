@@ -50,7 +50,7 @@
         <configuration key="source-flavor">presenter/source</configuration>
         <configuration key="target-flavor">presenter/work</configuration>
         <configuration key="rewrite">false</configuration>
-        <configuration key="audio-muxing-source-flavors">presenter/source</configuration>
+        <configuration key="audio-muxing-source-flavors">presenter/?,presentation/?,*/*</configuration>
         <configuration key="mux-encoding-profile">uct-av.work</configuration>
         <!--configuration key="mux-encoding-profile">uct-mux-test.work</configuration-->
       </configurations>

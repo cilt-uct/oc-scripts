@@ -4,12 +4,8 @@
   <id>uct-publish-after-edit</id>
   <title>UCT - Publish</title>
   <tags>
-<<<<<<< HEAD
-    <tag>editor</tag>
     <tag>archive</tag>
-=======
     <!--tag>editor</tag-->
->>>>>>> 072ef66... OPENCAST-1643: workflow and encoding profiles.
   </tags>
   <description/>
   <configuration_panel>
@@ -22,6 +18,17 @@
             <li>
               <input id="doNormalizeAudio" name="doNormalizeAudio" type="checkbox" checked="checked" class="configField" value="true" />
               <label for="doNormalizeAudio">Normalize Audio</label>
+            </li>
+            <li>
+              <label>Audio channel to use:
+            </li>
+            <li>
+              <input id="workProfileChannel_left" name="workProfileChannel" type="radio" checked="checked" class="configField" value="true" />
+              <label for="workProfileChannel_left">Left</label>
+            </li>
+            <li>
+              <input id="workProfileChannel_right" name="workProfileChannel" type="radio" class="configField" value="true"/>
+              <label for="workProfileChannel_right">Right</label>
             </li>
           </ul>
         </fieldset>
@@ -58,10 +65,28 @@
         <configuration key="doNormalizeAudio">true</configuration>
         <configuration key="doPictureInPicture">false</configuration>
 
-        <configuration key="workProfile">uct-av-left.work</configuration>
-        <configuration key="workProfileChannel">left</configuration>
+        <configuration key="workProfileChannel_left">true</configuration>
+        <configuration key="workProfileChannel_right">false</configuration>
 
         <configuration key="result_publish_process">normalized-trimmed</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="defaults"
+      if="${workProfileChannel_left}"
+      description="Use left audio channel">
+      <configurations>
+        <configuration key="workProfileChannel">left</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="defaults"
+      if="${workProfileChannel_right}"
+      description="Use right audio channel">
+      <configurations>
+        <configuration key="workProfileChannel">right</configuration>
       </configurations>
     </operation>
 
