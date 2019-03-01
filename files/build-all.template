@@ -73,12 +73,17 @@ deploy_karaf_data=tmpl_karaf_data
 deploy_userdirectory_sakai_user=tmp_userdirectory_sakai_user
 deploy_userdirectory_sakai_password=tmp_userdirectory_sakai_password
 
+# Watson
 deploy_watson_on=tmpl_watson_on
 deploy_watson_user=tmpl_watson_user
 deploy_watson_pass=tmpl_watson_pass
 deploy_watson_model=tmpl_watson_model
 deploy_watson_workflow=tmpl_watson_workflow
 deploy_watson_email=tmpl_watson_email
+
+# Nibity
+deploy_nibity_id=tmpl_nibity_id
+deploy_nibity_key=tmpl_nibity_key
 
 # LTI
 deploy_server_lti_name=tmpl_server_lti_name
