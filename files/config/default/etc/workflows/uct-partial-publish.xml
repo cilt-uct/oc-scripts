@@ -276,11 +276,40 @@
     <operation
       id="timelinepreviews"
       fail-on-error="false"
+      if="${presenter_work_video}"
       exception-handler-workflow="error"
-      description="Creating timeline preview images">
+      description="Creating timeline preview images (Presenter)">
       <configurations>
-        <configuration key="source-flavor">*/normalized-trimmed</configuration>
-        <configuration key="target-flavor">*/timeline+preview</configuration>
+        <configuration key="source-flavor">presenter/normalized-trimmed</configuration>
+        <configuration key="target-flavor">presenter/timeline+preview</configuration>
+        <configuration key="target-tags">engage-download</configuration>
+        <configuration key="image-count">100</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="timelinepreviews"
+      fail-on-error="false"
+      if="${presentation_work_video} AND NOT(${presenter_work_video})"
+      exception-handler-workflow="error"
+      description="Creating timeline preview images (Presentation)">
+      <configurations>
+        <configuration key="source-flavor">presentation/normalized-trimmed</configuration>
+        <configuration key="target-flavor">presentation/timeline+preview</configuration>
+        <configuration key="target-tags">engage-download</configuration>
+        <configuration key="image-count">100</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="timelinepreviews"
+      fail-on-error="false"
+      if="${presentation2_work_video} AND NOT(${presentation_work_video}) and NOT(${presenter_work_video})"
+      exception-handler-workflow="error"
+      description="Creating timeline preview images (Presentation 2)">
+      <configurations>
+        <configuration key="source-flavor">presentation/normalized-trimmed</configuration>
+        <configuration key="target-flavor">presentation/timeline+preview</configuration>
         <configuration key="target-tags">engage-download</configuration>
         <configuration key="image-count">100</configuration>
       </configurations>
