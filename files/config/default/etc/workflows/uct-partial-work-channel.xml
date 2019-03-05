@@ -1,25 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <definition xmlns="http://workflow.opencastproject.org">
 
-  <id>uct-partial-work</id>
-  <title>Prepare work versions</title>
+  <id>uct-partial-work-channel</id>
+  <title>Prepare work versions according to selected channel</title>
   <tags/>
   <description/>
 
   <configuration_panel></configuration_panel>
 
   <operations>
-
-    <!-- Analyze Tracks: set flavor_source workflow properties -->
-    <operation
-      id="analyze-tracks"
-      fail-on-error="false"
-      exception-handler-workflow="partial-error"
-      description="Analyze: SOURCE">
-      <configurations>
-        <configuration key="source-flavor">*/source</configuration>
-      </configurations>
-    </operation>
 
     <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
     <!-- Prepare the work media                                            -->
@@ -49,10 +38,10 @@
       <configurations>
         <configuration key="source-flavor">presenter/source</configuration>
         <configuration key="target-flavor">presenter/work</configuration>
-        <configuration key="rewrite">false</configuration>
-        <configuration key="audio-muxing-source-flavors">presenter/?,presentation/?,*/*</configuration>
-        <configuration key="mux-encoding-profile">uct-mux-av-stereo.work</configuration>
-        <!--configuration key="mux-encoding-profile">uct-mux-test.work</configuration-->
+        <configuration key="rewrite">true</configuration>
+        <configuration key="audio-muxing-source-flavors">presenter/source,presenter/?,presentation/?,*/*</configuration>
+        <configuration key="mux-encoding-profile">uct-mux-av-${workProfileChannel}.work</configuration>
+        <configuration key="audio-video-encoding-profile">uct-av-${workProfileChannel}.work</configuration>
       </configurations>
     </operation>
 
@@ -63,10 +52,10 @@
       <configurations>
         <configuration key="source-flavor">presentation/source</configuration>
         <configuration key="target-flavor">presentation/work</configuration>
-        <configuration key="rewrite">false</configuration>
-        <configuration key="audio-muxing-source-flavors">presenter/?,presentation/?,*/*</configuration>
-        <configuration key="mux-encoding-profile">uct-mux-av-stereo.work</configuration>
-        <!--configuration key="mux-encoding-profile">uct-mux-test.work</configuration-->
+        <configuration key="rewrite">true</configuration>
+        <configuration key="audio-muxing-source-flavors">presenter/source,presenter/?,presentation/?,*/*</configuration>
+        <configuration key="mux-encoding-profile">uct-mux-av-${workProfileChannel}.work</configuration>
+        <configuration key="audio-video-encoding-profile">uct-av-${workProfileChannel}.work</configuration>
       </configurations>
     </operation>
 
@@ -77,10 +66,10 @@
       <configurations>
         <configuration key="source-flavor">presentation2/source</configuration>
         <configuration key="target-flavor">presentation2/work</configuration>
-        <configuration key="rewrite">false</configuration>
-        <configuration key="audio-muxing-source-flavors">presenter/?,presentation2/?,*/*</configuration>
-        <configuration key="mux-encoding-profile">uct-mux-av-stereo.work</configuration>
-        <!--configuration key="mux-encoding-profile">uct-mux-test.work</configuration-->
+        <configuration key="rewrite">true</configuration>
+        <configuration key="audio-muxing-source-flavors">presenter/source,presenter/?,presentation/?,*/*</configuration>
+        <configuration key="mux-encoding-profile">uct-mux-av-${workProfileChannel}.work</configuration>
+        <configuration key="audio-video-encoding-profile">uct-av-${workProfileChannel}.work</configuration>
       </configurations>
     </operation>
 

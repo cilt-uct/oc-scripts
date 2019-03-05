@@ -189,6 +189,7 @@ TODO: Add and review [https://docs.opencast.org/latest/admin/upgrade/](https://d
 | uct-partial-publish-downloads | UCT - Publish Downloads | |:heavy_check_mark:| - |
 | uct-partial-publish | Publish the recording | |:heavy_check_mark:| - |
 | uct-partial-work | Prepare work versions | |:heavy_check_mark:| - |
+|  uct-partial-work-channel | Prepare work versions - with selection of audio channel | |:heavy_check_mark:| - |
 | uct-process-before-edit | UCT - Process for Editing | |:heavy_check_mark:| upload, schedule |
 | uct-process-obs | UCT - Process OBS Recording | |:heavy_check_mark:| schedule |
 | uct-process-personal | UCT - Process for Personal Series | |:heavy_check_mark:| schedule |
