@@ -11,25 +11,73 @@
 
   <operations>
     <operation
-      id="select-tracks"
-      exception-handler-workflow="partial-error"
-      description="Preparing audio and video work versions">
+      id="defaults"
+      description="Use left audio channel">
       <configurations>
-        <configuration key="source-flavor">*/source</configuration>
-        <configuration key="target-flavor">*/work</configuration>
-        <configuration key="audio-muxing">duplicate</configuration>
-        <configuration key="target-tags">-archive</configuration>
+        <configuration key="workProfileChannel">left</configuration>
       </configurations>
     </operation>
 
-    <!-- Analyze Tracks -->
+    <!-- 4.x : works :) -->
     <operation
-      id="analyze-tracks"
-      fail-on-error="false"
-      exception-handler-workflow="partial-error"
-      description="Analyze: All">
+      id="prepare-av"
+      exception-handler-workflow="uct-error"
+      description="Preparing presenter (camera) audio and video work versions">
       <configurations>
-        <configuration key="source-flavor">*/*</configuration>
+        <configuration key="source-flavor">presenter/source</configuration>
+        <configuration key="target-flavor">presenter/work</configuration>
+        <configuration key="rewrite">false</configuration>
+        <configuration key="audio-muxing-source-flavors">presenter/source,presenter/?,presentation/?,*/*</configuration>
+        <configuration key="mux-encoding-profile">uct-mux-av-${workProfileChannel}.work</configuration>
+        <configuration key="audio-video-encoding-profile">uct-av-${workProfileChannel}.work</configuration>
+        <configuration key="rewrite">true</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="prepare-av"
+      exception-handler-workflow="uct-error"
+      description="Preparing presentation (screen) audio and video work version">
+      <configurations>
+        <configuration key="source-flavor">presentation/source</configuration>
+        <configuration key="target-flavor">presentation/work</configuration>
+        <configuration key="rewrite">false</configuration>
+        <configuration key="audio-muxing-source-flavors">presenter/source,presenter/?,presentation/?,*/*</configuration>
+        <configuration key="mux-encoding-profile">uct-mux-av-${workProfileChannel}.work</configuration>
+        <configuration key="audio-video-encoding-profile">uct-av-${workProfileChannel}.work</configuration>
+        <configuration key="rewrite">true</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="prepare-av"
+      exception-handler-workflow="uct-error"
+      description="Preparing presentation 2nd (screen) audio and video work version">
+      <configurations>
+        <configuration key="source-flavor">presentation2/source</configuration>
+        <configuration key="target-flavor">presentation2/work</configuration>
+        <configuration key="rewrite">false</configuration>
+        <configuration key="audio-muxing-source-flavors">presenter/source,presenter/?,presentation/?,*/*</configuration>
+        <configuration key="mux-encoding-profile">uct-mux-av-${workProfileChannel}.work</configuration>
+        <configuration key="audio-video-encoding-profile">uct-av-${workProfileChannel}.work</configuration>
+        <configuration key="rewrite">true</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="tag"
+      description="Archive presenter_audio">
+      <configurations>
+        <configuration key="source-flavors">*/work</configuration>
+        <configuration key="target-tags">archive</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="snapshot"
+      description="Archive publishing information">
+      <configurations>
+        <configuration key="source-tags">archive</configuration>
       </configurations>
     </operation>
 

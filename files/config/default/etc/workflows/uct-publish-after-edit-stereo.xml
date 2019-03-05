@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<definition xmlns="http://workflow.opencastproject.org">
+
+  <id>uct-publish-after-edit-Stereo</id>
+  <title>UCT - Publish (Stereo)</title>
+  <tags>
+    <tag>editor</tag>
+  </tags>
+  <description/>
+  <displayOrder>1</displayOrder>
+  <configuration_panel />
+
+  <operations>
+    <operation
+      id="defaults"
+      description="Select stereo for publication">
+      <configurations>
+        <configuration key="workProfileChannel">stereo</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="include"
+      description="Process publish - left channel">
+      <configurations>
+        <configuration key="workflow-id">uct-publish-after-edit</configuration>
+      </configurations>
+    </operation>
+
+  </operations>
+
+</definition>
