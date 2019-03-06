@@ -130,7 +130,7 @@
     -->
     <operation
       id="include"
-      description="Prepare work version for processing">
+      description="Prepare work version for processing (${workProfileChannel})">
       <configurations>
         <configuration key="workflow-id">uct-partial-work-channel</configuration>
       </configurations>

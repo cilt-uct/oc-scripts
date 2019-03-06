@@ -34,7 +34,7 @@
     <operation
       id="prepare-av"
       exception-handler-workflow="uct-error"
-      description="Preparing presenter (camera) audio and video work versions">
+      description="Preparing presenter (camera) audio and video work versions (${workProfileChannel})">">
       <configurations>
         <configuration key="source-flavor">presenter/source</configuration>
         <configuration key="target-flavor">presenter/work</configuration>
@@ -48,7 +48,7 @@
     <operation
       id="prepare-av"
       exception-handler-workflow="uct-error"
-      description="Preparing presentation (screen) audio and video work version">
+      description="Preparing presentation (screen) audio and video work version (${workProfileChannel})">
       <configurations>
         <configuration key="source-flavor">presentation/source</configuration>
         <configuration key="target-flavor">presentation/work</configuration>
@@ -62,7 +62,7 @@
     <operation
       id="prepare-av"
       exception-handler-workflow="uct-error"
-      description="Preparing presentation 2nd (screen) audio and video work version">
+      description="Preparing presentation 2nd (screen) audio and video work version (${workProfileChannel})">
       <configurations>
         <configuration key="source-flavor">presentation2/source</configuration>
         <configuration key="target-flavor">presentation2/work</configuration>

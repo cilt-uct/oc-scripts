@@ -2,12 +2,12 @@
 <definition xmlns="http://workflow.opencastproject.org">
 
   <id>uct-publish-after-edit-Stereo</id>
-  <title>UCT - Publish (Stereo)</title>
+  <title>Publish (Stereo)</title>
   <tags>
     <tag>editor</tag>
   </tags>
   <description/>
-  <displayOrder>1</displayOrder>
+  <displayOrder>2</displayOrder>
   <configuration_panel />
 
   <operations>
