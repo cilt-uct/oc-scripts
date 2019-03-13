@@ -2,29 +2,25 @@
 <definition xmlns="http://workflow.opencastproject.org">
 
   <id>uct-transcript-nibity</id>
-  <title>Submit trimmed audio for Nibity Captions</title>
+  <title>Submit trimmed video for Nibity Captions</title>
   <tags>
     <tag>archive</tag>
   </tags>
-  <description>Submit trimmed audio for Nibity Captions</description>
+  <description>Submit trimmed video for Nibity Captions</description>
   <configuration_panel></configuration_panel>
   <operations>
 
-    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      Prepare work versions of the source material for archive and processing.
-      Preview and Publish use Work versions. (*/work)
-    -->
-    <!-- OPENCAST-2202: Just use presenter flavor -->
     <operation
       id="prepare-av"
-      exception-handler-workflow="partial-error"
-      description="Preparing presenter (camera) audio and video work versions">
+      exception-handler-workflow="uct-error"
+      description="Preparing presenter (camera) audio and video work version (left channel)">">
       <configurations>
         <configuration key="source-flavor">presenter/source</configuration>
         <configuration key="target-flavor">presenter/work</configuration>
-        <configuration key="rewrite">false</configuration>
-        <configuration key="audio-muxing-source-flavors">presenter/source</configuration>
-        <configuration key="mux-encoding-profile">uct-av.work</configuration>
+        <configuration key="rewrite">true</configuration>
+        <configuration key="audio-muxing-source-flavors">presenter/source,presenter/?,presentation/?,*/*</configuration>
+        <configuration key="mux-encoding-profile">uct-mux-av-left.work</configuration>
+        <configuration key="audio-video-encoding-profile">uct-av-left.work</configuration>
       </configurations>
     </operation>
 
@@ -41,23 +37,7 @@
       </configurations>
     </operation>
 
-    <!-- Extract audio from video in ogg/opus format -->
-    <operation
-      id="compose"
-      fail-on-error="true"
-      exception-handler-workflow="partial-error"
-      description="Extract audio for transcript generation">
-      <configurations>
-        <configuration key="source-flavor">*/trimmed</configuration>
-        <configuration key="target-flavor">audio/ogg</configuration>
-        <configuration key="target-tags">transcript</configuration>
-        <configuration key="encoding-profile">audio-opus</configuration>
-        <!-- If there is more than one file that match the source-tags, use only the first one -->
-        <configuration key="process-first-match-only">true</configuration>
-      </configurations>
-    </operation>
-
-    <!-- Start IBM Watson recognitions job : ASYNC return in -->
+    <!-- Start Nibity transcription job -->
     <operation
       id="start-nibity-transcription"
       fail-on-error="true"
@@ -67,7 +47,7 @@
         <!--  Skip this operation if flavor already exists. Used for cases when mp already has captions. -->
         <configuration key="skip-if-flavor-exists">captions/vtt+en</configuration>
         <!-- Audio to be translated, produced in the previous compose operation -->
-        <configuration key="source-tag">transcript</configuration>
+        <configuration key="source-flavor">presenter/trimmed</configuration>
       </configurations>
     </operation>
 
