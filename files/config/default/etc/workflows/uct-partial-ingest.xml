@@ -17,16 +17,6 @@
     <!-- inspect the media and tag everything for archival.                -->
     <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 
-    <!-- Ingest elements from external working file repositories and file servers -->
-    <operation
-      id="ingest-download"
-      exception-handler-workflow="partial-error"
-      description="Ingesting external elements">
-      <configurations>
-        <configuration key="delete-external">true</configuration>
-      </configurations>
-    </operation>
-
     <!-- Inspect the media -->
     <operation
         id="inspect"
