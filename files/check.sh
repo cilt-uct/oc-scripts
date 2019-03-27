@@ -75,7 +75,7 @@ fi
 
 ansible=$(ansible --version 2>/dev/null)
 if [ $? -eq 0 ]; then
-  echo 
+  echo
   echo "Ansible: "
   echo "$(ansible --version | head -n 1)"
 fi
@@ -87,7 +87,7 @@ echo "FFMpeg: "
 ffmpeg_path=$( get_ini_value "" "ffmpeg_path" $CONFIG)
 ffmpeg=$( $ffmpeg_path -version | grep -i "ffmpeg version")
 if [ $? -eq 0 ]; then
-  
+
   check=$( get_ini_value "" "ffmpeg_version" $CONFIG)
 
   if grep -q $check <<<$ffmpeg; then
@@ -160,7 +160,7 @@ else
   fi
 fi
 
-echo 
+echo
 echo "cropvid: "
 cropvid_path=$( get_ini_value "" "track4k_cropvid_path" $CONFIG)
 cropvid=$($cropvid_path 2>&1 | grep build)
@@ -170,7 +170,7 @@ else
   printf "${GREEN}${cropvid}${NC}\n"
 fi
 
-echo 
+echo
 echo "Track4K: "
 track4k_path=$( get_ini_value "" "track4k_binary_path" $CONFIG)
 track4k=$($track4k_path 2>&1 | grep build)
@@ -180,7 +180,7 @@ else
   printf "${GREEN}${track4k}${NC}\n"
 fi
 
-echo 
+echo
 echo "Python: "
 python_path=$( get_ini_value "" "python_path" $CONFIG)
 py=$($python_path --version 2>&1)
@@ -198,7 +198,7 @@ if [ $? -eq 0 ]; then
   echo
   echo "pyAudioAnalysis:"
   py1=$($python_path -c 'import pkgutil; print("pyAudioAnalysis exists" if pkgutil.find_loader("pyAudioAnalysis") else "NO pyAudioAnalysis")' 2>&1 | grep exists)
-  if [ -z "$track4k" ]; then
+  if [ -z "$py1" ]; then
     printf "${RED}FAIL${NC}\n"
   else
     printf "${GREEN}pyAudioAnalysis exists${NC}\n"
@@ -208,7 +208,7 @@ if [ $? -eq 0 ]; then
   echo "Trim Point Detector:"
   pytrimpoints_path=$( get_ini_value "" "pytrimpoints_path" $CONFIG)
   pytrimpoints=$($python_path $pytrimpoints_path --version 2>&1 | grep build)
-  if [ -z "$track4k" ]; then
+  if [ -z "$pytrimpoints" ]; then
     printf "${RED}FAIL${NC}\n"
   else
     printf "${GREEN}${pytrimpoints}${NC}\n"
