@@ -24,14 +24,20 @@ while (defined(my $file = glob '/opt/opencast/wfexec/*.pl')) {
 my @indiciesToKeep = grep { $result[$_] ne 'strict' } 0..$#result;
 @result = @result[@indiciesToKeep];
 
+my $err = 0;
 foreach my $item (@result) {
     my $rc =  eval "use $item; 1; ";
     print "Checking $item: " if $debug;
     if (!$rc) {
         print "ERROR not found\n" if $debug;
         print "ERROR ($item) not found\n" if !$debug;
+        $err = ++($err)
     }
     else {
         print "Found\n" if $debug;
     }
+}
+
+if ($err == 0) {
+    print "Found all modules :)\n"
 }

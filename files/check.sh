@@ -220,7 +220,8 @@ fi
 
 echo
 echo "Perl: "
-perl check.pl
+perl "$DEPLOY_DIR/check.pl"
 
 rm $CONFIG;
 rm "$DEPLOY_DIR/$PROGNAME";
+rm "$DEPLOY_DIR/check.pl";
