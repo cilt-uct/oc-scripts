@@ -110,13 +110,16 @@ main() {
     START_SERVICE=false
   fi
 
+  # create and restore directories and ownership
+  mkdir -p "$data/local/"
+  chown -R opencast:opencast "$data/local/"
   chown -R opencast:linux_cilt_admins $working_real/
   chmod g+w -R $working_real/
 
   # check link to service
   if [ ! -f "/lib/systemd/system" ]; then
 
-      ln -sf $working_real/docs/scripts/service/opencast.service /lib/systemd/system/opencast.service
+      ln -f $working_real/docs/scripts/service/opencast.service /lib/systemd/system/opencast.service
       systemctl enable opencast.service
   fi
 

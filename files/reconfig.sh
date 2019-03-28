@@ -69,7 +69,11 @@ main() {
     echo "    WARN: Configuration file ($DEPLOY_DIR/$CONFIG_FILES) not extracted ($working/)."
   fi
 
-  chown -R opencast:opencast $working_real/
+  # create and restore directories and ownership
+  mkdir -p "$data/local/"
+  chown -R opencast:opencast "$data/local/"
+  chown -R opencast:linux_cilt_admins $working_real/
+  chmod g+w -R $working_real/
 
   server_etc=$(awk '/org.opencastproject.server.url=http/ && /uct.ac/' $working/etc/custom.properties | cut -d "=" -f2)
 
