@@ -218,5 +218,9 @@ else
   printf "${RED}FAIL${NC}\n"
 fi
 
+echo
+echo "Perl: "
+perl check.pl
+
 rm $CONFIG;
 rm "$DEPLOY_DIR/$PROGNAME";
