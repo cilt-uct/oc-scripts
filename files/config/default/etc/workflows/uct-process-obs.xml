@@ -236,6 +236,22 @@
       </configurations>
     </operation>
 
+
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      Create Composite download versions of presenter, presentation and
+      presentation2 in either 2 panel or 3 panel variant.
+
+       In: */${result_publish_process} default: normalized-trimmed
+      Out: composite/delivery
+    -->
+    <operation
+      id="include"
+      description="Include publishing for downloads">
+      <configurations>
+        <configuration key="workflow-id">uct-partial-publish-downloads</configuration>
+      </configurations>
+    </operation>
+
     <!-- Image - Search -->
     <operation
       id="image"

@@ -47,7 +47,7 @@
       id="composite"
       fail-on-error="false"
       exception-handler-workflow="partial-error"
-      if="${presenter_work_video} AND ${presentation2_work_video}"
+      if="${presenter_work_video} AND ${presentation2_work_video} AND NOT(${presentation_work_video})"
       description="Picture in picture using presentation2">
       <configurations>
         <configuration key="source-flavor-lower">presentation2/${result_publish_process}</configuration>
