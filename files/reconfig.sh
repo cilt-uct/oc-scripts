@@ -70,8 +70,13 @@ main() {
   fi
 
   # create and restore directories and ownership
-  mkdir -p "$data/local/"
-  chown -R opencast:opencast "$data/local/"
+  if [ ! -d "$data/local/" ]; then
+    mkdir -p "$data/local/"
+    chown -R opencast:opencast "$data/local/"
+    if [ -d "$data/local/mysql" ]; then
+      chown -R mysql:mysql "$data/local/mysql"
+    fi
+  fi
   chown -R opencast:linux_cilt_admins $working_real/
   chmod g+w -R $working_real/
 
