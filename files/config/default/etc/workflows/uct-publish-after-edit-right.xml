@@ -15,6 +15,10 @@
       id="defaults"
       description="Select right channel for publication">
       <configurations>
+        <configuration key="workProfileChannel_left">false</configuration>
+        <configuration key="workProfileChannel_right">true</configuration>
+        <configuration key="workProfileChannel_stereo">false</configuration>
+
         <configuration key="workProfileChannel">right</configuration>
       </configurations>
     </operation>
