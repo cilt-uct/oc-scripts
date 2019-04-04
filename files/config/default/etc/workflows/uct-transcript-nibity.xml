@@ -7,20 +7,100 @@
     <tag>archive</tag>
   </tags>
   <description>Submit trimmed video for Nibity Captions</description>
-  <configuration_panel></configuration_panel>
+  <configuration_panel>
+    <![CDATA[
+      <div id="workflow-configuration">
+
+        <fieldset>
+          <legend>Publication Options:</legend>
+          <ul>
+            <li>
+              <label>Audio channel to use:
+            </li>
+            <li>
+              <input id="workProfileChannel_left" name="workProfileChannel" type="radio" checked="checked" class="configField" value="true" />
+              <label for="workProfileChannel_left">Left</label>
+            </li>
+            <li>
+              <input id="workProfileChannel_right" name="workProfileChannel" type="radio" class="configField" value="true"/>
+              <label for="workProfileChannel_right">Right</label>
+            </li>
+            <li>
+              <input id="workProfileChannel_merge" name="workProfileChannel" type="radio" class="configField" value="true"/>
+              <label for="workProfileChannel_merge">Merge left and right (publish with mono audio)</label>
+            </li>
+            <!--li>
+              <input id="workProfileChannel_stereo" name="workProfileChannel" type="radio" class="configField" value="true"/>
+              <label for="workProfileChannel_stereo">Stereo</label>
+            </li-->
+          </ul>
+        </fieldset>
+      </div>
+    ]]>
+  </configuration_panel>
   <operations>
+
+    <!-- Apply the default workflow configuration -->
+    <operation
+      id="defaults"
+      description="Applying default configuration values">
+      <configurations>
+        <configuration key="workProfileChannel_left">true</configuration>
+        <configuration key="workProfileChannel_right">false</configuration>
+        <configuration key="workProfileChannel_merge">false</configuration>
+        <configuration key="workProfileChannel_stereo">false</configuration>
+
+        <configuration key="workProfileChannel">left</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="defaults"
+      if="${workProfileChannel_left}"
+      description="Use left audio channel">
+      <configurations>
+        <configuration key="workProfileChannel">left</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="defaults"
+      if="${workProfileChannel_right}"
+      description="Use right audio channel">
+      <configurations>
+        <configuration key="workProfileChannel">right</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="defaults"
+      if="${workProfileChannel_merge}"
+      description="Mix left and right channels">
+      <configurations>
+        <configuration key="workProfileChannel">mix</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="defaults"
+      if="${workProfileChannel_stereo}"
+      description="Use stereo">
+      <configurations>
+        <configuration key="workProfileChannel">stereo</configuration>
+      </configurations>
+    </operation>
 
     <operation
       id="prepare-av"
       exception-handler-workflow="uct-error"
-      description="Preparing presenter (camera) audio and video work version (left channel)">">
+      description="Preparing presenter (camera) audio and video work version (${workProfileChannel})">">
       <configurations>
         <configuration key="source-flavor">presenter/source</configuration>
         <configuration key="target-flavor">presenter/work</configuration>
         <configuration key="rewrite">true</configuration>
         <configuration key="audio-muxing-source-flavors">presenter/source,presenter/?,presentation/?,*/*</configuration>
-        <configuration key="mux-encoding-profile">uct-mux-av-left.work</configuration>
-        <configuration key="audio-video-encoding-profile">uct-av-left.work</configuration>
+        <configuration key="mux-encoding-profile">uct-mux-av-${workProfileChannel}.work</configuration>
+        <configuration key="audio-video-encoding-profile">uct-av-${workProfileChannel}.work</configuration>
       </configurations>
     </operation>
 

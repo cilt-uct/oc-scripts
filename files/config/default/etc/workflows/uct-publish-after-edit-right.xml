@@ -7,7 +7,7 @@
     <tag>editor</tag>
   </tags>
   <description/>
-  <displayOrder>2</displayOrder>
+  <displayOrder>4</displayOrder>
   <configuration_panel />
 
   <operations>
@@ -17,6 +17,7 @@
       <configurations>
         <configuration key="workProfileChannel_left">false</configuration>
         <configuration key="workProfileChannel_right">true</configuration>
+        <configuration key="workProfileChannel_merge">false</configuration>
         <configuration key="workProfileChannel_stereo">false</configuration>
 
         <configuration key="workProfileChannel">right</configuration>
@@ -25,7 +26,7 @@
 
     <operation
       id="include"
-      description="Process publish - right channel">
+      description="Publish using the right channel">
       <configurations>
         <configuration key="workflow-id">uct-publish-after-edit</configuration>
       </configurations>

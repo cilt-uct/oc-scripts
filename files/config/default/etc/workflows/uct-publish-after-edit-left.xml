@@ -7,14 +7,14 @@
     <tag>editor</tag>
   </tags>
   <description/>
-  <displayOrder>3</displayOrder>
+  <displayOrder>5</displayOrder>
   <configuration_panel />
 
   <operations>
 
     <operation
       id="include"
-      description="Process publish - left channel">
+      description="Publish using the left channel">
       <configurations>
         <configuration key="workflow-id">uct-publish-after-edit</configuration>
       </configurations>

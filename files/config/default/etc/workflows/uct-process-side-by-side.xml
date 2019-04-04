@@ -26,6 +26,10 @@
               <label for="workProfileChannel_right">Right</label>
             </li>
             <li>
+              <input id="workProfileChannel_merge" name="workProfileChannel" type="radio" class="configField" value="true"/>
+              <label for="workProfileChannel_merge">Merge left and right (publish with mono audio)</label>
+            </li>
+            <li>
               <input id="workProfileChannel_stereo" name="workProfileChannel" type="radio" class="configField" value="true"/>
               <label for="workProfileChannel_stereo">Stereo</label>
             </li>
@@ -43,6 +47,7 @@
       <configurations>
         <configuration key="workProfileChannel_left">true</configuration>
         <configuration key="workProfileChannel_right">false</configuration>
+        <configuration key="workProfileChannel_merge">false</configuration>
         <configuration key="workProfileChannel_stereo">false</configuration>
 
         <configuration key="result_publish_process">normalized-trimmed</configuration>
@@ -64,6 +69,15 @@
       description="Use right audio channel">
       <configurations>
         <configuration key="workProfileChannel">right</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="defaults"
+      if="${workProfileChannel_merge}"
+      description="Mix left and right channels">
+      <configurations>
+        <configuration key="workProfileChannel">mix</configuration>
       </configurations>
     </operation>
 

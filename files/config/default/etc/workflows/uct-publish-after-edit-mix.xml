@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <definition xmlns="http://workflow.opencastproject.org">
 
-  <id>uct-publish-after-edit-Stereo</id>
-  <title>Publish (Stereo)</title>
+  <id>uct-publish-after-edit-mix</id>
+  <title>Publish (Mix)</title>
   <tags>
     <tag>editor</tag>
   </tags>
   <description/>
-  <displayOrder>1</displayOrder>
+  <displayOrder>2</displayOrder>
   <configuration_panel />
 
   <operations>
     <operation
       id="defaults"
-      description="Select stereo for publication">
+      description="Select stereo mix for publication">
       <configurations>
         <configuration key="workProfileChannel_left">false</configuration>
         <configuration key="workProfileChannel_right">false</configuration>
-        <configuration key="workProfileChannel_merge">false</configuration>
-        <configuration key="workProfileChannel_stereo">true</configuration>
+        <configuration key="workProfileChannel_merge">true</configuration>
+        <configuration key="workProfileChannel_stereo">false</configuration>
 
         <configuration key="workProfileChannel">stereo</configuration>
       </configurations>
@@ -26,7 +26,7 @@
 
     <operation
       id="include"
-      description="Process publish with stereo audio">
+      description="Publish by merging left and right (publish with mono audio)">
       <configurations>
         <configuration key="workflow-id">uct-publish-after-edit</configuration>
       </configurations>

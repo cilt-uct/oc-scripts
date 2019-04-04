@@ -26,9 +26,13 @@
               <label for="workProfileChannel_right">Right</label>
             </li>
             <li>
+              <input id="workProfileChannel_merge" name="workProfileChannel" type="radio" class="configField" value="true"/>
+              <label for="workProfileChannel_merge">Merge left and right (publish with mono audio)</label>
+            </li>
+            <!--li>
               <input id="workProfileChannel_stereo" name="workProfileChannel" type="radio" class="configField" value="true"/>
               <label for="workProfileChannel_stereo">Stereo</label>
-            </li>
+            </li-->
           </ul>
         </fieldset>
       </div>
@@ -43,7 +47,10 @@
       <configurations>
         <configuration key="workProfileChannel_left">true</configuration>
         <configuration key="workProfileChannel_right">false</configuration>
+        <configuration key="workProfileChannel_merge">false</configuration>
         <configuration key="workProfileChannel_stereo">false</configuration>
+
+        <configuration key="workProfileChannel">left</configuration>
       </configurations>
     </operation>
 
@@ -67,6 +74,15 @@
 
     <operation
       id="defaults"
+      if="${workProfileChannel_merge}"
+      description="Mix left and right channels">
+      <configurations>
+        <configuration key="workProfileChannel">mix</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="defaults"
       if="${workProfileChannel_stereo}"
       description="Use stereo">
       <configurations>
@@ -82,7 +98,7 @@
     <operation
       id="prepare-av"
       exception-handler-workflow="uct-error"
-      description="Preparing presenter (camera) audio and video work versions">
+      description="Preparing presenter (camera) audio and video work versions (${workProfileChannel})">
       <configurations>
         <configuration key="source-flavor">presenter/source</configuration>
         <configuration key="target-flavor">presenter/work</configuration>
@@ -116,6 +132,15 @@
         <configuration key="source-flavor">*/trimmed</configuration>
         <configuration key="target-flavor">audio/ogg</configuration>
         <configuration key="target-tags">transcript</configuration>
+        <!--
+        audio-opus uses -ac 1 so will downmix all the channels anyway :p
+
+        The Speech to Text service accepts audio with a maximum of 16 channels.
+        Because it uses only a single channel for speech recognition,
+        the service downmixes audio with multiple channels to one-channel mono during transcoding.
+
+        For the audio/wav format, the service accepts audio with a maximum of nine channels.
+        -->
         <configuration key="encoding-profile">audio-opus</configuration>
         <!-- If there is more than one file that match the source-tags, use only the first one -->
         <configuration key="process-first-match-only">true</configuration>
