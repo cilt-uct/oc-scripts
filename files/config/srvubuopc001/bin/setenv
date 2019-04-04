@@ -38,7 +38,7 @@ export JAVA_HOME="deploy_java_home"
 
 export KARAF_DATA="deploy_karaf_data"
 
-export EXTRA_JAVA_OPTS="-javaagent:/opt/newrelic/newrelic.jar -Dorg.eclipse.jetty.server.Request.maxFormContentSize=1500000 -Dfile.encoding=UTF-8 -XX:+UseG1GC -XX:MaxGCPauseMillis=3000 -verbose:gc -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+PrintGCDateStamps -Xloggc:/opt/logtmp/gc.log"
+export EXTRA_JAVA_OPTS="-javaagent:/opt/newrelic/newrelic.jar -Dorg.eclipse.jetty.server.Request.maxFormContentSize=1500000 -Dfile.encoding=UTF-8 -XX:+UseG1GC -XX:MaxGCPauseMillis=3000 -verbose:gc -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+PrintGCDateStamps -Xloggc:/opt/logtmp/gc.log -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=3 -XX:GCLogFileSize=10M"
 
 # export DEFAULT_JAVA_OPTS="-Xms256M -Xmx512M -Xss1M -XX:+UnlockDiagnosticVMOptions -XX:+UnsyncloadClass"
 export JAVA_MIN_MEM=deploy_java_min_memory
