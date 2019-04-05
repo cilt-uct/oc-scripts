@@ -19,6 +19,8 @@
 
         <configuration key="thumbnailType">0</configuration>
         <configuration key="thumbnailPosition">1</configuration>
+
+        <configuration key="workProfileChannel">left</configuration>
       </configurations>
     </operation>
 
@@ -132,7 +134,7 @@
         <configuration key="source-flavor">presenter/source</configuration>
         <configuration key="target-flavor">presenter/work</configuration>
         <configuration key="rewrite">false</configuration>
-        <configuration key="encoding-profile">uct-vsync.work</configuration>
+        <configuration key="encoding-profile">uct-av-${workProfileChannel}.work</configuration>
       </configurations>
     </operation>
 
