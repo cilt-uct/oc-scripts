@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<definition xmlns="http://workflow.opencastproject.org">
+
+  <!-- OPENCAST-2548: Temporary workflow -->
+  <id>uct-clean-track4k</id>
+  <title>Clean up Track4k Files</title>
+  <tags>
+    <tag>archive</tag>
+  </tags>
+  <description/>
+  <configuration_panel />
+
+  <operations>
+    <operation
+        id="asset-delete"
+        fail-on-error="true"
+        exception-handler-workflow="error"
+        description="Delete from AssetManager">
+        <configurations>
+            <configuration key="keep-last-snapshot">true</configuration>
+        </configurations>
+    </operation>
+
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <!-- Cleanup                                                           -->
+    <!--                                                                   -->
+    <!-- Remove work artifacts in /data/opencast/work/shared/...           -->
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <operation
+      id="include"
+      description="Remove temporary processing artifacts">
+      <configurations>
+        <configuration key="workflow-id">partial-cleanup</configuration>
+      </configurations>
+    </operation>
+
+  </operations>
+</definition>
