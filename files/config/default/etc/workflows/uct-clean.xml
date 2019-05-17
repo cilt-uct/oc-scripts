@@ -199,6 +199,16 @@
       </configurations>
     </operation>
 
+    <operation
+        id="asset-delete"
+        fail-on-error="true"
+        exception-handler-workflow="error"
+        description="Delete from AssetManager">
+        <configurations>
+            <configuration key="keep-last-snapshot">true</configuration>
+        </configurations>
+    </operation>
+
     <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
     <!-- Cleanup                                                           -->
     <!--                                                                   -->

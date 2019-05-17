@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<definition xmlns="http://workflow.opencastproject.org">
+
+  <id>cleanup-trimmed-normalized</id>
+  <title>Test refactoring trimmed-normalized</title>
+  <tags>
+    <tag>archive</tag>
+  </tags>
+  <description/>
+  <configuration_panel />
+  <operations>
+
+      <!-- re-encode -->
+      <operation id="compose"
+        description="Encode trimmed-normalized to source"
+        fail-on-error="true"
+        exception-handler-workflow="partial-error">
+        <configurations>
+          <configuration key="source-flavors">*/trimmed-normalized</configuration>
+          <configuration key="target-flavor">*/source</configuration>
+          <configuration key="target-tags">archive</configuration>
+          <configuration key="encoding-profile">uct.trimmed-to-source</configuration>
+        </configurations>
+      </operation>
+
+      <!-- untag trimmed-normalized -->
+      <operation
+        id="tag"
+        description="Exclude trimmed-normalized from archive">
+        <configurations>
+          <configuration key="source-flavors">*/trimmed-normalized</configuration>
+          <configuration key="target-tags">-archive</configuration>
+        </configurations>
+      </operation>
+
+      <!-- snapshot -->
+      <operation
+        id="snapshot"
+        description="Archive current state of recording">
+        <configurations>
+          <configuration key="source-tags">archive</configuration>
+        </configurations>
+      </operation>
+
+      <!-- clean older snapshots -->
+      <operation
+          id="asset-delete"
+          fail-on-error="true"
+          exception-handler-workflow="error"
+          description="Delete from AssetManager">
+          <configurations>
+              <configuration key="keep-last-snapshot">true</configuration>
+          </configurations>
+      </operation>
+
+      <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+      <!-- Cleanup                                                           -->
+      <!--                                                                   -->
+      <!-- Remove work artifacts in /data/opencast/work/shared/...           -->
+      <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+      <operation
+        id="include"
+        description="Remove temporary processing artifacts">
+        <configurations>
+          <configuration key="workflow-id">partial-cleanup</configuration>
+        </configurations>
+      </operation>
+
+  </operations>
+</definition>
