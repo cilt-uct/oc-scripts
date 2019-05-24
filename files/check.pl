@@ -1,6 +1,8 @@
 #! /usr/bin/perl
 
 use strict;
+use File::Find::Rule;
+use Cwd;
 
 sub uniq {
     my %seen;
@@ -10,7 +12,13 @@ sub uniq {
 my $debug = 0;
 my @result = ();
 
-while (defined(my $file = glob '/opt/opencast/wfexec/*.pl')) {
+my $dir = getcwd;
+my @files = File::Find::Rule->file()
+                            ->name( '*.pl' )
+                            ->in( $dir );
+
+#while (defined(my $file = glob '/opt/opencast/wfexec/*.pl')) {
+for my $file (@files) {
   open my $fh, "<", $file;  # lexical file handles, automatic error handling
 
   while (defined( my $line = <$fh> )) {

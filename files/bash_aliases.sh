@@ -8,21 +8,161 @@ useopc() {
   "$@" $opclog
 }
 
-showmedia () {
-  printf "Mediapackage_id: "
-  read media
+dirUsed() {
+    dir=$1
+    if [ -z "$(ls -A $dir 2> /dev/null)" ]; then
+        echo "0"
+    else
+        echo "1"
+    fi
+}
 
-  tree /data/opencast/archive/shared/workspace/mediapackage/$media
-  tree /data/opencast/archive/shared/files/mediapackage/$media
-  tree /data/opencast/archive/mh_default_org/$media
-  tree /data/opencast/distribution/downloads/mh_default_org/engage-player/$media
-  tree /data/opencast/distribution/downloads/mh_default_org/internal/$media
-  tree /data/opencast/distribution/streams/mh_default_org/engage-player/$media
+dirSizeAndTime() {
+    dir=$1
+    size=$(du -sh --time $dir 2>/dev/null | awk '{print $1} {print $2} {print $3}');
+    if [ -z "$size" ]; then
+        printf "0"
+    else
+        printf "%7s" $(echo $size | cut -d' ' -f 1)
+        printf "   $(echo $size | cut -d' ' -f 2) $(echo $size | cut -d' ' -f 3)"
+    fi
+}
+
+checkForArchiveVariance () {
+    dir=$1
+
+    if [ -d "$dir" ]; then
+        dir_first=$(find $dir -name track-* | head -n 1 | cut -d '/' -f 7)
+        dir_next=$((dir_first + 1))
+
+        #echo "$dir_first $dir_next"
+
+        if [ -d "$dir/$dir_first" ] && [ -d "$dir/$dir_next" ]; then
+
+            first_array=()
+            while IFS= read -d $'\0' -r file ; do
+                first_array=("${first_array[@]}" "$(basename $file)")
+            done < <(find $dir/$dir_first -type f -name "track-*" -print0)
+            #echo "${first_array[@]}"
+
+            next_array=()
+            while IFS= read -d $'\0' -r file ; do
+                next_array=("${next_array[@]}" "$(basename $file)")
+            done < <(find $dir/$dir_next -type f -name "track-*" -print0)
+            #echo "${next_array[@]}"
+
+            found=0
+            for item in "${first_array[@]}"
+            do
+                #echo $item
+                if [[ ! " ${next_array[@]} " =~ " ${item} " ]]; then
+                    # whatever you want to do when arr doesn't contain value
+                    ((found++))
+                fi
+            done
+            printf "$found"
+        else
+            printf "0"
+        fi
+    else
+        printf "0"
+    fi
+    printf "\n"
+}
+
+showmedia () {
+
+  if [ "$1" != "" ]; then
+    media=$1
+    printf "Mediapackage_id: $media\n"
+  else
+    printf "Mediapackage_id: "
+    read media
+  fi
+
+  # Workspace
+  dir_shared_workspace="/data/opencast/archive/shared/workspace/mediapackage/$media"
+  dir_shared_files="/data/opencast/archive/shared/files/mediapackage/$media"
+
+  # Archive
+  dir_archive="/data/opencast/archive/mh_default_org/$media"
+  # Engage
+  dir_engage="/data/opencast/distribution/downloads/mh_default_org/engage-player/$media"
+  # Internal
+  dir_internal="/data/opencast/distribution/downloads/mh_default_org/internal/$media"
+  # Stream
+  dir_stream="/data/opencast/distribution/streams/mh_default_org/engage-player/$media"
+
+  shared_workspace=$(dirUsed "$dir_shared_workspace")
+  shared_files=$(dirUsed "$dir_shared_files")
+  archive=$(dirUsed "$dir_archive")
+  engage=$(dirUsed "$dir_engage")
+  internal=$(dirUsed "$dir_internal")
+  stream=$(dirUsed "$dir_stream")
+
+  if [ "$shared_workspace" -eq "1" ]; then
+    tree $dir_shared_workspace
+  fi
+
+  if [ "$shared_files" -eq "1" ]; then
+    tree $dir_shared_files
+  fi
+
+  if [ "$archive" -eq "1" ]; then
+    tree $dir_archive
+  fi
+
+  if [ "$engage" -eq "1" ]; then
+    tree $dir_engage
+  fi
+
+  if [ "$internal" -eq "1" ]; then
+    tree $dir_internal
+  fi
+
+  if [ "$stream" -eq "1" ]; then
+    tree $dir_stream
+  fi
+
+  if [ "$shared_workspace" -eq "1" ]; then
+    tree $dir_shared_workspace
+  fi
+
+  # summary
+  if [ "$archive" -eq "1" ]; then
+    printf '%11s' "Archive:"
+    dirSizeAndTime $dir_archive
+    printf "   Var: "
+    checkForArchiveVariance $dir_archive
+  fi
+
+  if [ "$engage" -eq "1" ]; then
+    printf '%11s' "Engage:"
+    dirSizeAndTime $dir_engage
+    printf "\n"
+  fi
+
+  if [ "$internal" -eq "1" ]; then
+    printf '%11s' "Internal:"
+    dirSizeAndTime $dir_internal
+    printf "\n"
+  fi
+
+  if [ "$stream" -eq "1" ]; then
+    printf '%11s' "Stream: "
+    dirSizeAndTime $dir_stream
+    printf "\n"
+  fi
 }
 
 rmworkmedia() {
-  printf "Mediapackage_id: "
-  read media
+  if [ "$1" != "" ]; then
+    media=$1
+    printf "Mediapackage_id: $media"
+  else
+    printf "Mediapackage_id: "
+    read media
+  fi
 
   rm -rf /data/opencast/archive/shared/workspace/mediapackage/$media
   rm -rf /data/opencast/archive/shared/files/mediapackage/$media
