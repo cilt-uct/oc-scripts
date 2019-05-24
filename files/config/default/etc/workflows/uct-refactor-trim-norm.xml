@@ -2,7 +2,7 @@
 <definition xmlns="http://workflow.opencastproject.org">
 
   <id>cleanup-trimmed-normalized</id>
-  <title>Test refactoring trimmed-normalized</title>
+  <title>Refactoring trimmed-normalized</title>
   <tags>
     <tag>archive</tag>
   </tags>
@@ -52,6 +52,29 @@
               <configuration key="keep-last-snapshot">true</configuration>
           </configurations>
       </operation>
+
+      <!-- Comment that we cleaned up this recording -->
+      <operation
+        id="comment"
+        fail-on-error="false"
+        description="Comment to say refactoring trimmed-normalized (create)">
+        <configurations>
+          <configuration key="description">Refactoring trimmed-normalized.</configuration>
+          <configuration key="reason">EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.OTHER</configuration>
+          <configuration key="action">create</configuration>
+        </configurations>
+      </operation>
+
+      <operation
+        id="comment"
+        fail-on-error="false"
+        description="Comment to say refactoring trimmed-normalized (resolve)">
+        <configurations>
+          <configuration key="reason">EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.OTHER</configuration>
+          <configuration key="action">resolve</configuration>
+        </configurations>
+      </operation>
+
 
       <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
       <!-- Cleanup                                                           -->

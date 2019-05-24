@@ -19,15 +19,15 @@
           <fieldset>
             <legend>Remove:</legend>
             <ul>
-              <!--li>
+              <li>
                 <span>
                   <input id="removeSource" type="checkbox" checked="checked" class="configField" value="false" />
                   <span>&nbsp;Source</span>
                 </span>
-              </li-->
+              </li>
               <li>
                 <span>
-                  <input id="removeNormalizedTrimmed" type="checkbox" class="configField" value="true" />
+                  <input id="removeNormalizedTrimmed" type="checkbox" checked="checked" class="configField" value="true" />
                   <span>&nbsp;Normalized-Trimmed</span>
                 </span>
               </li>
@@ -50,7 +50,7 @@
               </li>
               <li>
                 <span>
-                  <input id="retractFromApi" type="checkbox" checked="checked" class="configField" value="true" />
+                  <input id="retractFromApi" type="checkbox"  class="configField" value="true" />
                   <span>&nbsp;External Applications</span>
                 </span>
               </li>
@@ -72,15 +72,15 @@
       id="defaults"
       description="Applying default configuration values">
       <configurations>
-        <configuration key="removeSource">false</configuration>
+        <configuration key="removeSource">true</configuration>
         <configuration key="removePreview">true</configuration>
         <configuration key="removeWork">true</configuration>
         <configuration key="removeTrimmed">true</configuration>
         <configuration key="removeNormalizedTrimmed">true</configuration>
 
+        <configuration key="retractPreview">true</configuration>
         <configuration key="retractFromEngage">true</configuration>
         <configuration key="retractFromApi">true</configuration>
-        <configuration key="retractPreview">false</configuration>
         <configuration key="retractFromYouTube">false</configuration>
       </configurations>
     </operation>
@@ -189,6 +189,28 @@
             <configuration key="source-flavors">*/normalized-trimmed</configuration>
             <configuration key="target-tags">-archive</configuration>
         </configurations>
+    </operation>
+
+    <!-- Comment that we cleaned up this recording -->
+    <operation
+      id="comment"
+      fail-on-error="false"
+      description="Comment that we cleaned up this recording (create)">
+      <configurations>
+        <configuration key="description">Retract a recording and clean out media files.</configuration>
+        <configuration key="reason">EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.OTHER</configuration>
+        <configuration key="action">create</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="comment"
+      fail-on-error="false"
+      description="Comment that we cleaned up this recording (resolve)">
+      <configurations>
+        <configuration key="reason">EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.OTHER</configuration>
+        <configuration key="action">resolve</configuration>
+      </configurations>
     </operation>
 
     <operation

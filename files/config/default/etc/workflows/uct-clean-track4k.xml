@@ -21,6 +21,28 @@
         </configurations>
     </operation>
 
+    <!-- Comment that we cleaned up this recording -->
+    <operation
+      id="comment"
+      fail-on-error="false"
+      description="Comment that we cleaned up Track4k files (create)">
+      <configurations>
+        <configuration key="description">Clean up Track4k Files.</configuration>
+        <configuration key="reason">EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.OTHER</configuration>
+        <configuration key="action">create</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="comment"
+      fail-on-error="false"
+      description="Comment that we cleaned up Track4k files (resolve)">
+      <configurations>
+        <configuration key="reason">EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.OTHER</configuration>
+        <configuration key="action">resolve</configuration>
+      </configurations>
+    </operation>
+
     <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
     <!-- Cleanup                                                           -->
     <!--                                                                   -->
