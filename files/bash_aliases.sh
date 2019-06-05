@@ -1,4 +1,7 @@
 # Alias definitions.
+export LANGUAGE=en_ZA.UTF-8
+export LANG=en_ZA.UTF-8
+export LC_ALL=en_ZA.UTF-8
 
 opclog=/opt/opencast/data/log/opencast.log
 
@@ -201,38 +204,41 @@ movemedia () {
   fi
 
   src1="/data/opencast/archive/mh_default_org/$media"
-  version=$(find $src1 -name track-* | head -n 1 | cut -d '/' -f 7)
-  src="/data/opencast/archive/mh_default_org/$media/$version"
-  echo "Move $media [$src]"
+  version=$(find $src1 -name "*.mp4" -o -name "*.avi" -o -name "*.mkv" -o -name "*.flac" | head -n 1 | cut -d '/' -f 7)
 
-  if [ -d "$src" ]; then
-
-      dest="/data/opencast/archive/shared/qa/$(date +"%s")"
-      mkdir -p $dest
-
-      cp $src/* $dest
-
-      if $setnew; then
-
-          if [[ !  -z  $newid  ]]; then
-            /data/opencast/fix_manifest.pl $dest $newid
-          else
-            /data/opencast/fix_manifest.pl $dest $new_default
-          fi
-      else
-          /data/opencast/fix_manifest.pl $dest
-      fi
-
-      cd $dest
-      zip - * | ssh opencast@mediadev.uct.ac.za 'cat > /data/opencast/qa/live/$(echo $media).zip; cp /data/opencast/qa/live/$(echo $media).zip /opt/opencast/data/inbox/in.zip'
-
-      rm -rf $dest
-      echo "Done."
-  else
-
+  if [ -z "$version" ]; then
     echo "Source folder does not exist !"
-  fi
+  else
+    src="/data/opencast/archive/mh_default_org/$media/$version"
+    echo "Move $media [$src]"
 
+    if [ -d "$src" ]; then
+
+        dest="/data/opencast/archive/shared/qa/$(date +"%s")"
+        mkdir -p $dest
+
+        cp $src/* $dest
+
+        if $setnew; then
+
+            if [[ !  -z  $newid  ]]; then
+              /data/opencast/fix_manifest.pl $dest $newid
+            else
+              /data/opencast/fix_manifest.pl $dest $new_default
+            fi
+        else
+            /data/opencast/fix_manifest.pl $dest
+        fi
+
+        cd $dest
+        zip - * | ssh opencast@mediadev.uct.ac.za 'cat > /data/opencast/qa/live/$(echo $media).zip; cp /data/opencast/qa/live/$(echo $media).zip /opt/opencast/data/inbox/in.zip'
+
+        rm -rf $dest
+        echo "Done."
+    else
+      echo "Source folder does not exist !"
+    fi
+  fi
   cd $from
 }
 

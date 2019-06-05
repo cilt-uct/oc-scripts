@@ -12,17 +12,19 @@
 #
 # TODO: remove published
 
-
 use XML::Twig;
-use List::Util 'first';  
+use List::Util 'first';
 use Cwd;
+
+use strict;
+no warnings 'all';
 
 my $path = $ARGV[0];
 my $newid = $ARGV[1];
 my $file_manifest = "$path/manifest.xml";
 
 my @file_catalogs = glob("$path/catalog-*.xml");
-my $file_catalog = $file_catalogs[0]; 
+my $file_catalog = $file_catalogs[0];
 
 sub changeManifest($$) {
 
