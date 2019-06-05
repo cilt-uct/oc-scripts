@@ -33,7 +33,7 @@
     <!-- 4.x : works :) -->
     <operation
       id="prepare-av"
-      exception-handler-workflow="uct-error"
+      exception-handler-workflow="partial-error"
       description="Preparing presenter (camera) audio and video work versions (${workProfileChannel})">">
       <configurations>
         <configuration key="source-flavor">presenter/source</configuration>
@@ -47,7 +47,7 @@
 
     <operation
       id="prepare-av"
-      exception-handler-workflow="uct-error"
+      exception-handler-workflow="partial-error"
       description="Preparing presentation (screen) audio and video work version (${workProfileChannel})">
       <configurations>
         <configuration key="source-flavor">presentation/source</configuration>
@@ -61,7 +61,7 @@
 
     <operation
       id="prepare-av"
-      exception-handler-workflow="uct-error"
+      exception-handler-workflow="partial-error"
       description="Preparing presentation 2nd (screen) audio and video work version (${workProfileChannel})">
       <configurations>
         <configuration key="source-flavor">presentation2/source</configuration>
@@ -77,7 +77,7 @@
     <!--operation
       id="analyze-tracks"
       fail-on-error="false"
-      exception-handler-workflow="uct-error"
+      exception-handler-workflow="partial-error"
       description="Analyze: WORK (A)">
       <configurations>
         <configuration key="source-flavor">*/work</configuration>
@@ -89,7 +89,7 @@
           id="compose"
           if="NOT(${presenter_work_video}) AND ${presenter_source_audio} AND NOT(${presentation_work_video}) AND NOT(${presentation2_work_video})"
           fail-on-error="true"
-          exception-handler-workflow="uct-error"
+          exception-handler-workflow="partial-error"
           description="Create presenter_work version for audio only">
           <configurations>
             <configuration key="source-flavor">presenter/source</configuration>

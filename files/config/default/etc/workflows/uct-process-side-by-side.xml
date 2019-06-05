@@ -116,7 +116,7 @@
     <operation
       id="normalize-audio"
       fail-on-error="true"
-      exception-handler-workflow="uct-error"
+      exception-handler-workflow="partial-error"
       description="Normalize audio stream">
       <configurations>
         <configuration key="source-flavor">*/trimmed</configuration>

@@ -137,7 +137,7 @@
   </operation-->
   <operation
     id="prepare-av"
-    exception-handler-workflow="uct-error"
+    exception-handler-workflow="partial-error"
     description="Preparing work versions">
     <configurations>
       <configuration key="source-flavor">*/source</configuration>

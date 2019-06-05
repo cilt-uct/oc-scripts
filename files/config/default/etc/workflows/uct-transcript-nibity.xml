@@ -12,7 +12,7 @@
 
     <operation
       id="prepare-av"
-      exception-handler-workflow="uct-error"
+      exception-handler-workflow="partial-error"
       description="Preparing presenter (camera) audio and video work version (left channel)">">
       <configurations>
         <configuration key="source-flavor">presenter/source</configuration>
