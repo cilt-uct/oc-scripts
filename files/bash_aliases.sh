@@ -127,10 +127,6 @@ showmedia () {
     tree $dir_stream
   fi
 
-  if [ "$shared_workspace" -eq "1" ]; then
-    tree $dir_shared_workspace
-  fi
-
   # summary
   if [ "$archive" -eq "1" ]; then
     printf '%11s' "Archive:"
