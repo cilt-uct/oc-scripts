@@ -39,6 +39,7 @@
         <configuration key="use_watson">false</configuration>
         <configuration key="use_waywithwords">false</configuration>
         <configuration key="audio_trim_lapel">false</configuration>
+        <configuration key="transcription_src_flavor">normalized-trimmed</configuration>
 
         <configuration key="doPictureInPicture">false</configuration>
 
@@ -84,6 +85,7 @@
 
     <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
     <!-- Transcription / Caption Services                                  -->
+    <!-- Source: ${transcription_src_flavor} - normalized-trimmed          -->
     <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
     <operation
       id="include"
@@ -91,6 +93,15 @@
       description="Do captioning with IBM Watson">
       <configurations>
         <configuration key="workflow-id">uct-include-transcription-watson</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="include"
+      if="${use_waywithwords} and ${audio_trim_lapel}"
+      description="Do captioning with Way with Words (nibity)">
+      <configurations>
+        <configuration key="workflow-id">uct-include-transcription-nibity</configuration>
       </configurations>
     </operation>
 

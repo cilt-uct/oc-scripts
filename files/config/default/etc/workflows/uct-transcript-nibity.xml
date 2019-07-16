@@ -7,20 +7,87 @@
     <tag>archive</tag>
   </tags>
   <description>Submit trimmed video for Nibity Captions</description>
-  <configuration_panel></configuration_panel>
+  <configuration_panel>
+    <![CDATA[
+      <div id="workflow-configuration">
+
+        <fieldset>
+          <legend>Publication Options:</legend>
+          <ul>
+            <li>
+              <label>Audio channel to use:
+            </li>
+            <li>
+              <input id="workProfileChannel_left" name="workProfileChannel" type="radio" checked="checked" class="configField" value="true" />
+              <label for="workProfileChannel_left">Left</label>
+            </li>
+            <li>
+              <input id="workProfileChannel_right" name="workProfileChannel" type="radio" class="configField" value="true"/>
+              <label for="workProfileChannel_right">Right</label>
+            </li>
+            <li>
+              <input id="workProfileChannel_stereo" name="workProfileChannel" type="radio" class="configField" value="true"/>
+              <label for="workProfileChannel_stereo">Stereo</label>
+            </li>
+          </ul>
+        </fieldset>
+      </div>
+    ]]>
+  </configuration_panel>
   <operations>
 
+    <!-- Apply the default workflow configuration -->
     <operation
-      id="prepare-av"
-      exception-handler-workflow="partial-error"
-      description="Preparing presenter (camera) audio and video work version (left channel)">">
+      id="defaults"
+      description="Applying default configuration values">
       <configurations>
-        <configuration key="source-flavor">presenter/source</configuration>
-        <configuration key="target-flavor">presenter/work</configuration>
-        <configuration key="rewrite">true</configuration>
-        <configuration key="audio-muxing-source-flavors">presenter/source,presenter/?,presentation/?,*/*</configuration>
-        <configuration key="mux-encoding-profile">uct-mux-av-left.work</configuration>
-        <configuration key="audio-video-encoding-profile">uct-av-left.work</configuration>
+        <configuration key="workProfileChannel_left">true</configuration>
+        <configuration key="workProfileChannel_right">false</configuration>
+        <configuration key="workProfileChannel_stereo">false</configuration>
+
+        <configuration key="transcription_src_flavor">trimmed</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="defaults"
+      if="${workProfileChannel_left}"
+      description="Use left audio channel">
+      <configurations>
+        <configuration key="workProfileChannel">left</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="defaults"
+      if="${workProfileChannel_right}"
+      description="Use right audio channel">
+      <configurations>
+        <configuration key="workProfileChannel">right</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="defaults"
+      if="${workProfileChannel_stereo}"
+      description="Use stereo">
+      <configurations>
+        <configuration key="workProfileChannel">stereo</configuration>
+      </configurations>
+    </operation>
+
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      Prepare work versions of the source material for archive and processing.
+      Preview and Publish use Work versions. (*/work)
+
+       In: */source
+      Out: */work
+    -->
+    <operation
+      id="include"
+      description="Prepare work version for processing (${workProfileChannel})">
+      <configurations>
+        <configuration key="workflow-id">uct-partial-work-channel</configuration>
       </configurations>
     </operation>
 
@@ -37,17 +104,11 @@
       </configurations>
     </operation>
 
-    <!-- Start Nibity transcription job -->
     <operation
-      id="start-nibity-transcription"
-      fail-on-error="true"
-      exception-handler-workflow="partial-error"
-      description="Start Nibity captions job">
+      id="include"
+      description="Do captioning with Way with Words (nibity)">
       <configurations>
-        <!--  Skip this operation if flavor already exists. Used for cases when mp already has captions. -->
-        <configuration key="skip-if-flavor-exists">captions/vtt+en</configuration>
-        <!-- Audio to be translated, produced in the previous compose operation -->
-        <configuration key="source-flavor">presenter/trimmed</configuration>
+        <configuration key="workflow-id">uct-include-transcription-nibity</configuration>
       </configurations>
     </operation>
 

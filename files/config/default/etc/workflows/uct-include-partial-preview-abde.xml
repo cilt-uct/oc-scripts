@@ -9,6 +9,16 @@
   <configuration_panel></configuration_panel>
 
   <operations>
+    <!-- Apply the default workflow configuration -->
+    <operation
+      id="defaults"
+      description="Applying default configuration values - Preview for ABDE">
+      <configurations>
+         <configuration key="preview_src_flavor">work</configuration>
+         <configuration key="preview_out_flavor">preview</configuration>
+         <configuration key="preview_out_tags">preview</configuration>
+      </configurations>
+    </operation>
 
         <!--
           Half of presentation size (0.5)
@@ -20,8 +30,8 @@
           exception-handler-workflow="partial-error"
           description="g. i. Composite (Temporary)">
           <configurations>
-            <configuration key="source-flavor-upper">presentation/work</configuration>
-            <configuration key="source-flavor-lower">presentation2/work</configuration>
+            <configuration key="source-flavor-upper">presentation/${preview_src_flavor}</configuration>
+            <configuration key="source-flavor-lower">presentation2/${preview_src_flavor}</configuration>
             <configuration key="encoding-profile">mp4-preview.dual.http</configuration>
             <!--configuration key="target-tags">tmp</configuration-->
             <configuration key="target-flavor">composite/inter</configuration>
@@ -50,11 +60,11 @@
           exception-handler-workflow="partial-error"
           description="g. ii. Composite (Presenter + Presentation + Presentation2)">
           <configurations>
-            <configuration key="source-flavor-upper">presenter/work</configuration>
+            <configuration key="source-flavor-upper">presenter/${preview_src_flavor}</configuration>
             <configuration key="source-flavor-lower">composite/inter</configuration>
             <configuration key="encoding-profile">mp4-preview.dual.http</configuration>
-            <configuration key="target-tags">preview</configuration>
-            <configuration key="target-flavor">composite/preview</configuration>
+            <configuration key="target-tags">${preview_out_tags}</configuration>
+            <configuration key="target-flavor">composite/${preview_out_flavor}</configuration>
             <configuration key="output-resolution">1248x468</configuration>
             <configuration key="output-background">0x000000FF</configuration>
             <configuration key="layout">preview</configuration>

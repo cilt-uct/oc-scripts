@@ -4,9 +4,18 @@
   <id>uct-include-transcription-watson</id>
   <title>Submit trimmed audio for Watson Transcription</title>
   <tags/>
-  <description>Runs after real publishing of media uses</description>
+  <description>Runs after real publishing of media</description>
   <configuration_panel></configuration_panel>
   <operations>
+
+    <!-- Apply the default workflow configuration -->
+    <operation
+      id="defaults"
+      description="Applying default configuration values - Watson Transcription">
+      <configurations>
+         <configuration key="transcription_src_flavor">normalized-trimmed</configuration>
+      </configurations>
+    </operation>
 
     <!-- Extract audio from video in ogg/opus format -->
     <operation
@@ -15,7 +24,7 @@
       exception-handler-workflow="partial-error"
       description="Extract audio for transcript generation">
       <configurations>
-        <configuration key="source-flavor">*/themed</configuration>
+        <configuration key="source-flavor">*/${transcription_src_flavor}</configuration>
         <configuration key="target-flavor">audio/ogg</configuration>
         <configuration key="target-tags">transcript</configuration>
         <configuration key="encoding-profile">audio-opus</configuration>
