@@ -62,7 +62,7 @@
         <configuration key="presentation2_work_video">false</configuration>
 
         <configuration key="use_watson">false</configuration>
-        <configuration key="use_waywithwords">false</configuration>
+        <configuration key="use_nibity">false</configuration>
         <configuration key="audio_trim_lapel">false</configuration>
         <configuration key="transcription_src_flavor">normalized-trimmed</configuration>
 
@@ -200,7 +200,7 @@
 
     <operation
       id="include"
-      if="${use_waywithwords} and ${audio_trim_lapel}"
+      if="${use_nibity} and ${audio_trim_lapel}"
       description="Do captioning with Way with Words (nibity)">
       <configurations>
         <configuration key="workflow-id">uct-include-transcription-nibity</configuration>

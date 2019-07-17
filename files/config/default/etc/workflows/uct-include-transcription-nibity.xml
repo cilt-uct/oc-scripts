@@ -179,20 +179,20 @@
     </operation>
 
     <!-- Start Nibity transcription job -->
-    <!-- <operation
+    <operation
       id="start-nibity-transcription"
       fail-on-error="true"
       exception-handler-workflow="partial-error"
       description="Start Nibity captions job">
-      <configurations> -->
+      <configurations>
         <!--  Skip this operation if flavor already exists. Used for cases when mp already has captions. -->
-        <!-- <configuration key="skip-if-flavor-exists">captions/vtt+en</configuration> -->
+        <configuration key="skip-if-flavor-exists">captions/vtt+en</configuration>
         <!-- Audio to be translated, produced in the previous compose operation -->
-        <!-- <configuration key="source-flavor">*/${preview_out_flavor}</configuration>
+        <configuration key="source-flavor">*/${preview_out_flavor}</configuration>
       </configurations>
-    </operation> -->
+    </operation>
 
-    <operation
+    <!--operation
         id="tag"
         exception-handler-workflow="partial-error"
         description="Add archive tags for */preview">
@@ -208,8 +208,7 @@
       <configurations>
         <configuration key="source-tags">archive</configuration>
       </configurations>
-    </operation>
-
+    </operation-->
 
   </operations>
 </definition>

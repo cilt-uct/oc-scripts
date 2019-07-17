@@ -150,7 +150,7 @@ try {
   print $fh "event_trim=$event_trim\n";
   print $fh "caption_provider=$caption_provider\n";
   print $fh "use_watson=true\n" if ($caption_provider eq "watson");
-  print $fh "use_waywithwords=true\n" if ($caption_provider eq "waywithword");
+  print $fh "use_nibity=true\n" if ($caption_provider eq "nibity");
   close $fh;
 };
 
