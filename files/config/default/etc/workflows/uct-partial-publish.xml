@@ -84,7 +84,6 @@
 
     <!--
       Normalize Audio (*/trimmed > */normalized-trimmed)
-      Tag for archiving. [TESTING]
     -->
     <operation
       id="normalize-audio"

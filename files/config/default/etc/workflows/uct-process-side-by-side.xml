@@ -111,7 +111,6 @@
 
     <!--
       Normalize Audio (*/trimmed > */normalized-trimmed)
-      Tag for archiving. [TESTING]
     -->
     <operation
       id="normalize-audio"
@@ -121,7 +120,6 @@
       <configurations>
         <configuration key="source-flavor">*/trimmed</configuration>
         <configuration key="target-flavor">*/normalized-trimmed</configuration>
-        <!--configuration key="target-tags">archive</configuration-->
         <configuration key="target-decibel">-25</configuration>
         <configuration key="force-transcode">true</configuration>
       </configurations>
