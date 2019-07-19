@@ -35,7 +35,7 @@ checkForArchiveVariance () {
     dir=$1
 
     if [ -d "$dir" ]; then
-        dir_first=$(find $dir -name track-* | head -n 1 | cut -d '/' -f 7)
+        dir_first=$(find $dir -name track-* 2>/dev/null | head -n 1 | cut -d '/' -f 7)
         dir_next=$((dir_first + 1))
 
         #echo "$dir_first $dir_next"
@@ -45,13 +45,13 @@ checkForArchiveVariance () {
             first_array=()
             while IFS= read -d $'\0' -r file ; do
                 first_array=("${first_array[@]}" "$(basename $file)")
-            done < <(find $dir/$dir_first -type f -name "track-*" -print0)
+            done < <(find $dir/$dir_first -type f -name "track-*" -print0 2>/dev/null)
             #echo "${first_array[@]}"
 
             next_array=()
             while IFS= read -d $'\0' -r file ; do
                 next_array=("${next_array[@]}" "$(basename $file)")
-            done < <(find $dir/$dir_next -type f -name "track-*" -print0)
+            done < <(find $dir/$dir_next -type f -name "track-*" -print0 2>/dev/null)
             #echo "${next_array[@]}"
 
             found=0
