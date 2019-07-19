@@ -186,6 +186,20 @@
     </operation>
 
     <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <!-- Archive                                                           -->
+    <!--                                                                   -->
+    <!-- Download from external ingest nodes, tag, inspect and and prepare -->
+    <!-- source recording and metadata catalogs.                           -->
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <operation
+      id="snapshot"
+      description="Archive publishing information">
+      <configurations>
+        <configuration key="source-tags">archive</configuration>
+      </configurations>
+    </operation>
+
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
     <!-- Transcription / Caption Services                                  -->
     <!-- Source: ${transcription_src_flavor} - normalized-trimmed          -->
     <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
@@ -204,20 +218,6 @@
       description="Do captioning with Way with Words (nibity)">
       <configurations>
         <configuration key="workflow-id">uct-include-transcription-nibity</configuration>
-      </configurations>
-    </operation>
-
-    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-    <!-- Archive                                                           -->
-    <!--                                                                   -->
-    <!-- Download from external ingest nodes, tag, inspect and and prepare -->
-    <!-- source recording and metadata catalogs.                           -->
-    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-    <operation
-      id="snapshot"
-      description="Archive publishing information">
-      <configurations>
-        <configuration key="source-tags">archive</configuration>
       </configurations>
     </operation>
 
