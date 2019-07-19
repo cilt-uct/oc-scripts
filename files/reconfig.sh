@@ -77,7 +77,8 @@ main() {
       chown -R mysql:mysql "$data/local/mysql"
     fi
   fi
-  chown -R opencast:linux_cilt_admins $working_real/
+  # chown -R opencast:linux_cilt_admins $working_real/
+  chown -R opencast:opencast $working_real/
   chmod g+w -R $working_real/
 
   server_etc=$(awk '/org.opencastproject.server.url=http/ && /uct.ac/' $working/etc/custom.properties | cut -d "=" -f2)
