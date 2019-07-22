@@ -1,7 +1,7 @@
 # Add alias definition file to servers
 ---
-    - name: Copy bash_aliases to profile
-      copy: src="{{ alias_src }}" dest=/etc/profile.d/00-opencast-alias.sh owner=root group=root mode=0644
+    # - name: Copy bash_aliases to profile
+    #   copy: src="{{ alias_src }}" dest=/etc/profile.d/00-opencast-alias.sh owner=root group=root mode=0644
 
     - name: Copy perl script to profile
       copy: src="{{ perl_src }}" dest=/data/opencast/fix_manifest.pl owner=opencast group=users mode=0771
