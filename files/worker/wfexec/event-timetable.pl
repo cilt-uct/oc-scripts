@@ -68,10 +68,10 @@ try {
   my $event_date     = getEventField($event_m, "startDate");
   my $gmt_start_time = getEventField($event_m, "startTime");
   my $duration       = getEventField($event_m, "duration");
-  my $location       = getEventField($event_m, "location");
   my $title          = getEventField($event_m, "title");
-
   my $start_time = GMT_LocalStartTime($event_date);
+
+  $location       = getEventField($event_m, "location");
 
   # Date portion of W3CDTF format for startDate
   $event_date = substr($event_date, 0, 10);
@@ -350,5 +350,3 @@ sub adjustCheckTime($$)
 
   return ($s, $e);
 }
-
-
