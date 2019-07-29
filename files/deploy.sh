@@ -123,11 +123,10 @@ main() {
   chmod g+w -R $working_real/
 
   # check link to service
-  if [ ! -f "/lib/systemd/system" ]; then
-
-      ln -f $working_real/docs/scripts/service/opencast.service /lib/systemd/system/opencast.service
-      systemctl enable opencast.service
-  fi
+  # if [ ! -f "/lib/systemd/system" ]; then
+  #     ln -f $working_real/docs/scripts/service/opencast.service /lib/systemd/system/opencast.service
+  #     systemctl enable opencast.service
+  # fi
 
   server_etc=$(awk '/org.opencastproject.server.url=http/ && /uct.ac/' $working/etc/custom.properties | cut -d "=" -f2)
 

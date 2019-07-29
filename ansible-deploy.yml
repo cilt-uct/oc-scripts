@@ -4,10 +4,10 @@
   hosts: all
   become: true
   vars:
-    script_action: "Deploy"    
+    script_action: "Deploy"
     deploy_script: "{{ folder_script }}files/deploy.sh"
     deploy_logfile: "{{ folder_script }}log/{{ script_action | lower }}.{{ deploy_date_time | regex_replace(' ','.') | regex_replace(':','-') }}.log"
-    
+
   pre_tasks:
     - name: Create log file
       local_action: template src="{{ folder_script }}templates/tmpl-deploy.j2" dest="{{ deploy_logfile }}"
@@ -15,7 +15,7 @@
 
     - name: Stop Opencast
       service: name=opencast state=stopped
-      when: stop_service
+      when: stop_service|bool
       ignore_errors: yes # the service might not exist yet
 
   roles:
@@ -25,4 +25,4 @@
   post_tasks:
     - include_role:
         name: jira_comment
-      when: production 
+      when: production|bool

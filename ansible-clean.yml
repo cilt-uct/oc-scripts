@@ -7,7 +7,7 @@
   pre_tasks:
     - name: Stop Opencast
       service: name=opencast state=stopped
-      when: stop_service
+      when: stop_service|bool
       ignore_errors: yes # the service might not exist yet
       register: result
 
@@ -19,18 +19,18 @@
     - name: Find Opencast log files
       find: paths={{folder_log}} patterns="*.log*"
       register: result
-      when: full_clean
+      when: full_clean|bool
 
     - name: Remove Opencast log files
       file:
         path: "{{ item.path }}"
         state: absent
-      with_items: "{{ result.files|default([]) }}" 
-      when: full_clean and result.matched|int > 0
+      with_items: "{{ result.files|default([]) }}"
+      when: full_clean|bool and result.matched|int > 0
 
     #- name: Start Opencast
     #  service: name=opencast state=started
-    #  when: start_service
+    #  when: start_service|bool
     #  ignore_errors: yes
 
     #- name: Create a Opencast Group

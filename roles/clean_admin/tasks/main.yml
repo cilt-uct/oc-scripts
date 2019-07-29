@@ -29,7 +29,7 @@
 - name: Find archive and distribution (downloads/streams) folders
   find: paths="{{ folder_archive }},{{ folder_distribution_downloads }},{{ folder_distribution_streams}}" patterns="*" file_type=directory
   register: result
-  when: full_clean
+  when: full_clean|bool
 
 #- debug: var=result
 
@@ -38,4 +38,4 @@
     path: "{{ item.path }}"
     state: absent
   with_items: "{{ result.files|default([]) }}"
-  when: full_clean and result.matched|int > 0
+  when: full_clean|bool and result.matched|int > 0

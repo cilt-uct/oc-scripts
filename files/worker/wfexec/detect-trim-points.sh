@@ -41,7 +41,7 @@ media=""
 output_file=""
 
 # List of valid venues to use - remove temp [ m209 ]
-venue_list=("hahn4" hoerilt1" "hoerilt2" "em4" "alex1a" "anatlt1" "beattielt" "cs302" "snapelt1" "cengsem" "menz12" "ls3a" "ls1a")
+venue_list=("hahn4" "hoerilt1" "hoerilt2" "em4" "alex1a" "anatlt1" "beattielt" "cs302" "snapelt1" "cengsem" "menz12" "ls3a" "ls1a")
 
 #--start-speech (seconds)    Threshold for speech at the start of the recording [sec] (default: 3)
 start_speech=3

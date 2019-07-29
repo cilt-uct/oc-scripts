@@ -33,4 +33,4 @@
       issue: "{{ jira_issue }}"
       operation: comment
       comment: "Deployed LTI Tools to _*{{inventory_hostname}}*_."
-    when: production
+    when: production|bool

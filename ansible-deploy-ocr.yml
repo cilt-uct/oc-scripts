@@ -19,4 +19,4 @@
   post_tasks:
     - include_role:
         name: jira_comment
-      when: production
+      when: production|bool

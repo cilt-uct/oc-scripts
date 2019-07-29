@@ -11,5 +11,5 @@
   post_tasks:
     - name: Start Opencast
       service: name=opencast state=started
-      #when: start_service
+      #when: start_service|bool
       ignore_errors: yes
