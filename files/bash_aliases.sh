@@ -31,6 +31,12 @@ dirSizeAndTime() {
     fi
 }
 
+getFileTypes() {
+  dir=$1
+  types=$(find $dir -type f | perl -ne 'print $1 if m/\.([^.\/]+)$/' | sort -u | tr '\n' ' ' | sed -e 's/[[:space:]]*$//')
+  printf "($types)"
+}
+
 checkForArchiveVariance () {
     dir=$1
 
@@ -131,6 +137,8 @@ showmedia () {
   if [ "$archive" -eq "1" ]; then
     printf '%11s' "Archive:"
     dirSizeAndTime $dir_archive
+    printf " "
+    getFileTypes $dir_archive
     printf "   Var: "
     checkForArchiveVariance $dir_archive
   fi
@@ -138,18 +146,24 @@ showmedia () {
   if [ "$engage" -eq "1" ]; then
     printf '%11s' "Engage:"
     dirSizeAndTime $dir_engage
+    printf " "
+    getFileTypes $dir_engage
     printf "\n"
   fi
 
   if [ "$internal" -eq "1" ]; then
     printf '%11s' "Internal:"
     dirSizeAndTime $dir_internal
+    printf " "
+    getFileTypes $dir_internal
     printf "\n"
   fi
 
   if [ "$stream" -eq "1" ]; then
     printf '%11s' "Stream: "
     dirSizeAndTime $dir_stream
+    printf " "
+    getFileTypes $dir_stream
     printf "\n"
   fi
 }
