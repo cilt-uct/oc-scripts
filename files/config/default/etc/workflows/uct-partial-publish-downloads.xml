@@ -40,7 +40,7 @@
         <configuration key="encoding-profile">mp4-download.dual.http</configuration>
         <configuration key="target-flavor">composite/delivery</configuration>
         <configuration key="target-tags">rss,atom,composite</configuration>
-        <configuration key="output-resolution">1280x360</configuration>
+        <configuration key="output-resolution">2560x720</configuration>
         <configuration key="output-background">0x000000FF</configuration>
         <configuration key="layout">preview</configuration>
         <configuration key="layout-single">
@@ -65,7 +65,7 @@
         <configuration key="encoding-profile">mp4-download.dual.http</configuration>
         <configuration key="target-flavor">composite/delivery</configuration>
         <configuration key="target-tags">rss,atom,composite</configuration>
-        <configuration key="output-resolution">1280x360</configuration>
+        <configuration key="output-resolution">2560x720</configuration>
         <configuration key="output-background">0x000000FF</configuration>
         <configuration key="layout">preview</configuration>
         <configuration key="layout-single">
@@ -90,7 +90,7 @@
         <configuration key="encoding-profile">mp4-download.dual.http</configuration>
         <configuration key="target-flavor">composite/delivery</configuration>
         <configuration key="target-tags">rss,atom,composite</configuration>
-        <configuration key="output-resolution">1280x360</configuration>
+        <configuration key="output-resolution">2560x720</configuration>
         <configuration key="output-background">0x000000FF</configuration>
         <configuration key="layout">preview</configuration>
         <configuration key="layout-single">
