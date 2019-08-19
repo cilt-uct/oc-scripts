@@ -108,7 +108,7 @@
         <configuration key="source-flavor-upper">presenter/transcription</configuration>
         <configuration key="encoding-profile">uct-mp4-preview.dual.http</configuration>
         <configuration key="target-flavor">composite/${preview_out_flavor}</configuration>
-        <configuration key="output-resolution">1280x360</configuration>
+        <configuration key="output-resolution">2560x720</configuration>
         <configuration key="output-background">0x000000FF</configuration>
         <configuration key="layout">preview</configuration>
         <configuration key="layout-single">
@@ -132,7 +132,7 @@
         <configuration key="source-flavor-upper">presenter/transcription</configuration>
         <configuration key="encoding-profile">mp4-preview.dual.http</configuration>
         <configuration key="target-flavor">composite/${preview_out_flavor}</configuration>
-        <configuration key="output-resolution">1280x360</configuration>
+        <configuration key="output-resolution">2560x720</configuration>
         <configuration key="output-background">0x000000FF</configuration>
         <configuration key="layout">preview</configuration>
         <configuration key="layout-single">
@@ -156,7 +156,7 @@
         <configuration key="source-flavor-upper">presentation/transcription</configuration>
         <configuration key="encoding-profile">mp4-preview.dual.http</configuration>
         <configuration key="target-flavor">composite/${preview_out_flavor}</configuration>
-        <configuration key="output-resolution">1280x360</configuration>
+        <configuration key="output-resolution">2560x720</configuration>
         <configuration key="output-background">0x000000FF</configuration>
         <configuration key="layout">preview</configuration>
         <configuration key="layout-single">
