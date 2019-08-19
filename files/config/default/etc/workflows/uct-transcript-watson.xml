@@ -104,13 +104,13 @@
       </configurations>
     </operation>
 
-    <operation
-      id="include"
-      description="Do captioning with Way with Words (nibity)">
-      <configurations>
-        <configuration key="workflow-id">uct-include-transcription-nibity</configuration>
-      </configurations>
-    </operation>
+      <operation
+        id="include"
+        description="Do captioning with IBM Watson">
+        <configurations>
+          <configuration key="workflow-id">uct-include-transcription-watson</configuration>
+        </configurations>
+      </operation>
 
     <!-- Cleanup -->
     <operation
