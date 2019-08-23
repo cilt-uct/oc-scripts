@@ -181,6 +181,8 @@
     <!-- Start Nibity transcription job -->
     <operation
       id="start-nibity-transcription"
+      max-attempts="3"
+      retry-strategy="hold"
       fail-on-error="true"
       exception-handler-workflow="partial-error"
       description="Start Nibity captions job">

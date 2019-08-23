@@ -37,6 +37,8 @@
     <!-- Start IBM Watson recognitions job : ASYNC return in -->
     <operation
       id="start-watson-transcription"
+      max-attempts="3"
+      retry-strategy="hold"
       fail-on-error="true"
       exception-handler-workflow="partial-error"
       description="Start IBM Watson transcription job">
