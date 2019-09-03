@@ -33,6 +33,10 @@
               <input id="workProfileChannel_stereo" name="workProfileChannel" type="radio" class="configField" value="true"/>
               <label for="workProfileChannel_stereo">Stereo</label>
             </li>
+            <li>
+              <input id="doCaptioning" name="doCaptioning" type="checkbox" checked="checked" class="configField" value="true" />
+              <label for="doCaptioning">Process Captioning if available</label>
+            </li>
           </ul>
         </fieldset>
       </div>
@@ -61,6 +65,7 @@
         <configuration key="presentation_work_video">false</configuration>
         <configuration key="presentation2_work_video">false</configuration>
 
+        <configuration key="doCaptioning">true</configuration>
         <configuration key="use_watson">false</configuration>
         <configuration key="use_nibity">false</configuration>
         <configuration key="audio_trim_lapel">false</configuration>
@@ -225,6 +230,7 @@
     <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
     <operation
       id="include"
+      if="${doCaptioning}"
       description="Include Captioning">
       <configurations>
         <configuration key="workflow-id">uct-include-captioning</configuration>
