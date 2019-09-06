@@ -72,7 +72,7 @@
         <configuration key="transcription_src_flavor">normalized-trimmed</configuration>
 
         <configuration key="doNormalizeAudio">true</configuration>
-        <configuration key="doPictureInPicture">false</configuration>
+        <configuration key="doPictureInPicture">true</configuration>
 
         <configuration key="workProfileChannel_left">true</configuration>
         <configuration key="workProfileChannel_right">false</configuration>

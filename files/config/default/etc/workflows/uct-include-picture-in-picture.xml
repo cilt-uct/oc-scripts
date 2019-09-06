@@ -29,6 +29,25 @@
       </configurations>
     </operation>
 
+    <!-- Untag previous pic-in-pic flavors -->
+    <operation
+      id="tag"
+      description="Untag all pic-in-pic1 flavors">
+      <configurations>
+        <configuration key="source-flavors">pic-in-pic1/delivery</configuration>
+        <configuration key="target-tags">-rss,-atom,</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="tag"
+      description="Untag all pic-in-pic1 flavors">
+      <configurations>
+        <configuration key="source-flavors">pic-in-pic2/delivery</configuration>
+        <configuration key="target-tags">-rss,-atom,</configuration>
+      </configurations>
+    </operation>
+
     <operation
       id="include"
       if="${useTopLeft}"
