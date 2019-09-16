@@ -191,6 +191,19 @@
         </configurations>
     </operation>
 
+    <operation
+        id="tag"
+        max-attempts="2"
+        fail-on-error="true"
+        if="${removeNormalizedTrimmed}"
+        exception-handler-workflow="partial-error"
+        description="Removing archive tags for */trimmed-normalized">
+        <configurations>
+            <configuration key="source-flavors">*/trimmed-normalized</configuration>
+            <configuration key="target-tags">-archive</configuration>
+        </configurations>
+    </operation>
+
     <!-- Comment that we cleaned up this recording -->
     <operation
       id="comment"
