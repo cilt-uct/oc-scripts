@@ -18,6 +18,16 @@
       </configurations>
     </operation>
 
+    <!-- Untag previous composite flavors -->
+    <operation
+      id="tag"
+      description="Untag all composite flavors">
+      <configurations>
+        <configuration key="source-flavors">composite/delivery</configuration>
+        <configuration key="target-tags">-rss,-atom,-composite</configuration>
+      </configurations>
+    </operation>
+
     <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       Create composite media for downloading on LTI tool and
       for publication to feeds (Atom / RSS).
