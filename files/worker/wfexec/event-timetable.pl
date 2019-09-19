@@ -68,7 +68,7 @@ if ((index(lc($title), "[backup]") != -1) || (index(lc($title), "[hold]") != -1)
     $event_trim = "false";
 }
 
-## Get the series info
+# Get the series info
 if (defined($series) && $series ne "") {
 
     ($visibility, $course, $caption_provider) = getSeriesDetails($mech, $server, $series);
@@ -83,7 +83,7 @@ if (defined($series) && $series ne "") {
             die "Course Code ERROR: ". $course;
         }
 
-        ## Check with the timetable webservice
+        # Check with the timetable webservice
         if (($course =~ /[\w]{3}[\d]{4}[\w]{1},[\d]{4}/) && defined($event_date) && defined($start_time) && defined($end_time) && defined($location)) {
 
             my ($st, $et) = adjustCheckTime($start_time, $end_time);
@@ -102,7 +102,7 @@ if (defined($series) && $series ne "") {
     }
 }
 
-## Conclusion
+# Conclusion
 if (($tt_result eq "true") && ($visibility ne "public")) {
     $timetabled = "true";
 }
@@ -130,29 +130,28 @@ exit 0;
 # Get the digest auth configuration from the local config file
 sub getOcAuth($) {
 
-  my $propsfile = shift;
+    my $propsfile = shift;
 
-  my $url;
-  my $user;
-  my $pass;
+    my $url;
+    my $user;
+    my $pass;
 
-  open FILE, '<', $propsfile or die "Unable to open local Opencast properties file: $!\n";
-  while(<FILE>) {
-    chomp;
-    if ($_ =~ /^org.opencastproject.security.digest.user=(.*)$/) {
-      $user = $1;
+    open FILE, '<', $propsfile or die "Unable to open local Opencast properties file: $!\n";
+    while(<FILE>) {
+        chomp;
+        if ($_ =~ /^org.opencastproject.security.digest.user=(.*)$/) {
+            $user = $1;
+        }
+        if ($_ =~ /^org.opencastproject.security.digest.pass=(.*)$/) {
+            $pass = $1;
+        }
+        if ($_ =~ /^org.opencastproject.admin.ui.url=(.*)$/) {
+            $url = $1;
+        }
     }
-    if ($_ =~ /^org.opencastproject.security.digest.pass=(.*)$/) {
-      $pass = $1;
-    }
-    if ($_ =~ /^org.opencastproject.admin.ui.url=(.*)$/) {
-      $url = $1;
-    }
+    close FILE;
 
-  }
-  close FILE;
-
-  return ($url, $user, $pass);
+    return ($url, $user, $pass);
 }
 
 # Series Metadata
@@ -228,10 +227,11 @@ sub getEventDetails($$$) {
     return ($series, $event_date, $duration, $title, $start_time, $end_time);
 }
 
+# Do a REST call to OC and retreive JSON based on the URL
 sub getMetadata($$$) {
     my $mech = shift;
     my $url = shift;
-    my $encode = shift;
+    my $decode = shift;
 
     $mech->get($url);
     $numEventAttempts++;
@@ -244,7 +244,7 @@ sub getMetadata($$$) {
             die "Metadata ERROR [". $response->status_line ."]: ". $url;
         }
     }
-    if ($encode) {
+    if ($decode) {
         return $json->utf8->canonical->decode($response->decoded_content);
     }
     return $response->decoded_content;
@@ -294,7 +294,6 @@ sub getSeriesField($$) {
 
     return $value;
 }
-
 
 # Adjust start and end times
 sub adjustCheckTime($$) {
