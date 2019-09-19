@@ -14,7 +14,7 @@ use JSON;
 
 my $debug = 0;
 my $oc_config = "/opt/opencast/etc/custom.properties";
-my $tt_ws = "http://srvslscet001.uct.ac.za/timetable/";
+my $tt_ws = "https://srvslscet001.uct.ac.za/timetable/";
 
 my %tt_comment;
 $tt_comment{'true'}  = "TIMETABLED event: edit and publish";
