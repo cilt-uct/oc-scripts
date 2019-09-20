@@ -286,6 +286,9 @@
     <sec:intercept-url pattern="/system/**" access="ROLE_ADMIN" />
     <sec:intercept-url pattern="/config/**" access="ROLE_ADMIN" />
 
+    <!-- Unauthenticated access to CA list for dashboards -->
+    <sec:intercept-url pattern="/capture-admin/agents.json" method="GET" access="ROLE_ANONYMOUS" />
+
     <!-- Enable capture agent updates and ingest -->
     <sec:intercept-url pattern="/capture-admin/**" access="ROLE_ADMIN, ROLE_CAPTURE_AGENT, ROLE_OAUTH_USER" />
     <sec:intercept-url pattern="/recordings/**" method="GET" access="ROLE_ADMIN, ROLE_CAPTURE_AGENT" />
