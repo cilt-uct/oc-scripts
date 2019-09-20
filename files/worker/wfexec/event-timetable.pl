@@ -9,7 +9,6 @@ use DateTime;
 use DateTime::Duration;
 use DateTime::Format::Duration;
 use DateTime::Format::W3CDTF;
-use Try::Tiny;
 use JSON;
 
 my $debug = 0;
@@ -38,6 +37,7 @@ my $dfd_t = DateTime::Format::Duration->new( pattern => '%H:%M:%S' );
 my $json = new JSON;
 my $sleep = 30;
 $sleep = 1 if $debug;
+print "\tsleep: $sleep\n" if $debug;
 
 my $mech = WWW::Mechanize->new( autocheck => 0 );
 $mech->credentials($oc_user, $oc_pass);
@@ -161,25 +161,14 @@ sub getSeriesDetails($$$) {
     my $server = shift;
     my $series_id = shift;
 
-    my $meta;
-    my ($visibility, $course, $caption_provider, $series_acl) = ("vula", "", "", "");
+    my ($visibility, $course, $caption_provider) = ("vula", "", "");
 
-    try {
-        $series_acl = getMetadata($mech, "$server/series/$series/acl.json", 0) =~ /ROLE_ANONYMOUS/;
-    } catch {
-        $series_acl = getMetadata($mech, "$server/admin-ng/series/$series/access.json", 0) =~ /ROLE_ANONYMOUS/;
-    };
-
+    my $series_acl = wrapGetMetadata($mech, "$server/series/$series/acl.json", 0) =~ /ROLE_ANONYMOUS/;
     if ($series_acl) {
         $visibility = "public";
     }
 
-    try {
-        $meta = getMetadata($mech, "$server/api/series/$series/metadata", 1);
-    } catch {
-        $meta = getMetadata($mech, "$server/admin-ng/series/$series/metadata.json", 1);
-    };
-
+    my $meta = wrapGetMetadata($mech, "$server/api/series/$series/metadata", 1);
     if (defined($meta)) {
         $course = getSeriesField($meta, "course");
         $caption_provider = getSeriesField($meta, "caption-type");
@@ -197,25 +186,13 @@ sub getEventDetails($$$) {
 
     ## Get the mediapackage info from api / admin-ng
     my ($series, $event_date, $duration, $title, $start_time, $end_time) = ("","","","","","");
-    try {
-        $numEventAttempts = 0;
-        my $event_m = getMetadata($mech, "$server/api/events/$mp/metadata?type=dublincore%2Fepisode", 1);
+    my $event_m = wrapGetMetadata($mech, "$server/api/events/$mp/metadata?type=dublincore%2Fepisode", 1);
 
-        $series     = getEventField($event_m, "isPartOf", 0);
-        $event_date = $w3c->parse_datetime(getEventField($event_m, "startDate", 0) ."T". getEventField($event_m, "startTime", 0) ."Z");
-        $duration   = getEventField($event_m, "duration", 0);
-        $title      = getEventField($event_m, "title", 0);
-        $location   = getEventField($event_m, "location", 0);
-    } catch {
-        $numEventAttempts = 0;
-        my $event_m = getMetadata($mech, "$server/admin-ng/event/$mp/metadata.json", 1);
-
-        $series     = getEventField($event_m, "isPartOf", 1);
-        $event_date = $w3c->parse_datetime(getEventField($event_m, "startDate", 1));
-        $duration   = getEventField($event_m, "duration", 1);
-        $title      = getEventField($event_m, "title", 1);
-        $location   = getEventField($event_m, "location", 1);
-    };
+    $series     = getEventField($event_m, "isPartOf", 0);
+    $event_date = $w3c->parse_datetime(getEventField($event_m, "startDate", 0) ."T". getEventField($event_m, "startTime", 0) ."Z");
+    $duration   = getEventField($event_m, "duration", 0);
+    $title      = getEventField($event_m, "title", 0);
+    $location   = getEventField($event_m, "location", 0);
 
     my $local_time = $event_date->clone()->set_time_zone('GMT')->set_time_zone('Africa/Johannesburg');
     my $local_end_time = $local_time + $dfd_t->parse_duration($duration);
@@ -227,6 +204,14 @@ sub getEventDetails($$$) {
     return ($series, $event_date, $duration, $title, $start_time, $end_time);
 }
 
+sub wrapGetMetadata($$$) {
+    my $mech = shift;
+    my $url = shift;
+    my $decode = shift;
+
+    $numEventAttempts = 0;
+    return getMetadata($mech, $url, $decode)
+}
 # Do a REST call to OC and retreive JSON based on the URL
 sub getMetadata($$$) {
     my $mech = shift;
@@ -237,6 +222,7 @@ sub getMetadata($$$) {
     $numEventAttempts++;
     my $response = $mech->response();
     if (!$response->is_success) {
+        print "retry [$numEventAttempts]\n" if $debug;
         if ($numEventAttempts < 3) {
             sleep($sleep);
             return getMetadata($mech, $url);
