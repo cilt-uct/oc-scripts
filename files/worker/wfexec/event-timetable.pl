@@ -216,7 +216,7 @@ sub getEventDetails($$$) {
     return ($series, $event_date, $duration, $title, $start_time, $end_time);
 }
 
-# Do a REST call to OC and retreive JSON based on the URL
+# Do a REST call to OC and retrieve JSON based on the URL
 sub getMetadata($$$) {
     my $mech = shift;
     my $url = shift;
