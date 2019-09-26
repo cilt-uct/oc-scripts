@@ -4,9 +4,6 @@ use strict;
 
 use Data::Dumper;
 use WWW::Mechanize;
-use LWP::Protocol::https;
-use DateTime;
-use DateTime::Duration;
 use DateTime::Format::Duration;
 use DateTime::Format::W3CDTF;
 use Attempt;
@@ -15,6 +12,7 @@ use JSON;
 my $debug = 0;
 my $oc_config = "/opt/opencast/etc/custom.properties";
 my $tt_ws = "https://srvslscet001.uct.ac.za/timetable/";
+my $this_timezone = 'Africa/Johannesburg';
 
 my %tt_comment;
 $tt_comment{'true'}  = "TIMETABLED event: edit and publish";
@@ -205,7 +203,7 @@ sub getEventDetails($$$) {
         $title      = getEventField($event_m, "title", 0);
         $location   = getEventField($event_m, "location", 0);
 
-        my $local_time = $event_date->clone()->set_time_zone('GMT')->set_time_zone('Africa/Johannesburg');
+        my $local_time = $event_date->clone()->set_time_zone('GMT')->set_time_zone($this_timezone);
         my $local_end_time = $local_time + $dfd_t->parse_duration($duration);
 
         $start_time = $local_time->strftime("%H:%M");
