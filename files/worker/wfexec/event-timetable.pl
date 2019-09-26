@@ -9,6 +9,7 @@ use DateTime;
 use DateTime::Duration;
 use DateTime::Format::Duration;
 use DateTime::Format::W3CDTF;
+use Attempt;
 use JSON;
 
 my $debug = 0;
@@ -35,15 +36,13 @@ my $w3c = DateTime::Format::W3CDTF->new;
 my $dfd_t = DateTime::Format::Duration->new( pattern => '%H:%M:%S' );
 
 my $json = new JSON;
-my $sleep = 30;
+my ($tries, $sleep) = (3, 30);
 $sleep = 1 if $debug;
-print "\tsleep: $sleep\n" if $debug;
+print "\ttries: $tries\tsleep: $sleep\n" if $debug;
 
 my $mech = WWW::Mechanize->new( autocheck => 0 );
 $mech->credentials($oc_user, $oc_pass);
 $mech->add_header( 'X-REQUESTED-AUTH' => 'Digest' );
-
-my $numEventAttempts = 0;
 
 my $timetable_completed = 0;
 my $timetable_result = "";
@@ -161,14 +160,20 @@ sub getSeriesDetails($$$) {
     my $server = shift;
     my $series_id = shift;
 
-    my ($visibility, $course, $caption_provider) = ("vula", "", "");
+    my $meta;
+    my ($visibility, $course, $caption_provider, $series_acl) = ("vula", "", "", "");
 
-    my $series_acl = wrapGetMetadata($mech, "$server/series/$series/acl.json", 0) =~ /ROLE_ANONYMOUS/;
+    attempt {
+        $series_acl = getMetadata($mech, "$server/api/series/$series/acl", 0) =~ /ROLE_ANONYMOUS/;
+    } tries => $tries, delay => $sleep;
+
     if ($series_acl) {
         $visibility = "public";
     }
+    attempt {
+        $meta = getMetadata($mech, "$server/api/series/$series/metadata", 1);
+    } tries => $tries, delay => $sleep;
 
-    my $meta = wrapGetMetadata($mech, "$server/api/series/$series/metadata", 1);
     if (defined($meta)) {
         $course = getSeriesField($meta, "course");
         $caption_provider = getSeriesField($meta, "caption-type");
@@ -185,33 +190,32 @@ sub getEventDetails($$$) {
     my $mp = shift;
 
     ## Get the mediapackage info from api / admin-ng
+    my $event_m;
     my ($series, $event_date, $duration, $title, $start_time, $end_time) = ("","","","","","");
-    my $event_m = wrapGetMetadata($mech, "$server/api/events/$mp/metadata?type=dublincore%2Fepisode", 1);
 
-    $series     = getEventField($event_m, "isPartOf", 0);
-    $event_date = $w3c->parse_datetime(getEventField($event_m, "startDate", 0) ."T". getEventField($event_m, "startTime", 0) ."Z");
-    $duration   = getEventField($event_m, "duration", 0);
-    $title      = getEventField($event_m, "title", 0);
-    $location   = getEventField($event_m, "location", 0);
+    # if the database goes away while we're using it, just try again...
+    attempt {
+        $event_m = getMetadata($mech, "$server/api/events/$mp/metadata?type=dublincore%2Fepisode", 1);
+    } tries => $tries, delay => $sleep;
 
-    my $local_time = $event_date->clone()->set_time_zone('GMT')->set_time_zone('Africa/Johannesburg');
-    my $local_end_time = $local_time + $dfd_t->parse_duration($duration);
+    if (defined($event_m)) {
+        $series     = getEventField($event_m, "isPartOf", 0);
+        $event_date = $w3c->parse_datetime(getEventField($event_m, "startDate", 0) ."T". getEventField($event_m, "startTime", 0) ."Z");
+        $duration   = getEventField($event_m, "duration", 0);
+        $title      = getEventField($event_m, "title", 0);
+        $location   = getEventField($event_m, "location", 0);
 
-    $start_time = $local_time->strftime("%H:%M");
-    $event_date = $local_time->strftime("%Y-%m-%d");
-    $end_time   = $local_end_time->strftime("%H:%M");
+        my $local_time = $event_date->clone()->set_time_zone('GMT')->set_time_zone('Africa/Johannesburg');
+        my $local_end_time = $local_time + $dfd_t->parse_duration($duration);
+
+        $start_time = $local_time->strftime("%H:%M");
+        $event_date = $local_time->strftime("%Y-%m-%d");
+        $end_time   = $local_end_time->strftime("%H:%M");
+    }
 
     return ($series, $event_date, $duration, $title, $start_time, $end_time);
 }
 
-sub wrapGetMetadata($$$) {
-    my $mech = shift;
-    my $url = shift;
-    my $decode = shift;
-
-    $numEventAttempts = 0;
-    return getMetadata($mech, $url, $decode)
-}
 # Do a REST call to OC and retreive JSON based on the URL
 sub getMetadata($$$) {
     my $mech = shift;
@@ -219,16 +223,9 @@ sub getMetadata($$$) {
     my $decode = shift;
 
     $mech->get($url);
-    $numEventAttempts++;
     my $response = $mech->response();
     if (!$response->is_success) {
-        print "retry [$numEventAttempts]\n" if $debug;
-        if ($numEventAttempts < 3) {
-            sleep($sleep);
-            return getMetadata($mech, $url);
-        } else {
-            die "Metadata ERROR [". $response->status_line ."]: ". $url;
-        }
+        die "Metadata ERROR [". $response->status_line ."]: ". $url;
     }
     if ($decode) {
         return $json->utf8->canonical->decode($response->decoded_content);
