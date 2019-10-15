@@ -28,6 +28,24 @@
       </configurations>
     </operation>
 
+    <!-- Check whether this series has a my videos - else create one -->
+    <operation
+      id="execute-once"
+      max-attempts="3"
+      retry-strategy="hold"
+      fail-on-error="true"
+      exception-handler-workflow="partial-error"
+      description="Create My Videos">
+      <configurations>
+        <configuration key="exec">/opt/opencast/wfexec/create-my-videos.pl</configuration>
+        <configuration key="load">0.1</configuration>
+        <configuration key="params">#{id} #{out}</configuration>
+        <configuration key="output-filename">my_videos.txt</configuration>
+        <configuration key="set-workflow-properties">true</configuration>
+        <configuration key="expected-type">Attachment</configuration>
+      </configurations>
+    </operation>
+
     <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       Inspect, analyze tracks (*/*), apply series access control
       archive */source, and tag metadata for archive and publish.
