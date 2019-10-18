@@ -43,7 +43,7 @@ $mech->credentials($oc_user, $oc_pass);
 $mech->add_header( 'X-REQUESTED-AUTH' => 'Digest' );
 
 my $timetable_completed = 0;
-my $timetable_result = "";
+my $timetable_result = "unprocessed";
 my $timetabled = "false";
 my $visibility = "unknown";
 my $course = "none";
@@ -52,8 +52,8 @@ my $location = "unknown";
 my $title = "unknown";
 my $series = "";
 my $tt_info = "none";
-my $tt_result = "false";
 my $event_trim = "true"; # Should this event be marked for trimming?
+
 my ($series, $event_date, $duration, $title, $start_time, $end_time) = ("","","","","","");
 ($series, $event_date, $duration, $title, $start_time, $end_time) = getEventDetails($mech, $server, $mpid);
 print Dumper($series, $event_date, $duration, $title, $start_time, $end_time) if $debug;
@@ -77,7 +77,7 @@ if (defined($series) && $series ne "") {
 
     if ($course ne "none") {
         if (!($course =~ /[\w]{3}[\d]{4}[\w]{1},[\d]{4}/)) {
-            die "Course Code ERROR: ". $course;
+            $timetable_result = "Check CONSENT, edit and publish - Course_Code_Check: ". $course;
         }
 
         # Check with the timetable webservice
@@ -93,26 +93,27 @@ if (defined($series) && $series ne "") {
             if (!$response->is_success) {
                 die "Timetable ERROR [". $response->status_line ."]: ". $tt_url;
             } else {
-                $tt_result = $response->decoded_content;
+
+                # Conclusion
+                if (($response->decoded_content eq "true") && ($visibility ne "public")) {
+                    $timetabled = "true";
+                }
             }
+
+            $tt_info = "$course;$location;$event_date;$start_time;$end_time;$visibility";
+            $timetable_completed = 1;
+            $timetable_result = $tt_comment{$timetabled};
         }
     }
 }
 
-# Conclusion
-if (($tt_result eq "true") && ($visibility ne "public")) {
-    $timetabled = "true";
-}
 
-$tt_info = "$course;$location;$event_date;$start_time;$end_time;$visibility";
-$timetable_completed = 1;
 
 ## Write result
 open(my $fh, '>', $filename) or die "File ERROR: failed to open result file '$filename' $!";
 print $fh "timetabled=$timetabled\n";
 print $fh "timetable_info=$tt_info\n";
-print $fh "timetable_comment=" . $tt_comment{$timetabled} . "\n"  if ($timetable_completed);
-print $fh "timetable_comment=" . $timetable_result . "\n"  if (!$timetable_completed);
+print $fh "timetable_comment=" . $timetable_result . "\n";
 print $fh "timetable_success=" . ($timetable_completed ? 'true' : 'false') . "\n";
 print $fh "event_location=$location\n";
 print $fh "event_trim=$event_trim\n";
