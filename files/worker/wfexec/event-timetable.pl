@@ -43,7 +43,7 @@ $mech->credentials($oc_user, $oc_pass);
 $mech->add_header( 'X-REQUESTED-AUTH' => 'Digest' );
 
 my $timetable_completed = 0;
-my $timetable_result = "unprocessed";
+my $timetable_result = "Check CONSENT, edit and publish - Unprocessed";
 my $timetabled = "false";
 my $visibility = "unknown";
 my $course = "none";
