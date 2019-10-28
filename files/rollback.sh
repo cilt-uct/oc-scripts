@@ -51,7 +51,7 @@ main() {
   check_directory $tmp_folder $tmp_folder_real
   check_directory $working $working_real
 
-  # Move old deployed code to backup folder 
+  # Move backup folder to working folder
    mv $working/* $tmp_folder
    mv $bak/* $working
    mv $tmp_folder/* $bak
