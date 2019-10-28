@@ -750,7 +750,7 @@ usage() {
 ## TODO: Add optional parameters to
 ##       - build: 0 (default) Do All, 1 build src, 2 build cfg
 #        - clean: 0 (default) Do All, 1 clean only db, 2 clean shared+archive+distribution
-ARGS=$(getopt -o ":abcdhlrstuvxz" -l ":all,build,clean,deploy,help,list,reconfig,update-git,status,version,xtop,ztart,lti-deploy,alias,track4k,audiotrim,ocr" -n "$PROGNAME" -- "$@")
+ARGS=$(getopt -o ":abcdhlrstuvxz" -l ":all,build,clean,deploy,help,list,reconfig,rollback,update-git,status,version,xtop,ztart,lti-deploy,alias,track4k,audiotrim,ocr" -n "$PROGNAME" -- "$@")
 
 if [ $? -ne 0 ] || [ $# -eq 0 ]; then
     # if error in parsing args display usage
