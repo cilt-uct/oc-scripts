@@ -76,7 +76,8 @@ main() {
     echo
    
     echo "    Cleaning ..."
-    rm tmp folder - and real tmp folder
+    rm -rf $tmp_folder
+    rm -rf $tmp_folder_real
     rm deploy.cfg
     rm deploy.tar.gz
     rm ${PROGNAME};
