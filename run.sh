@@ -28,6 +28,7 @@ LTI=false
 LIST=false
 UPDATE=false
 RECONFIGURE=false
+ROLLBACK=false
 STATUS=false
 STARTUP=false
 STOP=false
@@ -267,9 +268,23 @@ main() {
 
     if $RECONFIGURE; then
 
-        if $( ! $DEPLOY); then
+        if $( ! $DEPLOY) && $(! $ROLLBACK); then
             printf "Reconfigure"
             [ "$ACTIONS" -gt "1" ] && printf " - "
+        else
+            RECONFIGURE=false
+        fi
+
+        ACTIONS=$((ACTIONS-1))
+    fi
+
+     if $ROLLBACK; then
+
+        if $( ! $DEPLOY) && $(! $RECONFIGURE); then
+            printf "Rollback"
+            [ "$ACTIONS" -gt "1" ] && printf " - "
+        else 
+            ROLLBACK=false
         fi
 
         ACTIONS=$((ACTIONS-1))
@@ -426,7 +441,7 @@ main() {
    # the script folder is valid or we are just doing dev
    if $valid_script || [ $DEPLOY_TYPE = "dev" ]; then
 
-        if $DEPLOY || $RECONFIGURE; then
+        if $DEPLOY || $RECONFIGURE || $ROLLBACK; then
 
             cd $YML
 
@@ -459,7 +474,7 @@ main() {
         fi
 
         # don't deploy and reconfigure
-        if $RECONFIGURE && $( ! $DEPLOY) && [ $compiled -eq 1 ]; then
+        if $RECONFIGURE && [ $compiled -eq 1 ]; then
 
             echo "Reconfigure: ($HOSTS_FILE)"
 	        st=$(date +'%Y-%m-%d %H-%M-%S')
@@ -468,6 +483,17 @@ main() {
             $LIVE && ansible-playbook -i $HOSTS_FILE ansible-reconfig.yml --extra-vars "production=$([ $DEPLOY_TYPE = "prod" ] && echo "true" || echo "false") deploy_date_time=\"$st\" by=\"$(getCurrentUser)\" "
 
             echo $(addDeploymentMarker $production "Reconfigure" $gitlog $branch)
+        fi
+
+        if $ROLLBACK; then
+
+            echo "Rollback: ($HOSTS_FILE)"
+            st=$(date +'%Y-%m-%d %H-%M-%S')
+
+            cd $YML
+            $LIVE && ansible-playbook -i $HOSTS_FILE ansible-rollback.yml --extra-vars "production=$([ $DEPLOY_TYPE = "prod" ] && echo "true" || echo "false") deploy_date_time=\"$st\" by=\"$(getCurrentUser)\" "
+
+            echo $(addDeploymentMarker $production "Rollback" $gitlog $branch)
         fi
 
         echo
@@ -695,6 +721,10 @@ usage() {
     echo "      Reconfigure the respective servers. Deploy configuration build to each,"
     echo "      which includes custom.properties, encoding profiles and workflows."
     echo
+    echo "  --rollback"
+    echo "      Rollback the respective servers. The previous version (backup folder)"
+    echo "      will now be used as the live version and now the live bversion is in the backup folder"
+    echo
     echo "  -s, --status"
     echo "      Display the current git status of the source folder ($SRC) and assemblies."
     echo
@@ -720,7 +750,7 @@ usage() {
 ## TODO: Add optional parameters to
 ##       - build: 0 (default) Do All, 1 build src, 2 build cfg
 #        - clean: 0 (default) Do All, 1 clean only db, 2 clean shared+archive+distribution
-ARGS=$(getopt -o ":abcdhlrstuvxz" -l ":all,build,clean,deploy,help,list,reconfig,update-git,status,version,xtop,ztart,lti-deploy,alias,track4k,audiotrim,ocr" -n "$PROGNAME" -- "$@")
+ARGS=$(getopt -o ":abcdhlrstuvxz" -l ":all,build,clean,deploy,help,list,reconfig,rollback,update-git,status,version,xtop,ztart,lti-deploy,alias,track4k,audiotrim,ocr" -n "$PROGNAME" -- "$@")
 
 if [ $? -ne 0 ] || [ $# -eq 0 ]; then
     # if error in parsing args display usage
@@ -798,6 +828,11 @@ while true; do
             ;;
         -r|--reconfig)
             RECONFIGURE=true
+            $MORE && ACTIONS=$((ACTIONS+1))
+            shift
+            ;;
+        --rollback)
+            ROLLBACK=true
             $MORE && ACTIONS=$((ACTIONS+1))
             shift
             ;;

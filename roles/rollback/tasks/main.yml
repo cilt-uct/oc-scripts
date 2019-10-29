@@ -1,0 +1,5 @@
+---
+# This playbook will run the deploy config script on the node
+
+  - include_role:
+      name: deploy_config
