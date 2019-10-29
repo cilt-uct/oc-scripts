@@ -74,12 +74,12 @@ main() {
     $START_SERVICE && service opencast start
 
     echo
-    # OPENCAST-2386 - stop removing deployment files until we can sort out why it fails
-    #echo "    Cleaning ..."
-    #rm tmp folder - and real tmp folder
-    #rm deploy.cfg
-    #rm deploy.tar.gz
-    #rm ${PROGNAME};
+   
+    echo "    Cleaning ..."
+    rm tmp folder - and real tmp folder
+    rm deploy.cfg
+    rm deploy.tar.gz
+    rm ${PROGNAME};
 
   else
 
