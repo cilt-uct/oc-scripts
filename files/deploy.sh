@@ -94,7 +94,6 @@ main() {
     cp $working/etc/workflows-default/retract.xml $working/etc/workflows/retract.xml
     cp $working/etc/workflows-default/attach-watson-transcripts.xml $working/etc/workflows/attach-watson-transcripts.xml
     cp $working/etc/workflows-default/publish-uploaded-assets.xml $working/etc/workflows/publish-uploaded-assets.xml
-    cp $working/etc/workflows-default/duplicate-event.xml $working/etc/workflows/duplicate-event.xml
     cp $working/etc/workflows-default/import.xml $working/etc/workflows/import.xml
     cp $working/etc/workflows-default/offload.xml $working/etc/workflows/offload.xml
     cp $working/etc/workflows-default/restore.xml $working/etc/workflows/restore.xml
