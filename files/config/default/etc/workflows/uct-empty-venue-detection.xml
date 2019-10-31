@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<definition xmlns="http://workflow.opencastproject.org">
+
+  <id>uct-empty-venue-detection</id>
+  <title>Empty Venue Detection</title>
+  <tags>
+    <tag>archive</tag>
+  </tags>
+  <description/>
+  <configuration_panel />
+
+  <operations>
+
+    <!-- load the values from before -->
+    <operation
+      id="import-wf-properties"
+      fail-on-error="true"
+      exception-handler-workflow="partial-error"
+      description="Load processing settings">
+      <configurations>
+        <configuration key="source-flavor">processing/defaults</configuration>
+      </configurations>
+    </operation>
+
+    <!-- extract audio from the first of the source streams, encode to wav for analysis to be run properly -->
+    <operation
+      id="compose"
+      fail-on-error="false"
+      description="Extracting audio for trim point detection">
+      <configurations>
+        <configuration key="source-flavor">*/source</configuration>
+        <configuration key="target-flavor">audio/wav</configuration>
+        <configuration key="encoding-profile">audio.wav</configuration>
+
+        <!-- If there is more than one file that match the source-tags, use only the first one -->
+        <configuration key="process-first-match-only">true</configuration>
+      </configurations>
+    </operation>
+
+    <!-- Check whether this is a timetabled course event and get location -->
+    <operation
+      id="execute-once"
+      max-attempts="3"
+      retry-strategy="hold"
+      fail-on-error="true"
+      exception-handler-workflow="partial-error"
+      description="Detect empty venue">
+      <configurations>
+        <configuration key="exec">/opt/opencast/wfexec/vad-python.sh</configuration>
+        <configuration key="load">4.0</configuration>
+        <configuration key="params">-i #{flavor(audio/wav)} -o #{out}</configuration>
+        <configuration key="output-filename">empty-venue.txt</configuration>
+        <configuration key="set-workflow-properties">true</configuration>
+        <configuration key="expected-type">Attachment</configuration>
+      </configurations>
+    </operation>
+
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      Save, Archive and Cleanup
+    -->
+
+    <!-- Save workflow properties -->
+    <operation
+      id="export-wf-properties"
+      fail-on-error="true"
+      exception-handler-workflow="partial-error"
+      description="Export workflow settings to Java properties file">
+      <configurations>
+        <configuration key="target-flavor">processing/defaults</configuration>
+        <configuration key="target-tags">archive</configuration>
+      </configurations>
+    </operation>
+
+    <!-- Archive generated items -->
+    <operation
+      id="snapshot"
+      description="Archive work and preview information">
+      <configurations>
+        <configuration key="source-tags">archive</configuration>
+      </configurations>
+    </operation>
+
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <!-- Cleanup                                                           -->
+    <!--                                                                   -->
+    <!-- Remove work artifacts in /data/opencast/work/shared/...           -->
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <operation
+      id="include"
+      description="Remove temporary processing artifacts">
+      <configurations>
+        <configuration key="workflow-id">partial-cleanup</configuration>
+      </configurations>
+    </operation>
+
+  </operations>
+
+</definition>

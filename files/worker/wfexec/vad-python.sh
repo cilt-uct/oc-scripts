@@ -56,4 +56,4 @@ if [ -z "$media" ] && [ -z "$output_file" ]; then
     exit 4
 fi
 
-python3 detectVoiceInWave.py -i media -o output_file
+python3 /opt/VAD-python/detectVoiceInWave.py -i media -o output_file
