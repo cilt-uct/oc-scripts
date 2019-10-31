@@ -71,15 +71,6 @@
       </configurations>
     </operation>
 
-    <!-- Archive generated items -->
-    <operation
-      id="snapshot"
-      description="Archive work and preview information">
-      <configurations>
-        <configuration key="source-tags">archive</configuration>
-      </configurations>
-    </operation>
-
     <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
     <!-- Cleanup                                                           -->
     <!--                                                                   -->
