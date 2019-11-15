@@ -39,7 +39,24 @@
       max-attempts="3"
       retry-strategy="hold"
       fail-on-error="true"
-      if="${trim_detect_media} AND ${trim_detect_audio}"
+      exception-handler-workflow="partial-error"
+      description="Detect empty venue">
+      <configurations>
+        <configuration key="exec">/opt/opencast/wfexec/vad-python.sh</configuration>
+        <configuration key="load">4.0</configuration>
+        <configuration key="params">-i #{flavor(trim/detect)} -o #{out}</configuration>
+        <configuration key="output-filename">empty-venue.txt</configuration>
+        <configuration key="set-workflow-properties">true</configuration>
+        <configuration key="expected-type">Attachment</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="execute-once"
+      max-attempts="3"
+      retry-strategy="hold"
+      fail-on-error="true"
+      if="${trim_detect_media} AND ${trim_detect_audio} AND NOT(${empty_venue_detect})"
       exception-handler-workflow="partial-error"
       description="Get Audio Segments">
       <configurations>
@@ -58,7 +75,7 @@
       max-attempts="3"
       retry-strategy="retry"
       fail-on-error="true"
-      if="${trim_detect_media} AND ${trim_detect_audio} AND ${audio_trim_ishour}"
+      if="${trim_detect_media} AND ${trim_detect_audio} AND ${audio_trim_ishour} AND NOT(${empty_venue_detect})"
       exception-handler-workflow="partial-error"
       description="Construct SMIL">
       <configurations>
