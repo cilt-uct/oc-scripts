@@ -2,31 +2,31 @@
 # This playbook will copy over the build of each node type and deploy the build on each node
 
   - name: Copy allinone assembly
-    copy: src={{ deploy_assembly_allinone }} dest=/opt/opencast-dist-allinone.tar.gz owner=opencast group=opencast mode=0644
+    copy: src={{ deploy_assembly_allinone }} dest=/opt/opencast-dist-allinone.tar.gz owner="{{ system_user }}" group="{{ system_group }}" mode=0600
     when: "'allinone' in group_names"
 
   - name: Copy admin assembly
-    copy: src={{ deploy_assembly_admin }} dest=/opt/opencast-dist-admin.tar.gz owner=opencast group=opencast mode=0644
+    copy: src={{ deploy_assembly_admin }} dest=/opt/opencast-dist-admin.tar.gz owner="{{ system_user }}" group="{{ system_group }}" mode=0600
     when: "'admin' in group_names"
 
   - name: Copy admin and presentation assembly
-    copy: src={{ deploy_assembly_adminpresentation }} dest=/opt/opencast-dist-adminpresentation.tar.gz owner=opencast group=opencast mode=0644
+    copy: src={{ deploy_assembly_adminpresentation }} dest=/opt/opencast-dist-adminpresentation.tar.gz owner="{{ system_user }}" group="{{ system_group }}" mode=0600
     when: "'adminpresentation' in group_names"
 
   - name: Copy admin and worker assembly
-    copy: src={{ deploy_assembly_adminworker }} dest=/opt/opencast-dist-adminworker.tar.gz owner=opencast group=opencast mode=0644
+    copy: src={{ deploy_assembly_adminworker }} dest=/opt/opencast-dist-adminworker.tar.gz owner="{{ system_user }}" group="{{ system_group }}" mode=0600
     when: "'adminworker' in group_names"
 
   - name: Copy presentation assembly
-    copy: src={{ deploy_assembly_presentation }} dest=/opt/opencast-dist-presentation.tar.gz owner=opencast group=opencast mode=0644
+    copy: src={{ deploy_assembly_presentation }} dest=/opt/opencast-dist-presentation.tar.gz owner="{{ system_user }}" group="{{ system_group }}" mode=0600
     when: "'presentation' in group_names"
 
   - name: Copy ingest assembly
-    copy: src={{ deploy_assembly_ingest }} dest=/opt/opencast-dist-ingest.tar.gz owner=opencast group=opencast mode=0644
+    copy: src={{ deploy_assembly_ingest }} dest=/opt/opencast-dist-ingest.tar.gz owner="{{ system_user }}" group="{{ system_group }}" mode=0600
     when: "'ingest' in group_names"
 
   - name: Copy worker assembly
-    copy: src={{ deploy_assembly_worker }} dest=/opt/opencast-dist-worker.tar.gz owner=opencast group=opencast mode=0644
+    copy: src={{ deploy_assembly_worker }} dest=/opt/opencast-dist-worker.tar.gz owner="{{ system_user }}" group="{{ system_group }}" mode=0600
     when: "'worker' in group_names"
 
   - include_role:

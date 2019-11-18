@@ -489,7 +489,7 @@ main() {
 	        st=$(date +'%Y-%m-%d %H-%M-%S')
 
             cd $YML
-            $LIVE && ansible-playbook -i $HOSTS_FILE ansible-deploy.yml --extra-vars "production=$([ $DEPLOY_TYPE = "prod" ] && echo "true" || echo "false") deploy_date_time=\"$st\" by=\"$(getCurrentUser)\" "
+            $LIVE && ansible-playbook -i $HOSTS_FILE ansible-deploy.yml --extra-vars "production=$([ $DEPLOY_TYPE = "prod" ] && echo "true" || echo "false") deploy_date_time=\"$st\" by=\"$(getCurrentUser)\" system_user=root system_group=root "
 
             echo $(addDeploymentMarker $production "Deploy" $gitlog $branch)
         fi
@@ -501,7 +501,7 @@ main() {
 	        st=$(date +'%Y-%m-%d %H-%M-%S')
 
             cd $YML
-            $LIVE && ansible-playbook -i $HOSTS_FILE ansible-reconfig.yml --extra-vars "production=$([ $DEPLOY_TYPE = "prod" ] && echo "true" || echo "false") deploy_date_time=\"$st\" by=\"$(getCurrentUser)\" "
+            $LIVE && ansible-playbook -i $HOSTS_FILE ansible-reconfig.yml --extra-vars "production=$([ $DEPLOY_TYPE = "prod" ] && echo "true" || echo "false") deploy_date_time=\"$st\" by=\"$(getCurrentUser)\" system_user=root system_group=root"
 
             echo $(addDeploymentMarker $production "Reconfigure" $gitlog $branch)
         fi
@@ -512,7 +512,7 @@ main() {
             st=$(date +'%Y-%m-%d %H-%M-%S')
 
             cd $YML
-            $LIVE && ansible-playbook -i $HOSTS_FILE ansible-rollback.yml --extra-vars "production=$([ $DEPLOY_TYPE = "prod" ] && echo "true" || echo "false") deploy_date_time=\"$st\" by=\"$(getCurrentUser)\" "
+            $LIVE && ansible-playbook -i $HOSTS_FILE ansible-rollback.yml --extra-vars "production=$([ $DEPLOY_TYPE = "prod" ] && echo "true" || echo "false") deploy_date_time=\"$st\" by=\"$(getCurrentUser)\"  system_user=root system_group=root"
 
             echo $(addDeploymentMarker $production "Rollback" $gitlog $branch)
         fi
@@ -548,7 +548,7 @@ main() {
         rm -rf $TMP_DIR/*
 
         cd $YML
-        $LIVE && ansible-playbook -i $HOSTS_FILE ansible-lti.yml --extra-vars "production=$([ $DEPLOY_TYPE = "prod" ] && echo "true" || echo "false")"
+        $LIVE && ansible-playbook -i $HOSTS_FILE ansible-lti.yml --extra-vars "production=$([ $DEPLOY_TYPE = "prod" ] && echo "true" || echo "false")  system_user=root system_group=root"
 
         echo $(addDeploymentMarker $production "LTI" $gitlog $branch)
     fi

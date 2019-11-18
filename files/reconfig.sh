@@ -86,7 +86,7 @@ main() {
   fi
 
   chown -R opencast:opencast $working_real/
-  chmod g+w -R $working_real/
+  # chmod g+w -R $working_real/
 
   server_etc=$(awk '/org.opencastproject.server.url=http/ && /uct.ac/' $working/etc/custom.properties | cut -d "=" -f2)
 
