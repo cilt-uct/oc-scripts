@@ -36,7 +36,7 @@
     <!-- Add comments in order to mark the recording for editing or empty venue -->
     <operation
       id="comment"
-      if="${event_trim} AND NOT(${empty_venue_detect})"
+      if="${event_trim} AND NOT(${empty_venue})"
       description="Mark for editing">
       <configurations>
         <configuration key="description">${timetable_comment}</configuration>
@@ -47,7 +47,7 @@
 
     <operation
       id="comment"
-      if="${empty_venue_detect}"
+      if="${empty_venue}"
       description="Mark as empty venue">
       <configurations>
         <configuration key="description">Empty venue.</configuration>
@@ -58,7 +58,7 @@
 
     <operation
       id="comment"
-      if="${empty_venue_detect}"
+      if="${empty_venue}"
       description="Mark as empty venue (resolve)">
       <configurations>
         <configuration key="description">Empty venue.</configuration>
