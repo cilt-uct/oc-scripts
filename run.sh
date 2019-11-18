@@ -132,8 +132,8 @@ packageConfiguration() {
 
         # make sure that the files exist for the server so that packaging them is easier next time
         cfg_dir="$FILES/config/$name"
-        cfg_file="$FILES/config/build-$name.cfg"
-        build_file="$FILES/config/conf-$name.cfg"
+        cfg_file="$FILES/config/conf-$name.cfg"
+        build_file="$FILES/config/build-$name.cfg"
 
         if [ ! -f "$cfg_file" ]; then
             cp "$FILES/conf-server.template" "$cfg_file"
