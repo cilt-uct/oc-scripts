@@ -33,15 +33,37 @@
       </configurations>
     </operation>
 
-    <!-- Add comments in order to mark the recording for editing -->
+    <!-- Add comments in order to mark the recording for editing or empty venue -->
     <operation
       id="comment"
-      if="${event_trim}"
+      if="${event_trim} AND NOT(${empty_venue_detect})"
       description="Mark for editing">
       <configurations>
         <configuration key="description">${timetable_comment}</configuration>
         <configuration key="reason">EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.CUTTING</configuration>
         <configuration key="action">create</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="comment"
+      if="${empty_venue_detect}"
+      description="Mark as empty venue">
+      <configurations>
+        <configuration key="description">Empty venue.</configuration>
+        <configuration key="reason">EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.REVIEW</configuration>
+        <configuration key="action">create</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="comment"
+      if="${empty_venue_detect}"
+      description="Mark as empty venue (resolve)">
+      <configurations>
+        <configuration key="description">Empty venue.</configuration>
+        <configuration key="reason">EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.REVIEW</configuration>
+        <configuration key="action">resolve</configuration>
       </configurations>
     </operation>
 
