@@ -8,55 +8,13 @@
   <configuration_panel></configuration_panel>
   <operations>
 
-    <!-- extract audio from the first of the source streams, encode to wav for analysis to be run properly -->
-    <operation
-      id="compose"
-      fail-on-error="false"
-      description="Extracting audio for trim point detection">
-      <configurations>
-        <configuration key="source-flavor">*/source</configuration>
-        <configuration key="target-flavor">trim/detect</configuration>
-        <configuration key="encoding-profile">audio.wav</configuration>
-
-        <!-- If there is more than one file that match the source-tags, use only the first one -->
-        <configuration key="process-first-match-only">true</configuration>
-      </configurations>
-    </operation>
-
     <!-- Analyze Tracks -->
     <operation
-      id="analyze-tracks"
-      fail-on-error="false"
-      exception-handler-workflow="partial-error"
-      description="Analyze: Trim/Detect">
-      <configurations>
-        <configuration key="source-flavor">trim/detect</configuration>
-      </configurations>
-    </operation>
-
-    <operation
       id="execute-once"
       max-attempts="3"
       retry-strategy="hold"
       fail-on-error="true"
-      exception-handler-workflow="partial-error"
-      description="Detect empty venue">
-      <configurations>
-        <configuration key="exec">/opt/opencast/wfexec/detect-empty-venue.sh</configuration>
-        <configuration key="load">4.0</configuration>
-        <configuration key="params">-i #{flavor(trim/detect)} -o #{out}</configuration>
-        <configuration key="output-filename">empty-venue.txt</configuration>
-        <configuration key="set-workflow-properties">true</configuration>
-        <configuration key="expected-type">Attachment</configuration>
-      </configurations>
-    </operation>
-
-    <operation
-      id="execute-once"
-      max-attempts="3"
-      retry-strategy="hold"
-      fail-on-error="true"
-      if="${trim_detect_media} AND ${trim_detect_audio} AND NOT(${empty_venue})"
+      if="${trim_detect_media} AND ${trim_detect_audio}"
       exception-handler-workflow="partial-error"
       description="Get Audio Segments">
       <configurations>
@@ -75,7 +33,7 @@
       max-attempts="3"
       retry-strategy="retry"
       fail-on-error="true"
-      if="${trim_detect_media} AND ${trim_detect_audio} AND ${audio_trim_ishour} AND NOT(${empty_venue})"
+      if="${trim_detect_media} AND ${trim_detect_audio} AND ${audio_trim_ishour}"
       exception-handler-workflow="partial-error"
       description="Construct SMIL">
       <configurations>
