@@ -130,6 +130,27 @@ packageConfiguration() {
 
     if [ "$CONFIG_DIR" != "$name" ]; then
 
+        # make sure that the files exist for the server so that packaging them is easier next time
+        cfg_dir="$FILES/config/$name"
+        cfg_file="$FILES/config/build-$name.cfg"
+        build_file="$FILES/config/conf-$name.cfg"
+
+        if [ ! -f "$cfg_file" ]; then
+            cp "$FILES/conf-server.template" "$cfg_file"
+            sed -i -e "/#.*/! s;NNNN;$name/;" "$cfg_file"
+        fi
+
+        if [ ! -f "$build_file" ]; then
+            echo "deploy_server_name=http://$name.uct.ac.za:8080" > $build_file
+        fi
+
+        if [ ! -d "$cfg_dir" ]; then
+            mkdir -p "$cfg_dir/etc"
+            mkdir -p "$cfg_dir/bin"
+            touch "$cfg_dir/etc/.keep"
+            touch "$cfg_dir/bin/.keep"
+        fi
+
         mkdir -p $tmp
 
         # copy default configuration files to tmp
@@ -283,7 +304,7 @@ main() {
         if $( ! $DEPLOY) && $(! $RECONFIGURE); then
             printf "Rollback"
             [ "$ACTIONS" -gt "1" ] && printf " - "
-        else 
+        else
             ROLLBACK=false
         fi
 
