@@ -56,4 +56,12 @@ if [ -z "$media" ] && [ -z "$output_file" ]; then
     exit 4
 fi
 
-python3 /opt/VAD-python/detectVoiceInWave.py -i $media -o $output_file
+if [[ $string == *".flac"* ]]; 
+    then 
+        echo "'$media' is a flac file and will be passed on for empty venue detection"
+        python3 /opt/VAD-python/detectVoiceInWave.py -i $media -o $output_file
+        exit 0
+    else
+        echo "'$media' is not a flac file"
+        exit 5
+fi
