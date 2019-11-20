@@ -171,14 +171,23 @@ showmedia () {
 rmworkmedia() {
   if [ "$1" != "" ]; then
     media=$1
-    printf "Mediapackage_id: $media"
+    printf "Mediapackage_id: $media\n"
   else
     printf "Mediapackage_id: "
     read media
   fi
 
-  rm -rf /data/opencast/archive/shared/workspace/mediapackage/$media
-  rm -rf /data/opencast/archive/shared/files/mediapackage/$media
+  # Workspace
+  dir_shared_workspace="/data/opencast/archive/shared/workspace/mediapackage/$media"
+  dir_shared_files="/data/opencast/archive/shared/files/mediapackage/$media"
+
+  rm -rf $dir_shared_workspace
+  rm -rf $dir_shared_files
+
+  shared_workspace=$(dirUsed "$dir_shared_workspace")
+  shared_files=$(dirUsed "$dir_shared_files")
+
+  printf "  Out: $shared_workspace $shared_files\n"
 }
 
 movemedia () {
