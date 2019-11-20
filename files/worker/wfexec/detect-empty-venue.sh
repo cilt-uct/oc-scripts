@@ -63,5 +63,5 @@ if [[ $string == *".flac"* ]];
         exit 0
     else
         echo "'$media' is not a flac file"
-        exit 5
+        exit 0
 fi
