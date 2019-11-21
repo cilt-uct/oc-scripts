@@ -60,7 +60,6 @@ if [[ $string == *".flac"* ]];
     then 
         echo "'$media' is a flac file and will be passed on for empty venue detection"
         python3 /opt/VAD-python/detectVoiceInWave.py -i $media -o $output_file
-        exit 0
     else
         echo "'$media' is not a flac file"
         exit 0
