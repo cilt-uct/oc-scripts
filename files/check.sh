@@ -6,6 +6,9 @@ DEPLOY_DIR=/opt
 PROGNAME=$(basename "$0")
 CONFIG="$DEPLOY_DIR/check.cfg"
 
+OC_USER_ID=1004
+OC_GROUP_ID=1004
+
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 BLUE='\033[0;36m'
@@ -216,6 +219,50 @@ if [ $? -eq 0 ]; then
 
 else
   printf "${RED}FAIL${NC}\n"
+fi
+
+echo
+echo "Opencast User: "
+oc_all=$(id opencast)
+oc_groups=$(id -nG opencast)
+oc_id_u=$(id -u opencast)
+oc_id_g=$(id -g opencast)
+
+if [[ $oc_id_u -eq $OC_USER_ID && $oc_id_g -eq $OC_GROUP_ID && $oc_groups == *"opencast"* ]]; then
+    printf "${GREEN}${oc_all}${NC}\n"
+
+    echo
+    echo "Checking archive and distribution folder ownership and groups: "
+
+    declare -a folders_to_check=("/data/opencast/archive" "/data/opencast/archive/mh_default_org/")
+    declare -a check_dirs=(
+                    "/data/opencast/archive/shared/"
+                    "/data/opencast/distribution/"
+                    "/data/opencast/archive/shared/files/collection/"
+                    "/data/opencast/archive/shared/workspace/collection/")
+    for d in "${check_dirs[@]}"
+    do
+        if [ -d "$d" ]; then
+            readarray -t test_ar < <(find -L $d -maxdepth 2 -type d -regex '.*/[a-z\-]*$')
+            folders_to_check=("${folders_to_check[@]}" "${test_ar[@]}")
+        fi
+    done
+
+    for test_dir in "${folders_to_check[@]}"
+    do
+        if [ -d "$test_dir" ]; then
+            test_u=$(stat -c '%u' $test_dir)
+            test_g=$(stat -c '%g' $test_dir)
+
+            if [[ $test_u -ne $OC_USER_ID || $test_g -ne $OC_GROUP_ID ]]; then
+                printf "Fixing: ${RED}${test_u} ${test_g} ${test_dir}${NC}\n"
+                chown opencast:opencast $test_dir
+            fi
+        fi
+    done
+    printf "    ${GREEN}Done${NC}\n"
+else
+    printf "${RED}FAIL: ${oc_all} ${NC}\n"
 fi
 
 echo

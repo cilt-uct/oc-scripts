@@ -1,6 +1,6 @@
 # Check servers
 ---
-- name: Check the versions on all the servers
+- name: Check the versions on Worker / Admin servers (NOT Ingest)
   hosts: all
   become: true
 

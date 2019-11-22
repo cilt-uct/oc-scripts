@@ -3,6 +3,7 @@
 use strict;
 use File::Find::Rule;
 use Cwd;
+use Data::Dumper;
 
 sub uniq {
     my %seen;
@@ -12,17 +13,25 @@ sub uniq {
 my $debug = 0;
 my @result = ();
 
-my $dir = getcwd;
+my $dir = getcwd; # '/opt';
+$dir = '/opt' if $debug;
+
+# Find all the subdirectories of the work directory - ansible copies this to /opt
+# follows means we also go through system linked folders
+my @subdirs = File::Find::Rule->directory->extras({ follow => 1 })->name( '*opencast*' )->in( $dir );
+print Dumper(@subdirs) if $debug;
+
 my @files = File::Find::Rule->file()
                             ->name( '*.pl' )
-                            ->in( $dir );
+                            ->in( @subdirs );
 
-#while (defined(my $file = glob '/opt/opencast/wfexec/*.pl')) {
+# while (defined(my $file = glob '/opt/opencast/wfexec/*.pl')) {
 for my $file (@files) {
   open my $fh, "<", $file;  # lexical file handles, automatic error handling
 
   while (defined( my $line = <$fh> )) {
     my @matches = $line =~ /^use (\w*::\w*::\w*|\w*::\w*|\w*).*\;/g;
+    print Dumper(@matches) if $debug;
     push @result, @matches;
   }
   close $fh;
