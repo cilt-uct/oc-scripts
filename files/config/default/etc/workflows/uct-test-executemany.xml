@@ -11,7 +11,6 @@
 
   <operations>
 
-    <!-- Run track4k on presenter/source to presenter/tracked -->
     <operation
       id="execute-many"
       fail-on-error="true"
@@ -22,7 +21,7 @@
         <configuration key="params">#{in} #{out}</configuration>
         <configuration key="source-flavor">presenter/source</configuration>
         <configuration key="set-workflow-properties">true</configuration>
-        <configuration key="source-video">true</configuration>
+        <configuration key="source-audio">true</configuration>
         <configuration key="output-filename">wf.properties</configuration>
         <configuration key="expected-type">Attachment</configuration>
       </configurations>
