@@ -95,7 +95,7 @@ INSERT INTO oc_transcription_service_job (id, mediapackage_id, track_id, job_id,
 
 DROP TABLE oc_ibm_watson_transcript_job;
 
-#Clear out job data and hosts
+---Clear out job data and hosts
 SET FOREIGN_KEY_CHECKS=0;
 select 'Truncating job and host data' as 'ON';
 TRUNCATE oc_job;
@@ -104,4 +104,4 @@ TRUNCATE oc_job_mh_service_registration;
 TRUNCATE oc_host_registration;
 TRUNCATE oc_service_registration;
 SET FOREIGN_KEY_CHECKS=1;
-#END Clear out job data and hosts
+---END Clear out job data and hosts
