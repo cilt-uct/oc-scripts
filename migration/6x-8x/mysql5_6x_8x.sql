@@ -1,5 +1,7 @@
 ALTER TABLE oc_assets_asset ADD CONSTRAINT FK_oc_assets_asset_snapshot_id FOREIGN KEY (snapshot_id) REFERENCES oc_assets_snapshot (id) ON DELETE CASCADE;
-DROP TABLE oc_scheduled_transaction;
+
+-- DROP TABLE oc_scheduled_transaction; (Already dropped)
+
 DROP TABLE oc_scheduled_extended_event;
 CREATE TABLE oc_scheduled_extended_event (
   mediapackage_id VARCHAR(128) NOT NULL,
@@ -23,7 +25,7 @@ CREATE INDEX IX_oc_scheduled_extended_event_capture_agent_id ON oc_scheduled_ext
 CREATE INDEX IX_oc_scheduled_extended_event_dates ON oc_scheduled_extended_event (start_date, end_date);
 DELETE FROM oc_assets_properties WHERE namespace = 'org.opencastproject.scheduler.trx';
 
-ALTER TABLE oc_job DROP COLUMN blocking_job;
+-- ALTER TABLE oc_job DROP COLUMN blocking_job; (Already dropped)
 DROP TABLE oc_blocking_job;
 
 -- Due to MH-13397 Remove unfinished feature "Participation Management"
@@ -48,13 +50,13 @@ delete p from oc_assets_properties p where not exists (
 CREATE INDEX IX_oc_search_series ON oc_search (series_id);
 
 -- MH-13380 Add snapshot_id index for efficiency
-CREATE INDEX IX_oc_assets_asset_snapshot_id ON oc_assets_asset (snapshot_id);
+-- CREATE INDEX IX_oc_assets_asset_snapshot_id ON oc_assets_asset (snapshot_id); (Already exists)
 
 -- MH-13490 Add event index for efficiency
-CREATE INDEX IX_oc_event_comment_event ON oc_event_comment (event, organization);
+-- CREATE INDEX IX_oc_event_comment_event ON oc_event_comment (event, organization); (Already exists)
 
 -- MH-13489 Add index on series_id for efficiency
-CREATE INDEX IX_oc_assets_snapshot_series ON oc_assets_snapshot (series_id, version);
+-- CREATE INDEX IX_oc_assets_snapshot_series ON oc_assets_snapshot (series_id, version); (Already exists)
 
 -- Due to MH-13514 Add descriptive node names to hosts
 ALTER TABLE oc_host_registration ADD COLUMN node_name VARCHAR(255) AFTER host;
@@ -64,44 +66,48 @@ ALTER TABLE oc_aws_asset_mapping CHANGE COLUMN media_package mediapackage varcha
 
 
 -- Create provider table for transcription service
-CREATE TABLE oc_transcription_service_provider (
-  id BIGINT(20) NOT NULL,
-  provider VARCHAR(255) NOT NULL,
-  PRIMARY KEY (id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+-- CREATE TABLE oc_transcription_service_provider (
+--   id BIGINT(20) NOT NULL,
+--   provider VARCHAR(255) NOT NULL,
+--   PRIMARY KEY (id)
+-- ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+-- (Table already exists)
 
 -- Create table for transcription service job with link to transcription provider table
-CREATE TABLE oc_transcription_service_job (
-  id BIGINT(20) NOT NULL,
-  mediapackage_id VARCHAR(128) NOT NULL,
-  track_id VARCHAR(128) NOT NULL,
-  job_id  VARCHAR(128) NOT NULL,
-  date_created DATETIME NOT NULL,
-  date_expected DATETIME DEFAULT NULL,
-  date_completed DATETIME DEFAULT NULL,
-  status VARCHAR(128) DEFAULT NULL,
-  track_duration BIGINT NOT NULL,
-  provider_id BIGINT(20) NOT NULL,
-  PRIMARY KEY (id),
-  CONSTRAINT FK_oc_transcription_service_job_provider_id FOREIGN KEY (provider_id) REFERENCES oc_transcription_service_provider (id) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+-- CREATE TABLE oc_transcription_service_job (
+--   id BIGINT(20) NOT NULL,
+--   mediapackage_id VARCHAR(128) NOT NULL,
+--   track_id VARCHAR(128) NOT NULL,
+--   job_id  VARCHAR(128) NOT NULL,
+--   date_created DATETIME NOT NULL,
+--   date_expected DATETIME DEFAULT NULL,
+--   date_completed DATETIME DEFAULT NULL,
+--   status VARCHAR(128) DEFAULT NULL,
+--   track_duration BIGINT NOT NULL,
+--   provider_id BIGINT(20) NOT NULL,
+--   PRIMARY KEY (id),
+--   CONSTRAINT FK_oc_transcription_service_job_provider_id FOREIGN KEY (provider_id) REFERENCES oc_transcription_service_provider (id) ON DELETE CASCADE
+-- ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+-- (Table already exists)
 
 -- Migrate IBM Watson transcription data to new shared table
 
 INSERT INTO oc_transcription_service_provider (id, provider) VALUES (1, "IBM Watson");
+
+ALTER TABLE oc_transcription_service_job CHANGE "media_package_id" TO "mediapackage_id";
 
 INSERT INTO oc_transcription_service_job (id, mediapackage_id, track_id, job_id, date_created, date_completed, status, track_duration, provider_id)
  (SELECT id, media_package_id, track_id, job_id, date_created, date_completed, status, track_duration, 1 FROM oc_ibm_watson_transcript_job);
 
 DROP TABLE oc_ibm_watson_transcript_job;
 
----Clear out job data and hosts
+-- Clear out job data and hosts
 SET FOREIGN_KEY_CHECKS=0;
 select 'Truncating job and host data' as 'ON';
 TRUNCATE oc_job;
 TRUNCATE oc_job_argument;
-TRUNCATE oc_job_mh_service_registration;
+TRUNCATE oc_job_oc_service_registration;
 TRUNCATE oc_host_registration;
 TRUNCATE oc_service_registration;
 SET FOREIGN_KEY_CHECKS=1;
----END Clear out job data and hosts
+-- END Clear out job data and hosts
