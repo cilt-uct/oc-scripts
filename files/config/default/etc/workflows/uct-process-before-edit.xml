@@ -60,6 +60,15 @@
       </configurations>
     </operation>
 
+    <!-- Check if empty venue -->
+    <operation
+      id="include"
+      description="Detect empty venue">
+      <configurations>
+        <configuration key="workflow-id">uct-detect-empty-venue</configuration>
+      </configurations>
+    </operation>
+
     <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       Finalize ingest
       Make sure all elements are downloaded from external sources,
@@ -68,6 +77,7 @@
     -->
     <operation
       id="include"
+      if="NOT(${empty_venue})"
       description="Finalize upload and ingest">
       <configurations>
         <configuration key="workflow-id">uct-partial-ingest</configuration>
@@ -101,6 +111,7 @@
     -->
     <operation
       id="include"
+      if="NOT(${empty_venue})"
       description="Prepare work version for processing">
       <configurations>
         <configuration key="workflow-id">uct-partial-work</configuration>
@@ -112,6 +123,7 @@
     -->
     <operation
       id="include"
+      if="NOT(${empty_venue})"
       description="Run the audio analysis for (possible) autotrimming of the recording">
       <configurations>
         <configuration key="workflow-id">uct-include-autotrim-detection</configuration>
@@ -127,7 +139,7 @@
     -->
     <operation
       id="include"
-      if="${timetabled} AND ${audio_trim_autotrim} AND ${audio_trim_valid_venue}"
+      if="${timetabled} AND ${audio_trim_autotrim} AND ${audio_trim_valid_venue} AND NOT(${empty_venue})"
       description="RECORDING: Auto trim and publish (no preview)">
       <configurations>
         <configuration key="workflow-id">uct-include-before-edit-auto-trim</configuration>
