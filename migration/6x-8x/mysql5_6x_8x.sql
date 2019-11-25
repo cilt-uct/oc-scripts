@@ -94,7 +94,7 @@ ALTER TABLE oc_aws_asset_mapping CHANGE COLUMN media_package mediapackage varcha
 
 INSERT INTO oc_transcription_service_provider (id, provider) VALUES (1, "IBM Watson");
 
-ALTER TABLE oc_transcription_service_job CHANGE "media_package_id" TO "mediapackage_id";
+ALTER TABLE oc_transcription_service_job CHANGE COLUMN media_package_id mediapackage_id varchar(128);
 
 INSERT INTO oc_transcription_service_job (id, mediapackage_id, track_id, job_id, date_created, date_completed, status, track_duration, provider_id)
  (SELECT id, media_package_id, track_id, job_id, date_created, date_completed, status, track_duration, 1 FROM oc_ibm_watson_transcript_job);
