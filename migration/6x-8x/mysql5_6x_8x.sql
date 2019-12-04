@@ -111,3 +111,6 @@ TRUNCATE oc_host_registration;
 TRUNCATE oc_service_registration;
 SET FOREIGN_KEY_CHECKS=1;
 -- END Clear out job data and hosts
+
+-- Remove published search records for unpublished events as they don't need to get re-indexed
+delete from oc_search where deletion_date is not null;
