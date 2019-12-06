@@ -180,7 +180,7 @@
 
     <!-- Start Nibity transcription job -->
     <operation
-      id="start-nibity-transcription"
+      id="nibity-start-transcription"
       max-attempts="3"
       retry-strategy="hold"
       fail-on-error="true"

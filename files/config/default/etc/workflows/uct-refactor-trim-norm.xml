@@ -75,19 +75,17 @@
         </configurations>
       </operation>
 
-
-      <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-      <!-- Cleanup                                                           -->
-      <!--                                                                   -->
-      <!-- Remove work artifacts in /data/opencast/work/shared/...           -->
-      <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-      <operation
-        id="include"
+    <!-- Clean up work artifacts -->
+    <operation
+        id="cleanup"
+        fail-on-error="false"
         description="Remove temporary processing artifacts">
-        <configurations>
-          <configuration key="workflow-id">partial-cleanup</configuration>
-        </configurations>
-      </operation>
+      <configurations>
+        <configuration key="delete-external">true</configuration>
+        <!-- FixMe Don't clean up ACLs until workflow service no longer looks for them in the WFR. -->
+        <configuration key="preserve-flavors">security/*</configuration>
+      </configurations>
+    </operation>
 
   </operations>
 </definition>

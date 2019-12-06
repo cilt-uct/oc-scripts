@@ -366,17 +366,11 @@
       </configurations>
     </operation>
 
-    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-    <!-- Cleanup                                                           -->
-    <!--                                                                   -->
-    <!-- Remove work artifacts in /data/opencast/work/shared/...           -->
-    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <!-- Cleanup the working file repository -->
     <operation
-      id="include"
-      description="Remove temporary processing artifacts">
-      <configurations>
-        <configuration key="workflow-id">partial-cleanup</configuration>
-      </configurations>
+      id="cleanup"
+      fail-on-error="false"
+      description="Cleaning up">
     </operation>
 
   </operations>
