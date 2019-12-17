@@ -114,3 +114,6 @@ SET FOREIGN_KEY_CHECKS=1;
 
 -- Remove published search records for unpublished events as they don't need to get re-indexed
 delete from oc_search where deletion_date is not null;
+
+-- Drop bundle data to avoid production server bundle info showing up on dev servers
+truncate table oc_bundleinfo;
