@@ -117,3 +117,12 @@ delete from oc_search where deletion_date is not null;
 
 -- Drop bundle data to avoid production server bundle info showing up on dev servers
 truncate table oc_bundleinfo;
+
+-- Fix some paths in oc_search
+UPDATE oc_search
+   SET mediapackage_xml =
+   REPLACE( mediapackage_xml,
+            '/static/engage-player/',
+            '/static/mh_default_org/engage-player/')
+   WHERE INSTR( mediapackage_xml,
+                '/static/engage-player/') > 0;
