@@ -2,27 +2,38 @@ ALTER TABLE oc_assets_asset ADD CONSTRAINT FK_oc_assets_asset_snapshot_id FOREIG
 
 -- DROP TABLE oc_scheduled_transaction; (Already dropped)
 
-DROP TABLE oc_scheduled_extended_event;
-CREATE TABLE oc_scheduled_extended_event (
-  mediapackage_id VARCHAR(128) NOT NULL,
-  organization VARCHAR(128) NOT NULL,
-  capture_agent_id VARCHAR(128) NOT NULL,
-  start_date DATETIME NOT NULL,
-  end_date DATETIME NOT NULL,
-  source VARCHAR(255),
-  recording_state VARCHAR(255),
-  recording_last_heard BIGINT,
-  presenters TEXT(65535),
-  last_modified_date DATETIME,
-  checksum VARCHAR(64),
-  capture_agent_properties MEDIUMTEXT,
-  workflow_properties MEDIUMTEXT,
-  PRIMARY KEY (mediapackage_id, organization),
-  CONSTRAINT FK_oc_scheduled_extended_event_organization FOREIGN KEY (organization) REFERENCES oc_organization (id) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+-- DROP TABLE oc_scheduled_transaction; (Already dropped)
+
+-- DROP TABLE oc_scheduled_extended_event;
+-- CREATE TABLE oc_scheduled_extended_event (
+--   mediapackage_id VARCHAR(128) NOT NULL,
+--   organization VARCHAR(128) NOT NULL,
+--   capture_agent_id VARCHAR(128) NOT NULL,
+--   start_date DATETIME NOT NULL,
+--   end_date DATETIME NOT NULL,
+--   source VARCHAR(255),
+--   recording_state VARCHAR(255),
+--   recording_last_heard BIGINT,
+--   presenters TEXT(65535),
+--   last_modified_date DATETIME,
+--   checksum VARCHAR(64),
+--   capture_agent_properties MEDIUMTEXT,
+--   workflow_properties MEDIUMTEXT,
+--   PRIMARY KEY (mediapackage_id, organization),
+--   CONSTRAINT FK_oc_scheduled_extended_event_organization FOREIGN KEY (organization) REFERENCES oc_organization (id) ON DELETE CASCADE
+-- ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+ALTER TABLE
+  oc_scheduled_extended_event DROP review_status,
+  DROP review_date,
+  DROP optout,
+  DROP last_modified_origin;
+
 CREATE INDEX IX_oc_scheduled_extended_event_organization ON oc_scheduled_extended_event (organization);
-CREATE INDEX IX_oc_scheduled_extended_event_capture_agent_id ON oc_scheduled_extended_event (capture_agent_id);
-CREATE INDEX IX_oc_scheduled_extended_event_dates ON oc_scheduled_extended_event (start_date, end_date);
+-- CREATE INDEX IX_oc_scheduled_extended_event_capture_agent_id ON oc_scheduled_extended_event (capture_agent_id);
+-- CREATE INDEX IX_oc_scheduled_extended_event_dates ON oc_scheduled_extended_event (start_date, end_date);
+
+DELETE FROM oc_scheduled_extended_event WHERE end_date < NOW();
 DELETE FROM oc_assets_properties WHERE namespace = 'org.opencastproject.scheduler.trx';
 
 -- ALTER TABLE oc_job DROP COLUMN blocking_job; (Already dropped)
