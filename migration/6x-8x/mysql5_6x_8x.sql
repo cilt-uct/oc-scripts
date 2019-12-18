@@ -2,27 +2,13 @@ ALTER TABLE oc_assets_asset ADD CONSTRAINT FK_oc_assets_asset_snapshot_id FOREIG
 
 -- DROP TABLE oc_scheduled_transaction; (Already dropped)
 
-DROP TABLE oc_scheduled_extended_event;
-CREATE TABLE oc_scheduled_extended_event (
-  mediapackage_id VARCHAR(128) NOT NULL,
-  organization VARCHAR(128) NOT NULL,
-  capture_agent_id VARCHAR(128) NOT NULL,
-  start_date DATETIME NOT NULL,
-  end_date DATETIME NOT NULL,
-  source VARCHAR(255),
-  recording_state VARCHAR(255),
-  recording_last_heard BIGINT,
-  presenters TEXT(65535),
-  last_modified_date DATETIME,
-  checksum VARCHAR(64),
-  capture_agent_properties MEDIUMTEXT,
-  workflow_properties MEDIUMTEXT,
-  PRIMARY KEY (mediapackage_id, organization),
-  CONSTRAINT FK_oc_scheduled_extended_event_organization FOREIGN KEY (organization) REFERENCES oc_organization (id) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-CREATE INDEX IX_oc_scheduled_extended_event_organization ON oc_scheduled_extended_event (organization);
-CREATE INDEX IX_oc_scheduled_extended_event_capture_agent_id ON oc_scheduled_extended_event (capture_agent_id);
-CREATE INDEX IX_oc_scheduled_extended_event_dates ON oc_scheduled_extended_event (start_date, end_date);
+ALTER TABLE
+  oc_scheduled_extended_event DROP review_status,
+  DROP review_date,
+  DROP optout,
+  DROP last_modified_origin;
+
+DELETE FROM oc_scheduled_extended_event WHERE end_date < NOW();
 DELETE FROM oc_assets_properties WHERE namespace = 'org.opencastproject.scheduler.trx';
 
 -- ALTER TABLE oc_job DROP COLUMN blocking_job; (Already dropped)
@@ -64,32 +50,6 @@ ALTER TABLE oc_host_registration ADD COLUMN node_name VARCHAR(255) AFTER host;
 ALTER TABLE oc_aws_asset_mapping CHANGE COLUMN media_package_element mediapackage_element varchar(128);
 ALTER TABLE oc_aws_asset_mapping CHANGE COLUMN media_package mediapackage varchar(128);
 
-
--- Create provider table for transcription service
--- CREATE TABLE oc_transcription_service_provider (
---   id BIGINT(20) NOT NULL,
---   provider VARCHAR(255) NOT NULL,
---   PRIMARY KEY (id)
--- ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
--- (Table already exists)
-
--- Create table for transcription service job with link to transcription provider table
--- CREATE TABLE oc_transcription_service_job (
---   id BIGINT(20) NOT NULL,
---   mediapackage_id VARCHAR(128) NOT NULL,
---   track_id VARCHAR(128) NOT NULL,
---   job_id  VARCHAR(128) NOT NULL,
---   date_created DATETIME NOT NULL,
---   date_expected DATETIME DEFAULT NULL,
---   date_completed DATETIME DEFAULT NULL,
---   status VARCHAR(128) DEFAULT NULL,
---   track_duration BIGINT NOT NULL,
---   provider_id BIGINT(20) NOT NULL,
---   PRIMARY KEY (id),
---   CONSTRAINT FK_oc_transcription_service_job_provider_id FOREIGN KEY (provider_id) REFERENCES oc_transcription_service_provider (id) ON DELETE CASCADE
--- ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
--- (Table already exists)
-
 -- Migrate IBM Watson transcription data to new shared table
 
 INSERT INTO oc_transcription_service_provider (id, provider) VALUES (1, "IBM Watson");
@@ -114,3 +74,15 @@ SET FOREIGN_KEY_CHECKS=1;
 
 -- Remove published search records for unpublished events as they don't need to get re-indexed
 delete from oc_search where deletion_date is not null;
+
+-- Drop bundle data to avoid production server bundle info showing up on dev servers
+truncate table oc_bundleinfo;
+
+-- Fix some paths in oc_search
+UPDATE oc_search
+   SET mediapackage_xml =
+   REPLACE( mediapackage_xml,
+            '/static/engage-player/',
+            '/static/mh_default_org/engage-player/')
+   WHERE INSTR( mediapackage_xml,
+                '/static/engage-player/') > 0;
