@@ -51,7 +51,7 @@
     -->
     <operation id="compose"
       description="a. i. Create single-stream preview - presenter_transcription_video / audio"
-      if="${presenter_transcription_video} AND NOT(${presentation_transcription_video}) and NOT(${presentation2_transcription_video})"
+      if="${presenter_transcription_video} AND NOT(${presentation_transcription_video}) AND NOT(${presentation2_transcription_video})"
       fail-on-error="true"
       exception-handler-workflow="partial-error">
       <configurations>
@@ -63,7 +63,7 @@
 
     <operation id="compose"
       description="a. ii. Create audio only preview - presenter_source_audio"
-      if="${presenter_source_audio} and NOT(${presenter_transcription_video}) AND NOT(${presentation_transcription_video}) and NOT(${presentation2_transcription_video})"
+      if="${presenter_source_audio} AND NOT(${presenter_transcription_video}) AND NOT(${presentation_transcription_video}) AND NOT(${presentation2_transcription_video})"
       fail-on-error="true"
       exception-handler-workflow="partial-error">
       <configurations>
@@ -75,7 +75,7 @@
 
     <operation id="compose"
       description="b. Create single-stream preview - presentation_transcription_video / audio"
-      if="${presentation_transcription_video} AND NOT(${presenter_transcription_video}) and NOT(${presentation2_transcription_video})"
+      if="${presentation_transcription_video} AND NOT(${presenter_transcription_video}) AND NOT(${presentation2_transcription_video})"
       fail-on-error="true"
       exception-handler-workflow="partial-error">
       <configurations>
@@ -87,7 +87,7 @@
 
     <operation id="compose"
       description="c. Create single-stream preview - presentation2_transcription_video / audio"
-      if="${presentation2_transcription_video} AND NOT(${presentation_transcription_video}) and NOT(${presenter_transcription_video})"
+      if="${presentation2_transcription_video} AND NOT(${presentation_transcription_video}) AND NOT(${presenter_transcription_video})"
       fail-on-error="true"
       exception-handler-workflow="partial-error">
       <configurations>

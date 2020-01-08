@@ -303,7 +303,7 @@
     <operation
       id="timelinepreviews"
       fail-on-error="false"
-      if="${presentation2_work_video} AND NOT(${presentation_work_video}) and NOT(${presenter_work_video})"
+      if="${presentation2_work_video} AND NOT(${presentation_work_video}) AND NOT(${presenter_work_video})"
       exception-handler-workflow="error"
       description="Creating timeline preview images (Presentation 2)">
       <configurations>
@@ -345,7 +345,7 @@
 
     <operation
       id="encode"
-      if="(${presenter_source_resolution_y} &lt; 2160) and (${presenter_source_resolution_y} &gt; 1079)"
+      if="(${presenter_source_resolution_y} &lt; 2160) AND (${presenter_source_resolution_y} &gt; 1079)"
       fail-on-error="true"
       exception-handler-workflow="partial-error"
       description="Encoding for player and feeds (MP4) [1080p, 720p, 480p]: adaptive-parallel-1080-480.http">
@@ -359,7 +359,7 @@
 
     <operation
       id="encode"
-      if="(${presenter_source_resolution_y} &lt; 1080) and (${presenter_source_resolution_y} &gt; 719)"
+      if="(${presenter_source_resolution_y} &lt; 1080) AND (${presenter_source_resolution_y} &gt; 719)"
       fail-on-error="true"
       exception-handler-workflow="partial-error"
       description="Encoding for player and feeds (MP4) [720p, 480p]: adaptive-parallel-720-480.http">
@@ -373,7 +373,7 @@
 
     <operation
       id="compose"
-      if="(${presenter_source_resolution_y} &lt; 720) and (${presenter_source_resolution_y} &gt; 479)"
+      if="(${presenter_source_resolution_y} &lt; 720) AND (${presenter_source_resolution_y} &gt; 479)"
       fail-on-error="true"
       exception-handler-workflow="partial-error"
       description="Encoding for player and feeds (MP4) [480p]: adaptive-480p.http">
@@ -531,7 +531,7 @@
     <operation
       id="extract-text"
       fail-on-error="false"
-      if="${presentation2_work_video} and not(${presentation_work_video})"
+      if="${presentation2_work_video} AND not(${presentation_work_video})"
       description="Extracting text from presentation2 segments">
       <configurations>
         <configuration key="source-flavor">presentation2/normalized-trimmed</configuration>
