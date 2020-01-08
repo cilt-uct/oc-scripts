@@ -98,7 +98,7 @@
     <!-- B -->
     <operation
       id="encode"
-      if="(${presenter_source_resolution_y} &lt; 1080) and (${presenter_source_resolution_y} &gt; 719)"
+      if="(${presenter_source_resolution_y} &lt; 1080) AND (${presenter_source_resolution_y} &gt; 719)"
       fail-on-error="true"
       exception-handler-workflow="partial-error"
       description="Encoding for player and feeds (MP4) [720p, 480p]: mp4-norm-480-720-parallel">
@@ -113,7 +113,7 @@
     <!-- C -->
     <operation
       id="compose"
-      if="(${presenter_source_resolution_y} &lt; 720) and (${presenter_source_resolution_y} &gt; 479)"
+      if="(${presenter_source_resolution_y} &lt; 720) AND (${presenter_source_resolution_y} &gt; 479)"
       fail-on-error="true"
       exception-handler-workflow="partial-error"
       description="Encoding for player and feeds (MP4) [480p]: mp4-norm-480">

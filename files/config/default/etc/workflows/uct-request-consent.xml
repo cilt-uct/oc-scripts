@@ -33,7 +33,7 @@
     <operation
       id="send-email"
       fail-on-error="true"
-      if="${organizer_email_valid} and ${get_organizer_success}"
+      if="${organizer_email_valid} AND ${get_organizer_success}"
       exception-handler-workflow="partial-error"
       description="Sending email to organizer and notification list for consent">
       <configurations>
@@ -49,7 +49,7 @@
     <operation
       id="comment"
       fail-on-error="false"
-      if="${organizer_email_valid} and ${get_organizer_success}"
+      if="${organizer_email_valid} AND ${get_organizer_success}"
       description="Consent: Add comment that request for consent was sent">
       <configurations>
         <configuration key="description">Consent: Requested from ${organizer_name} [${organizer_email}]. CC: $notification_list </configuration>
@@ -62,7 +62,7 @@
     <operation
       id="comment"
       fail-on-error="false"
-      if="NOT(${organizer_email_valid} and ${get_organizer_success})"
+      if="NOT(${organizer_email_valid} AND ${get_organizer_success})"
       description="Consent: ERR : Could not send Consent mail">
       <configurations>
         <configuration key="description">Consent: Could not send email to ${organizer_name} [${organizer_email}]. CC: $notification_list </configuration>

@@ -66,7 +66,7 @@
 
     <operation
         id="defaults"
-        if="${usePresentation} and ${usePresentation2}"
+        if="${usePresentation} AND ${usePresentation2}"
         description="Use everything">
         <configurations>
         <configuration key="copy_flavor">*/*</configuration>
@@ -75,7 +75,7 @@
 
     <operation
         id="defaults"
-        if="${usePresentation} and NOT(${usePresentation2})"
+        if="${usePresentation} AND NOT(${usePresentation2})"
         description="Use presentation">
         <configurations>
         <configuration key="copy_flavor">presenter/source,presentation/source</configuration>
@@ -84,7 +84,7 @@
 
     <operation
         id="defaults"
-        if="NOT(${usePresentation}) and ${usePresentation2}"
+        if="NOT(${usePresentation}) AND ${usePresentation2}"
         description="Use presentation2">
         <configurations>
         <configuration key="copy_flavor">presenter/source,presentation2/source</configuration>
@@ -93,7 +93,7 @@
 
     <operation
         id="defaults"
-        if="NOT(${usePresentation}) and NOT(${usePresentation2})"
+        if="NOT(${usePresentation}) AND NOT(${usePresentation2})"
         description="Just presenter">
         <configurations>
         <configuration key="copy_flavor">presenter/source</configuration>

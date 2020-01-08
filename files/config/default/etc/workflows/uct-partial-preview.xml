@@ -25,7 +25,7 @@
     -->
     <operation id="compose"
       description="a. i. Create single-stream preview - presenter_work_video / audio"
-      if="${presenter_work_video} AND NOT(${presentation_work_video}) and NOT(${presentation2_work_video})"
+      if="${presenter_work_video} AND NOT(${presentation_work_video}) AND NOT(${presentation2_work_video})"
       fail-on-error="true"
       exception-handler-workflow="partial-error">
       <configurations>
@@ -38,7 +38,7 @@
 
     <operation id="compose"
       description="a. ii. Create audio only preview - presenter_source_audio"
-      if="${presenter_source_audio} and NOT(${presenter_work_video}) AND NOT(${presentation_work_video}) and NOT(${presentation2_work_video})"
+      if="${presenter_source_audio} AND NOT(${presenter_work_video}) AND NOT(${presentation_work_video}) AND NOT(${presentation2_work_video})"
       fail-on-error="true"
       exception-handler-workflow="partial-error">
       <configurations>
@@ -51,7 +51,7 @@
 
     <operation id="compose"
       description="b. Create single-stream preview - presentation_work_video / audio"
-      if="${presentation_work_video} AND NOT(${presenter_work_video}) and NOT(${presentation2_work_video})"
+      if="${presentation_work_video} AND NOT(${presenter_work_video}) AND NOT(${presentation2_work_video})"
       fail-on-error="true"
       exception-handler-workflow="partial-error">
       <configurations>
@@ -64,7 +64,7 @@
 
     <operation id="compose"
       description="c. Create single-stream preview - presentation2_work_video / audio"
-      if="${presentation2_work_video} AND NOT(${presentation_work_video}) and NOT(${presenter_work_video})"
+      if="${presentation2_work_video} AND NOT(${presentation_work_video}) AND NOT(${presenter_work_video})"
       fail-on-error="true"
       exception-handler-workflow="partial-error">
       <configurations>
