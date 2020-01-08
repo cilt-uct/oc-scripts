@@ -88,7 +88,7 @@
       id="snapshot"
       description="Archive work and preview information">
       <configurations>
-        <configuration key="source-tags">archive</configuration>
+        <configuration key="source-flavors">*/source,dublincore/*,security/*</configuration>
       </configurations>
     </operation>
 
