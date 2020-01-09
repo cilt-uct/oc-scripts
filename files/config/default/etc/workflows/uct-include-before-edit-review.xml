@@ -97,6 +97,11 @@
       id="cleanup"
       fail-on-error="false"
       description="Cleaning up">
+       <configurations>
+          <configuration key="preserve-flavors">*/source,dublincore/*,security/*</configuration>
+          <configuration key="delete-external">true</configuration>
+          <configuration key="delay">5</configuration>
+        </configurations>
     </operation>
 
   </operations>
