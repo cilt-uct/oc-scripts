@@ -60,7 +60,7 @@ main() {
   printf "."
 
 
-  [ "$(find -maxdepth 1 -type f -name 'opencast-dist-*.tar.gz' -ls | wc -l)" -eq "1" ] && found_tar=true || found_tar=false
+  [ "$(find -L -maxdepth 1 -type f -name 'opencast-dist-*.tar.gz' -ls | wc -l)" -eq "1" ] && found_tar=true || found_tar=false
   if $found_tar; then
 
     # extract the assembly tar file to /opt folder then move content to the correct folder
@@ -68,7 +68,7 @@ main() {
     printf "."
 
     # remove the now empty extract folder
-    find $opt -maxdepth 1 -type d -name "opencast-dist-*" -print0 | xargs -0 rm -r --
+    find -L $opt -maxdepth 1 -type d -name "opencast-dist-*" -print0 | xargs -0 rm -r --
     printf "."
   else
     echo
