@@ -20,8 +20,8 @@ PROGNAME=$(basename "$0")
 # assembly = adminpresentation
 # assembly_display = Admin and Presentation
 # server_url = http://mediadev.uct.ac.za
-# dir_install_real = /data/opt/opencast
-# dir_backup_real = /data/opt/opencast-bak
+# dir_install_real = /opt/opencast
+# dir_backup_real = /opt/opencast-bak
 
 main() {
 
@@ -59,7 +59,8 @@ main() {
   [ "$(ls -1 $working | wc -l)" -gt "0" ] && mv $working/* $bak/
   printf "."
 
-  [ "$(find -type f -name 'opencast-dist-*.tar.gz' -ls | wc -l)" -eq "1" ] && found_tar=true || found_tar=false
+
+  [ "$(find -maxdepth 1 -type f -name 'opencast-dist-*.tar.gz' -ls | wc -l)" -eq "1" ] && found_tar=true || found_tar=false
   if $found_tar; then
 
     # extract the assembly tar file to /opt folder then move content to the correct folder
@@ -67,7 +68,7 @@ main() {
     printf "."
 
     # remove the now empty extract folder
-    find $opt -type d -name "opencast-dist-*" -print0 | xargs -0 rm -r --
+    find $opt -maxdepth 1 -type d -name "opencast-dist-*" -print0 | xargs -0 rm -r --
     printf "."
   else
     echo
@@ -125,7 +126,6 @@ main() {
       chown -R mysql:mysql "$data/local/mysql"
     fi
   fi
-  # chown -R opencast:linux_cilt_admins $working_real/
   chown -R opencast:opencast $working_real/
   chmod g+w -R $working_real/
 
@@ -152,12 +152,11 @@ main() {
     $START_SERVICE && service opencast start
 
     echo
-    # OPENCAST-2386 - stop removing deployment files until we can sort out why it fails
-    #echo "    Cleaning ..."
-    #rm opencast-dist*.tar.gz
-    #rm deploy.cfg
-    #rm deploy.tar.gz
-    #rm ${PROGNAME};
+    echo "    Cleaning ..."
+    rm opencast-dist*.tar.gz
+    rm deploy.cfg
+    rm deploy.tar.gz
+    rm ${PROGNAME};
 
   else
 
