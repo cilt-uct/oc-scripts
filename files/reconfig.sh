@@ -22,8 +22,8 @@ CLEANUP=true
 # assembly = adminpresentation
 # assembly_display = Admin and Presentation
 # server_url = http://mediadev.uct.ac.za
-# dir_install_real = /data/opt/opencast
-# dir_backup_real = /data/opt/opencast-bak
+# dir_install_real = /opt/opencast
+# dir_backup_real = /opt/opencast-bak
 
 main() {
 
@@ -84,7 +84,7 @@ main() {
       chown -R mysql:mysql "$data/local/mysql"
     fi
   fi
-  # chown -R opencast:linux_cilt_admins $working_real/
+
   chown -R opencast:opencast $working_real/
   chmod g+w -R $working_real/
 
