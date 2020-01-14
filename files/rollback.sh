@@ -20,8 +20,8 @@ PROGNAME=$(basename "$0")
 # assembly = adminpresentation
 # assembly_display = Admin and Presentation
 # server_url = http://mediadev.uct.ac.za
-# dir_install_real = /data/opt/opencast
-# dir_backup_real = /data/opt/opencast-bak
+# dir_install_real = /opt/opencast
+# dir_backup_real = /opt/opencast-bak
 
 main() {
 
@@ -74,7 +74,7 @@ main() {
     $START_SERVICE && service opencast start
 
     echo
-   
+
     echo "    Cleaning ..."
     rm -rf $tmp_folder
     rm -rf $tmp_folder_real

@@ -20,14 +20,14 @@ SERVER_NAME=$HOSTNAME
 # assembly = adminpresentation
 # assembly_display = Admin and Presentation
 # server_url = http://mediadev.uct.ac.za
-# dir_install_real = /data/opt/opencast
-# dir_backup_real = /data/opt/opencast-bak
+# dir_install_real = /opt/opencast
+# dir_backup_real = /opt/opencast-bak
 
 main() {
 
   opt=$( get_ini_value general dir_working )
   lti=$( get_ini_value general dir_lti )
-  
+
   cd $opt
 
   echo "Starting to deploy Opencast LTI Static files:"
@@ -37,7 +37,7 @@ main() {
   [ "$(find -type f -name lti*.tar.gz -ls | wc -l)" -eq "1" ] && found_tar=true || found_tar=false
 
   if $found_tar; then
- 
+
     printf "    Extracting $DEPLOY_DIR/$CONFIG_FILES as $USER"
 
     tar -zxf $DEPLOY_DIR/$CONFIG_FILES -C $lti/
