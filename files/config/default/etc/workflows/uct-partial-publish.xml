@@ -19,24 +19,6 @@
       </configurations>
     </operation>
 
-    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-    <!-- Cut the video according the SMIL file                             -->
-    <!--                                                                   -->
-    <!-- Perform cutting according to the edit decision list.              -->
-    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-
-    <operation id="editor"
-      exception-handler-workflow="partial-error"
-      description="Cut the recording according to the edit decision list">
-      <configurations>
-        <configuration key="source-flavors">*/work</configuration>
-        <configuration key="smil-flavors">smil/cutting</configuration>
-        <configuration key="target-smil-flavor">smil/cutting</configuration>
-        <configuration key="target-flavor-subtype">trimmed</configuration>
-        <configuration key="interactive">false</configuration>
-      </configurations>
-    </operation>
-
     <!-- Tag smil/cutting for later re-use in case of re-publishing of the event
          Note that WOH editor will re-use target-smil-flavor instead of adding a new one -->
     <operation
@@ -79,6 +61,24 @@
       description="Archive cutting information">
       <configurations>
         <configuration key="source-tags">archive</configuration>
+      </configurations>
+    </operation>
+
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <!-- Cut the video according the SMIL file                             -->
+    <!--                                                                   -->
+    <!-- Perform cutting according to the edit decision list.              -->
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+
+    <operation id="editor"
+      exception-handler-workflow="partial-error"
+      description="Cut the recording according to the edit decision list">
+      <configurations>
+        <configuration key="source-flavors">*/work</configuration>
+        <configuration key="smil-flavors">smil/cutting</configuration>
+        <configuration key="target-smil-flavor">smil/cutting</configuration>
+        <configuration key="target-flavor-subtype">trimmed</configuration>
+        <configuration key="interactive">false</configuration>
       </configurations>
     </operation>
 

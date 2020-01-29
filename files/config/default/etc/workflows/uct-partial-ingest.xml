@@ -107,6 +107,17 @@
       </configurations>
     </operation>
 
+    <!-- make sure to save ACL and dublincore -->
+    <operation
+        id="tag"
+        exception-handler-workflow="partial-error"
+        description="Add archive tags for dublincore/*,security/*">
+        <configurations>
+            <configuration key="source-flavors">dublincore/*,security/*</configuration>
+            <configuration key="target-tags">archive</configuration>
+        </configurations>
+    </operation>
+
     <!-- Tag the incoming metadata catalogs for publishing -->
     <operation
       id="tag"

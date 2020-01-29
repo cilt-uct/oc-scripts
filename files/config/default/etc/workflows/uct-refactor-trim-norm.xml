@@ -79,12 +79,13 @@
     <operation
         id="cleanup"
         fail-on-error="false"
-        description="Remove temporary processing artifacts">
-      <configurations>
-        <configuration key="delete-external">true</configuration>
-        <!-- FixMe Don't clean up ACLs until workflow service no longer looks for them in the WFR. -->
-        <configuration key="preserve-flavors">security/*</configuration>
-      </configurations>
+        description="Cleaning up - remove temp processing artifacts">
+        <configurations>
+            <configuration key="delete-external">false</configuration>
+            <!-- FixMe Don't clean up ACLs until workflow service no longer looks for them in the WFR. -->
+            <configuration key="preserve-flavors">dublincore/*,security/*</configuration>
+            <configuration key="delay">5</configuration>
+        </configurations>
     </operation>
 
   </operations>
