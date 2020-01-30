@@ -270,8 +270,8 @@
     <!-- The OAI-PMH specification demands boths GET and POST requests  -->
     <!-- Please make sure that the path configured here matches         -->
     <!-- the path configured for the repository servlet.                -->
-    <sec:intercept-url pattern="/oaipmh/**" method="GET" access="ROLE_ANONYMOUS"/>
-    <sec:intercept-url pattern="/oaipmh/**" method="POST" access="ROLE_ANONYMOUS"/>
+    <sec:intercept-url pattern="/oaipmh/**" method="GET" access="ROLE_ADMIN"/>
+    <sec:intercept-url pattern="/oaipmh/**" method="POST" access="ROLE_ADMIN"/>
 
     <!-- Enable anonymous access to the rss and atom feeds -->
     <sec:intercept-url pattern="/feeds/**" method="GET" access="ROLE_ANONYMOUS" />
@@ -335,7 +335,7 @@
     -->
 
     <!-- Enables "remember me" functionality -->
-    <sec:remember-me key="opencast" user-service-ref="userDetailsService" />
+    <sec:remember-me services-ref="rememberMeServices" />
 
     <!-- Set the request cache -->
     <sec:request-cache ref="requestCache" />
@@ -352,6 +352,15 @@
     -->
 
   </sec:http>
+
+  <bean id="rememberMeServices" class="org.opencastproject.kernel.security.SystemTokenBasedRememberMeService">
+    <property name="userDetailsService" ref="userDetailsService"/>
+    <!-- All following settings are optional -->
+    <property name="tokenValiditySeconds" value="1209600"/>
+    <property name="cookieName" value="oc-remember-me"/>
+    <!-- The following key will be augmented by system properties. Thus, leaving this untouched is okay -->
+    <property name="key" value="opencast"/>
+  </bean>
 
   <!-- ############################# -->
   <!-- # Authentication Filters    # -->
@@ -537,12 +546,17 @@
   <!-- # Spring Security Internals # -->
   <!-- ############################# -->
 
+  <bean id="passwordEncoder" class="org.opencastproject.kernel.security.CustomPasswordEncoder" />
+
   <!-- The JPA user directory stores md5 hashed, salted passwords, so we must use a username-salted md5 password encoder. -->
   <sec:authentication-manager alias="authenticationManager">
     <!-- Uncomment this if using Shibboleth authentication -->
     <!--sec:authentication-provider ref="preauthAuthProvider" /-->
     <sec:authentication-provider user-service-ref="userDetailsService">
-      <sec:password-encoder hash="md5"><sec:salt-source user-property="username" /></sec:password-encoder>
+      <sec:password-encoder ref="passwordEncoder">
+        <!-- This salt is used only for decoding legacy MD5 hased passwords -->
+        <sec:salt-source user-property="username" />
+      </sec:password-encoder>
     </sec:authentication-provider>
   </sec:authentication-manager>
 
