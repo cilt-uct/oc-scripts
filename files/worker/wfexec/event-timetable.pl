@@ -65,8 +65,8 @@ if ((index(lc($title), "[backup]") != -1) || (index(lc($title), "[hold]") != -1)
     $event_trim = "false";
 }
 
-# Get the series info
-if (defined($series) && $series ne "") {
+# Get the series info - ignore if we are running on media
+if ((index($server, "media.uct.ac.za") != -1) && defined($series) && $series ne "")  {
 
     ($visibility, $course, $caption_provider) = getSeriesDetails($mech, $server, $series);
     print Dumper($visibility, $course, $caption_provider) if $debug;
@@ -106,8 +106,6 @@ if (defined($series) && $series ne "") {
         }
     }
 }
-
-
 
 ## Write result
 open(my $fh, '>', $filename) or die "File ERROR: failed to open result file '$filename' $!";
