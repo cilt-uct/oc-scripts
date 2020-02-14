@@ -23,6 +23,7 @@
         <configuration key="output-filename">empty-venue.txt</configuration>
         <configuration key="target-flavor">text/plain</configuration>
         <configuration key="source-audio">true</configuration>
+        <configuration key="source-video">true</configuration>
         <configuration key="set-workflow-properties">true</configuration>
         <configuration key="expected-type">Attachment</configuration>
         <configuration key="load">4.0</configuration>
