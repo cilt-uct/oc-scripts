@@ -175,6 +175,7 @@ TODO: Add and review [https://docs.opencast.org/latest/admin/upgrade/](https://d
 | partial-cleanup | Cleanup after processing | |:x:| - |
 | partial-watermark | Render watermark into presenter and presentation tracks | |:x:| - |
 | uct-clean | UCT - Retract and Cleanup | Retract a recording and clean out media files. |:heavy_check_mark:| archive |
+| uct-detect-empty-venue | UCT - Empty venue detection | Run VAD script, to analyse speech segments and in turn identify if venue is empty. | | |
 | uct-discard | UCT - Discard Media | Discard all the media from this event. |:heavy_check_mark:| archive |
 | uct-include-autotrim-detection | Audio trim point detection | Run the audio analysis for (possible) autotrimming of the recording |:heavy_check_mark:| archive |
 | uct-include-before-edit-auto-trim | UCT - Process for Editing (Auto Trim) | Publish directly from ingest process using autodetected trimpoints. |:heavy_check_mark:| - |
@@ -190,7 +191,7 @@ TODO: Add and review [https://docs.opencast.org/latest/admin/upgrade/](https://d
 | uct-partial-publish-downloads | UCT - Publish Downloads | |:heavy_check_mark:| - |
 | uct-partial-publish | Publish the recording | |:heavy_check_mark:| - |
 | uct-partial-work | Prepare work versions | |:heavy_check_mark:| - |
-|  uct-partial-work-channel | Prepare work versions - with selection of audio channel | |:heavy_check_mark:| - |
+| uct-partial-work-channel | Prepare work versions - with selection of audio channel | |:heavy_check_mark:| - |
 | uct-process-before-edit | UCT - Process for Editing | |:heavy_check_mark:| upload, schedule |
 | uct-process-obs | UCT - Process OBS Recording | |:heavy_check_mark:| schedule |
 | uct-process-personal | UCT - Process for Personal Series | |:heavy_check_mark:| schedule |

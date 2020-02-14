@@ -39,6 +39,8 @@
         <configuration key="audio_trim_valid_venue">false</configuration>
         <configuration key="audio_trim_lapel">false</configuration>
         <configuration key="audio_trim_ishour">false</configuration>
+
+        <configuration key="empty_venue">false</configuration>
       </configurations>
     </operation>
 

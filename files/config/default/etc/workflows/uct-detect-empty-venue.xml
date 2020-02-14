@@ -2,7 +2,7 @@
 <definition xmlns="http://workflow.opencastproject.org">
 
   <id>uct-detect-empty-venue</id>
-  <title>Use voice activity detection to identify if venue is empty</title>
+  <title>UCT - Empty venue detection</title>
   <tags>
     <tag>archive</tag>
   </tags>
