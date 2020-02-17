@@ -3,7 +3,9 @@
 
   <id>uct-detect-empty-venue</id>
   <title>UCT - Empty venue detection</title>
-  <tags/>
+  <tags>
+    <tag>archive</tag>
+  </tags>
   <description>Run VAD script, to analyse speech segments and in turn identify if venue is empty.</description>
   <configuration_panel></configuration_panel>
   
