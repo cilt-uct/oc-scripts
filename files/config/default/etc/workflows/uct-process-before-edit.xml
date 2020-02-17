@@ -62,15 +62,6 @@
       </configurations>
     </operation>
 
-    <!-- Check if empty venue -->
-    <operation
-      id="include"
-      description="Detect empty venue">
-      <configurations>
-        <configuration key="workflow-id">uct-detect-empty-venue</configuration>
-      </configurations>
-    </operation>
-
     <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       Finalize ingest
       Make sure all elements are downloaded from external sources,
@@ -79,10 +70,18 @@
     -->
     <operation
       id="include"
-      if="NOT(${empty_venue})"
       description="Finalize upload and ingest">
       <configurations>
         <configuration key="workflow-id">uct-partial-ingest</configuration>
+      </configurations>
+    </operation>
+
+    <!-- Check if empty venue -->
+    <operation
+      id="include"
+      description="Detect empty venue">
+      <configurations>
+        <configuration key="workflow-id">uct-detect-empty-venue</configuration>
       </configurations>
     </operation>
 
@@ -107,55 +106,14 @@
       </configurations>
     </operation>
 
-    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      Prepare work versions of the source material for further processing.
-      Preview and Publish use Work versions. (*/work)
-    -->
     <operation
       id="include"
-      if="NOT(${empty_venue})"
-      description="Prepare work version for processing">
+      description="Include before edit">
       <configurations>
-        <configuration key="workflow-id">uct-partial-work</configuration>
+        <configuration key="workflow-id">uct-include-before-edit</configuration>
       </configurations>
     </operation>
 
-    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      Run the script to detect the audio points and create a smil/cutting if possible
-    -->
-    <operation
-      id="include"
-      if="NOT(${empty_venue})"
-      description="Run the audio analysis for (possible) autotrimming of the recording">
-      <configurations>
-        <configuration key="workflow-id">uct-include-autotrim-detection</configuration>
-      </configurations>
-    </operation>
-
-    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      Decide Auto trimming and publish or Review
-      If a recording has a good_start, good_end, isHour and non speech used
-      segments is 0 then it is marked to be auto trimmed and published
-      It also depends on if the recording is timetabled and it is a valid venue
-      Else it goes into the normal queue to be reviewed
-    -->
-    <operation
-      id="include"
-      if="${timetabled} AND ${audio_trim_autotrim} AND ${audio_trim_valid_venue} AND NOT(${empty_venue})"
-      description="RECORDING: Auto trim and publish (no preview)">
-      <configurations>
-        <configuration key="workflow-id">uct-include-before-edit-auto-trim</configuration>
-      </configurations>
-    </operation>
-
-    <operation
-      id="include"
-      if="NOT(${timetabled} AND ${audio_trim_autotrim} AND ${audio_trim_valid_venue})"
-      description="RECORDING: Review">
-      <configurations>
-        <configuration key="workflow-id">uct-include-before-edit-review</configuration>
-      </configurations>
-    </operation>
 
   </operations>
 

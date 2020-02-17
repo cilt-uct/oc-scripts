@@ -44,7 +44,30 @@
         <configuration key="action">create</configuration>
       </configurations>
     </operation>
-    
+
+    <!-- Add RESOLVED comment for empty venue -->
+    <operation
+      id="comment"
+      if="${empty_venue}"
+      description="Mark as empty venue">
+      <configurations>
+        <configuration key="description">Empty venue.</configuration>
+        <configuration key="reason">EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.REVIEW</configuration>
+        <configuration key="action">create</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="comment"
+      if="${empty_venue}"
+      description="Mark as empty venue (resolve)">
+      <configurations>
+        <configuration key="description">Empty venue.</configuration>
+        <configuration key="reason">EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.REVIEW</configuration>
+        <configuration key="action">resolve</configuration>
+      </configurations>
+    </operation>
+
     <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       Save, Archive and Cleanup
     -->
