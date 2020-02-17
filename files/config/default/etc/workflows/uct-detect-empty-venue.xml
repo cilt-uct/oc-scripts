@@ -11,6 +11,18 @@
   
   <operations>
 
+     <!-- Inspect the media -->
+    <operation
+      id="inspect"
+      exception-handler-workflow="partial-error"
+      description="Inspecting mediapackage track elements">
+      <configurations>
+          <configuration key="overwrite">true</configuration>
+          <configuration key="accept-no-media">false</configuration>
+          <configuration key="accurate-frame-count">false</configuration>
+      </configurations>
+    </operation>
+
     <!-- Detect empty venue -->
     <operation
       id="execute-many"
@@ -24,9 +36,7 @@
         <configuration key="source-flavor">*/source</configuration>
         <configuration key="output-filename">empty-venue.txt</configuration>
         <configuration key="target-flavor">text/plain</configuration>
-        <configuration key="source-tags"></configuration>
         <configuration key="source-audio">true</configuration>
-        <configuration key="source-video">false</configuration>
         <configuration key="set-workflow-properties">true</configuration>
         <configuration key="expected-type">Attachment</configuration>
         <configuration key="load">4.0</configuration>
