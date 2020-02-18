@@ -121,10 +121,21 @@
       </configurations>
     </operation>
 
+    <!-- make sure to save ACL and dublincore -->
+    <operation
+        id="tag"
+        exception-handler-workflow="partial-error"
+        description="Add archive tags for dublincore/*,security/*">
+        <configurations>
+            <configuration key="source-flavors">dublincore/*,security/*</configuration>
+            <configuration key="target-tags">archive</configuration>
+        </configurations>
+    </operation>
+
     <!-- Archive generated items -->
     <operation
       id="snapshot"
-      description="Archive work and preview information">
+      description="Archive all at the end of workflow">
       <configurations>
         <configuration key="source-tags">archive</configuration>
         <!--configuration key="source-flavors">*/source,dublincore/*,security/*</configuration-->
