@@ -2,13 +2,26 @@
 <definition xmlns="http://workflow.opencastproject.org">
 
   <id>uct-detect-empty-venue</id>
-  <title>Use voice activity detection to identify if venue is empty</title>
+  <title>UCT - Empty venue detection</title>
   <tags>
     <tag>archive</tag>
   </tags>
   <description>Run VAD script, to analyse speech segments and in turn identify if venue is empty.</description>
   <configuration_panel></configuration_panel>
+  
   <operations>
+
+     <!-- Inspect the media -->
+    <operation
+      id="inspect"
+      exception-handler-workflow="partial-error"
+      description="Inspecting mediapackage track elements">
+      <configurations>
+          <configuration key="overwrite">true</configuration>
+          <configuration key="accept-no-media">false</configuration>
+          <configuration key="accurate-frame-count">false</configuration>
+      </configurations>
+    </operation>
 
     <!-- Detect empty venue -->
     <operation
