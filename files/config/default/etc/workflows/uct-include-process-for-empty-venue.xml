@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definition xmlns="http://workflow.opencastproject.org">
+
+  <id>uct-include-before-edit-choice</id>
+  <title>UCT - Process for Editing</title>
+  <tags/>
+  <description>
+    REQUIRES:
+      Flavors:
+        */source
+      Workflow Properties:
+        empty_venue
+  </description>
+
+  <configuration_panel></configuration_panel>
+
+  <operations>
+
+    <!-- Archive source material and generated items -->
+    <operation
+      id="snapshot"
+      if="NOT(${empty_venue})"
+      description="Archive source">
+      <configurations>
+        <configuration key="source-tags">archive</configuration>
+      </configurations>
+    </operation>
+
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      Prepare work versions of the source material for further processing.
+      Preview and Publish use Work versions. (*/work)
+    -->
+    <operation
+      id="include"
+      if="NOT(${empty_venue})"
+      description="Prepare work version for processing">
+      <configurations>
+        <configuration key="workflow-id">uct-partial-work</configuration>
+      </configurations>
+    </operation>
+
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      Run the script to detect the audio points and create a smil/cutting if possible
+    -->
+    <operation
+      id="include"
+      if="NOT(${empty_venue})"
+      description="Run the audio analysis for (possible) autotrimming of the recording">
+      <configurations>
+        <configuration key="workflow-id">uct-include-autotrim-detection</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="include"
+      if="NOT(${empty_venue})"
+      description="Process previews after auto trim detection">
+      <configurations>
+        <configuration key="workflow-id">uct-include-process-previews</configuration>
+      </configurations>
+    </operation>
+
+    <!-- Add RESOLVED comment for empty venue -->
+    <operation
+      id="comment"
+      if="${empty_venue}"
+      description="Mark as empty venue">
+      <configurations>
+        <configuration key="description">Empty venue.</configuration>
+        <configuration key="reason">EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.REVIEW</configuration>
+        <configuration key="action">create</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="comment"
+      if="${empty_venue}"
+      description="Mark as empty venue (resolve)">
+      <configurations>
+        <configuration key="description">Empty venue.</configuration>
+        <configuration key="reason">EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.REVIEW</configuration>
+        <configuration key="action">resolve</configuration>
+      </configurations>
+    </operation>
+
+  </operations>
+</definition>

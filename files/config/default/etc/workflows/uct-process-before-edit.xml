@@ -85,15 +85,6 @@
       </configurations>
     </operation>
 
-    <!-- Archive source material and generated items -->
-    <operation
-      id="snapshot"
-      description="Archive source">
-      <configurations>
-        <configuration key="source-tags">archive</configuration>
-      </configurations>
-    </operation>
-
     <!--
       Resolve the recording failure comment if this was a missed ingest (OPENCAST-1836)
     -->
@@ -108,10 +99,49 @@
 
     <operation
       id="include"
-      description="Include before edit">
+      description="Include process for empty venue">
       <configurations>
-        <configuration key="workflow-id">uct-include-before-edit</configuration>
+        <configuration key="workflow-id">uct-include-process-for-empty-venue</configuration>
       </configurations>
+    </operation>
+
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      Save, Archive and Cleanup
+    -->
+
+    <!-- Save workflow properties -->
+    <operation
+      id="export-wf-properties"
+      fail-on-error="true"
+      exception-handler-workflow="partial-error"
+      description="Export workflow settings to Java properties file">
+      <configurations>
+        <configuration key="target-flavor">processing/defaults</configuration>
+        <configuration key="target-tags">archive</configuration>
+      </configurations>
+    </operation>
+
+    <!-- Archive generated items -->
+    <operation
+      id="snapshot"
+      description="Archive work and preview information">
+      <configurations>
+        <configuration key="source-tags">archive</configuration>
+        <!--configuration key="source-flavors">*/source,dublincore/*,security/*</configuration-->
+      </configurations>
+    </operation>
+
+    <!-- Clean up work artifacts -->
+    <operation
+        id="cleanup"
+        fail-on-error="false"
+        description="Cleaning up - remove temp processing artifacts">
+        <configurations>
+            <configuration key="delete-external">false</configuration>
+            <!-- FixMe Don't clean up ACLs until workflow service no longer looks for them in the WFR. -->
+            <configuration key="preserve-flavors">dublincore/*,security/*</configuration>
+            <configuration key="delay">5</configuration>
+        </configurations>
     </operation>
 
   </operations>

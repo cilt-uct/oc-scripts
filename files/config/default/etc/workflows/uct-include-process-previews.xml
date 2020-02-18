@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <definition xmlns="http://workflow.opencastproject.org">
 
-  <id>uct-include-before-edit</id>
-  <title>UCT - Process for Editing</title>
+  <id>uct-include-process-previews</id>
+  <title>UCT - Process previews after auto trim</title>
   <tags/>
   <description>
     REQUIRES:
@@ -18,32 +18,7 @@
   <configuration_panel></configuration_panel>
 
   <operations>
-
-    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      Prepare work versions of the source material for further processing.
-      Preview and Publish use Work versions. (*/work)
-    -->
-    <operation
-      id="include"
-      if="NOT(${empty_venue})"
-      description="Prepare work version for processing">
-      <configurations>
-        <configuration key="workflow-id">uct-partial-work</configuration>
-      </configurations>
-    </operation>
-
-    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      Run the script to detect the audio points and create a smil/cutting if possible
-    -->
-    <operation
-      id="include"
-      if="NOT(${empty_venue})"
-      description="Run the audio analysis for (possible) autotrimming of the recording">
-      <configurations>
-        <configuration key="workflow-id">uct-include-autotrim-detection</configuration>
-      </configurations>
-    </operation>
-
+    
     <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       Decide Auto trimming and publish or Review
       If a recording has a good_start, good_end, isHour and non speech used
