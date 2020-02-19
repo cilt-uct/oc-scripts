@@ -16,8 +16,6 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-
-
 # Possible configuration options for the start script:
 #
 # export JAVA_HOME         # Location of Java installation
@@ -44,6 +42,12 @@ export EXTRA_JAVA_OPTS="-javaagent:/opt/newrelic/newrelic.jar -Dorg.eclipse.jett
 export JAVA_MIN_MEM=deploy_java_min_memory
 export JAVA_MAX_MEM=deploy_java_max_memory
 
+export KARAF_NOROOT=true
+
 # Set the timezone explicitly (related to MH-12095)
 export TZ=Africa/Johannesburg
 
+export DIR_MOUNTS="/data/opencast/distribution,/data/opencast/archive"
+
+. "$DIRNAME/check_ports"
+. "$DIRNAME/check_filesystem"
