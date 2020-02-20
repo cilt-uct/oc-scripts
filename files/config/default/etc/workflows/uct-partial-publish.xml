@@ -531,7 +531,7 @@
     <operation
       id="extract-text"
       fail-on-error="false"
-      if="${presentation2_work_video} AND not(${presentation_work_video})"
+      if="${presentation2_work_video} AND NOT(${presentation_work_video})"
       description="Extracting text from presentation2 segments">
       <configurations>
         <configuration key="source-flavor">presentation2/normalized-trimmed</configuration>

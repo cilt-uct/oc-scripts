@@ -372,7 +372,7 @@
     -->
     <operation
       id="include"
-      if="${presenter_raw_video} or ${presenter_source_audio} or ${presentation_source_video} or ${presentation2_source_video}"
+      if="${presenter_raw_video} OR ${presenter_source_audio} OR ${presentation_source_video} OR ${presentation2_source_video}"
       description="Prepare preview versions for Editing">
       <configurations>
         <configuration key="workflow-id">uct-partial-preview</configuration>
