@@ -630,8 +630,8 @@ main() {
         st=$(date +'%Y-%m-%d %H-%M-%S')
         ansible-playbook -i $HOSTS_FILE ansible-emptyvenuedetector.yml --extra-vars "production=$([ $DEPLOY_TYPE = "prod" ] && echo "true" || echo "false") deploy_date_time=\"$st\" by=\"$(getCurrentUser)\" "
 
-        empty_log=$(git -C $EMPTY_VENUE_SCR show --oneline | head -n 1)
-        empty_branch=$(git -C $EMPTY_VENUE_SCR rev-parse --symbolic-full-name --abbrev-ref HEAD)
+        empty_log=$(git -C $EMPTY_VENUE_SRC show --oneline | head -n 1)
+        empty_branch=$(git -C $EMPTY_VENUE_SRC rev-parse --symbolic-full-name --abbrev-ref HEAD)
 
         echo $(addDeploymentMarker $production "EmptyVenueDetect" $empty_log $empty_branch)
     fi
