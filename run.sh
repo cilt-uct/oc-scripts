@@ -36,6 +36,7 @@ VERSION=false
 ALIAS=false
 TRACK4K=false
 TRIMPOINT=false
+EMPTYVENUE=false
 OCR=false
 ACTIONS=0
 
@@ -335,6 +336,9 @@ main() {
     $TRIMPOINT && printf "Deploy Audio trimpoint detection"
     $TRIMPOINT && [ "$ACTIONS" -gt "1" ] && printf " - " && ACTIONS=$((ACTIONS-1))
 
+    $EMPTYVENUE && printf "Deploy Empty Venue detection"
+    $EMPTYVENUE && [ "$ACTIONS" -gt "1" ] && printf " - " && ACTIONS=$((ACTIONS-1))
+
     $OCR && printf "Deploy Tesseract and Hunspell data"
     $OCR && [ "$ACTIONS" -gt "1" ] && printf " - " && ACTIONS=$((ACTIONS-1))
 
@@ -620,6 +624,18 @@ main() {
         echo $(addDeploymentMarker $production "Track4K" $track_log $track_branch)
     fi
 
+    if $EMPTYVENUE; then
+
+        cd $YML
+        st=$(date +'%Y-%m-%d %H-%M-%S')
+        ansible-playbook -i $HOSTS_FILE ansible-emptyvenuedetector.yml --extra-vars "production=$([ $DEPLOY_TYPE = "prod" ] && echo "true" || echo "false") deploy_date_time=\"$st\" by=\"$(getCurrentUser)\" "
+
+        empty_log=$(git -C $EMPTY_VENUE_SCR show --oneline | head -n 1)
+        empty_branch=$(git -C $EMPTY_VENUE_SCR rev-parse --symbolic-full-name --abbrev-ref HEAD)
+
+        echo $(addDeploymentMarker $production "EmptyVenueDetect" $empty_log $empty_branch)
+    fi
+
     if $TRIMPOINT; then
 
         cd $YML
@@ -738,6 +754,9 @@ usage() {
     echo "  --audiotrim"
     echo "      Deploy or update the audio trim detector script from github."
     echo
+    echo "  --emptyvenue"
+    echo "      Deploy or update the empty venue detector script from github."
+    echo
     echo "  -r, --reconfig"
     echo "      Reconfigure the respective servers. Deploy configuration build to each,"
     echo "      which includes custom.properties, encoding profiles and workflows."
@@ -771,7 +790,7 @@ usage() {
 ## TODO: Add optional parameters to
 ##       - build: 0 (default) Do All, 1 build src, 2 build cfg
 #        - clean: 0 (default) Do All, 1 clean only db, 2 clean shared+archive+distribution
-ARGS=$(getopt -o ":abcdhlrstuvxz" -l ":all,build,clean,deploy,help,list,reconfig,rollback,update-git,status,version,xtop,ztart,lti-deploy,alias,track4k,audiotrim,ocr" -n "$PROGNAME" -- "$@")
+ARGS=$(getopt -o ":abcdhlrstuvxz" -l ":all,build,clean,deploy,help,list,reconfig,rollback,update-git,status,version,xtop,ztart,lti-deploy,alias,track4k,audiotrim,emptyvenue,ocr" -n "$PROGNAME" -- "$@")
 
 if [ $? -ne 0 ] || [ $# -eq 0 ]; then
     # if error in parsing args display usage
@@ -832,6 +851,11 @@ while true; do
             $MORE && ACTIONS=$((ACTIONS+1))
             shift
             ;;
+        --emptyvenue)
+            EMPTYVENUE=true
+            $MORE && ACTIONS=$((ACTIONS+1))
+            shift
+            ;;    
         -l|--list)
             LIST=true
             $MORE && ACTIONS=$((ACTIONS+1))
