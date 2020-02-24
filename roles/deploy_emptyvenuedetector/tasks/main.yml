@@ -10,8 +10,16 @@
       register: result
       when: "'worker' in group_names"
 
-    # add task to create logs folder with (opencast:opencast as owner)
-    # execute pip3 install -r requirements.txt
+    - name: Create directory
+      file:
+        path: /opt/VAD-python/logs
+        state: directory
+    
+    - name: Log file permissions
+      file: path=/opt/VAD-python/logs owner=opencast group=opencast mode=0777 state=directory
+
+    - name: install requirements.txt
+      shell: pip3 install -r requirements.txt
 
     - name: Append Deployment
       local_action: shell echo "* {{inventory_hostname}}" >> "{{ deploy_logfile }}"
