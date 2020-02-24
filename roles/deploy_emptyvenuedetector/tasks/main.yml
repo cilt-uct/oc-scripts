@@ -10,6 +10,17 @@
       register: result
       when: "'worker' in group_names"
 
+    - name: Create directory
+      file:
+        path: /opt/VAD-python/logs
+        state: directory
+    
+    - name: Log file permissions
+      file: path=/opt/VAD-python/logs owner=opencast group=opencast mode=0777 state=directory
+
+    - name: install requirements.txt
+      shell: pip3 install -r /opt/VAD-python/requirements.txt
+
     - name: Append Deployment
       local_action: shell echo "* {{inventory_hostname}}" >> "{{ deploy_logfile }}"
-      when: result is succeeded   
+      when: result is succeeded
