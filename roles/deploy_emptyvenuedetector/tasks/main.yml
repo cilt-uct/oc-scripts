@@ -10,6 +10,9 @@
       register: result
       when: "'worker' in group_names"
 
+    # add task to create logs folder with (opencast:opencast as owner)
+    # execute pip3 install -r requirements.txt
+
     - name: Append Deployment
       local_action: shell echo "* {{inventory_hostname}}" >> "{{ deploy_logfile }}"
-      when: result is succeeded   
+      when: result is succeeded
