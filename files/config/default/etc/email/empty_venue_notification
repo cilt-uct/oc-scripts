@@ -169,7 +169,7 @@
                                             <br/>
                                             <p>Event: <b>${catalogs['episode']['title']}</b></p>
                                             <br/>
-                                            <p>Date: <b>${catalogs['episode']['Period']}</b></p>
+                                            <p>Date: <b>${catalogs['episode']['temporal']}</b></p>
                                             <br/>
                                             <p>Venue: <b>${catalogs['episode']['spatial']}</b></p>
                                             <br/>
