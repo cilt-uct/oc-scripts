@@ -81,11 +81,10 @@
 
     <operation
       id="send-email"
-      if="${empty_venue}"
       fail-on-error="true"
-      if="${organizer_email_valid} AND ${get_organizer_success}"
+      if="${organizer_email_valid} AND ${get_organizer_success} AND ${empty_venue}"
       exception-handler-workflow="partial-error"
-      description="Sending email to organizer and notification list for consent">
+      description="Sending empty venue email to organizer and notification list">
       <configurations>
         <!-- <configuration key="to">${organizer_email}</configuration>
         <configuration key="cc">${notification_list}</configuration> -->
