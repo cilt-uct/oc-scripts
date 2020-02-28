@@ -42,6 +42,7 @@ my $process_result = "none";
 my $series_title = '';
 my $series_owner_id;
 my $series_notification_list;
+my $site_id;
 
 my $organizer_name = '';
 my $organizer_email = '';
@@ -67,6 +68,7 @@ try {
             my $series_m = $json->utf8->canonical->decode($series_metadata_json);
             $series_title = getSeriesField($series_m, "title");
             $series_owner_id = getSeriesField($series_m, "creator-id");
+            $site_id = getSeriesField($series_m, "site-id");
             $series_notification_list = '';#getSeriesField($series_m, "notification-list");
         }
     }
@@ -117,6 +119,7 @@ try {
     print $fh "organizer_email=$organizer_email\n";
     print $fh "organizer_email_valid=". ( isValidEmailSyntax($organizer_email) ? "true" : "false" ) ."\n";
     print $fh "notification_list=$cc\n";
+    print $fh "site_id=$site_id\n";
     close $fh;
 };
 

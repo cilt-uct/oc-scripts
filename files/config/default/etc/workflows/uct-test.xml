@@ -2,82 +2,45 @@
 <definition xmlns="http://workflow.opencastproject.org">
 
   <id>test</id>
-  <title>Test analyze all</title>
+  <title>Test send email</title>
   <tags>
     <tag>archive</tag>
   </tags>
   <description/>
   <configuration_panel />
 
+  <!-- Load workflow properties from metadata: update some workflow properties -->
+    <operation
+      id="execute-once"
+      max-attempts="3"
+      retry-strategy="hold"
+      fail-on-error="true"
+      exception-handler-workflow="partial-error"
+      description="Load workflow properties from settings in series">
+      <configurations>
+        <configuration key="exec">/opt/opencast/wfexec/get_organizer_details.pl</configuration>
+        <configuration key="load">0.1</configuration>
+        <configuration key="params">#{id} #{out}</configuration>
+        <configuration key="output-filename">series_organizer.txt</configuration>
+        <configuration key="set-workflow-properties">true</configuration>
+        <configuration key="expected-type">Attachment</configuration>
+      </configurations>
+    </operation>
+
   <operations>
     <operation
-      id="defaults"
-      description="Use left audio channel">
+      id="send-email"
+      fail-on-error="true"
+      exception-handler-workflow="partial-error"
+      description="Sending empty venue email to organizer and notification list">
       <configurations>
-        <configuration key="workProfileChannel">left</configuration>
-      </configurations>
-    </operation>
-
-    <!-- 4.x : works :) -->
-    <operation
-      id="prepare-av"
-      exception-handler-workflow="uct-error"
-      description="Preparing presenter (camera) audio and video work versions">
-      <configurations>
-        <configuration key="source-flavor">presenter/source</configuration>
-        <configuration key="target-flavor">presenter/work</configuration>
-        <configuration key="rewrite">false</configuration>
-        <configuration key="audio-muxing-source-flavors">presenter/source,presenter/?,presentation/?,*/*</configuration>
-        <configuration key="mux-encoding-profile">uct-mux-av-${workProfileChannel}.work</configuration>
-        <configuration key="audio-video-encoding-profile">uct-av-${workProfileChannel}.work</configuration>
-        <configuration key="rewrite">true</configuration>
-      </configurations>
-    </operation>
-
-    <operation
-      id="prepare-av"
-      exception-handler-workflow="uct-error"
-      description="Preparing presentation (screen) audio and video work version">
-      <configurations>
-        <configuration key="source-flavor">presentation/source</configuration>
-        <configuration key="target-flavor">presentation/work</configuration>
-        <configuration key="rewrite">false</configuration>
-        <configuration key="audio-muxing-source-flavors">presenter/source,presenter/?,presentation/?,*/*</configuration>
-        <configuration key="mux-encoding-profile">uct-mux-av-${workProfileChannel}.work</configuration>
-        <configuration key="audio-video-encoding-profile">uct-av-${workProfileChannel}.work</configuration>
-        <configuration key="rewrite">true</configuration>
-      </configurations>
-    </operation>
-
-    <operation
-      id="prepare-av"
-      exception-handler-workflow="uct-error"
-      description="Preparing presentation 2nd (screen) audio and video work version">
-      <configurations>
-        <configuration key="source-flavor">presentation2/source</configuration>
-        <configuration key="target-flavor">presentation2/work</configuration>
-        <configuration key="rewrite">false</configuration>
-        <configuration key="audio-muxing-source-flavors">presenter/source,presenter/?,presentation/?,*/*</configuration>
-        <configuration key="mux-encoding-profile">uct-mux-av-${workProfileChannel}.work</configuration>
-        <configuration key="audio-video-encoding-profile">uct-av-${workProfileChannel}.work</configuration>
-        <configuration key="rewrite">true</configuration>
-      </configurations>
-    </operation>
-
-    <operation
-      id="tag"
-      description="Archive presenter_audio">
-      <configurations>
-        <configuration key="source-flavors">*/work</configuration>
-        <configuration key="target-tags">archive</configuration>
-      </configurations>
-    </operation>
-
-    <operation
-      id="snapshot"
-      description="Archive publishing information">
-      <configurations>
-        <configuration key="source-tags">archive</configuration>
+        <!-- <configuration key="to">${organizer_email}</configuration>
+        <configuration key="cc">${notification_list}</configuration> -->
+        <configuration key="to">ngonidzashe.choga@uct.ac.za</configuration>
+        <!-- <configuration key="cc">corne.oosthuizen@uct.ac.za</configuration> -->
+        <configuration key="subject">Empty venue for:</configuration>
+        <configuration key="body-template-file">empty_venue_notification</configuration>
+        <configuration key="use-html">true</configuration>
       </configurations>
     </operation>
 

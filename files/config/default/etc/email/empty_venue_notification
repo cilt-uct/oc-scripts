@@ -169,11 +169,11 @@
                                             <br/>
                                             <p>Event: <b>${catalogs['episode']['title']}</b></p>
                                             <br/>
-                                            <p>Date: <b>${catalogs['episode']['start']}</b></p>
+                                            <p>Date: <b>${catalogs['episode']['temporal']}</b></p>
                                             <br/>
-                                            <p>Venue: <b>${catalogs['episode']['location']}</b></p>
+                                            <p>Venue: <b>${catalogs['episode']['spatial']}</b></p>
                                             <br/>
-                                            <p>We recommend updating the recordings so that these align with the course/event schedule. You can cancel and/or add recordings in your <a href="https://vula.uct.ac.za/portal/site/${catalogs['series']['site-id']}">Vula site</a> under Lecture Videos | Manage.</p>
+                                            <p>We recommend updating the recordings so that these align with the course/event schedule. You can cancel and/or add recordings in your <a href="https://vula.uct.ac.za/portal/site/${site-id]}">Vula site</a> under Lecture Videos | Manage.</p>
                                             <br/>
                                             <p>If a lecture did occur, please reply to this email within 3 days and we will investigate further.</p>
                                             <br/>
