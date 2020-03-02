@@ -165,15 +165,32 @@
                                             <br/>
                                             <p>The following recording was marked as unwanted due to no lecture/event happening in the venue, as detailed below:</p>
                                             <br/>
-                                            <p>Series: <b>${catalogs['series']['title']}</b></p>
+                                            <p>Series: <b>${catalogs['series']['title']}</b></p>   
                                             <br/>
-                                            <p>Event: <b>${catalogs['episode']['title']}</b></p>
+                                            <p>Event: <b>${catalogs['episode']['title']}</b></p> 
                                             <br/>
-                                            <p>Date: <b>${catalogs['episode']['temporal']}</b></p>
+                                            <#if ${catalogs['episode']['temporal']}?has_content>
+                                                <p>Date & time: <b>${catalogs['episode']['temporal']}</b></p>
+                                            <#else>
+                                                <p>Date & time: This was not a scheduled event.</p>
+                                            <#if>  
                                             <br/>
-                                            <p>Venue: <b>${catalogs['episode']['spatial']}</b></p>
+                                            <#if ${catalogs['episode']['spatial']}?has_content>
+                                                <p>Venue: <b>${catalogs['episode']['spatial']}</b></p>
+                                            <#else>
+                                                <p>Venue: The venue was not been set for this event.</p>
+                                            <#if>  
                                             <br/>
-                                            <p>We recommend updating the recordings so that these align with the course/event schedule. You can cancel and/or add recordings in your <a href="https://vula.uct.ac.za/portal/site/${site-id]}">Vula site</a> under Lecture Videos | Manage.</p>
+                                            <p>
+                                                <span>We recommend updating the recordings so that these align with the course/event schedule. You can cancel and/or add recordings in your </span> 
+                                                <#if ${site_id}?has_content>
+                                                    <a href="https://vula.uct.ac.za/portal/site/${site_id}">Vula site</a> 
+                                                <#else>
+                                                    <a href="https://vula.uct.ac.za/portal/site/">Vula site</a>
+                                                <#if>
+                                                <span> under Lecture Videos | Manage.</span>
+                                            </p>
+
                                             <br/>
                                             <p>If a lecture did occur, please reply to this email within 3 days and we will investigate further.</p>
                                             <br/>
