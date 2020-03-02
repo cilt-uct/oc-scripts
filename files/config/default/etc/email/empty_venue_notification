@@ -169,25 +169,24 @@
                                             <br/>
                                             <p>Event: <b>${catalogs['episode']['title']}</b></p> 
                                             <br/>
-                                            <#if ${catalogs['episode']['temporal']}?has_content>
-                                                <p>Date & time: <b>${catalogs['episode']['temporal']}</b></p>
+                                            <#if catalogs['episode']['temporal']?has_content>
+                                                <#setting time_zone="Africa/Johannesburg">
+                                                <#assign eventDate = catalogs['episode']['temporal']?substring(6,16)>
+                                                <#assign eventTime = catalogs['episode']['temporal']?substring(17,25)>
+                                                <p>Date & time: <b>${(eventDate + ' ' + eventTime + ' UTC')?datetime('yyyy-MM-dd HH:mm:ss z')}</b></p>
                                             <#else>
                                                 <p>Date & time: This was not a scheduled event.</p>
-                                            <#if>  
+                                            </#if>  
                                             <br/>
-                                            <#if ${catalogs['episode']['spatial']}?has_content>
+                                            <#if catalogs['episode']['spatial']?has_content>
                                                 <p>Venue: <b>${catalogs['episode']['spatial']}</b></p>
                                             <#else>
                                                 <p>Venue: The venue was not been set for this event.</p>
-                                            <#if>  
+                                            </#if>  
                                             <br/>
                                             <p>
                                                 <span>We recommend updating the recordings so that these align with the course/event schedule. You can cancel and/or add recordings in your </span> 
-                                                <#if ${site_id}?has_content>
-                                                    <a href="https://vula.uct.ac.za/portal/site/${site_id}">Vula site</a> 
-                                                <#else>
-                                                    <a href="https://vula.uct.ac.za/portal/site/">Vula site</a>
-                                                <#if>
+                                                <a href="https://vula.uct.ac.za/portal/site/">Vula site</a>
                                                 <span> under Lecture Videos | Manage.</span>
                                             </p>
 

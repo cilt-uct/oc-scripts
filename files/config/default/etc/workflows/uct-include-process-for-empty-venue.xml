@@ -88,8 +88,9 @@
       <configurations>
         <!-- <configuration key="to">${organizer_email}</configuration>
         <configuration key="cc">${notification_list}</configuration> -->
+        <!-- Will send internal emails for now, for qa purposes.-->
         <configuration key="to">ngonidzashe.choga@uct.ac.za</configuration>
-        <!-- <configuration key="cc">corne.oosthuizen@uct.ac.za</configuration> -->
+        <configuration key="cc">corne.oosthuizen@uct.ac.za</configuration>
         <configuration key="subject">Empty venue for: ${series_title}</configuration>
         <configuration key="body-template-file">empty_venue_notification</configuration>
         <configuration key="use-html">true</configuration>
