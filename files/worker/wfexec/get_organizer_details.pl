@@ -42,6 +42,7 @@ my $process_result = "none";
 my $series_title = '';
 my $series_owner_id;
 my $series_notification_list;
+my $normalised_date = '';
 
 my $organizer_name = '';
 my $organizer_email = '';
@@ -58,7 +59,9 @@ try {
     my $event_m = $json->utf8->canonical->decode($event_metadata_json);
 
     # Event fields - start_time is GMT
-    my $series   = getEventField($event_m, "isPartOf");
+    my $series = getEventField($event_m, "isPartOf");
+    my $start_date = getEventField($event_m, "startDate");
+    $normalised_date = normaliseDate($start_date);
 
     if (defined($series) && $series ne "") {
         my $series_metadata_json = getSeriesMetadata($mech, $server, $series);
@@ -117,6 +120,7 @@ try {
     print $fh "organizer_email=$organizer_email\n";
     print $fh "organizer_email_valid=". ( isValidEmailSyntax($organizer_email) ? "true" : "false" ) ."\n";
     print $fh "notification_list=$cc\n";
+    print $fh "start_date=$normalised_date\n";
     close $fh;
 };
 
@@ -261,4 +265,15 @@ sub isValidEmailSyntax($) {
 
   ## Simple regexp from http://www.webmasterworld.com/forum13/251.htm
   return ($addr =~ /^(\w|\-|\_|\.)+\@((\w|\-|\_)+\.)+[a-zA-Z]{2,}$/);
+}
+
+## Turn the date into a normalised date-time readable string
+sub normaliseDate($) {
+  my $start_date = shift;
+  my $date = substr($start_date, 0, 10);
+  my $time = substr($start_date, 11, 8);
+  my $formatter = DateTime::Format::Strptime->new(pattern => "%F  %T",time_zone=>'UTC');
+  my $dt_obj    = $formatter->parse_datetime("$date  $time");
+  $dt_obj->set_time_zone('Africa/Johannesburg');
+  return $dt_obj->strftime("%a, %d %b %Y %T %Z");
 }
