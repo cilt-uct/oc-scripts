@@ -114,8 +114,13 @@ packageConfigurationFile() {
     filename=$2
     out=$3
 
+    build_file="$FILES/config/build-$name.cfg"
+    if [ ! -f "$build_file" ]; then
+        echo "deploy_server_name=http://$name.uct.ac.za:8080" > $build_file
+    fi
+
     # replace the server specific settings
-    writeConfiguration $FILES/config/build-$name.cfg $file
+    writeConfiguration $build_file $file
 
     # replace generic
     writeConfiguration $FILES/config/build-default.cfg $file
@@ -138,7 +143,7 @@ packageConfiguration() {
 
         if [ ! -f "$cfg_file" ]; then
             cp "$FILES/conf-server.template" "$cfg_file"
-            sed -i -e "/#.*/! s;NNNN;$name/;" "$cfg_file"
+            sed -i -e "/#.*/! s;NNNN;$name;" "$cfg_file"
         fi
 
         if [ ! -f "$build_file" ]; then
@@ -855,7 +860,7 @@ while true; do
             EMPTYVENUE=true
             $MORE && ACTIONS=$((ACTIONS+1))
             shift
-            ;;    
+            ;;
         -l|--list)
             LIST=true
             $MORE && ACTIONS=$((ACTIONS+1))
