@@ -74,6 +74,7 @@
       <configurations>
         <configuration key="removeSource">true</configuration>
         <configuration key="removePreview">true</configuration>
+        <configuration key="removeInput">true</configuration>
         <configuration key="removeWork">true</configuration>
         <configuration key="removeTrimmed">true</configuration>
         <configuration key="removeNormalizedTrimmed">true</configuration>
@@ -161,6 +162,19 @@
         description="Removing archive tags for */work">
         <configurations>
             <configuration key="source-flavors">*/work</configuration>
+            <configuration key="target-tags">-archive</configuration>
+        </configurations>
+    </operation>
+
+    <operation
+        id="tag"
+        max-attempts="2"
+        fail-on-error="true"
+        if="${removeInput}"
+        exception-handler-workflow="partial-error"
+        description="Removing archive tags for */input">
+        <configurations>
+            <configuration key="source-flavors">*/input</configuration>
             <configuration key="target-tags">-archive</configuration>
         </configurations>
     </operation>
