@@ -42,6 +42,7 @@ my $process_result = "none";
 my $series_title = '';
 my $series_owner_id;
 my @series_notification_list;
+my $valid_notification_list = '';
 my $normalised_date = '';
 
 my $organizer_name = '';
@@ -85,8 +86,10 @@ try {
 
         if (@check_cc) {
             $cc = join ',', @check_cc;
+            $valid_notification_list = "true"
         } else {
             $cc = "null";
+            $valid_notification_list = "false"
         }
         
 
@@ -125,6 +128,7 @@ try {
     print $fh "organizer_email=$organizer_email\n";
     print $fh "organizer_email_valid=". ( isValidEmailSyntax($organizer_email) ? "true" : "false" ) ."\n";
     print $fh "notification_list=$cc\n";
+    print $fh "valid_notification_list=$valid_notification_list\n";
     print $fh "start_date=$normalised_date\n";
     close $fh;
 };
