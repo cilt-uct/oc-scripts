@@ -41,11 +41,15 @@ my $process_completed = 1;
 my $process_result = "none";
 my $series_title = '';
 my $series_owner_id;
-my $series_notification_list;
+my @series_notification_list;
+my $valid_notification_list = '';
+my $normalised_date = '';
 
 my $organizer_name = '';
 my $organizer_email = '';
 my $cc = '';
+
+my $site_id = '';
 
 try {
     # Login to Opencast
@@ -58,7 +62,9 @@ try {
     my $event_m = $json->utf8->canonical->decode($event_metadata_json);
 
     # Event fields - start_time is GMT
-    my $series   = getEventField($event_m, "isPartOf");
+    my $series = getEventField($event_m, "isPartOf");
+    my $start_date = getEventField($event_m, "startDate");
+    $normalised_date = normaliseDate($start_date);
 
     if (defined($series) && $series ne "") {
         my $series_metadata_json = getSeriesMetadata($mech, $server, $series);
@@ -67,21 +73,29 @@ try {
             my $series_m = $json->utf8->canonical->decode($series_metadata_json);
             $series_title = getSeriesField($series_m, "title");
             $series_owner_id = getSeriesField($series_m, "creator-id");
-            $series_notification_list = '';#getSeriesField($series_m, "notification-list");
+            @series_notification_list = getSeriesField($series_m, "notification-list");
+            $site_id = getSeriesField($series_m, "site-id");
         }
     }
-    if (defined($series_notification_list) && $series_notification_list ne "") {
-        # check notification list for valid emails and unique
-        $notification_list =~ s/[\n\r\s]+//g;
-        my @check_cc = split ',', $notification_list;
-        my @cc_ar = ();
-        my %seen  = ();
-        foreach (@check_cc) {
-            if (isValidEmailSyntax($_)) {
-                $seen{$_} = 1 if not exists $seen{$_};
+    if (@series_notification_list) {
+
+        my @check_cc = ();
+
+        foreach (@series_notification_list) {
+            if (isValidEmailSyntax(@$_)) {
+                push (@check_cc, @$_);
             }
         }
-        my $cc = join ',', keys %seen;
+
+        if (@check_cc) {
+            $cc = join ',', @check_cc;
+            $valid_notification_list = "true"
+        } else {
+            $cc = "null";
+            $valid_notification_list = "false"
+        }
+        
+
     }
 
     if (defined($series_owner_id) && $series_owner_id ne "") {
@@ -117,6 +131,9 @@ try {
     print $fh "organizer_email=$organizer_email\n";
     print $fh "organizer_email_valid=". ( isValidEmailSyntax($organizer_email) ? "true" : "false" ) ."\n";
     print $fh "notification_list=$cc\n";
+    print $fh "valid_notification_list=$valid_notification_list\n";
+    print $fh "start_date=$normalised_date\n";
+    print $fh "site_id=$site_id\n";
     close $fh;
 };
 
@@ -261,4 +278,15 @@ sub isValidEmailSyntax($) {
 
   ## Simple regexp from http://www.webmasterworld.com/forum13/251.htm
   return ($addr =~ /^(\w|\-|\_|\.)+\@((\w|\-|\_)+\.)+[a-zA-Z]{2,}$/);
+}
+
+## Turn the date into a normalised date-time readable string
+sub normaliseDate($) {
+  my $start_date = shift;
+  my $date = substr($start_date, 0, 10);
+  my $time = substr($start_date, 11, 8);
+  my $formatter = DateTime::Format::Strptime->new(pattern => "%F  %T",time_zone=>'UTC');
+  my $dt_obj    = $formatter->parse_datetime("$date  $time");
+  $dt_obj->set_time_zone('Africa/Johannesburg');
+  return $dt_obj->strftime("%a, %d %b %Y %T %Z");
 }
