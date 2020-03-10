@@ -186,7 +186,7 @@
                                                 <br/>
                                                 <p>
                                                     <span>We recommend updating the recordings so that these align with the course/event schedule. You can cancel and/or add recordings in your </span> 
-                                                    <a href="https://vula.uct.ac.za/portal/site/$workflowConfig['site_id']">Vula site</a>
+                                                    <a href="https://vula.uct.ac.za/portal/site/${workflowConfig['site_id']}">Vula site</a>
                                                     <span> under Lecture Videos | Manage.</span>
                                                 </p>
 

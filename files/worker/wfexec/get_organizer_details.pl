@@ -49,6 +49,8 @@ my $organizer_name = '';
 my $organizer_email = '';
 my $cc = '';
 
+my $site_id = '';
+
 try {
     # Login to Opencast
     my $mech = WWW::Mechanize->new( autocheck => 0 );
@@ -72,6 +74,7 @@ try {
             $series_title = getSeriesField($series_m, "title");
             $series_owner_id = getSeriesField($series_m, "creator-id");
             @series_notification_list = getSeriesField($series_m, "notification-list");
+            $site_id = getSeriesField($series_m, "site-id");
         }
     }
     if (@series_notification_list) {
@@ -130,6 +133,7 @@ try {
     print $fh "notification_list=$cc\n";
     print $fh "valid_notification_list=$valid_notification_list\n";
     print $fh "start_date=$normalised_date\n";
+    print $fh "site_id=$site_id\n";
     close $fh;
 };
 
