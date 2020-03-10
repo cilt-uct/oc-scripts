@@ -41,7 +41,7 @@ my $process_completed = 1;
 my $process_result = "none";
 my $series_title = '';
 my $series_owner_id;
-my $series_notification_list;
+my @series_notification_list;
 my $normalised_date = '';
 
 my $organizer_name = '';
@@ -70,21 +70,26 @@ try {
             my $series_m = $json->utf8->canonical->decode($series_metadata_json);
             $series_title = getSeriesField($series_m, "title");
             $series_owner_id = getSeriesField($series_m, "creator-id");
-            $series_notification_list = '';#getSeriesField($series_m, "notification-list");
+            @series_notification_list = getSeriesField($series_m, "notification-list");
         }
     }
-    if (defined($series_notification_list) && $series_notification_list ne "") {
-        # check notification list for valid emails and unique
-        $notification_list =~ s/[\n\r\s]+//g;
-        my @check_cc = split ',', $notification_list;
-        my @cc_ar = ();
-        my %seen  = ();
-        foreach (@check_cc) {
-            if (isValidEmailSyntax($_)) {
-                $seen{$_} = 1 if not exists $seen{$_};
+    if (@series_notification_list) {
+
+        my @check_cc = ();
+
+        foreach (@series_notification_list) {
+            if (isValidEmailSyntax(@$_)) {
+                push (@check_cc, @$_);
             }
         }
-        my $cc = join ',', keys %seen;
+
+        if (@check_cc) {
+            $cc = join ',', @check_cc;
+        } else {
+            $cc = "null";
+        }
+        
+
     }
 
     if (defined($series_owner_id) && $series_owner_id ne "") {
