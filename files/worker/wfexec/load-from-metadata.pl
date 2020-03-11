@@ -75,6 +75,7 @@ try {
     print $fh "caption_provider=$caption_provider\n";
     print $fh "use_watson=true\n" if ($caption_provider eq "watson");
     print $fh "use_nibity=true\n" if ($caption_provider eq "nibity");
+    print $fh "use_google=true\n" if ($caption_provider eq "google");
     print $fh "is_personal_series=". $is_personal_series ."\n";
     print $fh "metadata_result=" . $final_result . "\n" if ($final_result ne "");
     close $fh;

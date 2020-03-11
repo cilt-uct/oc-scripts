@@ -45,5 +45,16 @@
           <configuration key="workflow-id">uct-include-transcription-nibity</configuration>
         </configurations>
       </operation>
+
+      <!--  and ${audio_trim_lapel} -->
+      <operation
+        id="include"
+        if="${use_google}"
+        description="Do captioning with Google Speech-to-Text">
+        <configurations>
+          <configuration key="workflow-id">uct-include-transcription-google</configuration>
+        </configurations>
+      </operation>
+
   </operations>
 </definition>
