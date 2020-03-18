@@ -93,5 +93,6 @@ deploy_google_on=tmpl_google_on
 deploy_google_id=tmpl_google_id
 deploy_google_secret=tmpl_google_secret
 deploy_google_token=tmpl_google_token
+deploy_google_storage_bucket=tmpl_google_storage_bucket
 
 ## LAST LINE ##############################
