@@ -25,6 +25,7 @@ my $course = "";
 my $caption_provider = "unknown";
 my $process_completed = 1;
 my $process_result = "none";
+my $is_personal_series = "false";
 
 # Output
 my $final_result = "";
@@ -53,8 +54,11 @@ try {
 
         if ($series_metadata_json ne "") {
             my $series_m = $json->utf8->canonical->decode($series_metadata_json);
+            my $series_title = getSeriesField($series_m, "title");
             $course = getSeriesField($series_m, "course");
             $caption_provider = getSeriesField($series_m, "caption-type");
+            $is_personal_series = ( begins_with($series_title, "Personal Series") ? "true" : "false" );
+
             $process_completed = 1;
         }
     }
@@ -71,6 +75,7 @@ try {
     print $fh "caption_provider=$caption_provider\n";
     print $fh "use_watson=true\n" if ($caption_provider eq "watson");
     print $fh "use_nibity=true\n" if ($caption_provider eq "nibity");
+    print $fh "is_personal_series=". $is_personal_series ."\n";
     print $fh "metadata_result=" . $final_result . "\n" if ($final_result ne "");
     close $fh;
 };
@@ -196,4 +201,8 @@ sub getSeriesField($$) {
   }
 
   return $value;
+}
+
+sub begins_with {
+    return substr($_[0], 0, length($_[1])) eq $_[1];
 }

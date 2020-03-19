@@ -35,19 +35,127 @@
       </configurations>
     </operation>
 
+    <!-- Load workflow properties from metadata: update some workflow properties -->
+    <operation
+      id="execute-once"
+      max-attempts="3"
+      retry-strategy="hold"
+      fail-on-error="true"
+      exception-handler-workflow="partial-error"
+      description="Load workflow properties from settings in series">
+      <configurations>
+        <configuration key="exec">/opt/opencast/wfexec/load-from-metadata.pl</configuration>
+        <configuration key="load">0.1</configuration>
+        <configuration key="params">#{id} #{out}</configuration>
+        <configuration key="output-filename">metadata_workflow.txt</configuration>
+        <configuration key="set-workflow-properties">true</configuration>
+        <configuration key="expected-type">Attachment</configuration>
+      </configurations>
+    </operation>
+
+    <!--
+      Apply access control lists from series to the mediapackage.
+      Only runs if Event is linked to Series, SKIPPED if not.
+    -->
+    <operation
+      id="series"
+      exception-handler-workflow="partial-error"
+      description="Applying access control entries">
+      <configurations>
+        <configuration key="attach">*</configuration>
+        <configuration key="apply-acl">true</configuration>
+      </configurations>
+    </operation>
+
+    <!-- make sure to save ACL and dublincore -->
+    <operation
+        id="tag"
+        exception-handler-workflow="partial-error"
+        description="Add archive tags for dublincore/*,security/*">
+        <configurations>
+            <configuration key="source-flavors">dublincore/*,security/*</configuration>
+            <configuration key="target-tags">archive</configuration>
+        </configurations>
+    </operation>
+
+    <!-- Tag the incoming metadata catalogs and captions for publishing -->
+    <operation
+      id="tag"
+      description="Tagging metadata catalogs and captions for publication">
+      <configurations>
+        <configuration key="source-flavors">dublincore/*,*/captions</configuration>
+        <configuration key="target-tags">+engage-download</configuration>
+      </configurations>
+    </operation>
+
+    <!-- <operation
+        id="clone"
+        exception-handler-workflow="partial-error"
+        description="Move track_presenter.0/* to presenter/source">
+        <configurations>
+            <configuration key="source-flavor">track_presenter.0/*</configuration>
+            <configuration key="target-flavor">presenter/source</configuration>
+        </configurations>
+    </operation> -->
+
+    <operation
+      id="compose"
+      fail-on-error="true"
+      exception-handler-workflow="partial-error"
+      description="Move track_presenter.0/* to presenter/source">
+      <configurations>
+        <configuration key="source-flavor">track_presenter.0/*</configuration>
+        <configuration key="target-flavor">presenter/source</configuration>
+        <configuration key="target-tags">archive</configuration>
+        <configuration key="encoding-profile">uct-copy.work</configuration>
+      </configurations>
+    </operation>
+
+    <!-- Tag the sources for archival -->
+    <operation
+      id="tag"
+      description="Tagging source material for archival">
+      <configurations>
+        <configuration key="source-flavors">*/*</configuration>
+        <configuration key="target-tags">+archive</configuration>
+      </configurations>
+    </operation>
+
+    <!-- Tag the sources for archival -->
+    <operation
+      id="tag"
+      description="Remove track_presenter.0/* from archiving">
+      <configurations>
+        <configuration key="source-flavors">track_presenter.0/*</configuration>
+        <configuration key="target-tags">-archive, -engage-download</configuration>
+      </configurations>
+    </operation>
+
+    <!-- Analyze Tracks: set flavor_source workflow properties -->
+    <operation
+      id="analyze-tracks"
+      fail-on-error="false"
+      exception-handler-workflow="partial-error"
+      description="Analyze: SOURCE">
+      <configurations>
+        <configuration key="source-flavor">*/source</configuration>
+        <configuration key="aspect-ratio">4/3,16/9</configuration>
+      </configurations>
+    </operation>
+
     <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       Finalize ingest
       Make sure all elements are downloaded from external sources,
       inspect, analyze tracks (*/*), apply series access control
       archive */source, and tag metadata for archive and publish.
     -->
-    <operation
+    <!-- <operation
       id="include"
       description="Finalize upload and ingest">
       <configurations>
         <configuration key="workflow-id">uct-partial-ingest</configuration>
       </configurations>
-    </operation>
+    </operation> -->
 
     <!-- Save workflow properties -->
     <operation
@@ -263,6 +371,14 @@
         </configurations>
     </operation>
 
-  </operations>
+    <!--operation
+        id="include"
+        if="${is_personal_series}"
+        description="Running pre-preview proccess">
+        <configurations>
+            <configuration key="workflow-id">uct-update-previews</configuration>
+        </configurations>
+    </operation-->
 
+  </operations>
 </definition>

@@ -283,6 +283,10 @@
     <sec:intercept-url pattern="/system/**" access="ROLE_ADMIN" />
     <sec:intercept-url pattern="/config/**" access="ROLE_ADMIN" />
 
+    <!-- Additional UTL definition for editor to work -->
+    <sec:intercept-url pattern="/services/health.*" method="GET" access="ROLE_ADMIN, ROLE_ANONYMOUS" />
+    <sec:intercept-url pattern="/broker/status" method="GET" access="ROLE_ADMIN, ROLE_ANONYMOUS" />
+
     <!-- UCT: Unauthenticated access to CA list for dashboards -->
     <sec:intercept-url pattern="/capture-admin/agents.json" method="GET" access="ROLE_ANONYMOUS" />
 
