@@ -66,7 +66,7 @@ if [[ $media == *".flac"* ]] || [[ $media == *".mp4"* ]] || [[ $media == *".mkv"
             then
                 add_audio=`ffmpeg -f lavfi -i anullsrc=channel_layout=stereo:sample_rate=44100 -i $media -shortest -c:v copy $output_file`
             else
-                exit 4
+                add_audio=`ffmpeg -fflags +genpts -i $media -r 24 $output_file`
         fi
 
     else
