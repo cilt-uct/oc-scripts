@@ -4,32 +4,12 @@
   <id>fast</id>
   <title>UCT - Publish fast</title>
   <tags>
-    <tag>schedule</tag>
+    <tag>archive</tag>
   </tags>
   <description/>
   <configuration_panel/>
 
   <operations>
-
-    <!-- Detect empty venue -->
-    <operation
-      id="execute-many"
-      fail-on-error="true"
-      retry-strategy="hold"
-      exception-handler-workflow="partial-error"
-      description="Check if video has audio">
-      <configurations>
-        <configuration key="exec">/opt/opencast/wfexec/check-for-audio.sh</configuration>
-        <configuration key="params">-i #{in} -o #{out}</configuration>
-        <configuration key="source-flavor">*/source</configuration>
-        <configuration key="output-filename">enhanced.mp4</configuration>
-        <configuration key="target-flavor">text/plain</configuration>
-        <configuration key="source-audio">true</configuration>
-        <configuration key="set-workflow-properties">true</configuration>
-        <configuration key="expected-type">Track</configuration>
-        <configuration key="load">4.0</configuration>
-      </configurations>
-    </operation>
 
     <operation
       id="defaults"
@@ -40,24 +20,6 @@
 
         <configuration key="thumbnailType">0</configuration>
         <configuration key="thumbnailPosition">1</configuration>
-      </configurations>
-    </operation>
-
-    <!-- Check whether this series has a my videos - else create one -->
-    <operation
-      id="execute-once"
-      max-attempts="3"
-      retry-strategy="hold"
-      fail-on-error="true"
-      exception-handler-workflow="partial-error"
-      description="Create My Videos">
-      <configurations>
-        <configuration key="exec">/opt/opencast/wfexec/create-my-videos.pl</configuration>
-        <configuration key="load">0.1</configuration>
-        <configuration key="params">#{id} #{out}</configuration>
-        <configuration key="output-filename">my_videos.txt</configuration>
-        <configuration key="set-workflow-properties">true</configuration>
-        <configuration key="expected-type">Attachment</configuration>
       </configurations>
     </operation>
 
@@ -136,7 +98,26 @@
       </configurations>
     </operation>
 
-   <!-- Archive generated items -->
+    <!-- check if source video has audio and add to work versions -->
+    <operation
+      id="execute-many"
+      fail-on-error="true"
+      retry-strategy="hold"
+      exception-handler-workflow="partial-error"
+      description="Check if video has audio">
+      <configurations>
+        <configuration key="exec">/opt/opencast/wfexec/check-for-audio.sh</configuration>
+        <configuration key="params">-i #{in} -o #{out}</configuration>
+        <configuration key="source-flavor">*/source</configuration>
+        <configuration key="source-video">true</configuration>
+        <configuration key="output-filename">enhanced.mp4</configuration>
+        <configuration key="target-flavor">presenter/work</configuration>
+        <configuration key="expected-type">Track</configuration>
+        <configuration key="load">2.0</configuration>
+      </configurations>
+    </operation>
+
+    <!-- Archive generated items -->
     <operation
       id="snapshot"
       description="Archive source">
@@ -145,17 +126,28 @@
       </configurations>
     </operation>
 
-    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      Prepare work versions of the source material for archive and processing.
-      Preview and Publish use Work versions. (*/work)
-    -->
+    <!-- Untag work flavors -->
     <operation
-      id="include"
-      description="Prepare work version for processing">
+      id="tag"
+      description="Untag all work flavors">
       <configurations>
-        <configuration key="workflow-id">uct-partial-work</configuration>
+        <configuration key="source-flavors">*/work</configuration>
+        <configuration key="target-tags">-archive</configuration>
       </configurations>
     </operation>
+
+    <!-- DO normalization here -->
+
+    <!-- Analyze Tracks -->
+    <operation
+      id="analyze-tracks"
+      fail-on-error="false"
+      exception-handler-workflow="partial-error"
+      description="Analyze: WORK">
+      <configurations>
+        <configuration key="source-flavor">*/work</configuration>
+      </configurations>
+    </operation>`
 
     <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       Process video in parallel for publishing - without normalizing audio

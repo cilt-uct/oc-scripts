@@ -2,7 +2,7 @@
 
 # Initialize our variables:
 media=""
-output=""
+output_file=""
 
 # -d, --debug   If the flag exists then output debug file
 DEBUG=false
@@ -10,9 +10,9 @@ DEBUG=false
 OPTIONS=o:i:d
 LONGOPTIONS=debug,input:,output:
 
--temporarily store output to be able to check for errors
--e.g. use “--options” parameter by name to activate quoting/enhanced mode
--pass arguments only via   -- "$@"   to separate them correctly
+# -temporarily store output to be able to check for errors
+# -e.g. use “--options” parameter by name to activate quoting/enhanced mode
+# -pass arguments only via   -- "$@"   to separate them correctly
 PARSED=$(getopt --options=$OPTIONS --longoptions=$LONGOPTIONS --name "$0" -- "$@")
 if [[ $? -ne 0 ]]; then
     # e.g. $? == 1
@@ -64,8 +64,7 @@ if [[ $media == *".flac"* ]] || [[ $media == *".mp4"* ]] || [[ $media == *".mkv"
 
         if [ -z "$audio_check" ];
             then
-                add_audio=`ffmpeg -f lavfi -i anullsrc=channel_layout=stereo:sample_rate=44100 -i $media -shortest -c:v copy $output`
-                echo "Empty"
+                add_audio=`ffmpeg -f lavfi -i anullsrc=channel_layout=stereo:sample_rate=44100 -i $media -shortest -c:v copy $output_file`
             else
                 exit 4
         fi
