@@ -2,10 +2,8 @@
 <definition xmlns="http://workflow.opencastproject.org">
 
   <id>fast</id>
-  <title>UCT - Publish fast</title>
-  <tags>
-    <tag>archive</tag>
-  </tags>
+  <title>UCT - Publish Opencast Studio upload</title>
+  <tags/>
   <description/>
   <configuration_panel/>
 
