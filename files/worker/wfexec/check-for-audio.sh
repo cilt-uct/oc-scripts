@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Initialize our variables:
-media=""
-output_file=""
+media="77.webm"
+output_file="77.mp4"
 
 # -d, --debug   If the flag exists then output debug file
 DEBUG=false
@@ -13,41 +13,41 @@ LONGOPTIONS=debug,input:,output:
 # -temporarily store output to be able to check for errors
 # -e.g. use “--options” parameter by name to activate quoting/enhanced mode
 # -pass arguments only via   -- "$@"   to separate them correctly
-PARSED=$(getopt --options=$OPTIONS --longoptions=$LONGOPTIONS --name "$0" -- "$@")
-if [[ $? -ne 0 ]]; then
-    # e.g. $? == 1
-    #  then getopt has complained about wrong arguments to stdout
-    usage $@
-    exit 2
-fi
-# read getopt’s output this way to handle the quoting right:
-eval set -- "$PARSED"
+# PARSED=$(getopt --options=$OPTIONS --longoptions=$LONGOPTIONS --name "$0" -- "$@")
+# if [[ $? -ne 0 ]]; then
+#     # e.g. $? == 1
+#     #  then getopt has complained about wrong arguments to stdout
+#     usage $@
+#     exit 2
+# fi
+# # read getopt’s output this way to handle the quoting right:
+# eval set -- "$PARSED"
 
-# now enjoy the options in order and nicely split until we see --
-while true; do
-    case "$1" in
-        -i|--input)
-            media="$2"
-            shift 2
-            ;;
-        -o|--output)
-            output_file="$2"
-            shift 2
-            ;;
-        -d|--debug)
-            DEBUG=true
-            shift
-            ;;
-        --)
-            shift
-            break
-            ;;
-        *)
-            echo "Programming error"
-            exit 3
-            ;;
-    esac
-done
+# # now enjoy the options in order and nicely split until we see --
+# while true; do
+#     case "$1" in
+#         -i|--input)
+#             media="$2"
+#             shift 2
+#             ;;
+#         -o|--output)
+#             output_file="$2"
+#             shift 2
+#             ;;
+#         -d|--debug)
+#             DEBUG=true
+#             shift
+#             ;;
+#         --)
+#             shift
+#             break
+#             ;;
+#         *)
+#             echo "Programming error"
+#             exit 3
+#             ;;
+#     esac
+# done
 
 # handle non-option arguments
 
@@ -66,7 +66,7 @@ if [[ $media == *".flac"* ]] || [[ $media == *".mp4"* ]] || [[ $media == *".mkv"
             then
                 add_audio=`ffmpeg -f lavfi -i anullsrc=channel_layout=stereo:sample_rate=44100 -i $media -shortest -c:v libx264 -c:a aac $output_file`
             else
-                add_audio=`ffmpeg -fflags +genpts -i $media -vf scale=520:-2 $output_file`
+                add_audio=`ffmpeg -fflags +genpts -i $media -vf "pad=ceil(iw/2)*2:ceil(ih/2)*2" $output_file`
         fi
 
     else
