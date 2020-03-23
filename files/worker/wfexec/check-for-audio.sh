@@ -13,7 +13,7 @@ LONGOPTIONS=debug,input:,output:
 # -temporarily store output to be able to check for errors
 # -e.g. use “--options” parameter by name to activate quoting/enhanced mode
 # -pass arguments only via   -- "$@"   to separate them correctly
-# PARSED=$(getopt --options=$OPTIONS --longoptions=$LONGOPTIONS --name "$0" -- "$@")
+PARSED=$(getopt --options=$OPTIONS --longoptions=$LONGOPTIONS --name "$0" -- "$@")
 if [[ $? -ne 0 ]]; then
     # e.g. $? == 1
     #  then getopt has complained about wrong arguments to stdout
