@@ -64,7 +64,7 @@ if [[ $media == *".flac"* ]] || [[ $media == *".mp4"* ]] || [[ $media == *".mkv"
 
         if [ -z "$audio_check" ];
             then
-                add_audio=`ffmpeg -f lavfi -i anullsrc=channel_layout=stereo:sample_rate=44100 -i $media -shortest -c:v libx264 -c:a aac $output_file`
+                add_audio=`ffmpeg -f lavfi -i anullsrc=channel_layout=stereo:sample_rate=44100 -i $media -shortest -c:v libx264 -c:a aac -vf "pad=ceil(iw/2)*2:ceil(ih/2)*2" $output_file`
             else
                 add_audio=`ffmpeg -fflags +genpts -i $media -vf "pad=ceil(iw/2)*2:ceil(ih/2)*2" $output_file`
         fi
