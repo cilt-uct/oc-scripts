@@ -8,13 +8,13 @@
         clone: yes
         update: yes
       register: result
-      when: "'worker' in group_names"
+      when: "'worker' in group_names and 'workernoexec' in group_names"
 
     - name: Create directory
       file:
         path: /opt/VAD-python/logs
         state: directory
-    
+
     - name: Log file permissions
       file: path=/opt/VAD-python/logs owner=opencast group=opencast mode=0777 state=directory
 
