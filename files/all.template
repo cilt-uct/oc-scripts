@@ -61,7 +61,7 @@ folder_distribution_downloads: "{{ folder_data }}distribution/downloads"
 folder_distribution_streams: "{{ folder_data }}distribution/streams"
 
 # Deploy variables - Applicable to all servers
-folder_config: "{{ folder_script }}files/config/" 
+folder_config: "{{ folder_script }}files/config/"
 
 deploy_lti_static: "{{ folder_script }}files/lti.tar.gz"
 deploy_lti_script: "{{ folder_script }}files/lti.sh"
@@ -73,3 +73,4 @@ deploy_assembly_adminworker: "{{ folder_src }}build/opencast-dist-adminworker-{{
 deploy_assembly_presentation: "{{ folder_src }}build/opencast-dist-presentation-{{ oc_version }}.tar.gz"
 deploy_assembly_ingest: "{{ folder_src }}build/opencast-dist-ingest-{{ oc_version }}.tar.gz"
 deploy_assembly_worker: "{{ folder_src }}build/opencast-dist-worker-{{ oc_version }}.tar.gz"
+deploy_assembly_workernoexec: "{{ folder_src }}build/opencast-dist-workernoexec-{{ oc_version }}.tar.gz"

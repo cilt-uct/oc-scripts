@@ -2,7 +2,8 @@
 admin.uct.ac.za
 db.uct.ac.za
 ingest.uct.ac.za
-worker.uct.ac.za
+worker01.uct.ac.za
+worker02.uct.ac.za
 
 [dbservers]
 db.uct.ac.za
@@ -14,4 +15,7 @@ admin.uct.ac.za
 ingest.uct.ac.za
 
 [worker]
-worker.uct.ac.za
+worker01.uct.ac.za
+
+[workernoexec]
+worker02.uct.ac.za

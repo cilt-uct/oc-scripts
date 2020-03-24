@@ -1,12 +1,15 @@
 [production]
 srvubuopc001.uct.ac.za
 srvubuopc411.uct.ac.za
+srvubuopc412.uct.ac.za
 srvubuopc420.uct.ac.za
 srvubuopc421.uct.ac.za
 srvubuopc422.uct.ac.za
 srvubuopc423.uct.ac.za
-#srvubuopc424.uct.ac.za
-#srvubuopc425.uct.ac.za
+srvubuopc424.uct.ac.za
+srvubuopc425.uct.ac.za
+srvubuopc426.uct.ac.za
+srvubuopc427.uct.ac.za
 srvubuopc201.uct.ac.za
 srvubuopc202.uct.ac.za
 
@@ -22,9 +25,14 @@ srvubuopc202.uct.ac.za
 
 [worker]
 srvubuopc411.uct.ac.za
+srvubuopc412.uct.ac.za
 srvubuopc420.uct.ac.za
 srvubuopc421.uct.ac.za
 srvubuopc422.uct.ac.za
 srvubuopc423.uct.ac.za
-#srvubuopc424.uct.ac.za
-#srvubuopc425.uct.ac.za
+
+[workernoexec]
+srvubuopc424.uct.ac.za
+srvubuopc425.uct.ac.za
+srvubuopc426.uct.ac.za
+srvubuopc427.uct.ac.za

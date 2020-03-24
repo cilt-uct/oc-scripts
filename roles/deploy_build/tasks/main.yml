@@ -29,5 +29,9 @@
     copy: src={{ deploy_assembly_worker }} dest=/opt/opencast-dist-worker.tar.gz owner=opencast group=opencast mode=0644
     when: "'worker' in group_names"
 
+  - name: Copy worker without exec assembly
+    copy: src={{ deploy_assembly_workernoexec }} dest=/opt/opencast-dist-workernoexec.tar.gz owner=opencast group=opencast mode=0644
+    when: "'workernoexec' in group_names"
+
   - include_role:
       name: deploy_config
