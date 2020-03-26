@@ -44,6 +44,7 @@ if [ "$PROGNAME" = "start-opencast" ]; then
         check_filesystem "${DIR_MOUNTS}"
         if [ "$?" = "1" ]; then
             printf "\nFilesystem not mounted correctly: %s\n" "${DIR_MOUNTS}"
+            exit 1
         fi
     fi
 fi

@@ -47,7 +47,7 @@ export KARAF_NOROOT=true
 # Set the timezone explicitly (related to MH-12095)
 export TZ=Africa/Johannesburg
 
-export DIR_MOUNTS="/data/opencast/distribution,/data/opencast/archive"
+export DIR_MOUNTS=deploy_NFS_drive
 
 . "$DIRNAME/check_ports"
 . "$DIRNAME/check_filesystem"
