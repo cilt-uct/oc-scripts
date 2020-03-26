@@ -58,7 +58,7 @@ main() {
     cp $working/etc/workflows-default/google-speech-attach-transcripts.xml $working/etc/workflows/google-speech-attach-transcripts.xml
     cp $working/etc/workflows-default/google-speech-start-transcription.xml $working/etc/workflows/google-speech-start-transcription.xml
     cp $working/etc/workflows-default/nibity-attach-transcripts.xml $working/etc/workflows/nibity-attach-transcripts.xml
-    cp $working/etc/workflows-default/nibity-start-transcription.xml $working/etc/workflows/nibity-start-transcription.xml
+    #cp $working/etc/workflows-default/nibity-start-transcription.xml $working/etc/workflows/nibity-start-transcription.xml
     cp $working/etc/workflows-default/partial-error.xml $working/etc/workflows/partial-error.xml
     cp $working/etc/workflows-default/partial-retract.xml $working/etc/workflows/partial-retract.xml
     cp $working/etc/workflows-default/partial-title-slide.xml $working/etc/workflows/partial-title-slide.xml
