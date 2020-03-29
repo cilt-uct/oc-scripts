@@ -166,39 +166,23 @@
                                                 <p>
                                                     <span>The following recording was uploaded your </span>
                                                     <#if workflowConfig['site_id']?has_content>
-                                                        <a href="https://vula.uct.ac.za/portal/site/${workflowConfig['site_id']}">Vula site</a>
+                                                        <a href="https://vula.uct.ac.za/portal/site/${workflowConfig['site_id']}">Vula site.</a>
                                                     <#else>
-                                                        <a href="https://vula.uct.ac.za/">Vula site</a>
+                                                        <a href="https://vula.uct.ac.za/">Vula site.</a>
                                                     </#if>
-                                                </p>
-                                                <br/>
-                                                <p>Series: <b>${catalogs['series']['title']}</b></p>   
-                                                <br/>
+                                                </p>                                                
                                                 <p>Event: <b>${catalogs['episode']['title']}</b></p> 
                                                 <br/>
                                                 <#if catalogs['episode']['created']?has_content>
                                                     <#setting time_zone="Africa/Johannesburg">
-                                                    <#assign eventDate = catalogs['episode']['created']?substring(6,16)>
-                                                    <#assign eventTime = catalogs['episode']['created']?substring(17,25)>
+                                                    <#assign eventDate = catalogs['episode']['created']?substring(0,9)>
+                                                    <#assign eventTime = catalogs['episode']['created']?substring(11,19)>
                                                     <p>Date & time: <b>${(eventDate + ' ' + eventTime + ' UTC')?datetime('yyyy-MM-dd HH:mm:ss z')}</b></p>
                                                 <#else>
                                                     <p>Date & time: This was not a scheduled event.</p>
-                                                </#if>  
+                                                </#if>
                                                 <br/>
-                                                    <p>Venue: Opencast Studio.</p>  
-                                                <br/>
-                                                <p>
-                                                    <span>We recommend updating the recordings so that these align with the course/event schedule. You can cancel and/or add recordings in your </span>
-                                                    <#if workflowConfig['site_id']?has_content>
-                                                        <a href="https://vula.uct.ac.za/portal/site/${workflowConfig['site_id']}">Vula site</a>
-                                                    <#else>
-                                                        <a href="https://vula.uct.ac.za/">Vula site</a>
-                                                    </#if>
-                                                    <span> under Lecture Videos | Manage.</span>
-                                                </p>
-
-                                                <br/>
-                                                <p>If a lecture did occur, please reply to this email within 3 days and we will investigate further.</p>
+                                                <p>Series: <b>${catalogs['series']['title']}</b></p>   
                                                 <br/>
                                                 <p>Thank you,</p>
                                                 <p>UCT Lecture Recording Team</p>

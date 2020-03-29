@@ -288,5 +288,5 @@ sub normaliseDate($) {
   my $formatter = DateTime::Format::Strptime->new(pattern => "%F  %T",time_zone=>'UTC');
   my $dt_obj    = $formatter->parse_datetime("$date  $time");
   $dt_obj->set_time_zone('Africa/Johannesburg');
-  return $dt_obj->strftime("%a, %d %b %Y %T %Z");
+  return $dt_obj->strftime("%a, %d %b %Y %T");
 }
