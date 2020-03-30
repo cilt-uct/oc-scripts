@@ -21,6 +21,20 @@
       </configurations>
     </operation>
 
+    <!--
+      Apply access control lists from series to the mediapackage.
+      Only runs if Event is linked to Series, SKIPPED if not.
+    -->
+    <operation
+      id="series"
+      exception-handler-workflow="partial-error"
+      description="Applying access control entries">
+      <configurations>
+        <configuration key="attach">*</configuration>
+        <configuration key="apply-acl">true</configuration>
+      </configurations>
+    </operation>
+    
     <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       Prepare work versions of the source material for archive and processing.
       Preview and Publish use Work versions. (*/work)
