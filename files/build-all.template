@@ -4,6 +4,8 @@ deploy_java_home=tmpl_java_home
 deploy_java_min_memory=tmpl_java_min_memory
 deploy_java_max_memory=tmpl_java_max_memory
 
+deploy_NFS_drive="/data/opencast/distribution,/data/opencast/archive"
+
 # Storage Directories
 deploy_server_storage=tmpl_deploy_server_storage
 deploy_server_distribution_stream=tmpl_deploy_server_distribution_stream

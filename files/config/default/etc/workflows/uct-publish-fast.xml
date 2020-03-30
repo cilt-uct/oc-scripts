@@ -410,6 +410,14 @@
       </configurations>
     </operation>
 
+    <operation
+      id="include"
+      description="Send e-mail to course organiser that event has been published">
+      <configurations>
+        <configuration key="workflow-id">uct-opencast-studio-notification</configuration>
+      </configurations>
+    </operation>
+
     <!-- Clean up work artifacts -->
     <operation
         id="cleanup"
