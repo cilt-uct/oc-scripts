@@ -3,35 +3,42 @@
 use strict;
 use File::Find::Rule;
 use Cwd;
-use Data::Dumper;
+use Getopt::Long;
+use Class::Unload;
+use Class::Inspector;
 
 sub uniq {
     my %seen;
     grep !$seen{$_}++, @_;
 }
 
+my $help = 0;
 my $debug = 0;
+my $dir = "/opt/opencast";
+my @ignore_list = qw(Error feature warnings strict POSIX);
+
+GetOptions ('debug' => \$debug, 'help' => \$help);
+
+if ($help) {
+    print "Options:\n\n" .
+           " --debug     Show status and warnings\n";
+    exit(1);
+}
+
 my @result = ();
-
-my $dir = getcwd; # '/opt';
-$dir = '/opt' if $debug;
-
-# Find all the subdirectories of the work directory - ansible copies this to /opt
-# follows means we also go through system linked folders
-my @subdirs = File::Find::Rule->directory->extras({ follow => 1 })->name( '*opencast*' )->in( $dir );
-print Dumper(@subdirs) if $debug;
-
 my @files = File::Find::Rule->file()
                             ->name( '*.pl' )
-                            ->in( @subdirs );
+                            ->in( $dir );
 
-# while (defined(my $file = glob '/opt/opencast/wfexec/*.pl')) {
 for my $file (@files) {
   open my $fh, "<", $file;  # lexical file handles, automatic error handling
 
   while (defined( my $line = <$fh> )) {
     my @matches = $line =~ /^use (\w*::\w*::\w*|\w*::\w*|\w*).*\;/g;
-    print Dumper(@matches) if $debug;
+    
+    foreach my $tester (@ignore_list) {
+        @matches = grep ! /$tester/, @matches;
+    }
     push @result, @matches;
   }
   close $fh;
@@ -43,15 +50,13 @@ my @indiciesToKeep = grep { $result[$_] ne 'strict' } 0..$#result;
 
 my $err = 0;
 foreach my $item (@result) {
-    my $rc =  eval "use $item; 1; ";
     print "Checking $item: " if $debug;
-    if (!$rc) {
+    if (Class::Inspector->installed($item)) {
+        print "Found\n" if $debug;
+    } else {
         print "ERROR not found\n" if $debug;
         print "ERROR ($item) not found\n" if !$debug;
         $err = ++($err)
-    }
-    else {
-        print "Found\n" if $debug;
     }
 }
 
