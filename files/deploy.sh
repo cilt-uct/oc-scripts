@@ -107,6 +107,8 @@ main() {
     cp $working/etc/workflows-default/restore.xml $working/etc/workflows/restore.xml
     cp $working/etc/workflows-default/retract.xml $working/etc/workflows/retract.xml
     cp $working/etc/workflows-default/retry-watson-transcripts.xml $working/etc/workflows/retry-watson-transcripts.xml
+    cp $working/etc/workflows-default/partial-transcode-studio-tracks.xml $working/etc/workflows/partial-transcode-studio-tracks.xml
+    cp $working/etc/workflows-default/studio-upload.xml $working/etc/workflows/studio-upload.xml
 
     echo " Done."
   else

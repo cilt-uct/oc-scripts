@@ -1,30 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <definition xmlns="http://workflow.opencastproject.org">
 
-  <id>uct-process-upload</id>
-  <title>UCT - Process Upload</title>
+  <id>uct-re-process-uploads</id>
+  <title>Re-process Uploads</title>
   <tags>
-    <tag>upload</tag>
+    <tag>archive</tag>
   </tags>
   <description/>
-  <configuration_panel>
-    <![CDATA[
-      <div id="workflow-configuration">
-
-        <fieldset>
-          <legend>Upload options</legend>
-          <ul>
-            <li>
-              <input id="hasSlides" name="hasSlides" type="checkbox" class="configField" value="false" />
-              <label for="hasSlides">Specify whether the video track has slides</label>
-            </li>
-          </ul>
-        </fieldset>
-      </div>
-    ]]>
-  </configuration_panel>
+  <configuration_panel />
 
   <operations>
+  
     <!-- Apply the default workflow configuration -->
     <operation
       id="defaults"
@@ -32,24 +18,6 @@
       <configurations>
         <configuration key="hasSlides">false</configuration>
         <configuration key="downloadSourceflavorsExist">false</configuration>
-      </configurations>
-    </operation>
-
-    <!-- Load workflow properties from metadata: update some workflow properties -->
-    <operation
-      id="execute-once"
-      max-attempts="3"
-      retry-strategy="hold"
-      fail-on-error="true"
-      exception-handler-workflow="partial-error"
-      description="Load workflow properties from settings in series">
-      <configurations>
-        <configuration key="exec">/opt/opencast/wfexec/load-from-metadata.pl</configuration>
-        <configuration key="load">0.1</configuration>
-        <configuration key="params">#{id} #{out}</configuration>
-        <configuration key="output-filename">metadata_workflow.txt</configuration>
-        <configuration key="set-workflow-properties">true</configuration>
-        <configuration key="expected-type">Attachment</configuration>
       </configurations>
     </operation>
 
@@ -268,7 +236,7 @@
         <configuration key="encoding-profile">mp3.http</configuration>
         <configuration key="process-first-match-only">true</configuration>
       </configurations>
-    </operation>  
+    </operation>    
 
     <operation
       id="image"
@@ -380,6 +348,16 @@
       </configurations>
     </operation>
 
+    <operation
+        id="asset-delete"
+        fail-on-error="true"
+        exception-handler-workflow="error"
+        description="Delete from AssetManager">
+        <configurations>
+            <configuration key="keep-last-snapshot">true</configuration>
+        </configurations>
+    </operation>
+
     <!-- Clean up work artifacts -->
     <operation
         id="cleanup"
@@ -393,14 +371,6 @@
         </configurations>
     </operation>
 
-    <!--operation
-        id="include"
-        if="${is_personal_series}"
-        description="Running pre-preview proccess">
-        <configurations>
-            <configuration key="workflow-id">uct-update-previews</configuration>
-        </configurations>
-    </operation-->
-
   </operations>
+
 </definition>
