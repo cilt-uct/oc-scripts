@@ -116,8 +116,9 @@ print $fh "timetable_success=" . ($timetable_completed ? 'true' : 'false') . "\n
 print $fh "event_location=$location\n";
 print $fh "event_trim=$event_trim\n";
 print $fh "caption_provider=$caption_provider\n";
-print $fh "use_watson=true\n" if ($caption_provider eq "watson");
-print $fh "use_nibity=true\n" if ($caption_provider eq "nibity");
+print $fh "use_watson=". ( $caption_provider eq "watson" ? "true" : "false" ) ."\n";
+print $fh "use_nibity=". ( $caption_provider eq "nibity" ? "true" : "false" ) ."\n";
+print $fh "use_google=". ( $caption_provider eq "google" ? "true" : "false" ) ."\n";
 close $fh;
 
 exit 0;
