@@ -248,6 +248,21 @@
       </configurations>
     </operation>
 
+    <!-- Generate timeline preview images -->
+    <operation
+      id="timelinepreviews"
+      if="${presenter_source_video}"
+      fail-on-error="false"
+      exception-handler-workflow="error"
+      description="Creating timeline preview images of the presenter track">
+      <configurations>
+        <configuration key="source-flavor">presenter/delivery</configuration>
+        <configuration key="target-flavor">presenter/timeline+preview</configuration>
+        <configuration key="target-tags">engage-download</configuration>
+        <configuration key="image-count">100</configuration>
+      </configurations>
+    </operation>
+
     <!--
       Encoding audio for Engage player and feeds
 
@@ -320,20 +335,6 @@
         <configuration key="reference-tags">engage-download</configuration>
         <configuration key="target-tags">engage-download</configuration>
         <configuration key="encoding-profile">player-slides.http</configuration>
-      </configurations>
-    </operation>
-
-    <operation
-      id="timelinepreviews"
-      if="${presenter_source_video}"
-      fail-on-error="false"
-      exception-handler-workflow="error"
-      description="Creating timeline preview images of the presenter track">
-      <configurations>
-        <configuration key="source-flavor">presenter/delivery</configuration>
-        <configuration key="target-flavor">presenter/timeline+preview</configuration>
-        <configuration key="target-tags">engage-download</configuration>
-        <configuration key="image-count">100</configuration>
       </configurations>
     </operation>
 
