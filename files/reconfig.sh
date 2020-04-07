@@ -70,6 +70,7 @@ main() {
     cp $working/etc/workflows-default/retry-watson-transcripts.xml $working/etc/workflows/retry-watson-transcripts.xml
     cp $working/etc/workflows-default/partial-transcode-studio-tracks.xml $working/etc/workflows/partial-transcode-studio-tracks.xml
     cp $working/etc/workflows-default/studio-upload.xml $working/etc/workflows/studio-upload.xml
+    cp $working/etc/workflows-default/partial-preview.xml $working/etc/workflows/partial-preview.xml
 
     echo " Done."
   else
