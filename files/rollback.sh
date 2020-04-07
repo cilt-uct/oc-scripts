@@ -19,7 +19,7 @@ PROGNAME=$(basename "$0")
 # [server]
 # assembly = adminpresentation
 # assembly_display = Admin and Presentation
-# server_url = http://mediadev.uct.ac.za
+# server_url = http://[local machine name].uct.ac.za
 # dir_install_real = /opt/opencast
 # dir_backup_real = /opt/opencast-bak
 
