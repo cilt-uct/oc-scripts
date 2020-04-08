@@ -44,7 +44,6 @@ my $series_owner_id;
 my @series_notification_list;
 my $valid_notification_list = '';
 my $normalised_date = '';
-my $event_title = '';
 
 my $organizer_name = '';
 my $organizer_email = '';
@@ -64,7 +63,6 @@ try {
 
     # Event fields - start_time is GMT
     my $series = getEventField($event_m, "isPartOf");
-    $event_title = getEventField($event_m, "title");
     my $start_date = getEventField($event_m, "startDate");
     $normalised_date = normaliseDate($start_date);
 
@@ -129,7 +127,6 @@ try {
     print $fh "get_organizer_result=" . $process_result . "\n";
     print $fh "series_id=$series\n";
     print $fh "series_title=$series_title\n";
-    print $fh "event_title=$event_title\n";
     print $fh "organizer_name=$organizer_name\n";
     print $fh "organizer_email=$organizer_email\n";
     print $fh "organizer_email_valid=". ( isValidEmailSyntax($organizer_email) ? "true" : "false" ) ."\n";
