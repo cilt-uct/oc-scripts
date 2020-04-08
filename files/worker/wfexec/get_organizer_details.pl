@@ -44,6 +44,7 @@ my $series_owner_id;
 my @series_notification_list;
 my $valid_notification_list = '';
 my $normalised_date = '';
+my $event_title = '';
 
 my $organizer_name = '';
 my $organizer_email = '';
@@ -63,7 +64,7 @@ try {
 
     # Event fields - start_time is GMT
     my $series = getEventField($event_m, "isPartOf");
-    my $event_title = getEventField($event_m, "title");
+    $event_title = getEventField($event_m, "title");
     my $start_date = getEventField($event_m, "startDate");
     $normalised_date = normaliseDate($start_date);
 

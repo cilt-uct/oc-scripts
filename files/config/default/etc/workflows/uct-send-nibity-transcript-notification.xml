@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <definition xmlns="http://workflow.opencastproject.org">
 
-  <id>uct-opencast-studio-notification</id>
-  <title>UCT - Send e-mail to the media package creator that event has been published</title>
+  <id>uct-opencast-nibity-notification</id>
+  <title>UCT - Send e-mail to the series owner about nibity transcript upload</title>
   <tags/>
 
   <operations>
