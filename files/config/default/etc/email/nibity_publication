@@ -164,12 +164,13 @@
                                                 <p>Dear ${catalogs['series']['creator']},</p>
                                                 <br/>
                                                 <p>
-                                                    <span>The following recording's nibity transcription was uploaded your </span>
+                                                    <span>Captions and a transcript by WayWithWords for the following recording are now available on your </span>
                                                     <#if workflowConfig['site_id']?has_content>
-                                                        <a href="https://vula.uct.ac.za/portal/site/${workflowConfig['site_id']}">Vula site.</a>
+                                                        <a href="https://vula.uct.ac.za/portal/site/${workflowConfig['site_id']}">Vula site</a>
                                                     <#else>
-                                                        <a href="https://vula.uct.ac.za/">Vula site.</a>
+                                                        <a href="https://vula.uct.ac.za/">Vula site</a>
                                                     </#if>
+                                                    <span>:</span>
                                                 </p>                                                
                                                 <p>Event: <b>${catalogs['episode']['title']}</b></p> 
                                                 <br/>

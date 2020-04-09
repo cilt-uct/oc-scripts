@@ -34,7 +34,7 @@
         <configuration key="to">${organizer_email}</configuration>
         <configuration key="cc">${notification_list}</configuration>
         <configuration key="bcc">ngonidzashe.choga@uct.ac.za</configuration>
-        <configuration key="subject">Nibity transcript has been published for ${catalogs['episode']['title']}</configuration>
+        <configuration key="subject">WayWithWords transcript has been published for ${catalogs['episode']['title']}</configuration>
         <configuration key="body-template-file">nibity_publication</configuration>
         <configuration key="use-html">true</configuration>
       </configurations>
@@ -49,7 +49,7 @@
       <configurations>
         <configuration key="to">${organizer_email}</configuration>
         <configuration key="bcc">ngonidzashe.choga@uct.ac.za</configuration>
-        <configuration key="subject">Nibity transcript has been published for ${catalogs['episode']['title']}</configuration>
+        <configuration key="subject">WayWithWords transcript has been published for ${catalogs['episode']['title']}</configuration>
         <configuration key="body-template-file">nibity_publication</configuration>
         <configuration key="use-html">true</configuration>
       </configurations>
