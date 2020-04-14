@@ -136,7 +136,7 @@
             fail-on-error="true"
             if="${organizer_email_valid} AND ${get_organizer_success} AND ${valid_notification_list}"
             exception-handler-workflow="partial-error"
-            description="Sending empty venue email to organizer and notification list">
+            description="Sending nibity submission email to organizer and notification list">
       <configurations>
         <configuration key="to">${organizer_email}</configuration>
         <configuration key="cc">${notification_list}</configuration>
@@ -152,7 +152,7 @@
             fail-on-error="true"
             if="${organizer_email_valid} AND ${get_organizer_success} AND NOT(${valid_notification_list})"
             exception-handler-workflow="partial-error"
-            description="Sending empty venue email to organizer and notification list">
+            description="Sending nibity submission email to organizer and notification list">
       <configurations>
         <configuration key="to">${organizer_email}</configuration>
         <configuration key="bcc">ngonidzashe.choga@uct.ac.za,dmu.cilt@uct.ac.za</configuration>
