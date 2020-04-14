@@ -57,7 +57,6 @@ main() {
     cp $working/etc/workflows-default/import.xml $working/etc/workflows/import.xml
     cp $working/etc/workflows-default/google-speech-attach-transcripts.xml $working/etc/workflows/google-speech-attach-transcripts.xml
     cp $working/etc/workflows-default/google-speech-start-transcription.xml $working/etc/workflows/google-speech-start-transcription.xml
-    cp $working/etc/workflows-default/nibity-attach-transcripts.xml $working/etc/workflows/nibity-attach-transcripts.xml
     #cp $working/etc/workflows-default/nibity-start-transcription.xml $working/etc/workflows/nibity-start-transcription.xml
     cp $working/etc/workflows-default/partial-error.xml $working/etc/workflows/partial-error.xml
     cp $working/etc/workflows-default/partial-retract.xml $working/etc/workflows/partial-retract.xml
@@ -69,7 +68,6 @@ main() {
     cp $working/etc/workflows-default/retract.xml $working/etc/workflows/retract.xml
     cp $working/etc/workflows-default/retry-watson-transcripts.xml $working/etc/workflows/retry-watson-transcripts.xml
     cp $working/etc/workflows-default/partial-transcode-studio-tracks.xml $working/etc/workflows/partial-transcode-studio-tracks.xml
-    cp $working/etc/workflows-default/studio-upload.xml $working/etc/workflows/studio-upload.xml
     cp $working/etc/workflows-default/partial-preview.xml $working/etc/workflows/partial-preview.xml
 
     echo " Done."
