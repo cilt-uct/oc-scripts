@@ -140,7 +140,7 @@
       <configurations>
         <configuration key="to">${organizer_email}</configuration>
         <configuration key="cc">${notification_list}</configuration>
-        <configuration key="bcc">ngonidzashe.choga@uct.ac.za</configuration>
+        <configuration key="bcc">ngonidzashe.choga@uct.ac.za,dmu.cilt@uct.ac.za</configuration>
         <configuration key="subject">Event ${catalogs['episode']['title']} has been sent to WayWithWords for transcription</configuration>
         <configuration key="body-template-file">nibity_sent</configuration>
         <configuration key="use-html">true</configuration>
@@ -155,7 +155,7 @@
             description="Sending empty venue email to organizer and notification list">
       <configurations>
         <configuration key="to">${organizer_email}</configuration>
-        <configuration key="bcc">ngonidzashe.choga@uct.ac.za</configuration>
+        <configuration key="bcc">ngonidzashe.choga@uct.ac.za,dmu.cilt@uct.ac.za</configuration>
         <configuration key="subject">Event ${catalogs['episode']['title']} has been sent to WayWithWords for transcription</configuration>
         <configuration key="body-template-file">nibity_sent</configuration>
         <configuration key="use-html">true</configuration>

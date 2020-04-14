@@ -163,15 +163,7 @@
                                             <div style="line-height: 24px">
                                                 <p>Dear ${catalogs['series']['creator']},</p>
                                                 <br/>
-                                                <p>
-                                                    <span>Recording from your</span>
-                                                    <#if workflowConfig['site_id']?has_content>
-                                                        <a href="https://vula.uct.ac.za/portal/site/${workflowConfig['site_id']}">Vula site</a>
-                                                    <#else>
-                                                        <a href="https://vula.uct.ac.za/">Vula site</a>
-                                                    </#if>
-                                                    <span>has been sent to WayWithWords for transcription. The event's details are as follows: </span>
-                                                </p>
+                                                <p>The following recording has been submitted to WayWithWords for transcription:</p>
                                                 <br/>                                             
                                                 <p>Event: <b>${catalogs['episode']['title']}</b></p>
                                                 <#if catalogs['episode']['created']?has_content>
@@ -181,7 +173,9 @@
                                                     <p>Date & time: <b>${(eventDate + ' ' + eventTime + ' UTC')?datetime('yyyy-MM-dd HH:mm:ss z')}</b></p>
                                                 </#if>                                                
                                                 <p>Series: <b>${catalogs['series']['title']}</b></p>
-                                                <br/>   
+                                                <br/>
+                                                <p>Transcriptions are usually available within 2 working days of submission.</p>
+                                                <br/> 
                                                 <p>Thank you,</p>
                                                 <p>UCT Lecture Recording Team</p>
                                                 <p>Email: <a href="mailto:help@vula.uct.ac.za?subject=Consent: ${catalogs['series']['title']}" title="Help at Vula">help@vula.uct.ac.za</a></p>
