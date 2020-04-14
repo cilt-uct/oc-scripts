@@ -170,7 +170,8 @@
                                                     <#else>
                                                         <a href="https://vula.uct.ac.za/">Vula site:</a>
                                                     </#if>
-                                                </p>                                       
+                                                </p>
+                                                <br/>                                       
                                                 <p>Event: <b>${catalogs['episode']['title']}</b></p> 
                                                 <#if catalogs['episode']['created']?has_content>
                                                     <#setting time_zone="Africa/Johannesburg">
