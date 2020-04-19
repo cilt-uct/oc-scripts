@@ -210,7 +210,7 @@
         <configuration key="source-flavor">*/prepared</configuration>
         <configuration key="target-flavor">*/delivery</configuration>
         <configuration key="target-tags">engage-download,engage-streaming</configuration>
-        <configuration key="encoding-profile">studio.adaptive-parallel.http</configuration>
+        <configuration key="encoding-profile">uct.studio.adaptive-parallel.http</configuration>
       </configurations>
     </operation>
 
