@@ -368,6 +368,19 @@
       </configurations>
     </operation>
 
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <!-- Transcription / Caption Services                                  -->
+    <!-- Source: ${transcription_src_flavor} - normalized-trimmed          -->
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <operation
+      id="include"
+      if="${doCaptioning}"
+      description="Include Captioning">
+      <configurations>
+        <configuration key="workflow-id">uct-include-captioning</configuration>
+      </configurations>
+    </operation>
+
     <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       Save, Archive and Cleanup
     -->
