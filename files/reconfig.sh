@@ -61,7 +61,6 @@ main() {
     cp $working/etc/workflows-default/partial-error.xml $working/etc/workflows/partial-error.xml
     cp $working/etc/workflows-default/partial-retract.xml $working/etc/workflows/partial-retract.xml
     cp $working/etc/workflows-default/partial-title-slide.xml $working/etc/workflows/partial-title-slide.xml
-    cp $working/etc/workflows-default/publish-uploaded-assets.xml $working/etc/workflows/publish-uploaded-assets.xml
     cp $working/etc/workflows-default/offload.xml $working/etc/workflows/offload.xml
     cp $working/etc/workflows-default/republish-metadata.xml $working/etc/workflows/republish-metadata.xml
     cp $working/etc/workflows-default/restore.xml $working/etc/workflows/restore.xml
