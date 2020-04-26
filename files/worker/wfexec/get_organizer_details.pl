@@ -39,6 +39,7 @@ my ($oc_host, $oc_user, $oc_pass) = getOcAuth($oc_config);
 
 my $process_completed = 1;
 my $process_result = "none";
+my $series = '';
 my $series_title = '';
 my $series_owner_id;
 my @series_notification_list;
@@ -47,8 +48,9 @@ my $normalised_date = '';
 
 my $organizer_name = '';
 my $organizer_email = '';
+my $submitter_name = '';
+my $submitter_email = '';
 my $cc = '';
-
 my $site_id = '';
 
 try {
@@ -58,11 +60,15 @@ try {
     $mech->add_header( 'X-REQUESTED-AUTH' => 'Digest' );
 
     my $json = new JSON;
+
+    my $event_workflow_json = getWorklowSubmitter($mech, $oc_host, $mediapackage_id);
+    $submitter_name = $event_workflow_json->{name};
+    $submitter_email = $event_workflow_json->{email};
     my $event_metadata_json = getEventMetadata($mech, $oc_host, $mediapackage_id);
     my $event_m = $json->utf8->canonical->decode($event_metadata_json);
 
     # Event fields - start_time is GMT
-    my $series = getEventField($event_m, "isPartOf");
+    $series = getEventField($event_m, "isPartOf");
     my $start_date = getEventField($event_m, "startDate");
     $normalised_date = normaliseDate($start_date);
 
@@ -94,7 +100,6 @@ try {
             $cc = "null";
             $valid_notification_list = "false"
         }
-        
 
     }
 
@@ -127,8 +132,8 @@ try {
     print $fh "get_organizer_result=" . $process_result . "\n";
     print $fh "series_id=$series\n";
     print $fh "series_title=$series_title\n";
-    print $fh "organizer_name=$organizer_name\n";
-    print $fh "organizer_email=$organizer_email\n";
+    print $fh "organizer_name=" . ($submitter_email eq "" ? $organizer_name : $submitter_name) . "\n";
+    print $fh "organizer_email=" . ($submitter_email eq "" ? $organizer_email : $submitter_email) . "\n";
     print $fh "organizer_email_valid=". ( isValidEmailSyntax($organizer_email) ? "true" : "false" ) ."\n";
     print $fh "notification_list=$cc\n";
     print $fh "valid_notification_list=$valid_notification_list\n";
@@ -183,6 +188,57 @@ sub getEventMetadata($$) {
        die "Unable to get event metadata for event $mp: " . $response->status_line;
   }
   return $response->decoded_content;
+}
+
+sub getWorklowSubmitter($$) {
+
+  my $mech = shift;
+  my $server = shift;
+  my $mp = shift;
+
+  my $json = new JSON;
+
+  $mech->get("$server/admin-ng/event/$mp/workflows.json");
+  my $response = $mech->response();
+  if (!$response->is_success) {
+       die "Unable to get event metadata for event $mp: " . $response->status_line;
+  }
+
+  my $workflows = $json->utf8->canonical->decode($response->decoded_content);
+  my @results = @{$workflows->{results}};
+  my $workflow_id = getWorkflowID(@results);
+  
+  $mech->get("$server/admin-ng/event/$mp/workflows/$workflow_id");
+  my $response = $mech->response();
+  if (!$response->is_success) {
+       die "Unable to get event metadata for event $mp: " . $response->status_line;
+  }
+
+  my $workflow_json = $json->utf8->canonical->decode($response->decoded_content);
+  my $creator_details = $workflow_json->{creator};
+  return $creator_details;
+}
+
+sub getWorkflowID($$) {
+
+  my @results = shift;
+  my $first_workflow_id = "";
+  my $first_workflow_date = "";
+  my $dateformat = DateTime::Format::Strptime->new(pattern => '%Y-%m-%dT%H:%M:%SZ');
+
+  for my $workflow( @results ) {
+    my $current_date = $dateformat->parse_datetime($workflow->{submitted});
+
+    if( $first_workflow_date eq "" ) {
+      $first_workflow_id = $workflow->{id};
+      $first_workflow_date = $current_date;
+    } elsif( DateTime->compare($current_date, $first_workflow_date) == -1 ) {
+      $first_workflow_id = $workflow->{id};
+      $first_workflow_date = $current_date;
+    }
+  }
+
+  return $first_workflow_id;
 }
 
 # Series Metadata
@@ -286,7 +342,7 @@ sub normaliseDate($) {
   my $date = substr($start_date, 0, 10);
   my $time = substr($start_date, 11, 8);
   my $formatter = DateTime::Format::Strptime->new(pattern => "%F  %T",time_zone=>'UTC');
-  my $dt_obj    = $formatter->parse_datetime("$date  $time");
+  my $dt_obj = $formatter->parse_datetime("$date  $time");
   $dt_obj->set_time_zone('Africa/Johannesburg');
   return $dt_obj->strftime("%a, %d %b %Y %T");
 }
