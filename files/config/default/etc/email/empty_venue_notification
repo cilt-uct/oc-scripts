@@ -195,7 +195,7 @@
                                                 <br/>
                                                 <p>Thank you,</p>
                                                 <p>UCT Lecture Recording Team</p>
-                                                <p>Email: <a href="mailto:help@vula.uct.ac.za?subject=Consent: ${catalogs['series']['title']}" title="Help at Vula">help@vula.uct.ac.za</a></p>
+                                                <p>Email: <a href="mailto:help@vula.uct.ac.za?subject=Empty venue: ${workflowConfig['series_title']}" title="Help at Vula">help@vula.uct.ac.za</a></p>
                                                 <p>Phone: 021-650-5500</p>
                                             </div>
                                         </td>
