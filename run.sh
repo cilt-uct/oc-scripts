@@ -479,6 +479,10 @@ main() {
             mkdir -p $FILES/config/default/wfexec/
             cp -pr $FILES/worker/wfexec/* $FILES/config/default/wfexec/
 
+            # copy workflow resources to default
+            mkdir -p $FILES/config/default/resources/
+            cp -pr $FILES/worker/resources/* $FILES/config/default/resources/
+
             echo "    Packaging configurations:"
             printf "       "
             for name in "${ACTIVE_SERVER_LIST[@]}"; do

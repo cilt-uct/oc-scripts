@@ -35,6 +35,46 @@
       </configurations>
     </operation>
 
+    <!-- Check if uploaded file is an audio-only file -->
+    <operation
+      id="execute-once"
+      max-attempts="3"
+      retry-strategy="hold"
+      fail-on-error="true"
+      exception-handler-workflow="partial-error"
+      description="Check if uploaded file is an audio file">
+      <configurations>
+        <configuration key="exec">/opt/opencast/wfexec/check-if-file-is-audio-only.sh</configuration>
+        <configuration key="load">0.1</configuration>
+        <configuration key="params">-i #{in} -o #{out}</configuration>
+        <configuration key="output-filename">audio_only.txt</configuration>
+        <configuration key="set-workflow-properties">true</configuration>
+        <configuration key="expected-type">Attachment</configuration>
+      </configurations>
+    </operation>
+
+    <!-- If upload is audio only, create video file with static image -->
+    <operation
+      id="execute-once"
+      if="${is_audio_upload}"
+      max-attempts="3"
+      retry-strategy="hold"
+      fail-on-error="true"
+      exception-handler-workflow="partial-error"
+      description="Check if uploaded file is an audio file">
+      <configurations>
+        <configuration key="exec">/opt/opencast/wfexec/convert-audio-to-video.sh</configuration>
+        <configuration key="params">-i #{in} -o #{out}</configuration>
+        <configuration key="source-flavor">presenter/source</configuration>
+        <configuration key="source-video">true</configuration>
+        <configuration key="output-filename">static.mp4</configuration>
+        <configuration key="target-flavor">presenter/source</configuration>
+        <configuration key="target-tags">archive</configuration>
+        <configuration key="expected-type">Track</configuration>
+        <configuration key="load">2.0</configuration>
+      </configurations>
+    </operation>
+
     <!-- Load workflow properties from metadata: update some workflow properties -->
     <operation
       id="execute-once"
