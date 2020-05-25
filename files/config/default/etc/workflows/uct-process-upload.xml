@@ -32,7 +32,7 @@
       <configurations>
         <configuration key="hasSlides">false</configuration>
         <configuration key="downloadSourceflavorsExist">false</configuration>
-        <configuration key="isAudioUpload">false</configuration>
+        <configuration key="is_audio_upload">false</configuration>
       </configurations>
     </operation>
 
@@ -57,7 +57,7 @@
     <!-- If upload is audio only, create video file with static image -->
     <operation
       id="execute-once"
-      if="${isAudioUpload}"
+      if="${is_audio_upload}"
       max-attempts="3"
       retry-strategy="hold"
       fail-on-error="true"
