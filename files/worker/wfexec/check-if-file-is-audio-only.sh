@@ -66,4 +66,4 @@ if [[ $audio_check != *"codec_type=video"* ]];
         is_audio=false
 fi
 
-echo "is_audio_upload=$is_audio" > "$output_file"
+echo "isAudioUpload=$is_audio" > "$output_file"

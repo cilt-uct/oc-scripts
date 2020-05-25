@@ -32,6 +32,7 @@
       <configurations>
         <configuration key="hasSlides">false</configuration>
         <configuration key="downloadSourceflavorsExist">false</configuration>
+        <configuration key="isAudioUpload">false</configuration>
       </configurations>
     </operation>
 
@@ -56,12 +57,12 @@
     <!-- If upload is audio only, create video file with static image -->
     <operation
       id="execute-once"
-      if="${is_audio_upload}"
+      if="${isAudioUpload}"
       max-attempts="3"
       retry-strategy="hold"
       fail-on-error="true"
       exception-handler-workflow="partial-error"
-      description="Check if uploaded file is an audio file">
+      description="If upload is audio only, create video file with static image">
       <configurations>
         <configuration key="exec">/opt/opencast/wfexec/convert-audio-to-video.sh</configuration>
         <configuration key="params">-i #{in} -o #{out}</configuration>

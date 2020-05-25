@@ -3,6 +3,7 @@
 # Initialize our variables:
 media=""
 output_file=""
+image="/opt/opencast/resources/uct_logo.jpg"
 
 # -d, --debug   If the flag exists then output debug file
 DEBUG=false
@@ -57,5 +58,5 @@ if [ -z "$media" ] && [ -z "$output_file" ];
         exit 4
 fi
 
-audio_check=`ffmpeg -loop 1 -i ../resources/uct_logo.jpg -i $media -c:a aac -c:v libx264 -shortest $output_file`
+audio_check=`ffmpeg -loop 1 -i $image -i $media -c:a aac -c:v libx264 -shortest $output_file`
 
