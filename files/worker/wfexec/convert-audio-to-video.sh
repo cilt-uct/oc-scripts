@@ -58,5 +58,5 @@ if [ -z "$media" ] && [ -z "$output_file" ];
         exit 4
 fi
 
-audio_check=`ffmpeg -loop 1 -i $image -i $media -c:a aac -c:v libx264 -shortest $output_file`
+ffmpeg -loop 1 -i $image -i $media -c:a aac -c:v libx264 -shortest $output_file
 

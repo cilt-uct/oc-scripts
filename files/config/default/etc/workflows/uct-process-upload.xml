@@ -32,7 +32,6 @@
       <configurations>
         <configuration key="hasSlides">false</configuration>
         <configuration key="downloadSourceflavorsExist">false</configuration>
-        <configuration key="is_audio_upload">false</configuration>
       </configurations>
     </operation>
 
@@ -51,28 +50,6 @@
         <configuration key="output-filename">audio_only.txt</configuration>
         <configuration key="set-workflow-properties">true</configuration>
         <configuration key="expected-type">Attachment</configuration>
-      </configurations>
-    </operation>
-
-    <!-- If upload is audio only, create video file with static image -->
-    <operation
-      id="execute-once"
-      if="${is_audio_upload}"
-      max-attempts="3"
-      retry-strategy="hold"
-      fail-on-error="true"
-      exception-handler-workflow="partial-error"
-      description="If upload is audio only, create video file with static image">
-      <configurations>
-        <configuration key="exec">/opt/opencast/wfexec/convert-audio-to-video.sh</configuration>
-        <configuration key="params">-i #{in} -o #{out}</configuration>
-        <configuration key="source-flavor">presenter/source</configuration>
-        <configuration key="source-video">true</configuration>
-        <configuration key="output-filename">static.mp4</configuration>
-        <configuration key="target-flavor">presenter/source</configuration>
-        <configuration key="target-tags">archive</configuration>
-        <configuration key="expected-type">Track</configuration>
-        <configuration key="load">2.0</configuration>
       </configurations>
     </operation>
 
@@ -129,18 +106,31 @@
       </configurations>
     </operation>
 
-    <!-- <operation
-        id="clone"
-        exception-handler-workflow="partial-error"
-        description="Move track_presenter.0/* to presenter/source">
-        <configurations>
-            <configuration key="source-flavor">track_presenter.0/*</configuration>
-            <configuration key="target-flavor">presenter/source</configuration>
-        </configurations>
-    </operation> -->
+    <!-- If upload is audio only, create video file with static image -->
+    <operation
+      id="execute-many"
+      if="${is_audio_upload}"
+      max-attempts="3"
+      retry-strategy="hold"
+      fail-on-error="true"
+      exception-handler-workflow="partial-error"
+      description="If upload is audio only, create video file with static image">
+      <configurations>
+        <configuration key="exec">/opt/opencast/wfexec/convert-audio-to-video.sh</configuration>
+        <configuration key="params">-i #{in} -o #{out}</configuration>
+        <configuration key="source-flavor">track_presenter.0/*</configuration>
+        <configuration key="source-audio">true</configuration>
+        <configuration key="output-filename">static.mp4</configuration>
+        <configuration key="target-flavor">presenter/source</configuration>
+        <configuration key="target-tags">archive</configuration>
+        <configuration key="expected-type">Track</configuration>
+        <configuration key="load">2.0</configuration>
+      </configurations>
+    </operation>
 
     <operation
       id="compose"
+      if="NOT(${is_audio_upload})"
       fail-on-error="true"
       exception-handler-workflow="partial-error"
       description="Move track_presenter.0/* to presenter/source">
