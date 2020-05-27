@@ -156,7 +156,7 @@
         <configuration key="params">-i #{in} -o #{out}</configuration>
         <configuration key="source-flavor">presenter/source</configuration>
         <configuration key="output-filename">static.mp4</configuration>
-        <configuration key="target-flavor">*/delivery</configuration>
+        <configuration key="target-flavor">presenter/delivery</configuration>
         <configuration key="target-tags">engage-download,engage-streaming,rss,atom</configuration>
         <configuration key="expected-type">Track</configuration>
         <configuration key="load">2.0</configuration>
