@@ -3,7 +3,7 @@
 # Initialize our variables:
 media=""
 output_file=""
-image="/opt/opencast/etc/no_audio.png"
+image="/opt/opencast/etc/branding/no_audio.jpg"
 
 # -d, --debug   If the flag exists then output debug file
 DEBUG=false
@@ -58,5 +58,5 @@ if [ -z "$media" ] && [ -z "$output_file" ];
         exit 4
 fi
 
-ffmpeg -loop 1 -i $image -i $media -c:a aac -c:v libx264 -shortest $output_file
+ffmpeg -loop 1 -i $image -i $media -vf scale=-2:480 -c:a aac -c:v libx264 -shortest $output_file
 
