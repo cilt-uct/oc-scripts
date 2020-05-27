@@ -59,7 +59,7 @@ fi
 
 audio_check=`ffprobe -loglevel error -show_entries stream=codec_type -of default=nw=1 $media`
 
-if [[ $audio_check != *"codec_type=video"* ]];
+if [[ $audio_check != *"codec_type=video"* ]] && [[ $audio_check == *"codec_type=audio"* ]];
     then
         is_audio=true
     else

@@ -3,7 +3,7 @@
 # Initialize our variables:
 media=""
 output_file=""
-image="/opt/opencast/resources/uct_logo.jpg"
+image="/opt/opencast/etc/no_audio.png"
 
 # -d, --debug   If the flag exists then output debug file
 DEBUG=false
