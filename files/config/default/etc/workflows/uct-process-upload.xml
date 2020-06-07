@@ -180,7 +180,7 @@
       <configurations>
         <configuration key="exec">/opt/opencast/wfexec/check-if-file-is-audio-only.sh</configuration>
         <configuration key="params">-i #{in} -o #{out}</configuration>
-        <configuration key="source-flavor">presenter/source</configuration>
+        <configuration key="source-flavor">*/source</configuration>
         <configuration key="output-filename">audio_only.txt</configuration>
         <configuration key="target-flavor">text/plain</configuration>
         <configuration key="set-workflow-properties">true</configuration>
@@ -201,9 +201,9 @@
       <configurations>
         <configuration key="exec">/opt/opencast/wfexec/convert-audio-to-video.sh</configuration>
         <configuration key="params">-i #{in} -o #{out}</configuration>
-        <configuration key="source-flavor">presenter/source</configuration>
+        <configuration key="source-flavor">*/source</configuration>
         <configuration key="output-filename">static.mp4</configuration>
-        <configuration key="target-flavor">presenter/delivery</configuration>
+        <configuration key="target-flavor">*/delivery</configuration>
         <configuration key="target-tags">engage-download,engage-streaming,rss,atom</configuration>
         <configuration key="expected-type">Track</configuration>
         <configuration key="load">2.0</configuration>
