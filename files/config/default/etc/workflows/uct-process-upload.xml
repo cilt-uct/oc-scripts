@@ -134,6 +134,41 @@
       </configurations>
     </operation>
 
+        <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      Finalize ingest
+      Make sure all elements are downloaded from external sources,
+      inspect, analyze tracks (*/*), apply series access control
+      archive */source, and tag metadata for archive and publish.
+    -->
+    <!-- <operation
+      id="include"
+      description="Finalize upload and ingest">
+      <configurations>
+        <configuration key="workflow-id">uct-partial-ingest</configuration>
+      </configurations>
+    </operation> -->
+
+    <!-- Save workflow properties -->
+    <operation
+      id="export-wf-properties"
+      fail-on-error="false"
+      exception-handler-workflow="partial-error"
+      description="Export workflow settings to Java properties file">
+      <configurations>
+        <configuration key="target-flavor">processing/defaults</configuration>
+        <configuration key="target-tags">archive</configuration>
+      </configurations>
+    </operation>
+
+   <!-- Archive generated items -->
+    <operation
+      id="snapshot"
+      description="Archive source">
+      <configurations>
+        <configuration key="source-tags">archive</configuration>
+      </configurations>
+    </operation>
+
     <!-- Check if uploaded file is an audio-only file -->
     <operation
       id="execute-many"
@@ -172,41 +207,6 @@
         <configuration key="target-tags">engage-download,engage-streaming,rss,atom</configuration>
         <configuration key="expected-type">Track</configuration>
         <configuration key="load">2.0</configuration>
-      </configurations>
-    </operation>
-
-    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      Finalize ingest
-      Make sure all elements are downloaded from external sources,
-      inspect, analyze tracks (*/*), apply series access control
-      archive */source, and tag metadata for archive and publish.
-    -->
-    <!-- <operation
-      id="include"
-      description="Finalize upload and ingest">
-      <configurations>
-        <configuration key="workflow-id">uct-partial-ingest</configuration>
-      </configurations>
-    </operation> -->
-
-    <!-- Save workflow properties -->
-    <operation
-      id="export-wf-properties"
-      fail-on-error="false"
-      exception-handler-workflow="partial-error"
-      description="Export workflow settings to Java properties file">
-      <configurations>
-        <configuration key="target-flavor">processing/defaults</configuration>
-        <configuration key="target-tags">archive</configuration>
-      </configurations>
-    </operation>
-
-   <!-- Archive generated items -->
-    <operation
-      id="snapshot"
-      description="Archive source">
-      <configurations>
-        <configuration key="source-tags">archive</configuration>
       </configurations>
     </operation>
 
