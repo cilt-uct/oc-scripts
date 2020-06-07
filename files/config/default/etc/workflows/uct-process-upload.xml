@@ -122,6 +122,18 @@
       </configurations>
     </operation>
 
+    <!-- Analyze Tracks: set flavor_source workflow properties -->
+    <operation
+      id="analyze-tracks"
+      fail-on-error="false"
+      exception-handler-workflow="partial-error"
+      description="Analyze: SOURCE">
+      <configurations>
+        <configuration key="source-flavor">*/source</configuration>
+        <configuration key="aspect-ratio">4/3,16/9</configuration>
+      </configurations>
+    </operation>
+
     <!-- Check if uploaded file is an audio-only file -->
     <operation
       id="execute-many"
@@ -160,18 +172,6 @@
         <configuration key="target-tags">engage-download,engage-streaming,rss,atom</configuration>
         <configuration key="expected-type">Track</configuration>
         <configuration key="load">2.0</configuration>
-      </configurations>
-    </operation>
-
-    <!-- Analyze Tracks: set flavor_source workflow properties -->
-    <operation
-      id="analyze-tracks"
-      fail-on-error="false"
-      exception-handler-workflow="partial-error"
-      description="Analyze: SOURCE">
-      <configurations>
-        <configuration key="source-flavor">*/source</configuration>
-        <configuration key="aspect-ratio">4/3,16/9</configuration>
       </configurations>
     </operation>
 
