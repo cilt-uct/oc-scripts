@@ -32,5 +32,5 @@
       password: "{{ jira_pass }}"
       issue: "{{ jira_issue }}"
       operation: comment
-      comment: "Deployed LTI Tools to _*{{inventory_hostname}}*_ ({{ deploy_date_time }})[{{ by }}]"
+      comment: "Deployed LTI Tools to *{{inventory_hostname}}* on {color:#00875a}{{ deploy_date_time }}{color} by _{{ by }}_ \n\n+Git:+ {{ gitbranch }} - {{ gitlog }}"
     when: production|bool

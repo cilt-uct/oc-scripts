@@ -17,5 +17,5 @@
     copy: src="{{ track4k_json_src }}" dest="{{ track4k_json_dest }}" owner="{{system_user}}" group="{{system_group}}" mode=0644
 
   - name: Append Deployment
-      local_action: shell echo "* {{inventory_hostname}}" >> "{{ deploy_logfile }}"
-      when: result is succeeded
+    local_action: shell echo "* {{inventory_hostname}}" >> "{{ deploy_logfile }}"
+    when: result is succeeded
