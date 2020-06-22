@@ -1,10 +1,21 @@
 # Deploy Track4k to the various nodes
 ---
 - name: Deploy Track4K binary
-  hosts: all
+  hosts: worker
   become: true
+  vars:
+    script_action: "Deploy-track4k"
+    deploy_logfile: "{{ folder_script }}log/{{ script_action | lower }}.{{ deploy_date_time | regex_replace(' ','.') | regex_replace(':','-') }}.log"
+
+  pre_tasks:
+    - name: Create log file
+      local_action: template src="{{ folder_script }}templates/tmpl-deploy.j2" dest="{{ deploy_logfile }}"
+      run_once: True
 
   roles:
     - { role: deploy_track4k, when: "'worker' in group_names or 'adminpresentation' in group_names or 'allinone' in group_names or 'adminworker' in group_names" }
 
-
+  post_tasks:
+    - include_role:
+        name: jira_comment
+      when: production|bool
