@@ -5,6 +5,7 @@
 
   - name: Copy Track4k binary
     copy: src="{{ track4k_binary }}" dest="{{ track4k_binary }}" owner="{{system_user}}" group="{{system_group}}" mode=0755
+    register: result
 
   - name: Copy cropvid binary
     copy: src="{{ track4k_cropvid }}" dest="{{ track4k_cropvid }}" owner="{{system_user}}" group="{{system_group}}" mode=0755
@@ -14,3 +15,7 @@
 
   - name: Copy Track4k wrapper config
     copy: src="{{ track4k_json_src }}" dest="{{ track4k_json_dest }}" owner="{{system_user}}" group="{{system_group}}" mode=0644
+
+  - name: Append Deployment
+      local_action: shell echo "* {{inventory_hostname}}" >> "{{ deploy_logfile }}"
+      when: result is succeeded

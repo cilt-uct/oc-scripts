@@ -468,8 +468,12 @@ main() {
         fi
     fi
 
-   # the script folder is valid or we are just doing dev
-   if $valid_script || [ $DEPLOY_TYPE = "dev" ]; then
+    # For Jira comment date
+    st=$(date +'%Y-%m-%d %H-%M-%S')
+    extra_vars="production=$([ $DEPLOY_TYPE = "prod" ] && echo "true" || echo "false") deploy_date_time=\"$st\" by=\"$(getCurrentUser)\" "
+
+    # the script folder is valid or we are just doing dev
+    if $valid_script || [ $DEPLOY_TYPE = "dev" ]; then
 
         if $DEPLOY || $RECONFIGURE || $ROLLBACK; then
 
@@ -494,11 +498,9 @@ main() {
 
         if $DEPLOY && [ $compiled -eq 1 ]; then
 
-            echo "Deploy: ($HOSTS_FILE)"
-	        st=$(date +'%Y-%m-%d %H-%M-%S')
-
             cd $YML
-            $LIVE && ansible-playbook -i $HOSTS_FILE ansible-deploy.yml --extra-vars "production=$([ $DEPLOY_TYPE = "prod" ] && echo "true" || echo "false") deploy_date_time=\"$st\" by=\"$(getCurrentUser)\" "
+            echo "Deploy: ($HOSTS_FILE)"                    
+            $LIVE && ansible-playbook -i $HOSTS_FILE ansible-deploy.yml --extra-vars "$extra_vars gitbranch=\"$branch\" gitlog=\"$gitlog\" "
 
             echo $(addDeploymentMarker $production "Deploy" $gitlog $branch)
         fi
@@ -506,22 +508,18 @@ main() {
         # don't deploy and reconfigure
         if $RECONFIGURE && [ $compiled -eq 1 ]; then
 
-            echo "Reconfigure: ($HOSTS_FILE)"
-	        st=$(date +'%Y-%m-%d %H-%M-%S')
-
             cd $YML
-            $LIVE && ansible-playbook -i $HOSTS_FILE ansible-reconfig.yml --extra-vars "production=$([ $DEPLOY_TYPE = "prod" ] && echo "true" || echo "false") deploy_date_time=\"$st\" by=\"$(getCurrentUser)\" "
+            echo "Reconfigure: ($HOSTS_FILE)"
+            $LIVE && ansible-playbook -i $HOSTS_FILE ansible-reconfig.yml --extra-vars "$extra_vars gitbranch=\"$branch\" gitlog=\"$gitlog\" "
 
             echo $(addDeploymentMarker $production "Reconfigure" $gitlog $branch)
         fi
 
         if $ROLLBACK; then
 
-            echo "Rollback: ($HOSTS_FILE)"
-            st=$(date +'%Y-%m-%d %H-%M-%S')
-
             cd $YML
-            $LIVE && ansible-playbook -i $HOSTS_FILE ansible-rollback.yml --extra-vars "production=$([ $DEPLOY_TYPE = "prod" ] && echo "true" || echo "false") deploy_date_time=\"$st\" by=\"$(getCurrentUser)\" "
+            echo "Rollback: ($HOSTS_FILE)"
+            $LIVE && ansible-playbook -i $HOSTS_FILE ansible-rollback.yml --extra-vars "$extra_vars gitbranch=\"$branch\" gitlog=\"$gitlog\" "
 
             echo $(addDeploymentMarker $production "Rollback" $gitlog $branch)
         fi
@@ -557,7 +555,7 @@ main() {
         rm -rf $TMP_DIR/*
 
         cd $YML
-        $LIVE && ansible-playbook -i $HOSTS_FILE ansible-lti.yml --extra-vars "production=$([ $DEPLOY_TYPE = "prod" ] && echo "true" || echo "false")"
+        $LIVE && ansible-playbook -i $HOSTS_FILE ansible-lti.yml --extra-vars "$extra_vars gitbranch=\"$branch\" gitlog=\"$gitlog\" "
 
         echo $(addDeploymentMarker $production "LTI" $gitlog $branch)
     fi
@@ -619,48 +617,45 @@ main() {
     fi
 
     if $TRACK4K; then
-
-        cd $YML
-        ansible-playbook -i $HOSTS_FILE ansible-track4k.yml
-
         track_log=$(git -C $TRACK4K_SRC show --oneline | head -n 1)
         track_branch=$(git -C $TRACK4K_SRC rev-parse --symbolic-full-name --abbrev-ref HEAD)
+
+        cd $YML
+        echo "Deploy Track4K: ($HOSTS_FILE)"
+        ansible-playbook -i $HOSTS_FILE ansible-track4k.yml --extra-vars "$extra_vars gitbranch=\"$track_branch\" gitlog=\"$track_log\" "
 
         echo $(addDeploymentMarker $production "Track4K" $track_log $track_branch)
     fi
 
     if $EMPTYVENUE; then
-
-        cd $YML
-        st=$(date +'%Y-%m-%d %H-%M-%S')
-        ansible-playbook -i $HOSTS_FILE ansible-emptyvenuedetector.yml --extra-vars "production=$([ $DEPLOY_TYPE = "prod" ] && echo "true" || echo "false") deploy_date_time=\"$st\" by=\"$(getCurrentUser)\" "
-
         empty_log=$(git -C $EMPTY_VENUE_SRC show --oneline | head -n 1)
         empty_branch=$(git -C $EMPTY_VENUE_SRC rev-parse --symbolic-full-name --abbrev-ref HEAD)
+
+        cd $YML
+        echo "Deploy Empty Venue: ($HOSTS_FILE)"
+        ansible-playbook -i $HOSTS_FILE ansible-emptyvenuedetector.yml --extra-vars "$extra_vars gitbranch=\"$empty_branch\" gitlog=\"$empty_log\" "
 
         echo $(addDeploymentMarker $production "EmptyVenueDetect" $empty_log $empty_branch)
     fi
 
     if $TRIMPOINT; then
-
-        cd $YML
-        st=$(date +'%Y-%m-%d %H-%M-%S')
-        ansible-playbook -i $HOSTS_FILE ansible-trimpointdetector.yml --extra-vars "production=$([ $DEPLOY_TYPE = "prod" ] && echo "true" || echo "false") deploy_date_time=\"$st\" by=\"$(getCurrentUser)\" "
-
         trim_log=$(git -C $AUDIO_TRIM_SRC show --oneline | head -n 1)
         trim_branch=$(git -C $AUDIO_TRIM_SRC rev-parse --symbolic-full-name --abbrev-ref HEAD)
+
+        cd $YML
+        echo "Deploy Audio Trim Point Detector: ($HOSTS_FILE)"
+        ansible-playbook -i $HOSTS_FILE ansible-trimpointdetector.yml --extra-vars "$extra_vars gitbranch=\"$trim_branch\" gitlog=\"$trim_log\" "
 
         echo $(addDeploymentMarker $production "AudioTrimPoint" $trim_log $trim_branch)
     fi
 
     if $OCR; then
-
-        cd $YML
-        st=$(date +'%Y-%m-%d %H-%M-%S')
-        ansible-playbook -i $HOSTS_FILE ansible-deploy-ocr.yml --extra-vars "production=$([ $DEPLOY_TYPE = "prod" ] && echo "true" || echo "false") deploy_date_time=\"$st\" by=\"$(getCurrentUser)\" "
-
         ocr_log=$(git -C $OCR_SCR show --oneline | head -n 1)
         ocr_branch=$(git -C $OCR_SCR rev-parse --symbolic-full-name --abbrev-ref HEAD)
+
+        cd $YML
+        echo "Deploy OCR: ($HOSTS_FILE)"
+        ansible-playbook -i $HOSTS_FILE ansible-deploy-ocr.yml --extra-vars "$extra_vars gitbranch=\"$ocr_branch\" gitlog=\"$ocr_log\" "
 
         echo $(addDeploymentMarker $production "OCR" $ocr_log $ocr_branch)
     fi
