@@ -134,20 +134,6 @@
       </configurations>
     </operation>
 
-    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      Finalize ingest
-      Make sure all elements are downloaded from external sources,
-      inspect, analyze tracks (*/*), apply series access control
-      archive */source, and tag metadata for archive and publish.
-    -->
-    <!-- <operation
-      id="include"
-      description="Finalize upload and ingest">
-      <configurations>
-        <configuration key="workflow-id">uct-partial-ingest</configuration>
-      </configurations>
-    </operation> -->
-
     <!-- Save workflow properties -->
     <operation
       id="export-wf-properties"
