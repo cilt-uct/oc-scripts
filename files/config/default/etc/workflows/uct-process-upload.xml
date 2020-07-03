@@ -88,9 +88,30 @@
       </configurations>
     </operation>
 
+    <!-- Check if uploaded file is an audio-only file -->
+    <operation
+      id="execute-many"
+      max-attempts="3"
+      retry-strategy="hold"
+      fail-on-error="true"
+      exception-handler-workflow="partial-error"
+      description="Check if uploaded file is an audio file">
+      <configurations>
+        <configuration key="exec">/opt/opencast/wfexec/check-if-file-is-audio-only.sh</configuration>
+        <configuration key="params">-i #{in} -o #{out}</configuration>
+        <configuration key="source-flavor">presenter/source</configuration>
+        <configuration key="output-filename">audio_only.txt</configuration>
+        <configuration key="target-flavor">text/plain</configuration>
+        <configuration key="set-workflow-properties">true</configuration>
+        <configuration key="expected-type">Attachment</configuration>
+        <configuration key="load">0.1</configuration>
+      </configurations>
+    </operation>
+
     <!-- Move track_presenter.0/* to presenter/source (LTI uploads) -->
     <operation
       id="compose"
+      if="NOT(${is_audio_upload})"
       fail-on-error="true"
       exception-handler-workflow="partial-error"
       description="Move track_presenter.0/* to presenter/source">
@@ -99,6 +120,27 @@
         <configuration key="target-flavor">presenter/source</configuration>
         <configuration key="target-tags">archive</configuration>
         <configuration key="encoding-profile">uct-copy.work</configuration>
+      </configurations>
+    </operation>
+
+    <!-- If upload is audio only, create video file with static image -->
+    <operation
+      id="execute-many"
+      if="${is_audio_upload}"
+      max-attempts="3"
+      retry-strategy="hold"
+      fail-on-error="true"
+      exception-handler-workflow="partial-error"
+      description="If upload is audio only, create video file with static image">
+      <configurations>
+        <configuration key="exec">/opt/opencast/wfexec/convert-audio-to-video.sh</configuration>
+        <configuration key="params">-i #{in} -o #{out}</configuration>
+        <configuration key="source-flavor">track_presenter.0/*</configuration>
+        <configuration key="output-filename">static.mkv</configuration>
+        <configuration key="target-flavor">presenter/source</configuration>
+        <configuration key="target-tags">archive</configuration>
+        <configuration key="expected-type">Track</configuration>
+        <configuration key="load">2.0</configuration>
       </configurations>
     </operation>
 
@@ -155,48 +197,6 @@
       </configurations>
     </operation>
 
-
-    <!-- Check if uploaded file is an audio-only file -->
-    <operation
-      id="execute-many"
-      max-attempts="3"
-      retry-strategy="hold"
-      fail-on-error="true"
-      exception-handler-workflow="partial-error"
-      description="Check if uploaded file is an audio file">
-      <configurations>
-        <configuration key="exec">/opt/opencast/wfexec/check-if-file-is-audio-only.sh</configuration>
-        <configuration key="params">-i #{in} -o #{out}</configuration>
-        <configuration key="source-flavor">presenter/source</configuration>
-        <configuration key="output-filename">audio_only.txt</configuration>
-        <configuration key="target-flavor">text/plain</configuration>
-        <configuration key="set-workflow-properties">true</configuration>
-        <configuration key="expected-type">Attachment</configuration>
-        <configuration key="load">0.1</configuration>
-      </configurations>
-    </operation>
-
-    <!-- If upload is audio only, create video file with static image -->
-    <operation
-      id="execute-many"
-      if="${is_audio_upload}"
-      max-attempts="3"
-      retry-strategy="hold"
-      fail-on-error="true"
-      exception-handler-workflow="partial-error"
-      description="If upload is audio only, create video file with static image">
-      <configurations>
-        <configuration key="exec">/opt/opencast/wfexec/convert-audio-to-video.sh</configuration>
-        <configuration key="params">-i #{in} -o #{out}</configuration>
-        <configuration key="source-flavor">presenter/source</configuration>
-        <configuration key="output-filename">static.mp4</configuration>
-        <configuration key="target-flavor">presenter/delivery</configuration>
-        <configuration key="target-tags">engage-download,engage-streaming,rss,atom</configuration>
-        <configuration key="expected-type">Track</configuration>
-        <configuration key="load">2.0</configuration>
-      </configurations>
-    </operation>
-
     <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       Process video in parallel for publishing
     -->
@@ -210,7 +210,7 @@
     <!-- A -->
     <operation
       id="encode"
-      if="(${presenter_source_resolution_y} &gt; 1079) AND NOT(${is_audio_upload})"
+      if="(${presenter_source_resolution_y} &gt; 1079)"
       fail-on-error="true"
       exception-handler-workflow="partial-error"
       description="Encoding for player and feeds (MP4) [1080p, 720p, 480p]: mp4-norm-480-720-1080-parallel">
@@ -225,7 +225,7 @@
     <!-- B -->
     <operation
       id="encode"
-      if="(${presenter_source_resolution_y} &lt; 1080) AND (${presenter_source_resolution_y} &gt; 719) AND NOT(${is_audio_upload})"
+      if="(${presenter_source_resolution_y} &lt; 1080) AND (${presenter_source_resolution_y} &gt; 719)"
       fail-on-error="true"
       exception-handler-workflow="partial-error"
       description="Encoding for player and feeds (MP4) [720p, 480p]: mp4-norm-480-720-parallel">
@@ -240,7 +240,7 @@
     <!-- C -->
     <operation
       id="compose"
-      if="(${presenter_source_resolution_y} &lt; 720) AND (${presenter_source_resolution_y} &gt; 479) AND NOT(${is_audio_upload})"
+      if="(${presenter_source_resolution_y} &lt; 720) AND (${presenter_source_resolution_y} &gt; 479)"
       fail-on-error="true"
       exception-handler-workflow="partial-error"
       description="Encoding for player and feeds (MP4) [480p]: mp4-norm-480">
@@ -255,7 +255,7 @@
     <!-- D -->
     <operation
       id="compose"
-      if="(${presenter_source_resolution_y} &lt; 480) AND NOT(${is_audio_upload})"
+      if="(${presenter_source_resolution_y} &lt; 480)"
       fail-on-error="true"
       exception-handler-workflow="partial-error"
       description="Encoding for player and feeds (MP4) [other]: mp4-norm-other">
