@@ -99,7 +99,7 @@
       <configurations>
         <configuration key="exec">/opt/opencast/wfexec/check-if-file-is-audio-only.sh</configuration>
         <configuration key="params">-i #{in} -o #{out}</configuration>
-        <configuration key="source-flavor">presenter/source</configuration>
+        <configuration key="source-flavor">track_presenter.0/*</configuration>
         <configuration key="output-filename">audio_only.txt</configuration>
         <configuration key="target-flavor">text/plain</configuration>
         <configuration key="set-workflow-properties">true</configuration>
