@@ -46,40 +46,37 @@
 
     <!-- Remove google transcript -->
     <operation
-      id="retract-engage"
+      id="retract-partial"
       fail-on-error="true"
       if="${googleTranscript}"
       exception-handler-workflow="partial-error"
       description="Retract google transcript from event">
       <configurations>
         <configuration key="retract-flavors">captions/timedtext</configuration>
-        <configuration key="retract-tags">archive</configuration>
       </configurations>
     </operation>
 
     <!-- Remove nibity transcript -->
     <operation
-      id="retract-engage"
+      id="retract-partial"
       fail-on-error="true"
       if="${nibityTranscript}"
       exception-handler-workflow="partial-error"
       description="Retract google nibity from event">
       <configurations>
         <configuration key="retract-flavors">captions/vtt</configuration>
-        <configuration key="retract-tags">archive</configuration>
       </configurations>
     </operation>
 
     <!-- Remove uploaded transcript -->
     <operation
-      id="retract-engage"
+      id="retract-partial"
       fail-on-error="true"
       if="${uploadedTranscript}"
       exception-handler-workflow="partial-error"
       description="Retract uploaded transcript from event">
       <configurations>
         <configuration key="retract-flavors">text/vtt</configuration>
-        <configuration key="retract-tags">archive</configuration>
       </configurations>
     </operation>
 
