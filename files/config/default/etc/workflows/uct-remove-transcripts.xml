@@ -57,6 +57,7 @@
       </configurations>
     </operation>
 
+    <!-- Remove nibity transcript -->
     <operation
       id="retract-engage"
       fail-on-error="true"
@@ -69,6 +70,7 @@
       </configurations>
     </operation>
 
+    <!-- Remove uploaded transcript -->
     <operation
       id="retract-engage"
       fail-on-error="true"
@@ -78,19 +80,6 @@
       <configurations>
         <configuration key="retract-flavors">text/vtt</configuration>
         <configuration key="retract-tags">archive</configuration>
-      </configurations>
-    </operation>
-
-    <!-- Clean up work artifacts -->
-    <operation
-      id="cleanup"
-      fail-on-error="false"
-      description="Cleaning up - remove temp processing artifacts">
-      <configurations>
-        <configuration key="delete-external">false</configuration>
-        <!-- FixMe Don't clean up ACLs until workflow service no longer looks for them in the WFR. -->
-        <configuration key="preserve-flavors">dublincore/*,security/*</configuration>
-        <configuration key="delay">5</configuration>
       </configurations>
     </operation>
 
