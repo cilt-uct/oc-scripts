@@ -2,7 +2,7 @@
 <definition xmlns="http://workflow.opencastproject.org">
 
   <id>uct-remove-transcripts</id>
-  <title>Remove Transcripts</title>
+  <title>UCT - Remove Transcripts</title>
   <tags>
     <tag>archive</tag>
   </tags>
@@ -53,7 +53,7 @@
       description="Retract google transcript from event">
       <configurations>
         <configuration key="retract-flavors">captions/timedtext</configuration>
-      <configurations>
+      </configurations>
     </operation>
 
     <operation
@@ -64,7 +64,7 @@
       description="Retract google nibity from event">
       <configurations>
         <configuration key="retract-flavors">captions/vtt</configuration>
-      <configurations>
+      </configurations>
     </operation>
 
     <operation
@@ -75,7 +75,7 @@
       description="Retract uploaded transcript from event">
       <configurations>
         <configuration key="retract-flavors">text/vtt</configuration>
-      <configurations>
+      </configurations>
     </operation>
 
     <!-- Clean up work artifacts -->
