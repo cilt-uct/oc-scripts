@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<definition xmlns="http://workflow.opencastproject.org">
+
+  <id>uct-request-transcript</id>
+  <title>UCT - Request Transcript</title>
+  <tags>
+    <tag>archive</tag>
+  </tags>
+  <description>Transcript requested.</description>
+  <configuration_panel />
+
+  <operations>
+
+    <!--
+      Add comment for submission of transcript
+    -->
+    <operation
+      id="comment"
+      description="Add to trancription queue">
+      <configurations>
+        <configuration key="action">create</configuration>
+        <configuration key="reason">EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.TRANSCRIPT</configuration>
+        <configuration key="description">Recording has a transcript request.</configuration>        
+      </configurations>
+    </operation>
+
+  </operations>
+</definition>

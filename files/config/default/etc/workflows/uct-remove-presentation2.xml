@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<definition xmlns="http://workflow.opencastproject.org">
+
+    <id>uct-remove-presentation2</id>
+    <title>Remove presentation2/source</title>
+    <tags>
+        <tag>archive</tag>
+    </tags>
+    <description/>
+    <configuration_panel />
+    <operations>
+        <operation id="clone" description="Clone presentation2-source > presentation2-backup" exception-handler-workflow="partial-error">
+            <configurations>
+                <configuration key="source-flavor">presentation2/source</configuration>
+                <configuration key="target-flavor">presentation2/backup</configuration>
+            </configurations>
+        </operation>
+
+        <!-- untag presentation2-source -->
+        <operation id="tag" description="Exclude presentation2-source from archive">
+            <configurations>
+                <configuration key="source-flavors">presentation2/source</configuration>
+                <configuration key="target-tags">-archive</configuration>
+            </configurations>
+        </operation>
+
+        <operation id="tag" description="Include presentation2-backup from archive">
+            <configurations>
+                <configuration key="source-flavors">presentation2/backup</configuration>
+                <configuration key="target-tags">+archive</configuration>
+            </configurations>
+        </operation>
+
+        <!-- snapshot -->
+        <operation id="snapshot" description="Archive current state of recording">
+            <configurations>
+                <configuration key="source-tags">archive</configuration>
+            </configurations>
+        </operation>
+
+        <!-- clean older snapshots -->
+        <operation id="asset-delete" fail-on-error="true" exception-handler-workflow="error" description="Delete from AssetManager">
+            <configurations>
+                <configuration key="keep-last-snapshot">true</configuration>
+            </configurations>
+        </operation>
+
+        <!-- Comment that we cleaned up this recording -->
+        <operation id="comment" fail-on-error="false" description="Comment to say Removed presentation2-source (create)">
+            <configurations>
+                <configuration key="description">Removed presentation2-source.</configuration>
+                <configuration key="reason">EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.OTHER</configuration>
+                <configuration key="action">create</configuration>
+            </configurations>
+        </operation>
+
+        <operation id="comment" fail-on-error="false" description="Comment to say Removed presentation2-source (resolve)">
+            <configurations>
+                <configuration key="reason">EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.OTHER</configuration>
+                <configuration key="action">resolve</configuration>
+            </configurations>
+        </operation>
+
+        <!-- Clean up work artifacts -->
+        <operation id="cleanup" fail-on-error="false" description="Cleaning up - remove temp processing artifacts">
+            <configurations>
+                <configuration key="delete-external">false</configuration>
+                <!-- FixMe Don't clean up ACLs until workflow service no longer looks for them in the WFR. -->
+                <configuration key="preserve-flavors">dublincore/*,security/*</configuration>
+                <configuration key="delay">5</configuration>
+            </configurations>
+        </operation>
+
+    </operations>
+</definition>
