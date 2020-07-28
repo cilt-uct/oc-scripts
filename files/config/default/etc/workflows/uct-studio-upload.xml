@@ -50,6 +50,10 @@
               <input id="publishToOaiPmh" name="publishToOaiPmh" type="checkbox" class="configField" value="false" />
               <label for="publishToOaiPmh">OAI-PMH Default Repository</label>
             </li>
+            <li>
+              <input id="doCaptioning" name="doCaptioning" type="checkbox" class="configField" value="false" />
+              <label for="doCaptioning">Captions</label>
+             </li>
           </ul>
         </fieldset>
       </div>
@@ -113,6 +117,8 @@
         <configuration key="publishToAws">false</configuration>
         <configuration key="thumbnailType">0</configuration>
         <configuration key="thumbnailPosition">1</configuration>
+        <configuration key="doCaptioning">true</configuration>       
+        <configuration key="isUpload">true</configuration>
       </configurations>
     </operation>
 
@@ -373,6 +379,7 @@
     <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
     <operation
             id="include"
+            if="${doCaptioning}"
             description="Include Captioning">
       <configurations>
         <configuration key="workflow-id">uct-include-captioning</configuration>

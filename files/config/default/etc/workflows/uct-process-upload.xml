@@ -18,6 +18,10 @@
               <input id="hasSlides" name="hasSlides" type="checkbox" class="configField" value="false" />
               <label for="hasSlides">Specify whether the video track has slides</label>
             </li>
+            <li>
+              <input id="doCaptioning" name="doCaptioning" type="checkbox" class="configField" value="false" />
+              <label for="doCaptioning">Captions</label>
+            </li>
           </ul>
         </fieldset>
       </div>
@@ -31,6 +35,8 @@
       description="Applying default configuration values">
       <configurations>
         <configuration key="hasSlides">false</configuration>
+        <configuration key="isUpload">true</configuration> 
+        <configuration key="doCaptioning">true</configuration>
         <configuration key="downloadSourceflavorsExist">false</configuration>
       </configurations>
     </operation>
@@ -374,6 +380,7 @@
     <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
     <operation
             id="include"
+            if="${doCaptioning}"
             description="Include Captioning">
       <configurations>
         <configuration key="workflow-id">uct-include-captioning</configuration>
