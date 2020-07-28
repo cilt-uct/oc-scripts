@@ -3,7 +3,7 @@
   <id>uct-include-transcription-google</id>
   <title>Submit trimmed audio for Google Speech Transcription</title>
   <tags/>
-  <description>Runs after real publishing of media</description>
+  <description>Runs before real publishing of media</description>
   <configuration_panel></configuration_panel>
   <operations>
 
@@ -12,7 +12,7 @@
       id="defaults"
       description="INIT: Applying default values">
       <configurations>
-        <configuration key="transcription_src_flavor">normalized-trimmed</configuration>
+        <configuration key="transcription_src_flavor">delivery</configuration>
 
         <configuration key="skipFlavor">captions/timedtext</configuration>
         <configuration key="languageCode">en-GB</configuration>

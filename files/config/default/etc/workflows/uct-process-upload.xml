@@ -369,6 +369,18 @@
     </operation>
 
     <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <!-- Transcription / Caption Services                                  -->
+    <!-- Source: ${transcription_src_flavor} - delivery                    -->
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <operation
+            id="include"
+            description="Include Captioning">
+      <configurations>
+        <configuration key="workflow-id">uct-include-captioning</configuration>
+      </configurations>
+    </operation>
+
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
     <!-- Publish to publication channels                                   -->
     <!--                                                                   -->
     <!-- Send the encoded material along with the metadata to the          -->
@@ -384,19 +396,6 @@
         <configuration key="download-source-tags">engage-download,atom,rss,mobile</configuration>
         <configuration key="streaming-source-tags">engage-streaming</configuration>
         <configuration key="check-availability">true</configuration>
-      </configurations>
-    </operation>
-
-    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-    <!-- Transcription / Caption Services                                  -->
-    <!-- Source: ${transcription_src_flavor} - normalized-trimmed          -->
-    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-    <operation
-      id="include"
-      if="${doCaptioning}"
-      description="Include Captioning">
-      <configurations>
-        <configuration key="workflow-id">uct-include-captioning</configuration>
       </configurations>
     </operation>
 

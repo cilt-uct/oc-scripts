@@ -368,6 +368,18 @@
     </operation>
 
     <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <!-- Transcription / Caption Services                                  -->
+    <!-- Source: ${transcription_src_flavor} - delivery                    -->
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <operation
+            id="include"
+            description="Include Captioning">
+      <configurations>
+        <configuration key="workflow-id">uct-include-captioning</configuration>
+      </configurations>
+    </operation>
+
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
     <!-- Publish to publication channels                                   -->
     <!--                                                                   -->
     <!-- Send the encoded material along with the metadata to the          -->
@@ -456,19 +468,6 @@
         <configuration key="subject">Screencast titled ${catalogs['episode']['title']} has been published</configuration>
         <configuration key="body-template-file">screencast_publication</configuration>
         <configuration key="use-html">true</configuration>
-      </configurations>
-    </operation>
-
-    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-    <!-- Transcription / Caption Services                                  -->
-    <!-- Source: ${transcription_src_flavor} - normalized-trimmed          -->
-    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-    <operation
-      id="include"
-      if="${doCaptioning}"
-      description="Include Captioning">
-      <configurations>
-        <configuration key="workflow-id">uct-include-captioning</configuration>
       </configurations>
     </operation>
 

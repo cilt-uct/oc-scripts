@@ -21,8 +21,9 @@
           <configuration key="use_watson">false</configuration>
           <configuration key="use_nibity">false</configuration>
           <configuration key="audio_trim_lapel">false</configuration>
+          <configuration key="use_google">true</configuration>
 
-          <configuration key="transcription_src_flavor">normalized-trimmed</configuration>
+          <configuration key="transcription_src_flavor">delivery</configuration>
         </configurations>
       </operation>
 
@@ -49,7 +50,6 @@
       <!--  and ${audio_trim_lapel} -->
       <operation
         id="include"
-        if="${use_google}"
         description="Do captioning with Google Speech-to-Text">
         <configurations>
           <configuration key="workflow-id">uct-include-transcription-google</configuration>
