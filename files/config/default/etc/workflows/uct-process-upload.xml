@@ -20,7 +20,7 @@
             </li>
             <li>
               <input id="doCaptioning" name="doCaptioning" type="checkbox" class="configField" value="false" />
-              <label for="doCaptioning">Captions</label>
+              <label for="doCaptioning">Captions with Google</label>
             </li>
           </ul>
         </fieldset>
