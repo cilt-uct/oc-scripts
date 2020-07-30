@@ -164,13 +164,7 @@
                                                 <p>Dear ${workflowConfig['organizer_name']},</p>
                                                 <br/>
                                                 <p>
-                                                    <span>The following video has been successfully uploaded to your </span>
-                                                    <#if workflowConfig['site_id']?has_content>
-                                                        <a href="https://vula.uct.ac.za/portal/site/${workflowConfig['site_id']}">Vula site</a>
-                                                    <#else>
-                                                        <a href="https://vula.uct.ac.za/">Vula site</a>
-                                                    </#if>
-                                                    <span>:</span>
+                                                    <span>Captions by Google Speech have been added to the following video which you uploaded through Lecture Videos in Vula: </span>
                                                 </p>
                                                 <br/>                                             
                                                 <p>Event: <b>${catalogs['episode']['title']}</b></p>
@@ -182,13 +176,18 @@
                                                 </#if>                                                
                                                 <p>Series: <b>${workflowConfig['series_title']}</b></p>
                                                 <br/>
-                                                <p>Captions using Google Speech have been added to your video. Automated captions are on by default for uploaded content on Lecture Videos in Vula.</p>
+                                                <p>These captions are automatically generated for all new videos, and may contain some errors. Please review them for accuracy.</p>
                                                 <br/>
-                                                <p>These captions have been created using automatic speech recognition, and may contain some errors and inaccuracies.</p>
+                                                <p>The full transcript can be downloaded from the Downloads tab of the video.</p>
                                                 <br/>
-                                                <p>You can request better quality captions (using WayWithWords), do minor edits to the current captions or remove the captions completely via the <a href="https://vula.uct.ac.za/access/content/public/help/HowTo_CaptionsAndTranscripts_Staff.pdf">Manage tab</a>, then click the CC (Closed Captions) icon.</p>
+                                                <p>If the transcript and captions are not helpful, these options are available through the Lecture Videos <a href="https://vula.uct.ac.za/access/content/public/help/HowTo_CaptionsAndTranscripts_Staff.pdf">Manage tab</a> (click on the Closed Captions CC icon):</p>
+                                                <ul>
+                                                    <li>remove the captions completely</li>
+                                                    <li>edit the captions</li>
+                                                    <li>request accurate captions, through manual transcription by WayWithWords (available within 2 to 5 days)</li>
+                                                </ul>
                                                 <br/>
-                                                <p>There is also a <a href="https://vula.uct.ac.za/access/content/public/help/HowTo_CaptionsAndTranscripts_Students.pdf">Using Captions and Transcripts guide</a> for students if there are any queries.</p><br/>
+                                                <p>Please refer to the <a href="https://vula.uct.ac.za/access/content/public/help/HowTo_CaptionsAndTranscripts_Students.pdf">Using Captions and Transcripts guide</a> (which is also available to students) if you have any queries.</p>
                                                 <br/>
                                                 <p>Thank you,</p>
                                                 <p>UCT Lecture Recording Team</p>
