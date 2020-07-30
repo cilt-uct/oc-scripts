@@ -181,7 +181,9 @@
                                                     <p>Date & time: <b>${(eventDate + ' ' + eventTime + ' UTC')?datetime('yyyy-MM-dd HH:mm:ss z')}</b></p>
                                                 </#if>                                                
                                                 <p>Series: <b>${workflowConfig['series_title']}</b></p>
-                                                <br/>   
+                                                <br/>
+                                                <p>Minor editing of captions is also available in Lecture Videos. Select the Manage tab, then click the CC (Closed Captions) icon.</p>
+                                                <br/>
                                                 <p>Thank you,</p>
                                                 <p>UCT Lecture Recording Team</p>
                                                 <p>Email: <a href="mailto:help@vula.uct.ac.za?subject=Google Speech publication: ${workflowConfig['series_title']}" title="Help at Vula">help@vula.uct.ac.za</a></p>
