@@ -164,7 +164,7 @@
                                                 <p>Dear ${workflowConfig['organizer_name']},</p>
                                                 <br/>
                                                 <p>
-                                                    <span>Google Speech captions for the following recording are now available on your </span>
+                                                    <span>The following video has been successfully uploaded to your </span>
                                                     <#if workflowConfig['site_id']?has_content>
                                                         <a href="https://vula.uct.ac.za/portal/site/${workflowConfig['site_id']}">Vula site</a>
                                                     <#else>
@@ -182,7 +182,9 @@
                                                 </#if>                                                
                                                 <p>Series: <b>${workflowConfig['series_title']}</b></p>
                                                 <br/>
-                                                <p>Minor editing of captions is also available in Lecture Videos. Select the Manage tab, then click the CC (Closed Captions) icon.</p>
+                                                <p>Captions using Google Speech have been added to your video. Automated captions are on by default for uploaded content on Lecture Videos in Vula.</p>
+                                                <p>You can request better quality captions (using WayWithWords), do minor edits to the current captions or remove the captions completely via the <a href="https://vula.uct.ac.za/access/content/public/help/HowTo_CaptionsAndTranscripts_Staff.pdf">Manage tab</a>, then click the CC (Closed Captions) icon.</p>
+                                                <p>There is also a <a href="https://vula.uct.ac.za/access/content/public/help/HowTo_CaptionsAndTranscripts_Students.pdf">Using Captions and Transcripts guide</a> for students if there are any queries.</p><br/>
                                                 <br/>
                                                 <p>Thank you,</p>
                                                 <p>UCT Lecture Recording Team</p>
