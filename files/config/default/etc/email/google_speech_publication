@@ -183,8 +183,11 @@
                                                 <p>Series: <b>${workflowConfig['series_title']}</b></p>
                                                 <br/>
                                                 <p>Captions using Google Speech have been added to your video. Automated captions are on by default for uploaded content on Lecture Videos in Vula.</p>
+                                                <br/>
                                                 <p>These captions have been created using automatic speech recognition, and may contain some errors and inaccuracies.</p>
+                                                <br/>
                                                 <p>You can request better quality captions (using WayWithWords), do minor edits to the current captions or remove the captions completely via the <a href="https://vula.uct.ac.za/access/content/public/help/HowTo_CaptionsAndTranscripts_Staff.pdf">Manage tab</a>, then click the CC (Closed Captions) icon.</p>
+                                                <br/>
                                                 <p>There is also a <a href="https://vula.uct.ac.za/access/content/public/help/HowTo_CaptionsAndTranscripts_Students.pdf">Using Captions and Transcripts guide</a> for students if there are any queries.</p><br/>
                                                 <br/>
                                                 <p>Thank you,</p>
