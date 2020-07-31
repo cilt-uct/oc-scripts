@@ -29,11 +29,12 @@
 
       <operation
         id="defaults"
-        if="NOT ${isUpload}"
+        if="NOT(${isUpload})"
         description="Applying default configuration values for captions">
         <configurations>
           <configuration key="use_watson">false</configuration>
           <configuration key="use_nibity">false</configuration>
+          <configuration key="use_google">false</configuration>
           <configuration key="audio_trim_lapel">false</configuration>
           <configuration key="transcription_src_flavor">normalized-trimmed</configuration>
         </configurations>
