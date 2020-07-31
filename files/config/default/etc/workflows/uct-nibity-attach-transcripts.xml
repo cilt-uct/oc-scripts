@@ -21,6 +21,7 @@
         <configuration key="transcription-job-id">${transcriptionJobId}</configuration>
         <!-- Caption generated will have the default flavor based on the target-caption-format and language e.g. captions/vtt+en -->
         <configuration key="target-caption-format">vtt</configuration>
+        <configuration key="vtt">true</configuration>
         <configuration key="target-tag">engage-download</configuration>
       </configurations>
     </operation>
@@ -98,6 +99,22 @@
     <operation
             id="send-email"
             fail-on-error="true"
+            if="NOT(${vtt}) AND ${organizer_email_valid} AND ${get_organizer_success} AND ${valid_notification_list}"
+            exception-handler-workflow="partial-error"
+            description="Sending nibity docx only transcript email to organizer and notification list">
+      <configurations>
+        <configuration key="to">${organizer_email}</configuration>
+        <configuration key="cc">${notification_list}</configuration>
+        <configuration key="bcc">ngonidzashe.choga@uct.ac.za,dmu.cilt@uct.ac.za</configuration>
+        <configuration key="subject">WayWithWords transcript has been published for ${catalogs['episode']['title']}</configuration>
+        <configuration key="body-template-file">nibity_docx_only_publication</configuration>
+        <configuration key="use-html">true</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+            id="send-email"
+            fail-on-error="true"
             if="${organizer_email_valid} AND ${get_organizer_success} AND NOT(${valid_notification_list})"
             exception-handler-workflow="partial-error"
             description="Sending nibity transcript email to organizer and notification list">
@@ -106,6 +123,21 @@
         <configuration key="bcc">ngonidzashe.choga@uct.ac.za,dmu.cilt@uct.ac.za</configuration>
         <configuration key="subject">WayWithWords transcript has been published for ${catalogs['episode']['title']}</configuration>
         <configuration key="body-template-file">nibity_publication</configuration>
+        <configuration key="use-html">true</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+            id="send-email"
+            fail-on-error="true"
+            if="NOT(${vtt}) AND ${organizer_email_valid} AND ${get_organizer_success} AND NOT(${valid_notification_list})"
+            exception-handler-workflow="partial-error"
+            description="Sending nibity docx only transcript email to organizer and notification list">
+      <configurations>
+        <configuration key="to">${organizer_email}</configuration>
+        <configuration key="bcc">ngonidzashe.choga@uct.ac.za,dmu.cilt@uct.ac.za</configuration>
+        <configuration key="subject">WayWithWords transcript has been published for ${catalogs['episode']['title']}</configuration>
+        <configuration key="body-template-file">nibity_docx_only_publication</configuration>
         <configuration key="use-html">true</configuration>
       </configurations>
     </operation>
