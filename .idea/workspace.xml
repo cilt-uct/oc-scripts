@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="b9dba5fa-99b4-493f-9f9c-26fcbdaf6ab8" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/files/config/default/etc/email/google_speech_publication" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/files/config/default/etc/email/nibity_request_sent" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/files/config/default/etc/workflows/uct-google-speech-attach-transcripts.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/files/config/default/etc/org.opencastproject.transcription.nibity.NibityTranscriptionService.cfg" beforeDir="false" afterPath="$PROJECT_DIR$/files/config/default/etc/org.opencastproject.transcription.nibity.NibityTranscriptionService.cfg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/files/config/default/etc/workflows/uct-include-captioning.xml" beforeDir="false" afterPath="$PROJECT_DIR$/files/config/default/etc/workflows/uct-include-captioning.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/files/config/default/etc/workflows/uct-request-transcript.xml" beforeDir="false" afterPath="$PROJECT_DIR$/files/config/default/etc/workflows/uct-request-transcript.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/files/deploy.sh" beforeDir="false" afterPath="$PROJECT_DIR$/files/deploy.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/files/reconfig.sh" beforeDir="false" afterPath="$PROJECT_DIR$/files/reconfig.sh" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <servers />
+  </component>
+</project>
