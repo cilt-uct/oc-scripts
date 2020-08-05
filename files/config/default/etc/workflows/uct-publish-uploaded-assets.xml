@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <definition xmlns="http://workflow.opencastproject.org">
-  <id>publish-uploaded-assets</id>
+  <id>uct-publish-uploaded-assets</id>
   <title>Publish uploaded assets</title>
   <tags>
      <!-- Only launched from add asset in admin-ng, not available for selection by end users via the UI -->
@@ -35,7 +35,7 @@
       exception-handler-workflow="partial-error"
       description="Update recording in Opencast Media Module">
       <configurations>
-        <configuration key="download-source-flavors">dublincore/*,security/*,text/*</configuration>
+        <configuration key="download-source-flavors">dublincore/*,security/*,text/*,captions/*</configuration>
         <configuration key="strategy">merge</configuration>
         <configuration key="check-availability">false</configuration>
       </configurations>

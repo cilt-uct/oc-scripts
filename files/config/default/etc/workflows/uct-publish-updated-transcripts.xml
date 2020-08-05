@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <definition xmlns="http://workflow.opencastproject.org">
     <id>uct-publish-updated-transcripts</id>
-    <title>Publish updated transcripts</title>
+    <title>UCT - Publish updated transcript</title>
     <tags>
         <!-- Only launched from LTI Manage -->
     </tags>
-    <description>Publish updated captions</description>
+    <description>UCT - Publish updated transcript</description>
     <configuration_panel>
     </configuration_panel>
 
@@ -17,83 +17,35 @@
                 id="defaults"
                 description="Applying default configuration values">
             <configurations>
-                <configuration key="publishToEngage">true</configuration>
+                <configuration key="googleTranscript">true</configuration>
+                <configuration key="nibityTranscript">true</configuration>
+                <configuration key="uploadedTranscript">true</configuration>
             </configurations>
         </operation>
 
         <!-- Remove published transcripts -->
         <operation
-                id="retract-partial"
+                id="include"
                 fail-on-error="true"
                 exception-handler-workflow="partial-error"
                 description="Retract published transcripts from event">
             <configurations>
-                <configuration key="retract-flavors">captions/*,text/vtt</configuration>
+                <configuration key="workflow-id">uct-remove-transcripts</configuration>
             </configurations>
         </operation>
 
-        <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-        <!-- Publish to publication channels                                   -->
-        <!--                                                                   -->
-        <!-- Update the recording metadata in the publication channels.        -->
-        <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-
-        <!-- Publish to engage player -->
+        <!-- Publish to updated transcript -->
 
         <operation
-                id="publish-engage"
-                if="${publishToEngage}"
+                id="include"
+                fail-on-error="true"
                 exception-handler-workflow="partial-error"
-                description="Update recording in Opencast Media Module">
+                description="Publish updated transcript">
             <configurations>
-                <configuration key="download-source-flavors">dublincore/*,security/*,text/vtt,captions/*</configuration>
-                <configuration key="strategy">merge</configuration>
-                <configuration key="check-availability">false</configuration>
-            </configurations>
-        </operation>
-
-        <!-- Publish to engage player -->
-
-        <operation
-                id="republish-oaipmh"
-                if="${publishToOaiPmh}"
-                exception-handler-workflow="partial-error"
-                description="Update recording metadata in default OAI-PMH repository">
-            <configurations>
-                <configuration key="source-flavors">${download-source-flavors}</configuration>
-                <configuration key="repository">default</configuration>
-            </configurations>
-        </operation>
-
-        <!-- Archive the current state of the mediapackage -->
-
-        <operation
-                id="snapshot"
-                description="Archiving new assets">
-            <configurations>
-                <configuration key="source-flavors">*/*</configuration>
-            </configurations>
-        </operation>
-
-        <!-- Clean up work artifacts -->
-
-        <operation
-                id="cleanup"
-                fail-on-error="false"
-                description="Cleaning up - remove temp processing artifacts">
-            <configurations>
-                <configuration key="delete-external">false</configuration>
-                <!-- FixMe Don't clean up ACLs until workflow service no longer looks for them in the WFR. -->
-                <configuration key="preserve-flavors">dublincore/*,security/*</configuration>
-                <configuration key="delay">5</configuration>
+                <configuration key="workflow-id">uct-publish-uploaded-assets</configuration>
             </configurations>
         </operation>
 
     </operations>
-
-    <state-mappings>
-        <state-mapping state="running">EVENTS.EVENTS.STATE_MAPPING.PUBLISHING</state-mapping>
-        <state-mapping state="failing">EVENTS.EVENTS.STATE_MAPPING.PUBLISHING</state-mapping>
-    </state-mappings>
 
 </definition>
