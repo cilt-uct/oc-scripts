@@ -33,7 +33,6 @@
       <configurations>
         <configuration key="to">${organizer_email}</configuration>
         <configuration key="cc">${notification_list}</configuration>
-        <configuration key="bcc">ngonidzashe.choga@uct.ac.za</configuration>
         <configuration key="subject">Screencast has been published for ${series_title} on ${start_date}</configuration>
         <configuration key="body-template-file">screencast_publication</configuration>
         <configuration key="use-html">true</configuration>
@@ -48,7 +47,6 @@
       description="Sending empty venue email to organizer and notification list">
       <configurations>
         <configuration key="to">${organizer_email}</configuration>
-        <configuration key="bcc">ngonidzashe.choga@uct.ac.za</configuration>
         <configuration key="subject">Screencast has been published for ${series_title} at ${start_date}</configuration>
         <configuration key="body-template-file">screencast_publication</configuration>
         <configuration key="use-html">true</configuration>

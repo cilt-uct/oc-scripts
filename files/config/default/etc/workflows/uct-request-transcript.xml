@@ -52,7 +52,6 @@
       <configurations>
         <configuration key="to">${organizer_email}</configuration>
         <configuration key="cc">${notification_list}</configuration>
-        <configuration key="bcc">ngonidzashe.choga@uct.ac.za, nosipho.mali@uct.ac.za</configuration>
         <configuration key="subject">A Transcript request for ${catalogs['episode']['title']} has been submitted</configuration>
         <configuration key="body-template-file">nibity_request_sent</configuration>
         <configuration key="use-html">true</configuration>
@@ -67,7 +66,6 @@
             description="Sending a transcript request email to organizer and notification list">
       <configurations>
         <configuration key="to">${organizer_email}</configuration>
-        <configuration key="bcc">ngonidzashe.choga@uct.ac.za,nosipho.mali@uct.ac.za</configuration>
         <configuration key="subject">A Transcript request for ${catalogs['episode']['title']} has been submitted</configuration>
         <configuration key="body-template-file">nibity_request_sent</configuration>
         <configuration key="use-html">true</configuration>
