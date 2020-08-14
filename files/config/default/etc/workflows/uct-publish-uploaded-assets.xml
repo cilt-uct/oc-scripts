@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <definition xmlns="http://workflow.opencastproject.org">
-  <id>uct-publish-uploaded-assets</id>
+  <id>publish-uploaded-assets</id>
   <title>Publish uploaded assets</title>
   <tags>
      <!-- Only launched from add asset in admin-ng, not available for selection by end users via the UI -->
