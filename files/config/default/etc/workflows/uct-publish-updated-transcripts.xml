@@ -42,7 +42,7 @@
                 exception-handler-workflow="partial-error"
                 description="Publish updated transcript">
             <configurations>
-                <configuration key="workflow-id">uct-publish-uploaded-assets</configuration>
+                <configuration key="workflow-id">publish-uploaded-assets</configuration>
             </configurations>
         </operation>
 
