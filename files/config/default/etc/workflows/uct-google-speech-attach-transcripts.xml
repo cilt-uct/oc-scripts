@@ -21,7 +21,7 @@
         <configuration key="transcription-job-id">${transcriptionJobId}</configuration>
         <configuration key="line-size">80</configuration>
         <configuration key="target-flavor">captions/timedtext</configuration>
-        <configuration key="target-tag">archive</configuration>
+        <configuration key="target-tag">archive,engage-download</configuration>
         <configuration key="target-caption-format">vtt</configuration>
       </configurations>
     </operation>
