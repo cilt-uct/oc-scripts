@@ -10,6 +10,18 @@
 
   <operations>
 
+    <!-- Apply the default workflow configuration -->
+    <operation
+            id="defaults"
+            description="Applying default configuration values">
+      <configurations>
+        <configuration key="googleTranscript">true</configuration>
+        <configuration key="nibityTranscript">true</configuration>
+        <configuration key="uploadedTranscript">true</configuration>
+        <configuration key="download-source-flavors">text/*,captions/*</configuration>
+      </configurations>
+    </operation>
+
     <!-- Untag Google Speech captions -->
     <operation
             id="tag"
