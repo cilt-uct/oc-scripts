@@ -10,8 +10,48 @@
 
   <operations>
 
-    <!-- Attach caption/transcript -->
+    <!-- Apply the default workflow configuration -->
+    <operation
+            id="defaults"
+            description="Applying default configuration values">
+      <configurations>
+        <configuration key="googleTranscript">true</configuration>
+        <configuration key="uploadedTranscript">true</configuration>
+        <configuration key="download-source-flavors">text/*,captions/*</configuration>
+      </configurations>
+    </operation>
 
+    <!-- Untag Google Speech captions -->
+    <operation
+            id="tag"
+            description="Untag Google Speech captions">
+      <configurations>
+        <configuration key="source-flavors">captions/timedtext</configuration>
+        <configuration key="target-tags">-engage-download</configuration>
+      </configurations>
+    </operation>
+
+    <!-- Remove published transcripts -->
+    <operation
+            id="include"
+            fail-on-error="true"
+            exception-handler-workflow="partial-error"
+            description="Retract published transcripts from event">
+      <configurations>
+        <configuration key="workflow-id">uct-remove-transcripts</configuration>
+      </configurations>
+    </operation>
+
+    <!-- Archive the current state of the mediapackage -->
+    <operation
+            id="snapshot"
+            description="Archive the current state">
+      <configurations>
+        <configuration key="source-flavors">*/*</configuration>
+      </configurations>
+    </operation>
+
+    <!-- Attach caption/transcript -->
     <operation id="nibity-attach-transcription"
       fail-on-error="true"
       exception-handler-workflow="partial-error"
@@ -51,7 +91,6 @@
     </operation>
 
     <!-- Archive media package -->
-
     <operation id="snapshot"
       fail-on-error="true"
       exception-handler-workflow="partial-error"
@@ -62,7 +101,6 @@
     </operation>
 
     <!-- Send notification to the media package creator -->
-
     <operation
             id="execute-once"
             max-attempts="3"
@@ -89,7 +127,6 @@
       <configurations>
         <configuration key="to">${organizer_email}</configuration>
         <configuration key="cc">${notification_list}</configuration>
-        <configuration key="bcc">ngonidzashe.choga@uct.ac.za,dmu.cilt@uct.ac.za</configuration>
         <configuration key="subject">WayWithWords transcript has been published for ${catalogs['episode']['title']}</configuration>
         <configuration key="body-template-file">nibity_publication</configuration>
         <configuration key="use-html">true</configuration>
@@ -120,7 +157,6 @@
             description="Sending nibity transcript email to organizer and notification list">
       <configurations>
         <configuration key="to">${organizer_email}</configuration>
-        <configuration key="bcc">ngonidzashe.choga@uct.ac.za,dmu.cilt@uct.ac.za</configuration>
         <configuration key="subject">WayWithWords transcript has been published for ${catalogs['episode']['title']}</configuration>
         <configuration key="body-template-file">nibity_publication</configuration>
         <configuration key="use-html">true</configuration>
@@ -143,7 +179,6 @@
     </operation>
 
     <!-- Clean up work artifacts -->
-
     <operation
         id="cleanup"
         fail-on-error="false"

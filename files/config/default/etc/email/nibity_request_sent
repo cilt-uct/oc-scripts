@@ -6,7 +6,7 @@
         <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0;" />
         <meta name="viewport" content="width=600,initial-scale = 2.3,user-scalable=no">
 
-        <title>Lecture Recording - Empty Venue Notification</title>
+        <title>Lecture Recording - Transcript Request Notification</title>
 
         <style type="text/css">
             body {
@@ -163,30 +163,24 @@
                                             <div style="line-height: 24px">
                                                 <p>Dear ${workflowConfig['organizer_name']},</p>
                                                 <br/>
-                                                <p>
-                                                    <span>Captions and a transcript by WayWithWords for the following recording are now available on your </span>
-                                                    <#if workflowConfig['site_id']?has_content>
-                                                        <a href="https://vula.uct.ac.za/portal/site/${workflowConfig['site_id']}">Vula site</a>
-                                                    <#else>
-                                                        <a href="https://vula.uct.ac.za/">Vula site</a>
-                                                    </#if>
-                                                    <span>:</span>
-                                                </p>
-                                                <br/>                                             
+                                                <p>Your request for better transcripts and captions has been submitted to WayWithWords for the following video:</p>
+                                                <br/>
                                                 <p>Event: <b>${catalogs['episode']['title']}</b></p>
                                                 <#if catalogs['episode']['created']?has_content>
                                                     <#setting time_zone="Africa/Johannesburg">
                                                     <#assign eventDate = catalogs['episode']['created']?substring(0,10)>
                                                     <#assign eventTime = catalogs['episode']['created']?substring(11,19)>
                                                     <p>Date & time: <b>${(eventDate + ' ' + eventTime + ' UTC')?datetime('yyyy-MM-dd HH:mm:ss z')}</b></p>
-                                                </#if>                                                
+                                                </#if>
                                                 <p>Series: <b>${workflowConfig['series_title']}</b></p>
                                                 <br/>
-                                                <p>Minor editing of captions is also available in Lecture Videos. Select the Manage tab, then click the CC (Closed Captions) icon.</p>
+                                                <p>Transcriptions are usually available within 2 to 5 working days of submission.</p>
+                                                <br/>
+                                                <p>You will receive an email notification when the transcript and captions are available on your video.</p>
                                                 <br/>
                                                 <p>Thank you,</p>
                                                 <p>UCT Lecture Recording Team</p>
-                                                <p>Email: <a href="mailto:help@vula.uct.ac.za?subject=WayWithWords publication: ${workflowConfig['series_title']}" title="Help at Vula">help@vula.uct.ac.za</a></p>
+                                                <p>Email: <a href="mailto:help@vula.uct.ac.za?subject=WayWithWords submission: ${workflowConfig['series_title']}" title="Help at Vula">help@vula.uct.ac.za</a></p>
                                                 <p>Phone: 021-650-5500</p>
                                             </div>
                                         </td>

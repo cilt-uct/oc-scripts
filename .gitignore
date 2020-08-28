@@ -28,3 +28,7 @@ files/config/default/wfexec/*
 !files/config/default/wfexec/.keep
 callback_plugins/human_log.pyc
 files/shell_variable.sh
+.idea/modules.xml
+.idea/oc-scripts.iml
+.idea/vcs.xml
+.idea/workspace.xml

@@ -35,7 +35,7 @@
       exception-handler-workflow="partial-error"
       description="Update recording in Opencast Media Module">
       <configurations>
-        <configuration key="download-source-flavors">dublincore/*,security/*,text/*</configuration>
+        <configuration key="download-source-flavors">dublincore/*,security/*,text/*,captions/*</configuration>
         <configuration key="strategy">merge</configuration>
         <configuration key="check-availability">false</configuration>
       </configurations>

@@ -21,7 +21,7 @@
         <configuration key="transcription-job-id">${transcriptionJobId}</configuration>
         <configuration key="line-size">80</configuration>
         <configuration key="target-flavor">captions/timedtext</configuration>
-        <configuration key="target-tag">archive</configuration>
+        <configuration key="target-tag">archive,engage-download</configuration>
         <configuration key="target-caption-format">vtt</configuration>
       </configurations>
     </operation>
@@ -89,7 +89,6 @@
       <configurations>
         <configuration key="to">${organizer_email}</configuration>
         <configuration key="cc">${notification_list}</configuration>
-        <configuration key="bcc">ngonidzashe.choga@uct.ac.za,nosipho.mali@uct.ac.za</configuration>
         <configuration key="subject">Google Speech captions have been published for ${catalogs['episode']['title']}</configuration>
         <configuration key="body-template-file">google_speech_publication</configuration>
         <configuration key="use-html">true</configuration>
@@ -104,7 +103,6 @@
             description="Sending google captions email to organizer and notification list">
       <configurations>
         <configuration key="to">${organizer_email}</configuration>
-        <configuration key="bcc">ngonidzashe.choga@uct.ac.za,nosipho.mali@uct.ac.za</configuration>
         <configuration key="subject">Google Speech captions have been published for ${catalogs['episode']['title']}</configuration>
         <configuration key="body-template-file">google_speech_publication</configuration>
         <configuration key="use-html">true</configuration>
