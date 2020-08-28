@@ -126,7 +126,7 @@
       <configurations>
         <configuration key="to">${organizer_email}</configuration>
         <configuration key="cc">${notification_list}</configuration>
-        <configuration key="bcc">dmu.cilt@uct.ac.za</configuration>
+        <configuration key="bcc"></configuration>
         <configuration key="subject">WayWithWords transcript has been published for ${catalogs['episode']['title']}</configuration>
         <configuration key="body-template-file">nibity_publication</configuration>
         <configuration key="use-html">true</configuration>
@@ -141,7 +141,7 @@
             description="Sending nibity transcript email to organizer and notification list">
       <configurations>
         <configuration key="to">${organizer_email}</configuration>
-        <configuration key="bcc">dmu.cilt@uct.ac.za</configuration>
+        <configuration key="bcc"></configuration>
         <configuration key="subject">WayWithWords transcript has been published for ${catalogs['episode']['title']}</configuration>
         <configuration key="body-template-file">nibity_publication</configuration>
         <configuration key="use-html">true</configuration>
