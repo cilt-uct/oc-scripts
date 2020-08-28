@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <definition xmlns="http://workflow.opencastproject.org">
 
-    <id>uct-untag-transcripts</id>
-    <title>UCT Untag Transcripts</title>
+    <id>uct-untag-google-transcripts</id>
+    <title>UCT - Untag Google Transcript</title>
     <tags>
         <tag>archive</tag>
     </tags>
-    <description>Update Transcript tags</description>
+    <description>Untag Google Transcript</description>
     <configuration_panel />
 
     <operations>
@@ -14,7 +14,7 @@
         <!-- Untag Google Speech captions -->
         <operation
                 id="tag"
-                description="Tagging Google Speech captions for publication">
+                description="Untag Google Speech captions">
             <configurations>
                 <configuration key="source-flavors">captions/timedtext</configuration>
                 <configuration key="target-tags">-engage-download</configuration>
@@ -24,7 +24,7 @@
         <!-- Archive the current state of the mediapackage -->
         <operation
                 id="snapshot"
-                description="Archiving new assets">
+                description="Archive the current state">
             <configurations>
                 <configuration key="source-flavors">*/*</configuration>
             </configurations>
