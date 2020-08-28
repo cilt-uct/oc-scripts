@@ -16,7 +16,6 @@
             description="Applying default configuration values">
       <configurations>
         <configuration key="googleTranscript">true</configuration>
-        <configuration key="nibityTranscript">true</configuration>
         <configuration key="uploadedTranscript">true</configuration>
         <configuration key="download-source-flavors">text/*,captions/*</configuration>
       </configurations>
@@ -25,7 +24,7 @@
     <!-- Untag Google Speech captions -->
     <operation
             id="tag"
-            description="Tagging Google Speech captions for publication">
+            description="Untag Google Speech captions">
       <configurations>
         <configuration key="source-flavors">captions/timedtext</configuration>
         <configuration key="target-tags">-engage-download</configuration>
@@ -46,7 +45,7 @@
     <!-- Archive the current state of the mediapackage -->
     <operation
             id="snapshot"
-            description="Archiving new assets">
+            description="Archive the current state">
       <configurations>
         <configuration key="source-flavors">*/*</configuration>
       </configurations>
