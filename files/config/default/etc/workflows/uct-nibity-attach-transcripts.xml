@@ -121,7 +121,7 @@
     <operation
             id="send-email"
             fail-on-error="true"
-            if="${organizer_email_valid} AND ${get_organizer_success} AND ${valid_notification_list}"
+            if="${organizer_email_valid} AND ${get_organizer_success} AND ${has-vtt} AND ${valid_notification_list}"
             exception-handler-workflow="partial-error"
             description="Sending nibity transcript email to organizer and notification list">
       <configurations>
@@ -136,7 +136,7 @@
     <operation
             id="send-email"
             fail-on-error="true"
-            if="NOT(${has-vtt}) AND ${organizer_email_valid} AND ${get_organizer_success} AND ${valid_notification_list}"
+            if="${organizer_email_valid} AND ${get_organizer_success} AND NOT(${has-vtt}) AND ${valid_notification_list}"
             exception-handler-workflow="partial-error"
             description="Sending nibity transcript only transcript email to organizer and notification list">
       <configurations>
@@ -151,7 +151,7 @@
     <operation
             id="send-email"
             fail-on-error="true"
-            if="${organizer_email_valid} AND ${get_organizer_success} AND NOT(${valid_notification_list})"
+            if="${organizer_email_valid} AND ${get_organizer_success} AND ${has-vtt} AND NOT(${valid_notification_list})"
             exception-handler-workflow="partial-error"
             description="Sending nibity transcript email to organizer and notification list">
       <configurations>
@@ -165,7 +165,7 @@
     <operation
             id="send-email"
             fail-on-error="true"
-            if="NOT(${has-vtt}) AND ${organizer_email_valid} AND ${get_organizer_success} AND NOT(${valid_notification_list})"
+            if="AND ${organizer_email_valid} AND ${get_organizer_success} AND NOT(${has-vtt}) AND NOT(${valid_notification_list})"
             exception-handler-workflow="partial-error"
             description="Sending nibity transcript only transcript email to organizer and notification list">
       <configurations>
