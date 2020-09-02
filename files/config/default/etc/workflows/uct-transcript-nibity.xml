@@ -140,7 +140,6 @@
       <configurations>
         <configuration key="to">${organizer_email}</configuration>
         <configuration key="cc">${notification_list}</configuration>
-        <configuration key="bcc">dmu.cilt@uct.ac.za</configuration>
         <configuration key="subject">Event ${catalogs['episode']['title']} has been sent to WayWithWords for transcription</configuration>
         <configuration key="body-template-file">nibity_sent</configuration>
         <configuration key="use-html">true</configuration>
@@ -155,7 +154,6 @@
             description="Sending nibity submission email to organizer and notification list">
       <configurations>
         <configuration key="to">${organizer_email}</configuration>
-        <configuration key="bcc">dmu.cilt@uct.ac.za</configuration>
         <configuration key="subject">Event ${catalogs['episode']['title']} has been sent to WayWithWords for transcription</configuration>
         <configuration key="body-template-file">nibity_sent</configuration>
         <configuration key="use-html">true</configuration>
