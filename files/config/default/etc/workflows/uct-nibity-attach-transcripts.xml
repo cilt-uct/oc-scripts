@@ -61,7 +61,7 @@
         <configuration key="transcription-job-id">${transcriptionJobId}</configuration>
         <!-- Caption generated will have the default flavor based on the target-caption-format and language e.g. captions/vtt+en -->
         <configuration key="target-caption-format">vtt</configuration>
-        <configuration key="vtt">true</configuration>
+        <configuration key="has-vtt">true</configuration>
         <configuration key="target-tag">engage-download</configuration>
       </configurations>
     </operation>
@@ -136,7 +136,7 @@
     <operation
             id="send-email"
             fail-on-error="true"
-            if="NOT(${vtt}) AND ${organizer_email_valid} AND ${get_organizer_success} AND ${valid_notification_list}"
+            if="NOT(${has-vtt}) AND ${organizer_email_valid} AND ${get_organizer_success} AND ${valid_notification_list}"
             exception-handler-workflow="partial-error"
             description="Sending nibity transcript only transcript email to organizer and notification list">
       <configurations>
@@ -165,7 +165,7 @@
     <operation
             id="send-email"
             fail-on-error="true"
-            if="NOT(${vtt}) AND ${organizer_email_valid} AND ${get_organizer_success} AND NOT(${valid_notification_list})"
+            if="NOT(${has-vtt}) AND ${organizer_email_valid} AND ${get_organizer_success} AND NOT(${valid_notification_list})"
             exception-handler-workflow="partial-error"
             description="Sending nibity transcript only transcript email to organizer and notification list">
       <configurations>
