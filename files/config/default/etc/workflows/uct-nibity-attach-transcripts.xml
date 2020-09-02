@@ -165,7 +165,7 @@
     <operation
             id="send-email"
             fail-on-error="true"
-            if="AND ${organizer_email_valid} AND ${get_organizer_success} AND NOT(${has-vtt}) AND NOT(${valid_notification_list})"
+            if="${organizer_email_valid} AND ${get_organizer_success} AND NOT(${has-vtt}) AND NOT(${valid_notification_list})"
             exception-handler-workflow="partial-error"
             description="Sending nibity transcript only transcript email to organizer and notification list">
       <configurations>
