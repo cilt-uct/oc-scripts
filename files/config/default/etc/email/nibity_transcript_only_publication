@@ -182,7 +182,7 @@
                                                 </#if>
                                                 <p>Series: <b>${workflowConfig['series_title']}</b></p>
                                                 <br/>
-                                                <p>Unfortunately, WayWithWords was not able to successfully generate captions for this recording. Students can however use the transcript available under Downloads under the recording.</p>
+                                                <p>Unfortunately, Way With Words was not able to successfully generate captions for this recording. Students can however use the transcript available under Downloads under the recording.</p>
                                                 <br/>
                                                 <p>If you have further questions, please contact help@vula.uct.ac.za.</p>
                                                 <br/>
