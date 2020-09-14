@@ -10,6 +10,33 @@
 
   <operations>
 
+    <operation
+      id="defaults"
+      description="Applying default configuration values">
+      <configurations>
+        <configuration key="retracted_event">false</configuration>
+      </configurations>
+    </operation>
+
+    <!-- Check if event has been retracted -->
+     
+    <operation id="execute-once"
+      max-attempts="3"
+      retry-strategy="hold"
+      fail-on-error="true"
+      exception-handler-workflow="partial-error"
+      description="Check if event has been retracted">
+      <configurations>
+        <configuration key="exec">/opt/opencast/wfexec/check-if-retracted.pl</configuration>
+        <configuration key="load">0.1</configuration>
+        <configuration key="params">#{id} #{out}</configuration>
+        <configuration key="output-filename">retracted_event.txt</configuration>
+        <configuration key="target-flavor">text/plain</configuration>
+        <configuration key="set-workflow-properties">true</configuration>
+        <configuration key="expected-type">Attachment</configuration>
+      </configurations>
+    </operation>
+
     <!-- Attach caption/transcript -->
 
     <operation id="nibity-attach-transcription"
@@ -27,6 +54,7 @@
 
     <!-- Merge caption/transcript to existing publication and republish -->
     <operation id="publish-engage"
+      if="NOT(${retracted_event})"
       fail-on-error="true"
       exception-handler-workflow="partial-error"
       description="Distribute and publish to engage server">
@@ -38,8 +66,8 @@
       </configurations>
     </operation>
 
-    <operation
-      id="republish-oaipmh"
+    <operation id="republish-oaipmh"
+      if="NOT(${retracted_event})"
       exception-handler-workflow="partial-error"
       description="Update recording metadata in default OAI-PMH repository">
       <configurations>
