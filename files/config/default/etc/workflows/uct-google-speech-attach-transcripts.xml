@@ -10,14 +10,6 @@
 
   <operations>
 
-    <operation
-            id="defaults"
-            description="Applying default configuration values">
-      <configurations>
-        <configuration key="retracted_event">false</configuration>
-      </configurations>
-    </operation>
-
      <!-- Check if event has been retracted -->
 
     <operation
@@ -58,8 +50,8 @@
 
     <operation 
             id="publish-engage"
-            if="NOT(${retracted_event})"
             fail-on-error="true"
+            if="NOT(${retracted_event})"
             exception-handler-workflow="partial-error"
             description="Distribute and publish to engage server">
       <configurations>

@@ -10,14 +10,6 @@
 
   <operations>
 
-    <operation
-      id="defaults"
-      description="Applying default configuration values">
-      <configurations>
-        <configuration key="retracted_event">false</configuration>
-      </configurations>
-    </operation>
-
     <!-- Check if event has been retracted -->
      
     <operation id="execute-once"
@@ -31,7 +23,6 @@
         <configuration key="load">0.1</configuration>
         <configuration key="params">#{id} #{out}</configuration>
         <configuration key="output-filename">retracted_event.txt</configuration>
-        <configuration key="target-flavor">text/plain</configuration>
         <configuration key="set-workflow-properties">true</configuration>
         <configuration key="expected-type">Attachment</configuration>
       </configurations>
@@ -54,8 +45,8 @@
 
     <!-- Merge caption/transcript to existing publication and republish -->
     <operation id="publish-engage"
-      if="NOT(${retracted_event})"
       fail-on-error="true"
+      if="NOT(${retracted_event})"
       exception-handler-workflow="partial-error"
       description="Distribute and publish to engage server">
       <configurations>
