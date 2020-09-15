@@ -12,7 +12,6 @@
     <operations>
 
         <!-- Apply the default workflow configuration -->
-
         <operation
                 id="defaults"
                 description="Applying default configuration values">
@@ -20,6 +19,27 @@
                 <configuration key="googleTranscript">true</configuration>
                 <configuration key="nibityTranscript">true</configuration>
                 <configuration key="uploadedTranscript">true</configuration>
+                <configuration key="download-source-flavors">text/*,captions/*</configuration>
+            </configurations>
+        </operation>
+
+        <!-- Tagging captions for publication -->
+        <operation
+                id="tag"
+                description="Tagging captions for publication">
+            <configurations>
+                <configuration key="source-flavors">text/*,captions/*</configuration>
+                <configuration key="target-tags">-engage-download</configuration>
+            </configurations>
+        </operation>
+
+        <!-- Tagging captions for publication -->
+        <operation
+                id="tag"
+                description="Tagging captions for publication">
+            <configurations>
+                <configuration key="source-flavors">${download-source-flavors}</configuration>
+                <configuration key="target-tags">engage-download,archive</configuration>
             </configurations>
         </operation>
 
@@ -34,15 +54,23 @@
             </configurations>
         </operation>
 
-        <!-- Publish to updated transcript -->
+        <!-- Archive the current state of the mediapackage -->
+        <operation
+                id="snapshot"
+                description="Archiving new assets">
+            <configurations>
+                <configuration key="source-flavors">*/*</configuration>
+            </configurations>
+        </operation>
 
+        <!-- Publish to updated transcript -->
         <operation
                 id="include"
                 fail-on-error="true"
                 exception-handler-workflow="partial-error"
                 description="Publish updated transcript">
             <configurations>
-                <configuration key="workflow-id">uct-publish-uploaded-assets</configuration>
+                <configuration key="workflow-id">publish-uploaded-assets</configuration>
             </configurations>
         </operation>
 

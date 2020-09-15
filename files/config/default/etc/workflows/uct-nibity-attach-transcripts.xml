@@ -10,8 +10,18 @@
 
   <operations>
 
+    <!-- Apply the default workflow configuration -->
+    <operation
+            id="defaults"
+            description="Applying default configuration values">
+      <configurations>
+        <configuration key="googleTranscript">true</configuration>
+        <configuration key="uploadedTranscript">true</configuration>
+        <configuration key="download-source-flavors">text/*,captions/*</configuration>
+      </configurations>
+    </operation>
+
     <!-- Check if event has been retracted -->
-     
     <operation id="execute-once"
       max-attempts="3"
       retry-strategy="hold"
@@ -28,8 +38,37 @@
       </configurations>
     </operation>
 
-    <!-- Attach caption/transcript -->
+    <!-- Untag Google Speech captions -->
+    <operation
+            id="tag"
+            description="Untag Google Speech captions">
+      <configurations>
+        <configuration key="source-flavors">captions/timedtext</configuration>
+        <configuration key="target-tags">-engage-download</configuration>
+      </configurations>
+    </operation>
 
+    <!-- Remove published transcripts -->
+    <operation
+            id="include"
+            fail-on-error="true"
+            exception-handler-workflow="partial-error"
+            description="Retract published transcripts from event">
+      <configurations>
+        <configuration key="workflow-id">uct-remove-transcripts</configuration>
+      </configurations>
+    </operation>
+
+    <!-- Archive the current state of the mediapackage -->
+    <operation
+            id="snapshot"
+            description="Archive the current state">
+      <configurations>
+        <configuration key="source-flavors">*/*</configuration>
+      </configurations>
+    </operation>
+
+    <!-- Attach caption/transcript -->
     <operation id="nibity-attach-transcription"
       fail-on-error="true"
       exception-handler-workflow="partial-error"
@@ -39,6 +78,7 @@
         <configuration key="transcription-job-id">${transcriptionJobId}</configuration>
         <!-- Caption generated will have the default flavor based on the target-caption-format and language e.g. captions/vtt+en -->
         <configuration key="target-caption-format">vtt</configuration>
+        <configuration key="has-vtt">true</configuration>
         <configuration key="target-tag">engage-download</configuration>
       </configurations>
     </operation>
@@ -69,7 +109,6 @@
     </operation>
 
     <!-- Archive media package -->
-
     <operation id="snapshot"
       fail-on-error="true"
       exception-handler-workflow="partial-error"
@@ -80,7 +119,6 @@
     </operation>
 
     <!-- Send notification to the media package creator -->
-
     <operation
             id="execute-once"
             max-attempts="3"
@@ -101,13 +139,12 @@
     <operation
             id="send-email"
             fail-on-error="true"
-            if="${organizer_email_valid} AND ${get_organizer_success} AND ${valid_notification_list}"
+            if="${organizer_email_valid} AND ${get_organizer_success} AND ${has-vtt} AND ${valid_notification_list}"
             exception-handler-workflow="partial-error"
             description="Sending nibity transcript email to organizer and notification list">
       <configurations>
         <configuration key="to">${organizer_email}</configuration>
         <configuration key="cc">${notification_list}</configuration>
-        <configuration key="bcc">dmu.cilt@uct.ac.za</configuration>
         <configuration key="subject">WayWithWords transcript has been published for ${catalogs['episode']['title']}</configuration>
         <configuration key="body-template-file">nibity_publication</configuration>
         <configuration key="use-html">true</configuration>
@@ -117,20 +154,47 @@
     <operation
             id="send-email"
             fail-on-error="true"
-            if="${organizer_email_valid} AND ${get_organizer_success} AND NOT(${valid_notification_list})"
+            if="${organizer_email_valid} AND ${get_organizer_success} AND NOT(${has-vtt}) AND ${valid_notification_list}"
+            exception-handler-workflow="partial-error"
+            description="Sending nibity transcript only transcript email to organizer and notification list">
+      <configurations>
+        <configuration key="to">${organizer_email}</configuration>
+        <configuration key="cc">${notification_list}</configuration>
+        <configuration key="subject">WayWithWords transcript has been published for ${catalogs['episode']['title']}</configuration>
+        <configuration key="body-template-file">nibity_transcript_only_publication</configuration>
+        <configuration key="use-html">true</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+            id="send-email"
+            fail-on-error="true"
+            if="${organizer_email_valid} AND ${get_organizer_success} AND ${has-vtt} AND NOT(${valid_notification_list})"
             exception-handler-workflow="partial-error"
             description="Sending nibity transcript email to organizer and notification list">
       <configurations>
         <configuration key="to">${organizer_email}</configuration>
-        <configuration key="bcc">dmu.cilt@uct.ac.za</configuration>
         <configuration key="subject">WayWithWords transcript has been published for ${catalogs['episode']['title']}</configuration>
         <configuration key="body-template-file">nibity_publication</configuration>
         <configuration key="use-html">true</configuration>
       </configurations>
     </operation>
 
-    <!-- Clean up work artifacts -->
+    <operation
+            id="send-email"
+            fail-on-error="true"
+            if="${organizer_email_valid} AND ${get_organizer_success} AND NOT(${has-vtt}) AND NOT(${valid_notification_list})"
+            exception-handler-workflow="partial-error"
+            description="Sending nibity transcript only transcript email to organizer and notification list">
+      <configurations>
+        <configuration key="to">${organizer_email}</configuration>
+        <configuration key="subject">WayWithWords transcript has been published for ${catalogs['episode']['title']}</configuration>
+        <configuration key="body-template-file">nibity_transcript_only_publication</configuration>
+        <configuration key="use-html">true</configuration>
+      </configurations>
+    </operation>
 
+    <!-- Clean up work artifacts -->
     <operation
         id="cleanup"
         fail-on-error="false"
