@@ -33,6 +33,7 @@
         <configuration key="load">0.1</configuration>
         <configuration key="params">#{id} #{out}</configuration>
         <configuration key="output-filename">retracted_event.txt</configuration>
+        <configuration key="target-flavor">text/plain</configuration>
         <configuration key="set-workflow-properties">true</configuration>
         <configuration key="expected-type">Attachment</configuration>
       </configurations>
