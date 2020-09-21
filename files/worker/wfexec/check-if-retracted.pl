@@ -1,10 +1,11 @@
 #! /usr/bin/perl
 
-## Get the information to send a consent request email to
-## the Organizer and NotificationList of a series
-# https://jira.cilt.uct.ac.za/browse/OPENCAST-2247
+## Check if a retract workflow was run on the event 
+## set workflow property called retracted_event = true/false
+# https://jira.cilt.uct.ac.za/browse/OPENCAST-2989
+# https://jira.cilt.uct.ac.za/browse/OPENCAST-2902
 
-# TODO: get notification list from series metadata when it is added
+# Created: Ngoni Choga (2020-09-14)
 
 my $debug = 0;
 
