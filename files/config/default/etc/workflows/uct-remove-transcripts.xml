@@ -47,9 +47,8 @@
     <!-- Remove google transcript -->
     <operation
       id="retract-partial"
-      fail-on-error="true"
-      if="${googleTranscript}"
-      exception-handler-workflow="partial-error"
+      fail-on-error="false"
+      if="${googleTranscript}"      
       description="Retract google transcript from event">
       <configurations>
         <configuration key="retract-flavors">captions/timedtext</configuration>
@@ -59,9 +58,8 @@
     <!-- Remove nibity transcript -->
     <operation
       id="retract-partial"
-      fail-on-error="true"
+      fail-on-error="false"
       if="${nibityTranscript}"
-      exception-handler-workflow="partial-error"
       description="Retract google nibity from event">
       <configurations>
         <configuration key="retract-flavors">captions/vtt</configuration>
@@ -71,9 +69,8 @@
     <!-- Remove uploaded transcript -->
     <operation
       id="retract-partial"
-      fail-on-error="true"
+      fail-on-error="false"
       if="${uploadedTranscript}"
-      exception-handler-workflow="partial-error"
       description="Retract uploaded transcript from event">
       <configurations>
         <configuration key="retract-flavors">text/vtt</configuration>
