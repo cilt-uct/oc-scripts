@@ -197,6 +197,54 @@
       </configurations>
     </operation>
 
+    <operation
+      id="composite"
+      description="Downloads: Presenter + Presentation (360p)"
+      fail-on-error="false"
+      exception-handler-workflow="partial-error">
+      <configurations>
+        <configuration key="source-flavor-lower">presentation/prepared</configuration>
+        <configuration key="source-flavor-upper">presenter/prepared</configuration>
+        <configuration key="encoding-profile">mp4-download.dual.http</configuration>
+        <configuration key="target-flavor">composite/delivery</configuration>
+        <configuration key="target-tags">rss,atom,composite</configuration>
+        <configuration key="output-resolution">1280x360</configuration>
+        <configuration key="output-background">0x000000FF</configuration>
+        <configuration key="layout">preview</configuration>
+        <configuration key="layout-single">
+          {"horizontalCoverage":1.0,"anchorOffset":{"referring":{"left":0.0,"top":0.0},"reference":{"left":0.0,"top":0.0},"offset":{"x":0,"y":0}}};
+        </configuration>
+        <configuration key="layout-preview">
+          {"horizontalCoverage":0.5,"anchorOffset":{"referring":{"left":1.0,"top":0.0},"reference":{"left":1.0,"top":0.0},"offset":{"x":0,"y":0}}};
+          {"horizontalCoverage":0.5,"anchorOffset":{"referring":{"left":0.0,"top":0.0},"reference":{"left":0.0,"top":0.0},"offset":{"x":0,"y":0}}};
+        </configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="composite"
+      description="Downloads: Presenter + Presentation (720p)"
+      fail-on-error="false"
+      exception-handler-workflow="partial-error">
+      <configurations>
+        <configuration key="source-flavor-lower">presentation/prepared</configuration>
+        <configuration key="source-flavor-upper">presenter/prepared</configuration>
+        <configuration key="encoding-profile">mp4-download.dual.http</configuration>
+        <configuration key="target-flavor">composite/delivery</configuration>
+        <configuration key="target-tags">rss,atom,composite</configuration>
+        <configuration key="output-resolution">2560x720</configuration>
+        <configuration key="output-background">0x000000FF</configuration>
+        <configuration key="layout">preview</configuration>
+        <configuration key="layout-single">
+          {"horizontalCoverage":1.0,"anchorOffset":{"referring":{"left":0.0,"top":0.0},"reference":{"left":0.0,"top":0.0},"offset":{"x":0,"y":0}}};
+        </configuration>
+        <configuration key="layout-preview">
+          {"horizontalCoverage":0.5,"anchorOffset":{"referring":{"left":1.0,"top":0.0},"reference":{"left":1.0,"top":0.0},"offset":{"x":0,"y":0}}};
+          {"horizontalCoverage":0.5,"anchorOffset":{"referring":{"left":0.0,"top":0.0},"reference":{"left":0.0,"top":0.0},"offset":{"x":0,"y":0}}};
+        </configuration>
+      </configurations>
+    </operation>
+
     <!-- Create preview artifacts -->
 
     <operation
