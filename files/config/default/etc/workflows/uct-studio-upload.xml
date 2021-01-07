@@ -198,8 +198,29 @@
     </operation>
 
     <operation
+      id="analyze-tracks"
+      fail-on-error="true"
+      exception-handler-workflow="partial-error"
+      description="Analyze tracks in media package and set control variables">
+      <configurations>
+        <configuration key="source-flavor">presenter/prepared</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="analyze-tracks"
+      fail-on-error="true"
+      exception-handler-workflow="partial-error"
+      description="Analyze tracks in media package and set control variables">
+      <configurations>
+        <configuration key="source-flavor">presentation/prepared</configuration>
+      </configurations>
+    </operation>
+
+    <operation
       id="composite"
       description="Downloads: Presenter + Presentation (360p)"
+      if="${presentation_prepared_media} AND ${presenter_prepared_media}"
       fail-on-error="false"
       exception-handler-workflow="partial-error">
       <configurations>
@@ -224,6 +245,7 @@
     <operation
       id="composite"
       description="Downloads: Presenter + Presentation (720p)"
+      if="${presentation_prepared_media} AND ${presenter_prepared_media}"
       fail-on-error="false"
       exception-handler-workflow="partial-error">
       <configurations>
