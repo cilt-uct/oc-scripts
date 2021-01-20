@@ -216,6 +216,19 @@
     <!-- Download from external ingest nodes, tag, inspect and and prepare -->
     <!-- source recording and metadata catalogs.                           -->
     <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    
+    <!-- Save workflow properties -->
+    <operation
+      id="export-wf-properties"
+      fail-on-error="true"
+      exception-handler-workflow="partial-error"
+      description="Export workflow settings to Java properties file">
+      <configurations>
+        <configuration key="target-flavor">processing/defaults</configuration>
+        <configuration key="target-tags">archive</configuration>
+      </configurations>
+    </operation>
+    
     <operation
       id="snapshot"
       description="Archive publishing information">

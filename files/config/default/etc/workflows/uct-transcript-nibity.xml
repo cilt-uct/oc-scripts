@@ -36,15 +36,23 @@
   </configuration_panel>
   <operations>
 
+    <operation
+      id="export-wf-properties"
+      fail-on-error="true"
+      exception-handler-workflow="partial-error"
+      description="Export workflow settings to Java properties file">
+      <configurations>
+        <configuration key="target-flavor">processing/defaults</configuration>
+        <configuration key="target-tags">archive</configuration>
+        <configuration key="keys">workProfileChannel_right, workProfileChannel_left, workProfileChannel_stereo</configuration>
+      </configurations>
+    </operation>
+
     <!-- Apply the default workflow configuration -->
     <operation
       id="defaults"
       description="Applying default configuration values">
       <configurations>
-        <configuration key="workProfileChannel_left">true</configuration>
-        <configuration key="workProfileChannel_right">false</configuration>
-        <configuration key="workProfileChannel_stereo">false</configuration>
-
         <configuration key="transcription_src_flavor">trimmed</configuration>
       </configurations>
     </operation>
