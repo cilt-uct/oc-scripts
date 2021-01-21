@@ -40,6 +40,19 @@
   </configuration_panel>
   <operations>
 
+  <!-- Apply the default workflow configuration -->
+    <operation
+      id="defaults"
+      description="Applying default configuration values">
+      <configurations>
+        <configuration key="workProfileChannel_left">true</configuration>
+        <configuration key="workProfileChannel_right">false</configuration>
+        <configuration key="workProfileChannel_stereo">false</configuration>
+        <configuration key="publishedChannel">false</configuration>
+        <configuration key="transcription_src_flavor">trimmed</configuration>
+      </configurations>
+    </operation>
+
     <operation
       id="import-wf-properties"
       if="${publishedChannel}"
@@ -48,16 +61,7 @@
       description="Load processing settings">
       <configurations>
         <configuration key="source-flavor">processing/defaults</configuration>
-        <configuration key="keys">workProfileChannel_right, workProfileChannel_left, workProfileChannel_stereo</configuration>
-      </configurations>
-    </operation>
-
-    <!-- Apply the default workflow configuration -->
-    <operation
-      id="defaults"
-      description="Applying default configuration values">
-      <configurations>
-        <configuration key="transcription_src_flavor">trimmed</configuration>
+        <configuration key="keys">workProfileChannel</configuration>
       </configurations>
     </operation>
 
