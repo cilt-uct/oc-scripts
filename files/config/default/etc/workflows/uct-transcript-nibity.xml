@@ -30,7 +30,7 @@
               <label for="workProfileChannel_stereo">Stereo</label>
             </li>
             <li>
-              <input id="publishedChannel name="workProfileChannel" type="radio" class="configField" value="true"/>
+              <input id="publishedChannel" name="workProfileChannel" type="radio" class="configField" value="true"/>
               <label for="publishedChannel">Published</label>
             </li>
           </ul>
@@ -42,7 +42,7 @@
 
     <operation
       id="import-wf-properties"
-      if="${workProfileChannel_left}"
+      if="${publishedChannel}"
       fail-on-error="true"
       exception-handler-workflow="partial-error"
       description="Load processing settings">
