@@ -29,6 +29,10 @@
               <input id="workProfileChannel_stereo" name="workProfileChannel" type="radio" class="configField" value="true"/>
               <label for="workProfileChannel_stereo">Stereo</label>
             </li>
+            <li>
+              <input id="publishedChannel" name="workProfileChannel" type="radio" class="configField" value="true"/>
+              <label for="publishedChannel">Published</label>
+            </li>
           </ul>
         </fieldset>
       </div>
@@ -36,7 +40,7 @@
   </configuration_panel>
   <operations>
 
-    <!-- Apply the default workflow configuration -->
+  <!-- Apply the default workflow configuration -->
     <operation
       id="defaults"
       description="Applying default configuration values">
@@ -44,8 +48,20 @@
         <configuration key="workProfileChannel_left">true</configuration>
         <configuration key="workProfileChannel_right">false</configuration>
         <configuration key="workProfileChannel_stereo">false</configuration>
-
+        <configuration key="publishedChannel">false</configuration>
         <configuration key="transcription_src_flavor">trimmed</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="import-wf-properties"
+      if="${publishedChannel}"
+      fail-on-error="true"
+      exception-handler-workflow="partial-error"
+      description="Load processing settings">
+      <configurations>
+        <configuration key="source-flavor">processing/defaults</configuration>
+        <configuration key="keys">workProfileChannel</configuration>
       </configurations>
     </operation>
 
