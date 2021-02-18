@@ -5,7 +5,7 @@
   <title>Request consent</title>
   <tags>
     <!--tag>editor</tag-->
-    <!--tag>archive</tag-->
+    <tag>archive</tag>
   </tags>
   <description/>
   <configuration_panel />
