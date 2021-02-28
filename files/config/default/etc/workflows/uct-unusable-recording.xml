@@ -33,13 +33,27 @@
         <operation
                 id="send-email"
                 fail-on-error="true"
-                if="${organizer_email_valid} AND ${get_organizer_success}"
+                if="${organizer_email_valid} AND ${get_organizer_success} AND ${valid_notification_list}"
                 exception-handler-workflow="partial-error"
                 description="Sending email to organizer and notification list about unusable recording">
             <configurations>
                 <configuration key="to">${organizer_email}</configuration>
                 <configuration key="cc">${notification_list}</configuration>
-                <configuration key="subject">Unusable recording: ${series_title}</configuration>
+                <configuration key="subject">Unusable recording: ${catalogs['episode']['title']}</configuration>
+                <configuration key="body-template-file">unusable_recording</configuration>
+                <configuration key="use-html">true</configuration>
+            </configurations>
+        </operation>
+
+        <operation
+                id="send-email"
+                fail-on-error="true"
+                if="${organizer_email_valid} AND ${get_organizer_success} AND NOT(${valid_notification_list})"
+                exception-handler-workflow="partial-error"
+                description="Sending email to organizer about unusable recording">
+            <configurations>
+                <configuration key="to">${organizer_email}</configuration>
+                <configuration key="subject">Unusable recording: ${catalogs['episode']['title']}</configuration>
                 <configuration key="body-template-file">unusable_recording</configuration>
                 <configuration key="use-html">true</configuration>
             </configurations>
@@ -49,7 +63,6 @@
         <operation
                 id="comment"
                 fail-on-error="false"
-                if="${organizer_email_valid} AND ${get_organizer_success}"
                 description="Resolve the cutting flag">
             <configurations>
                 <configuration key="description">Resolving the cutting flag </configuration>
@@ -62,7 +75,6 @@
         <operation
                 id="comment"
                 fail-on-error="false"
-                if="NOT(${organizer_email_valid} AND ${get_organizer_success})"
                 description="Mark recording as unusable">
             <configurations>
                 <configuration key="description">This recording is unusable </configuration>
@@ -75,7 +87,6 @@
         <operation
                 id="comment"
                 fail-on-error="false"
-                if="NOT(${organizer_email_valid} AND ${get_organizer_success})"
                 description="Resolve unusable comment">
             <configurations>
                 <configuration key="description">Resolving unusable comment </configuration>
