@@ -58,6 +58,16 @@
       </configurations>
     </operation>
 
+    <operation
+            id="comment"
+            description="Updated previews and ready for editing">
+      <configurations>
+        <configuration key="description">Updated previews and ready for editing</configuration>
+        <configuration key="action">create</configuration>
+        <configuration key="reason">EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.CUTTING</configuration>
+      </configurations>
+    </operation>
+
     <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       Save, Archive and Cleanup
     -->
