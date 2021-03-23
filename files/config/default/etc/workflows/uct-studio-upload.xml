@@ -110,7 +110,7 @@
         id="defaults"
         description="Applying default configuration values">
       <configurations>
-        <configuration key="skipEditorPreview">true</configuration>
+        <configuration key="skipEditorPreview">false</configuration>
         <configuration key="publishToEngage">true</configuration>
         <configuration key="publishToApi">true</configuration>
         <configuration key="publishToOaiPmh">false</configuration>
