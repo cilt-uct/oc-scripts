@@ -8,7 +8,7 @@
   <configuration_panel></configuration_panel>
   <operations>
 
-      <!-- extract audio from the first of the source streams, encode to wav for analysis to be run properly -->
+    <!-- extract audio from the first of the source streams, encode to wav for analysis to be run properly -->
     <operation
       id="compose"
       fail-on-error="false"

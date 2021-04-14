@@ -42,14 +42,14 @@
     <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       Run the script to detect the audio points and create a smil/cutting if possible
     -->
-    <operation
+    <!--operation
       id="include"
       if="NOT(${empty_venue})"
       description="Run the audio analysis for (possible) autotrimming of the recording">
       <configurations>
         <configuration key="workflow-id">uct-include-autotrim-detection</configuration>
       </configurations>
-    </operation>
+    </operation-->
 
     <operation
       id="include"
