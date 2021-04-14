@@ -14,14 +14,16 @@ sub uniq {
 
 my $help = 0;
 my $debug = 0;
+my $to_install = 0;
 my $dir = "/opt/opencast";
 my @ignore_list = qw(Error feature warnings strict POSIX);
 
-GetOptions ('debug' => \$debug, 'help' => \$help);
+GetOptions ('install' => \$to_install, 'debug' => \$debug, 'help' => \$help);
 
 if ($help) {
     print "Options:\n\n" .
            " --debug     Show status and warnings\n";
+           " --install   Will try and install the missing modules\n";
     exit(1);
 }
 
@@ -50,13 +52,18 @@ my @indiciesToKeep = grep { $result[$_] ne 'strict' } 0..$#result;
 
 my $err = 0;
 foreach my $item (@result) {
-    print "Checking $item: " if $debug;
-    if (Class::Inspector->installed($item)) {
-        print "Found\n" if $debug;
-    } else {
-        print "ERROR not found\n" if $debug;
-        print "ERROR ($item) not found\n" if !$debug;
-        $err = ++($err)
+
+    if (!check_install($item)) {
+        if ($to_install) {
+            print "Trying to install ($item)\n" if $debug;
+            system("perl -MCPAN -e 'install $item'");
+        } else {
+            
+            if (!check_install($item)) {
+                print "ERROR ($item) not found\n" if !$debug;
+                $err = ++($err)
+            }
+        }
     }
 }
 
