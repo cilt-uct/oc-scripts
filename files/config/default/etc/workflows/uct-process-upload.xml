@@ -35,7 +35,8 @@
       description="Applying default configuration values">
       <configurations>
         <configuration key="hasSlides">false</configuration>
-        <configuration key="isUpload">true</configuration> 
+        <configuration key="isUpload">true</configuration>
+        <configuration key="hasPresentation">false</configuration>
         <configuration key="doCaptioning">true</configuration>
         <configuration key="downloadSourceflavorsExist">false</configuration>
       </configurations>
@@ -129,6 +130,21 @@
       </configurations>
     </operation>
 
+    <!-- Move track_presentation.0/* to presentation/source (LTI uploads) -->
+    <operation
+      id="compose"
+      if="${hasPresentation} AND NOT(${is_audio_upload})"
+      fail-on-error="true"
+      exception-handler-workflow="partial-error"
+      description="Move track_presentation.0/* to presentation/source">
+      <configurations>
+        <configuration key="source-flavor">track_presentation.0/*</configuration>
+        <configuration key="target-flavor">presentation/source</configuration>
+        <configuration key="target-tags">archive</configuration>
+        <configuration key="encoding-profile">uct-copy.work</configuration>
+      </configurations>
+    </operation>
+
     <!-- If upload is audio only, create video file with static image -->
     <operation
       id="execute-many"
@@ -166,6 +182,17 @@
       description="Remove track_presenter.0/* from archiving">
       <configurations>
         <configuration key="source-flavors">track_presenter.0/*</configuration>
+        <configuration key="target-tags">-archive, -engage-download</configuration>
+      </configurations>
+    </operation>
+
+    <!-- Tag the presentation source for archival -->
+    <operation
+      id="tag"
+      if="${hasPresentation}"
+      description="Remove track_presentation.0/* from archiving">
+      <configurations>
+        <configuration key="source-flavors">track_presentation.0/*</configuration>
         <configuration key="target-tags">-archive, -engage-download</configuration>
       </configurations>
     </operation>
