@@ -117,7 +117,7 @@
         <configuration key="publishToAws">false</configuration>
         <configuration key="thumbnailType">0</configuration>
         <configuration key="thumbnailPosition">1</configuration>
-        <configuration key="doCaptioning">true</configuration>       
+        <configuration key="doCaptioning">false</configuration>
         <configuration key="isUpload">true</configuration>
       </configurations>
     </operation>
