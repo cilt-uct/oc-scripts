@@ -7,11 +7,6 @@ use Getopt::Long;
 use Class::Unload;
 use Class::Inspector;
 
-sub uniq {
-    my %seen;
-    grep !$seen{$_}++, @_;
-}
-
 my $help = 0;
 my $debug = 0;
 my $to_install = 0;
@@ -23,8 +18,27 @@ GetOptions ('install' => \$to_install, 'debug' => \$debug, 'help' => \$help);
 if ($help) {
     print "Options:\n\n" .
            " --debug     Show status and warnings\n";
-           " --install   Will try and install the missing modules\n";
+           " --install   Try and install Show status and warnings\n";
     exit(1);
+}
+
+sub uniq {
+    my %seen;
+    grep !$seen{$_}++, @_;
+}
+
+sub check_install($) {
+    my $module = shift;
+    my $found = Class::Inspector->installed($module);
+
+    # print "Checking $item: " if $debug;
+    if ($found) {
+        print "Found $module\n" if $debug;
+    } else {
+        print "ERROR $module not found\n" if $debug;
+    }
+
+    return $found;
 }
 
 my @result = ();
