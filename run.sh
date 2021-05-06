@@ -665,7 +665,7 @@ main() {
     if $SOX; then
         cd $YML
         echo "Deploy Sox: ($HOSTS_FILE)"
-        $LIVE && ansible-playbook -i $HOSTS_FILE ansible-deploy-sox.yml --extra-vars "$extra_vars ggitbranch=\"$branch\" gitlog=\"$gitlog\" "
+        $LIVE && ansible-playbook -i $HOSTS_FILE ansible-deploy-sox.yml --extra-vars "$extra_vars gitbranch=\"$branch\" gitlog=\"$gitlog\" "
         $LIVE && echo $(addDeploymentMarker $production "Sox" $gitlog $branch)
     fi    
 
@@ -1031,3 +1031,4 @@ cd $CURRENT_DIR
 
 # run main code
 main
+
