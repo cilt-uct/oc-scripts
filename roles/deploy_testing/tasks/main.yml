@@ -1,0 +1,27 @@
+---
+# This playbook will deploy Opencast Dependency testing script (ffmpeg, hunspell, sox, tesseract-ocr)
+# Deployed for Everything except Ingest and Database
+
+  - name: Copy Testing binary
+    copy:
+        src: "{{ test_src }}"
+        dest: "{{ test_dest }}"
+        owner: "{{ system_user }}"
+        group: "{{system_group}}"        
+    register: result
+
+  # fire and forget
+  - name: Run Script
+    shell: "{{ test_dest }}run.sh"
+    async: 500
+    poll: 0
+    register: run_script
+
+  - async_status: jid={{ run_script.ansible_job_id }}
+    register: log
+    until: log.finished
+    retries: 30
+
+  - name: Append Deployment
+    local_action: shell echo "* {{inventory_hostname}}" >> "{{ deploy_logfile }}"
+    when: result is succeeded

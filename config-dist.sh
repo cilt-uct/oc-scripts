@@ -30,7 +30,6 @@ GIT_REPO=https://github.com/opencast/opencast.git
 SRC="/usr/local/src/opencast"
 TRACK4K_SRC="/usr/local/src/track4k/trackhd"
 AUDIO_TRIM_SRC="/opt/trimpointdetector/"
-OCR_SCR="/usr/local/src/tesseract"
 EMPTY_VENUE_SRC="/opt/VAD-python/"
 
 # The folder where all the ansible scripts reside and the files folder structure

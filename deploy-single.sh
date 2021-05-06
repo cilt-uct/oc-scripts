@@ -1,36 +1,26 @@
 #! /bin/bash
 
-## Manages the building, cleaning and deployment of Opencast from this machine
-## Uses:
-##    - Ansible
-##    - Git
-##    - Maven
-##    - xmlstarlet
-##    - sshpass
-
-# Original (2016-06-27): Corne Oosthuizen
-# See: changelog.md
-
 source config-dist.sh
 
 # internal configuration
 CONFIG_DIR="config"
 SRC_VERSION=$(xmlstarlet sel -t -v "/_:project/_:version" $SRC/pom.xml)
-DEPLOY_TYPE="dev"
-HOSTS_FILE=$HOSTS_FOLDER"dev"
+HOSTFILES=("dev" "production")
 CURRENT_USER=$(logname)
 
+# should we execute permanent scripts
+LIVE=false
+
+DEPLOY_TYPE="dev"
+HOSTS_FILE=$HOSTS_FOLDER"tmp"
+
 # action variables (what we will do)
-BUILD=false
-CLEAN=false
+FULL=false
 DEPLOY=false
 FORCE_DEPLOY=false
 LTI=false
-LIST=false
-UPDATE=false
 RECONFIGURE=false
 ROLLBACK=false
-STATUS=false
 STARTUP=false
 STOP=false
 VERSION=false
@@ -43,47 +33,9 @@ OCR=false
 SOX=false
 ACTIONS=0
 
-# list of servers to use
-declare -a ACTIVE_LIST
-
-# should we execute permanent scripts
-LIVE=true
-
-setStatus() {
-
-    branch_name=$(git -C $SRC symbolic-ref -q HEAD)
-    branch_name=${branch_name##refs/heads/}
-    branch_name=${branch_name:-HEAD}
-    echo "src: $SRC" > $STATUS_FILE
-    echo >> $STATUS_FILE
-    git -C $SRC status | grep $branch_name >> $STATUS_FILE
-    echo "" >> $STATUS_FILE
-    git -C $SRC show --oneline | head -n 1 >> $STATUS_FILE
-    echo "" >> $STATUS_FILE
-}
-
-showServers() {
-
-    cd $YML
-
-    if [ -f $HOSTS_FILE ]; then
-
-        echo "    Servers ($HOSTS_FILE):"
-        while read -r line
-        do
-            echo "        $line"
-        done < $HOSTS_FILE
-    else
-
-        echo "    ERROR: No servers defined!"
-    fi
-    echo
-    echo "    Servers ($HOSTS_FILE):"
-    for name in "${ACTIVE_SERVER_LIST[@]}"; do
-        echo "        $name"
-    done
-    echo
-}
+target_server=""
+target_section=""
+target_hostfile=""
 
 displayTime() {
   T=$1
@@ -287,17 +239,8 @@ addDeploymentMarker() {
 
 main() {
 
-    echo #$ACTIONS
-    printf "Actions [$DEPLOY_TYPE]($SRC_VERSION): "
-
-    $UPDATE && printf "Update"
-    $UPDATE && [ "$ACTIONS" -gt "1" ] && printf " - " && ACTIONS=$((ACTIONS-1))
-
-    $BUILD && printf "Build"
-    $BUILD && [ "$ACTIONS" -gt "1" ] && printf " - " && ACTIONS=$((ACTIONS-1))
-
-    $CLEAN && printf "Clean"
-    $CLEAN && [ "$ACTIONS" -gt "1" ] && printf " - " && ACTIONS=$((ACTIONS-1))
+    echo $ACTIONS
+    echo "Actions for $target_server [$target_section] ($target_hostfile):"
 
     # if we are deploying then don't do reconfigure or rollback
     if [[ ( $RECONFIGURE || $ROLLBACK ) && $DEPLOY ]]; then
@@ -341,9 +284,6 @@ main() {
 
     $TEST && printf "Run Dependency Test"
     $TEST && [ "$ACTIONS" -gt "1" ] && printf " - " && ACTIONS=$((ACTIONS-1))
-    
-    $TRACK4K && printf "Deploy Track4K"
-    $TRACK4K && [ "$ACTIONS" -gt "1" ] && printf " - " && ACTIONS=$((ACTIONS-1))
 
     $TRIMPOINT && printf "Deploy Audio trimpoint detection"
     $TRIMPOINT && [ "$ACTIONS" -gt "1" ] && printf " - " && ACTIONS=$((ACTIONS-1))
@@ -357,12 +297,6 @@ main() {
     $SOX && printf "Deploy Sox"
     $SOX && [ "$ACTIONS" -gt "1" ] && printf " - " && ACTIONS=$((ACTIONS-1))    
 
-    if $LIST && $( ! $STATUS); then
-        printf "Display List Servers"
-        [ "$ACTIONS" -gt "1" ] && printf " - " && ACTIONS=$((ACTIONS-1))
-    fi
-
-    $STATUS && printf "Show Current Status"
     echo
     echo
 
@@ -386,97 +320,6 @@ main() {
     cd $YML
     require_clean_work_tree valid_script "Script ($YML)"
     $(! $valid_script) && echo
-
-    # should be first
-    if $UPDATE; then
-
-        echo "Updating opencast build ..."
-        git -C $SRC fetch && git -C $SRC pull
-        echo
-    fi
-
-    # should be second before displaying status
-    if $BUILD; then
-
-        st=$(date +'%Y-%m-%d.%H-%M-%S')
-        log_file=$YML"/log/oc-build."$st".log"
-        now=$(date +'%Y-%m-%d %H:%M:%S')
-        target=$(date --date='3 minutes' +'%Y-%m-%d %H:%M:%S')
-
-        # the source is valid or we are just doing dev in which case
-        # build source
-        if $valid_src || [ $DEPLOY_TYPE = "dev" ]; then
-
-            echo "Building source: "
-            echo "    mvn -T 1C clean install -Dmaven.test.skip=true (takes around 3min)"
-            echo "        $now : Started"
-            echo "        $target : Target"
-
-            if $LIVE; then
-                cd $SRC
-
-                #/usr/local/src/opencast-uct/modules/matterhorn-admin-ui-ng# rm -rf node_modules/*
-                mvn -T 1C clean install -Dmaven.test.skip=true --log-file $log_file
-                EXEC_STATUS=$?
-
-                cd $YML
-
-                now=$(date +'%Y-%m-%d %H:%M:%S')
-                echo "        $now : Completed"
-                echo
-
-                if [ $EXEC_STATUS -eq 0 ]; then
-                    compiled=1
-                    echo "    SUCCESS"
-                    echo "Last Build ($now) - SUCCESS" > $BUILD_STATUS_FILE
-
-                else
-                    compiled=0
-                    echo "    ERROR"
-                    echo "Last Build ($now) - ERROR" > $BUILD_STATUS_FILE
-                fi
-
-                echo "    (Log: $log_file)"
-                echo
-            else
-                echo "    SUCCESS (NOT LIVE)"
-            fi
-        else
-
-            if $( ! $valid_src); then
-                echo "    NOT BUILD: source ($SRC) contains uncommited/added items."
-                echo
-            fi
-        fi
-
-        cd $YML
-    fi
-
-    if $CLEAN && [ $compiled -eq 1 ]; then
-
-        echo "Clean: ($HOSTS_FILE)"
-
-        if [ $DEPLOY_TYPE = "dev" ]; then
-          cd $YML
-
-          extra="full_clean=true"
-
-          if $( ! $DEPLOY); then
-
-              # we will start after deploy
-              extra="$extra start_service=false"
-          fi
-
-          $LIVE && ansible-playbook -i $HOSTS_FILE ansible-clean.yml --extra-vars "$extra"
-          echo
-
-          cd $YML
-        else
-
-          echo "    Cleaning can only be performed on 'dev'."
-          echo
-        fi
-    fi
 
     # For Jira comment date
     st=$(date +'%Y-%m-%d %H-%M-%S')
@@ -564,12 +407,6 @@ main() {
         $LIVE && echo $(addDeploymentMarker $production "LTI" $gitlog $branch)
     fi
 
-    # STATUS will show list of servers
-    if $LIST && $( ! $STATUS) && [ $compiled -eq 1 ]; then
-
-        showServers
-    fi
-
     if $VERSION; then
 
         cd $YML
@@ -623,7 +460,7 @@ main() {
         cd $YML
         echo "Deploy Testing Script: ($HOSTS_FILE)"
         $LIVE && ansible-playbook -i $HOSTS_FILE ansible-testing.yml --extra-vars "$extra_vars gitbranch=\"$branch\" gitlog=\"$gitlog\" "
-    fi
+    fi    
 
     if $TRACK4K; then
         track_log=$(git -C $TRACK4K_SRC show --oneline | head -n 1)
@@ -669,37 +506,6 @@ main() {
         $LIVE && echo $(addDeploymentMarker $production "Sox" $gitlog $branch)
     fi    
 
-    if $STATUS; then
-
-        cd $YML
-
-        setStatus
-        echo "Current Status:"
-
-        if [ -f $STATUS_FILE ]; then
-
-            while read -r line
-            do
-                printf "\t$line\n"
-            done < $STATUS_FILE
-        fi
-
-        if [ -f $BUILD_STATUS_FILE ]; then
-
-            while read -r line
-            do
-                printf "\t$line\n"
-            done < $BUILD_STATUS_FILE
-            echo
-        fi
-
-        if [ $compiled -eq 1 ]; then
-          showServers
-        fi
-
-        # also display state / running of service
-    fi
-
     end_time=`date +%s`
     duration=$(( $(date "+%s") - $(echo $start_time) ))
 
@@ -707,7 +513,6 @@ main() {
     displayTime $duration
 
     echo
-
     cd $CURRENT_DIR
 }
 
@@ -719,10 +524,10 @@ usage() {
         echo
     fi
 
-    echo "Usage: $PROGNAME [options] (Deploy type: dev, production | prod, staging)"
+    echo "Usage: $PROGNAME [options] (srv|dev)ubuopc(xxx)"
     echo
-    echo "  Example: $PROGNAME -bd prod"
-    echo "           Build source, package and deploy to production servers."
+    echo "  Example: $PROGNAME -d srvubuopc001"
+    echo "           Deploy Opencast to srvubuopc001"
     echo
     echo "  NOTE: If configured some options also add JIRA comments and New Relic deployment markers."
     echo
@@ -732,18 +537,10 @@ usage() {
     echo "      This help text."
     echo
     echo "  -a, --all"
-    echo "      Update the source, build it, clean the servers and deploy new build."
+    echo "      Deploy build to specified server and ALL other dependencies (alias,lti,ocr,sox,track4k,audiotrim,emptyvenue)"
     echo
     echo "  --alias"
     echo "      Deploy the Opencast bash aliases file to each server to make interaction with the sytem easier."
-    echo
-    echo "  -b, --build"
-    echo "      Will build the assemblies for $SRC (e.g mvn -T 1C clean install) with the current source."
-    echo
-    echo "  -c, --clean"
-    echo "      Will clean the deployment of opencast on all the associated servers."
-    echo "      a) Clean Database (Only works for development)"
-    echo "      b) Clean Indexes, Distribution and Workspace"
     echo
     echo "  -d, --deploy"
     echo "      Deploy the currently build assemblies to their respective servers - only if source code is 'clean' or 'dev'."
@@ -753,9 +550,6 @@ usage() {
     echo
     echo "  -t, --lti-deploy"
     echo "      Deploy LTI tool static files to the appropriate servers."
-    echo
-    echo "  -l, --list"
-    echo "      List the servers that can be updated with this script."
     echo
     echo "  --ocr"
     echo "      Deploy Tesseract and hunspell with all the required language and dictionary files."
@@ -786,10 +580,6 @@ usage() {
     echo "  -s, --status"
     echo "      Display the current git status of the source folder ($SRC) and assemblies."
     echo
-    echo "  -u, --update-git"
-    echo "      Will update $SRC to include the latest changes on the selected branch."
-    echo "      e.g git fetch && git pull"
-    echo
     echo "  -v, --version"
     echo "      Run a script on each server and return the version of all the program dependencies."
     echo
@@ -808,7 +598,7 @@ usage() {
 ## TODO: Add optional parameters to
 ##       - build: 0 (default) Do All, 1 build src, 2 build cfg
 #        - clean: 0 (default) Do All, 1 clean only db, 2 clean shared+archive+distribution
-ARGS=$(getopt -o ":abcdhlrstuvxz" -l ":all,build,clean,deploy,help,list,reconfig,rollback,update-git,status,version,xtop,ztart,lti-deploy,alias,test,track4k,audiotrim,emptyvenue,ocr,sox" -n "$PROGNAME" -- "$@")
+ARGS=$(getopt -o ":abdfhrstvxz" -l ":all,build,deploy,force,help,reconfig,rollback,status,version,xtop,ztart,lti-deploy,alias,test,track4k,audiotrim,emptyvenue,ocr,sox" -n "$PROGNAME" -- "$@")
 
 if [ $? -ne 0 ] || [ $# -eq 0 ]; then
     # if error in parsing args display usage
@@ -825,27 +615,22 @@ while true; do
             exit 0
             ;;
         -a|--all)
-            BUILD=true
-            CLEAN=true
+            ALIAS=true
             DEPLOY=true
-            UPDATE=true
-            STATUS=true
-            ACTIONS=5
+            LTI=true
+            TEST=true
+            TRACK4K=true
+            TRIMPOINT=true
+            EMPTYVENUE=true
+            OCR=true
+            SOX=true
+
+            ACTIONS=8
             MORE=false
             shift
             ;;
         --alias)
             ALIAS=true
-            $MORE && ACTIONS=$((ACTIONS+1))
-            shift
-            ;;
-        -b|--build)
-            BUILD=true
-            $MORE && ACTIONS=$((ACTIONS+1))
-            shift
-            ;;
-        -c|--clean)
-            CLEAN=true
             $MORE && ACTIONS=$((ACTIONS+1))
             shift
             ;;
@@ -859,7 +644,7 @@ while true; do
             DEPLOY=true
             $MORE && ACTIONS=$((ACTIONS+1))
             shift
-            ;;             
+            ;;            
         -t|--lti-deploy)
             LTI=true
             $MORE && ACTIONS=$((ACTIONS+1))
@@ -869,7 +654,7 @@ while true; do
             TEST=true
             $MORE && ACTIONS=$((ACTIONS+1))
             shift
-            ;;            
+            ;;
         --track4k)
             TRACK4K=true
             $MORE && ACTIONS=$((ACTIONS+1))
@@ -897,11 +682,6 @@ while true; do
             ;;
         --sox)
             SOX=true
-            $MORE && ACTIONS=$((ACTIONS+1))
-            shift
-            ;;
-        -u|--update-git)
-            UPDATE=true
             $MORE && ACTIONS=$((ACTIONS+1))
             shift
             ;;
@@ -951,34 +731,13 @@ done
 string="$@"
 for arg in "${string,}"
 do
-  case "$arg" in
-    "dev" )
-      DEPLOY_TYPE="dev"
-      HOSTS_FILE=$HOSTS_FOLDER"dev"
-      shift
-      break
-      ;;
-    "prod"|"production" )
-      DEPLOY_TYPE="prod"
-      HOSTS_FILE=$HOSTS_FOLDER"production"
-      shift
-      break
-      ;;
-    "staging" )
-      DEPLOY_TYPE="staging"
-      HOSTS_FILE=$HOSTS_FOLDER"staging"
-      shift
-      break
-      ;;
-    * )
-      args+=($arg)
-  esac
+    if [[ $arg != srv* ]]; then
+        target_server="$arg"
+    fi
+    if [[ $arg != dev* ]]; then
+        target_server="$arg"
+    fi
 done
-
-if [ -z "$DEPLOY_TYPE" ]; then
-  DEPLOY_TYPE="dev"
-  HOSTS_FILE=$HOSTS_FOLDER"dev"
-fi
 
 if [ $ACTIONS -eq 0 ]; then
     # if there are no actions / only deploy type then show usage
@@ -986,48 +745,43 @@ if [ $ACTIONS -eq 0 ]; then
     exit 1
 fi
 
-# Write out the required files for this build type (deploy-[type].cfg) to the files for:
-# - build and package for each server
-# - deploy with ansible script
+if [[ ! "$target_server" == *".uct.ac.za"* ]]; then
+    target_server="$target_server.uct.ac.za"
+fi
 
-cd $YML
+test_target_server=$(echo "$target_server" | cut -f1 -d".")
+for host_file in "${HOSTFILES[@]}"; do
 
-cp $FILES/build-all.template files/config/build-default.cfg
-cp $FILES/dbservers.template group_vars/dbservers
-cp $FILES/all.template group_vars/all
-cp $FILES/shell_variable.template $FILES/shell_variable.sh
+    # Read the hosts file for the profile and populate a list of servers that will be
+    # used to build configuration files for and deploy/reconfigure
+    test_section=""
 
-writeConfiguration "$DEPLOY_CFG_FOLDER/deploy-$DEPLOY_TYPE.cfg" files/config/build-default.cfg
-writeConfiguration "$DEPLOY_CFG_FOLDER/deploy-$DEPLOY_TYPE.cfg" group_vars/dbservers
-writeConfiguration "$DEPLOY_CFG_FOLDER/deploy-$DEPLOY_TYPE.cfg" group_vars/all
-writeConfiguration "$DEPLOY_CFG_FOLDER/deploy-$DEPLOY_TYPE.cfg" $FILES/shell_variable.sh
-
-sed -i -e "/#.*/! s;tmpl_src_version;$SRC_VERSION;" group_vars/all
-sed -i -e "/#.*/! s;tmpl_folder_src;$SRC/;" group_vars/all
-sed -i -e "/#.*/! s;tmpl_folder_script;$YML/;" group_vars/all
-
-# source the shell variables that we are going to use
-source $FILES/shell_variable.sh
-
-  # Read the hosts file for the profile and populate a list of servers that will be
-  # used to build configuration files for and deploy/reconfigure
-  while read line
-  do
-      [[ $line = \#* ]] && continue
-
-      if [ ! -z "$line" ]; then
-
-        if [[ $line != \[* ]]; then
-           name=$( echo $line | cut -d'.' -f 1)
-           ACTIVE_LIST+=($name)
+    while read line
+    do
+        if [[ $line == \[* ]]; then
+            test_section=$line
         fi
-      fi
 
-  done < "$HOSTS_FILE"
+        [[ $line = \#* ]] && continue
 
-  ACTIVE_SERVER_LIST=($(echo "${ACTIVE_LIST[@]}" | tr ' ' '\n' | sort -u | tr '\n' ' '))
+        if [ ! -z "$line" ]; then
 
-cd $CURRENT_DIR
+            if [[ $line != \[* ]]; then
+                name=$( echo $line | cut -d'.' -f 1)
+                if [[ $name == "$test_target_server" ]]; then
+                    target_section=$(echo "$test_section" | sed 's/\[//g' | sed 's/\]//g')
+                    target_hostfile="$host_file"
+                fi
+            fi
+        fi
+
+    done < "$HOSTS_FOLDER""$host_file"
+done
+
+DEPLOY_TYPE=$target_hostfile
+ACTIVE_SERVER_LIST=("$test_target_server")
+echo "[$target_section]" > $HOSTS_FILE
+echo "$target_server" >> $HOSTS_FILE
 
 # run main code
 main

@@ -1,0 +1,21 @@
+# Deploy OCR
+---
+- name: Deploy Sox
+  hosts: all
+  become: true
+  vars:
+    script_action: "Deploy-Sox"
+    deploy_logfile: "{{ folder_script }}log/{{ script_action | lower }}.{{ deploy_date_time | regex_replace(' ','.') | regex_replace(':','-') }}.log"
+
+  pre_tasks:
+    - name: Create log file
+      local_action: template src="{{ folder_script }}templates/tmpl-deploy.j2" dest="{{ deploy_logfile }}"
+      run_once: True
+
+  roles:
+    - deploy_sox
+
+  post_tasks:
+    - include_role:
+        name: jira_comment
+      when: production|bool
