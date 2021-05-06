@@ -15,7 +15,8 @@
         - hunspell-en-za
       state: latest
       update_cache: true
+    register: result      
 
-    - name: Append Deployment
-      local_action: shell echo "* {{inventory_hostname}} (Hunspell)" >> "{{ deploy_logfile }}"
-      when: result is succeeded      
+  - name: Append Deployment
+    local_action: shell echo "* {{inventory_hostname}} (Hunspell)" >> "{{ deploy_logfile }}"
+    when: result is succeeded

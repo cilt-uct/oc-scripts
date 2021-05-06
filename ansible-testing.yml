@@ -13,9 +13,10 @@
       run_once: True
 
   roles:
-    - { role: deploy_testing, when: "'ingest' not in group_names" or 'dbservers' not in group_names" }
+    - { role: deploy_testing, when: "'ingest' not in group_names or 'dbservers' not in group_names" }
 
   post_tasks:
     - include_role:
         name: jira_comment
       when: production|bool
+

@@ -8,22 +8,30 @@
         clone: yes
         update: yes
       register: result
-      when: "'worker' in group_names and 'workernoexec' in group_names"
+      when: "'worker' in group_names or 'workernoexec' in group_names"
 
-    - name: Create directory
+    - name: Set User
       file:
-        path: /opt/VAD-python/logs
+        path: "{{ repo_dest }}"
         state: directory
-      when: "'worker' in group_names and 'workernoexec' in group_names"
+        owner: "{{system_user}}" 
+        group: "{{system_group}}"
+        recurse: yes
 
-    - name: Log file permissions
-      file: path=/opt/VAD-python/logs owner=opencast group=opencast mode=0777 state=directory
-      when: "'worker' in group_names and 'workernoexec' in group_names"
+    - name: Create log directory
+      file: 
+        path: "{{ repo_dest }}/logs"
+        owner: "{{system_user}}"
+        group: "{{system_group}}"
+        mode: "u=rw,g=r,o=r"
+        state: directory
+      when: "'worker' in group_names or 'workernoexec' in group_names"
 
-    - name: install requirements.txt
-      shell: pip3 install -r /opt/VAD-python/requirements.txt
-      when: "'worker' in group_names and 'workernoexec' in group_names"
+    # - name: install requirements.txt
+    #   shell: pip3 install -r {{ repo_dest }}requirements.txt
+    #   when: "'worker' in group_names or 'workernoexec' in group_names"
 
     - name: Append Deployment
       local_action: shell echo "* {{inventory_hostname}}" >> "{{ deploy_logfile }}"
       when: result is succeeded
+

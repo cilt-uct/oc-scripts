@@ -20,8 +20,10 @@ __metaclass__ = type
 from ansible.plugins.callback import CallbackBase
 
 import sys
-reload(sys)
-sys.setdefaultencoding('utf-8')
+
+if sys.version[0] == '2':
+    reload(sys)
+    sys.setdefaultencoding("utf-8")
 
 try:
     import simplejson as json
@@ -48,16 +50,23 @@ class CallbackModule(CallbackBase):
             for field in FIELDS:
                 no_log = data.get('_ansible_no_log', False)
                 if field in data.keys() and data[field] and no_log != True:
-                    output = self._format_output(data[field])
-                    # The following two lines are a hack to make it work with UTF-8 characters
-                    if type(output) != list:
-                        output = output.encode('utf-8', 'replace')
-                    self._display.display("\n{0}:\n{1}".format(field, output.replace("\\n","\n")), log_only=False)
+                    self._display.display("\n{0}".format(data[field]), log_only=False)
+        #             output = self._format_output(data[field])
+        #             # The following two lines are a hack to make it work with UTF-8 characters
+        #             if type(output) != list:
+        #                 output = output.encode('utf-8', 'replace')
+        #             self._display.display("\n{0}:\n{1}".format(field, output.replace("\\n","\n")), log_only=False)
 
     def _format_output(self, output):
         # Strip unicode
-        if type(output) == unicode:
-            output = output.encode(sys.getdefaultencoding(), 'replace')
+        if sys.version_info >= (3,0,0):
+            # for Python 3
+            if isinstance(output, bytes):
+                output = output.decode('ascii')  # or  s = str(s)[2:-1]
+        else:
+            # for Python 2
+            if isinstance(output, unicode):
+                output = output.encode(sys.getdefaultencoding(), 'replace')
 
         # If output is a dict
         if type(output) == dict:

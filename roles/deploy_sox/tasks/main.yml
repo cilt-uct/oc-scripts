@@ -7,7 +7,8 @@
         - sox
       state: latest
       update_cache: true
+    register: result
 
-    - name: Append Deployment
-      local_action: shell echo "* {{inventory_hostname}} (Sox)" >> "{{ deploy_logfile }}"
-      when: result is succeeded
+  - name: Append Deployment
+    local_action: shell echo "* {{inventory_hostname}} (Sox)" >> "{{ deploy_logfile }}"
+    when: result is succeeded

@@ -9,7 +9,7 @@ HOSTFILES=("dev" "production")
 CURRENT_USER=$(logname)
 
 # should we execute permanent scripts
-LIVE=false
+LIVE=true
 
 DEPLOY_TYPE="dev"
 HOSTS_FILE=$HOSTS_FOLDER"tmp"
@@ -239,7 +239,7 @@ addDeploymentMarker() {
 
 main() {
 
-    echo $ACTIONS
+    echo #$ACTIONS
     echo "Actions for $target_server [$target_section] ($target_hostfile):"
 
     # if we are deploying then don't do reconfigure or rollback
@@ -502,7 +502,7 @@ main() {
     if $SOX; then
         cd $YML
         echo "Deploy Sox: ($HOSTS_FILE)"
-        $LIVE && ansible-playbook -i $HOSTS_FILE ansible-deploy-sox.yml --extra-vars "$extra_vars ggitbranch=\"$branch\" gitlog=\"$gitlog\" "
+        $LIVE && ansible-playbook -i $HOSTS_FILE ansible-deploy-sox.yml --extra-vars "$extra_vars gitbranch=\"$branch\" gitlog=\"$gitlog\" "
         $LIVE && echo $(addDeploymentMarker $production "Sox" $gitlog $branch)
     fi    
 
@@ -577,9 +577,6 @@ usage() {
     echo "      Rollback the respective servers. The previous version (backup folder)"
     echo "      will now be used as the live version and now the live bversion is in the backup folder"
     echo
-    echo "  -s, --status"
-    echo "      Display the current git status of the source folder ($SRC) and assemblies."
-    echo
     echo "  -v, --version"
     echo "      Run a script on each server and return the version of all the program dependencies."
     echo
@@ -598,7 +595,7 @@ usage() {
 ## TODO: Add optional parameters to
 ##       - build: 0 (default) Do All, 1 build src, 2 build cfg
 #        - clean: 0 (default) Do All, 1 clean only db, 2 clean shared+archive+distribution
-ARGS=$(getopt -o ":abdfhrstvxz" -l ":all,build,deploy,force,help,reconfig,rollback,status,version,xtop,ztart,lti-deploy,alias,test,track4k,audiotrim,emptyvenue,ocr,sox" -n "$PROGNAME" -- "$@")
+ARGS=$(getopt -o ":abdfhrtvxz" -l ":all,build,deploy,force,help,reconfig,rollback,version,xtop,ztart,lti-deploy,alias,test,track4k,audiotrim,emptyvenue,ocr,sox" -n "$PROGNAME" -- "$@")
 
 if [ $? -ne 0 ] || [ $# -eq 0 ]; then
     # if error in parsing args display usage
@@ -625,7 +622,7 @@ while true; do
             OCR=true
             SOX=true
 
-            ACTIONS=8
+            ACTIONS=$((ACTIONS+9))
             MORE=false
             shift
             ;;
@@ -692,11 +689,6 @@ while true; do
             ;;
         --rollback)
             ROLLBACK=true
-            $MORE && ACTIONS=$((ACTIONS+1))
-            shift
-            ;;
-        -s|--status)
-            STATUS=true
             $MORE && ACTIONS=$((ACTIONS+1))
             shift
             ;;
@@ -779,9 +771,38 @@ for host_file in "${HOSTFILES[@]}"; do
 done
 
 DEPLOY_TYPE=$target_hostfile
+if [[ $DEPLOY_TYPE == "production" ]]; then
+    DEPLOY_TYPE="prod"
+fi
+
 ACTIVE_SERVER_LIST=("$test_target_server")
 echo "[$target_section]" > $HOSTS_FILE
 echo "$target_server" >> $HOSTS_FILE
 
+cd $YML
+
+cp $FILES/build-all.template files/config/build-default.cfg
+cp $FILES/dbservers.template group_vars/dbservers
+cp $FILES/all.template group_vars/all
+cp $FILES/shell_variable.template $FILES/shell_variable.sh
+
+writeConfiguration "$DEPLOY_CFG_FOLDER/deploy-$DEPLOY_TYPE.cfg" files/config/build-default.cfg
+writeConfiguration "$DEPLOY_CFG_FOLDER/deploy-$DEPLOY_TYPE.cfg" group_vars/dbservers
+writeConfiguration "$DEPLOY_CFG_FOLDER/deploy-$DEPLOY_TYPE.cfg" group_vars/all
+writeConfiguration "$DEPLOY_CFG_FOLDER/deploy-$DEPLOY_TYPE.cfg" $FILES/shell_variable.sh
+
+sed -i -e "/#.*/! s;tmpl_src_version;$SRC_VERSION;" group_vars/all
+sed -i -e "/#.*/! s;tmpl_folder_src;$SRC/;" group_vars/all
+sed -i -e "/#.*/! s;tmpl_folder_script;$YML/;" group_vars/all
+
+# source the shell variables that we are going to use
+source $FILES/shell_variable.sh
+
+# for testing
+NEWRELIC_USE=false
+
+cd $CURRENT_DIR
+
 # run main code
 main
+
