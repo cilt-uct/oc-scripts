@@ -819,7 +819,7 @@ sed -i -e "/#.*/! s;tmpl_folder_script;$YML/;" group_vars/all
 source $FILES/shell_variable.sh
 
 # for testing
-NEWRELIC_USE=false
+# NEWRELIC_USE=false
 
 cd $CURRENT_DIR
 

@@ -5,7 +5,7 @@
 # Create opencast user and directory
 
   - name: create opencast group
-    user:
+    group:
       name: opencast
       gid: 1004
       state: present
@@ -84,19 +84,20 @@
     community.general.cpanm:
       name: Attempt
 
-  - pip:
-    name:
-      - numpy 
-      - matplotlib 
-      - scipy 
-      - sklearn 
-      - hmmlearn 
-      - simplejson 
-      - eyed3 
-      - pydub 
-      - soundfile 
-      - moviepy
-    executable: pip3
+  - name: Install python packages
+    pip:
+      name:
+        - numpy 
+        - matplotlib 
+        - scipy 
+        - sklearn 
+        - hmmlearn 
+        - simplejson 
+        - eyed3 
+        - pydub 
+        - soundfile 
+        - moviepy
+      executable: pip3
 
   - name: Append Deployment
     local_action: shell echo "* {{inventory_hostname}} (Tesseract)" >> "{{ deploy_logfile }}"
