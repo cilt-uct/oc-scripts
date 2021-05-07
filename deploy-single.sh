@@ -19,6 +19,7 @@ FULL=false
 DEPLOY=false
 FORCE_DEPLOY=false
 LTI=false
+INSTALL=false
 RECONFIGURE=false
 ROLLBACK=false
 STARTUP=false
@@ -270,6 +271,9 @@ main() {
     $LTI && printf "Deploy LTI Tool"
     $LTI && [ "$ACTIONS" -gt "1" ] && printf " - " && ACTIONS=$((ACTIONS-1))
 
+    $INSTALL && printf "Install ALL Packages"
+    $INSTALL && [ "$ACTIONS" -gt "1" ] && printf " - " && ACTIONS=$((ACTIONS-1))
+
     $VERSION && printf "Check dependencies"
     $VERSION && [ "$ACTIONS" -gt "1" ] && printf " - " && ACTIONS=$((ACTIONS-1))
 
@@ -324,6 +328,13 @@ main() {
     # For Jira comment date
     st=$(date +'%Y-%m-%d %H-%M-%S')
     extra_vars="production=$([ $DEPLOY_TYPE = "prod" ] && echo "true" || echo "false") deploy_date_time=\"$st\" by=\"$(getCurrentUser)\" "
+
+    if $INSTALL; then
+        cd $YML
+        echo "Install ALL Packages: ($HOSTS_FILE)"
+        $LIVE && ansible-playbook -i $HOSTS_FILE ansible-install-packages.yml --extra-vars "$extra_vars gitbranch=\"$branch\" gitlog=\"$gitlog\" "
+        $LIVE && echo $(addDeploymentMarker $production "Install Packages" $gitlog $branch)
+    fi
 
     # the script folder is valid or we are just doing dev OR forced to deploy or rollback
     if $FORCE_DEPLOY || $ROLLBACK || $valid_script || [ $DEPLOY_TYPE = "dev" ]; then
@@ -504,7 +515,7 @@ main() {
         echo "Deploy Sox: ($HOSTS_FILE)"
         $LIVE && ansible-playbook -i $HOSTS_FILE ansible-deploy-sox.yml --extra-vars "$extra_vars gitbranch=\"$branch\" gitlog=\"$gitlog\" "
         $LIVE && echo $(addDeploymentMarker $production "Sox" $gitlog $branch)
-    fi    
+    fi   
 
     end_time=`date +%s`
     duration=$(( $(date "+%s") - $(echo $start_time) ))
@@ -547,6 +558,9 @@ usage() {
     echo
     echo "  -f, --force"
     echo "      Force deploy the currently build assemblies to their respective servers."
+    echo
+    echo "  -i, --install"
+    echo "      Install ALL packages and create Opencast User (ffmpeg hunspell sox tesseract-ocr, perl, python, OpenJDK)."
     echo
     echo "  -t, --lti-deploy"
     echo "      Deploy LTI tool static files to the appropriate servers."
@@ -595,7 +609,7 @@ usage() {
 ## TODO: Add optional parameters to
 ##       - build: 0 (default) Do All, 1 build src, 2 build cfg
 #        - clean: 0 (default) Do All, 1 clean only db, 2 clean shared+archive+distribution
-ARGS=$(getopt -o ":abdfhrtvxz" -l ":all,build,deploy,force,help,reconfig,rollback,version,xtop,ztart,lti-deploy,alias,test,track4k,audiotrim,emptyvenue,ocr,sox" -n "$PROGNAME" -- "$@")
+ARGS=$(getopt -o ":abdifhrtvxz" -l ":one,all,build,deploy,force,install,help,reconfig,rollback,version,xtop,ztart,lti-deploy,alias,test,track4k,audiotrim,emptyvenue,ocr,sox" -n "$PROGNAME" -- "$@")
 
 if [ $? -ne 0 ] || [ $# -eq 0 ]; then
     # if error in parsing args display usage
@@ -613,6 +627,7 @@ while true; do
             ;;
         -a|--all)
             ALIAS=true
+            INSTALL=true
             DEPLOY=true
             LTI=true
             TEST=true
@@ -622,88 +637,93 @@ while true; do
             OCR=true
             SOX=true
 
-            ACTIONS=$((ACTIONS+9))
+            ACTIONS=9
             MORE=false
             shift
             ;;
         --alias)
-            ALIAS=true
+            $MORE && ALIAS=true
             $MORE && ACTIONS=$((ACTIONS+1))
             shift
             ;;
         -d|--deploy)
-            DEPLOY=true
+            $MORE && DEPLOY=true
             $MORE && ACTIONS=$((ACTIONS+1))
             shift
             ;;
         -f|--force)
-            FORCE_DEPLOY=true
-            DEPLOY=true
+            $MORE && FORCE_DEPLOY=true
+            $MORE && DEPLOY=true
             $MORE && ACTIONS=$((ACTIONS+1))
             shift
-            ;;            
+            ;;
+        -i|--install)
+            $MORE && INSTALL=true
+            $MORE && ACTIONS=$((ACTIONS+1))
+            shift
+            ;;                    
         -t|--lti-deploy)
-            LTI=true
+            $MORE && LTI=true
             $MORE && ACTIONS=$((ACTIONS+1))
             shift
             ;;
         --test)
-            TEST=true
+            $MORE && TEST=true
             $MORE && ACTIONS=$((ACTIONS+1))
             shift
             ;;
         --track4k)
-            TRACK4K=true
+            $MORE && TRACK4K=true
             $MORE && ACTIONS=$((ACTIONS+1))
             shift
             ;;
         --audiotrim)
-            TRIMPOINT=true
+            $MORE && TRIMPOINT=true
             $MORE && ACTIONS=$((ACTIONS+1))
             shift
             ;;
         --emptyvenue)
-            EMPTYVENUE=true
+            $MORE && EMPTYVENUE=true
             $MORE && ACTIONS=$((ACTIONS+1))
             shift
             ;;
         -l|--list)
-            LIST=true
+            $MORE && LIST=true
             $MORE && ACTIONS=$((ACTIONS+1))
             shift
             ;;
         --ocr)
-            OCR=true
+            $MORE && OCR=true
             $MORE && ACTIONS=$((ACTIONS+1))
             shift
             ;;
         --sox)
-            SOX=true
+            $MORE && SOX=true
             $MORE && ACTIONS=$((ACTIONS+1))
             shift
             ;;
         -r|--reconfig)
-            RECONFIGURE=true
+            $MORE && RECONFIGURE=true
             $MORE && ACTIONS=$((ACTIONS+1))
             shift
             ;;
         --rollback)
-            ROLLBACK=true
+            $MORE && ROLLBACK=true
             $MORE && ACTIONS=$((ACTIONS+1))
             shift
             ;;
         -v|--version)
-            VERSION=true
+            $MORE && VERSION=true
             $MORE && ACTIONS=$((ACTIONS+1))
             shift
             ;;
         -x|--xtop)
-            STOP=true
+            $MORE && STOP=true
             $MORE && ACTIONS=$((ACTIONS+1))
             shift
             ;;
         -z|--ztart)
-            STARTUP=true
+            $MORE && STARTUP=true
             $MORE && ACTIONS=$((ACTIONS+1))
             shift
             ;;
@@ -805,4 +825,3 @@ cd $CURRENT_DIR
 
 # run main code
 main
-

@@ -17,6 +17,7 @@
         owner: "{{system_user}}" 
         group: "{{system_group}}"
         recurse: yes
+      when: "'worker' in group_names or 'workernoexec' in group_names"
 
     - name: Create log directory
       file: 

@@ -808,7 +808,7 @@ usage() {
 ## TODO: Add optional parameters to
 ##       - build: 0 (default) Do All, 1 build src, 2 build cfg
 #        - clean: 0 (default) Do All, 1 clean only db, 2 clean shared+archive+distribution
-ARGS=$(getopt -o ":abcdhlrstuvxz" -l ":all,build,clean,deploy,help,list,reconfig,rollback,update-git,status,version,xtop,ztart,lti-deploy,alias,test,track4k,audiotrim,emptyvenue,ocr,sox" -n "$PROGNAME" -- "$@")
+ARGS=$(getopt -o ":abcdhlrstuvxz" -l ":one,all,build,clean,deploy,help,list,reconfig,rollback,update-git,status,version,xtop,ztart,lti-deploy,alias,test,track4k,audiotrim,emptyvenue,ocr,sox" -n "$PROGNAME" -- "$@")
 
 if [ $? -ne 0 ] || [ $# -eq 0 ]; then
     # if error in parsing args display usage
@@ -835,103 +835,103 @@ while true; do
             shift
             ;;
         --alias)
-            ALIAS=true
+            $MORE && ALIAS=true
             $MORE && ACTIONS=$((ACTIONS+1))
             shift
             ;;
         -b|--build)
-            BUILD=true
+            $MORE && BUILD=true
             $MORE && ACTIONS=$((ACTIONS+1))
             shift
             ;;
         -c|--clean)
-            CLEAN=true
+            $MORE && CLEAN=true
             $MORE && ACTIONS=$((ACTIONS+1))
             shift
             ;;
         -d|--deploy)
-            DEPLOY=true
+            $MORE && DEPLOY=true
             $MORE && ACTIONS=$((ACTIONS+1))
             shift
             ;;
         -f|--force)
-            FORCE_DEPLOY=true
-            DEPLOY=true
+            $MORE && FORCE_DEPLOY=true
+            $MORE && DEPLOY=true
             $MORE && ACTIONS=$((ACTIONS+1))
             shift
             ;;             
         -t|--lti-deploy)
-            LTI=true
+            $MORE && LTI=true
             $MORE && ACTIONS=$((ACTIONS+1))
             shift
             ;;
         --test)
-            TEST=true
+            $MORE && TEST=true
             $MORE && ACTIONS=$((ACTIONS+1))
             shift
             ;;            
         --track4k)
-            TRACK4K=true
+            $MORE && TRACK4K=true
             $MORE && ACTIONS=$((ACTIONS+1))
             shift
             ;;
         --audiotrim)
-            TRIMPOINT=true
+            $MORE && TRIMPOINT=true
             $MORE && ACTIONS=$((ACTIONS+1))
             shift
             ;;
         --emptyvenue)
-            EMPTYVENUE=true
+            $MORE && EMPTYVENUE=true
             $MORE && ACTIONS=$((ACTIONS+1))
             shift
             ;;
         -l|--list)
-            LIST=true
+            $MORE && LIST=true
             $MORE && ACTIONS=$((ACTIONS+1))
             shift
             ;;
         --ocr)
-            OCR=true
+            $MORE && OCR=true
             $MORE && ACTIONS=$((ACTIONS+1))
             shift
             ;;
         --sox)
-            SOX=true
+            $MORE && SOX=true
             $MORE && ACTIONS=$((ACTIONS+1))
             shift
             ;;
         -u|--update-git)
-            UPDATE=true
+            $MORE && UPDATE=true
             $MORE && ACTIONS=$((ACTIONS+1))
             shift
             ;;
         -r|--reconfig)
-            RECONFIGURE=true
+            $MORE && RECONFIGURE=true
             $MORE && ACTIONS=$((ACTIONS+1))
             shift
             ;;
         --rollback)
-            ROLLBACK=true
+            $MORE && ROLLBACK=true
             $MORE && ACTIONS=$((ACTIONS+1))
             shift
             ;;
         -s|--status)
-            STATUS=true
+            $MORE && STATUS=true
             $MORE && ACTIONS=$((ACTIONS+1))
             shift
             ;;
         -v|--version)
-            VERSION=true
+            $MORE && VERSION=true
             $MORE && ACTIONS=$((ACTIONS+1))
             shift
             ;;
         -x|--xtop)
-            STOP=true
+            $MORE && STOP=true
             $MORE && ACTIONS=$((ACTIONS+1))
             shift
             ;;
         -z|--ztart)
-            STARTUP=true
+            $MORE && STARTUP=true
             $MORE && ACTIONS=$((ACTIONS+1))
             shift
             ;;

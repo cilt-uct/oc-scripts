@@ -1,0 +1,103 @@
+---
+# This playbook will install Tesseract and all the related language packs
+
+###
+# Create opencast user and directory
+
+  - name: create opencast group
+    user:
+      name: opencast
+      gid: 1004
+      state: present
+
+  - name: create opencast user
+    user:
+      name: opencast
+      group: opencast
+      createhome: true
+      uid: 1004
+      state: present
+
+  # - name: Create archive directory
+  #   file: 
+  #     path: "/data/opencast/archive"
+  #     owner: "{{system_user}}"
+  #     group: "{{system_group}}"
+  #     mode: "u=rw,g=r,o=r"
+  #     state: directory
+
+  # - name: Create distribution directory
+  #   file: 
+  #     path: "/data/opencast/distribution"
+  #     owner: "{{system_user}}"
+  #     group: "{{system_group}}"
+  #     mode: "u=rw,g=r,o=r"
+  #     state: directory
+
+  - name: Install ALL dependencies
+    apt:
+      pkg:
+        - net-tools
+        - tree 
+        - htop 
+        - synfig 
+        - netcat 
+        - libwww-mechanize-perl 
+        - libtry-tiny-perl 
+        - libjson-perl 
+        - libdatetime-perl 
+        - libdatetime-format-strptime-perl 
+        - libdatetime-format-w3cdtf-perl
+        - libfile-find-rule-perl
+        - libclass-unload-perl        
+        - ffmpeg 
+        - hunspell 
+        - sox 
+        - tesseract-ocr
+        - hunspell-af 
+        - hunspell-en-za 
+        - hunspell-en-au 
+        - hunspell-en-ca 
+        - hunspell-en-gb 
+        - hunspell-en-med 
+        - hunspell-en-us 
+        - hunspell-en-za 
+        - tesseract-ocr-eng
+        - openjdk-8-jdk
+        - python3-pip
+      state: latest
+      update_cache: true
+    register: result
+
+  - name: Hold ffmpeg hunspell sox tesseract-ocr
+    dpkg_selections:
+      name: "{{item}}"
+      selection: hold
+    loop:
+      - ffmpeg 
+      - hunspell 
+      - sox 
+      - tesseract-ocr
+
+  # requires: ansible-galaxy collection install community.general
+  - name: Install Attempt perl package
+    community.general.cpanm:
+      name: Attempt
+
+  - pip:
+    name:
+      - numpy 
+      - matplotlib 
+      - scipy 
+      - sklearn 
+      - hmmlearn 
+      - simplejson 
+      - eyed3 
+      - pydub 
+      - soundfile 
+      - moviepy
+    executable: pip3
+
+  - name: Append Deployment
+    local_action: shell echo "* {{inventory_hostname}} (Tesseract)" >> "{{ deploy_logfile }}"
+    when: result is succeeded
