@@ -23,7 +23,7 @@
         path: "{{ repo_dest }}/logs"
         owner: "{{system_user}}"
         group: "{{system_group}}"
-        mode: "u=rw,g=r,o=r"
+        mode: "u=rw,g=rw,o=rw"
         state: directory
       when: "'worker' in group_names or 'workernoexec' in group_names"
 

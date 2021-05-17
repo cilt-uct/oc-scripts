@@ -123,6 +123,7 @@ packageConfigurationFile() {
     build_file="$FILES/config/build-$name.cfg"
     if [ ! -f "$build_file" ]; then
         echo "deploy_server_name=http://$name.uct.ac.za:8080" > $build_file
+        echo "deploy_server_nodename=$name.uct.ac.za" > $build_file
     fi
 
     # replace the server specific settings
@@ -154,6 +155,7 @@ packageConfiguration() {
 
         if [ ! -f "$build_file" ]; then
             echo "deploy_server_name=http://$name.uct.ac.za:8080" > $build_file
+            echo "deploy_server_nodename=$name.uct.ac.za" > $build_file
         fi
 
         if [ ! -d "$cfg_dir" ]; then
