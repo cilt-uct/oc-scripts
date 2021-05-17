@@ -339,7 +339,7 @@ main() {
     fi
 
     # the script folder is valid or we are just doing dev OR forced to deploy or rollback
-    if [[ $FORCE_DEPLOY == true || $ROLLBACK == true || $valid_script -eq 1 || $DEPLOY_TYPE == "dev" ]; then
+    if [[ $FORCE_DEPLOY == true || $ROLLBACK == true || $valid_script -eq 1 || $DEPLOY_TYPE == "dev" ]]; then
     
         if [[ $DEPLOY == true || $RECONFIGURE == true || $ROLLBACK == true ]]; then
 
