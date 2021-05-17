@@ -246,7 +246,7 @@ main() {
     echo "Actions for $target_server [$target_section] ($target_hostfile):"
 
     # if we are deploying then don't do reconfigure or rollback
-    if [[ ( $RECONFIGURE || $ROLLBACK ) && $DEPLOY ]]; then
+    if [[ $DEPLOY == true && ( $RECONFIGURE == true || $ROLLBACK == true ) ]]; then
         $RECONFIGURE && ACTIONS=$((ACTIONS-1))
         $ROLLBACK && ACTIONS=$((ACTIONS-1))
         RECONFIGURE=false
@@ -254,7 +254,7 @@ main() {
     fi 
 
     # if we rollback then we can't deploy or reconfigure
-    if $ROLLBACK && $RECONFIGURE; then
+    if [[ $RECONFIGURE == true && $ROLLBACK == true ]]; then
         $DEPLOY && ACTIONS=$((ACTIONS-1))
         $RECONFIGURE && ACTIONS=$((ACTIONS-1))
         DEPLOY=false
@@ -339,9 +339,9 @@ main() {
     fi
 
     # the script folder is valid or we are just doing dev OR forced to deploy or rollback
-    if $FORCE_DEPLOY || $ROLLBACK || $valid_script || [ $DEPLOY_TYPE = "dev" ]; then
-
-        if $DEPLOY || $RECONFIGURE || $ROLLBACK; then
+    if [[ $FORCE_DEPLOY == true || $ROLLBACK == true || $valid_script -eq 1 || $DEPLOY_TYPE == "dev" ]; then
+    
+        if [[ $DEPLOY == true || $RECONFIGURE == true || $ROLLBACK == true ]]; then
 
             cd $YML
 
