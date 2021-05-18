@@ -1,5 +1,5 @@
 ---
-# This playbook will install Tesseract and all the related language packs
+# This playbook will install package dependencies
 
 ###
 # Create opencast user and directory
@@ -83,6 +83,7 @@
   - name: Install Attempt perl package
     community.general.cpanm:
       name: Attempt
+    ignore_errors: True
 
   - name: Install python packages
     pip:
@@ -100,5 +101,5 @@
       executable: pip3
 
   - name: Append Deployment
-    local_action: shell echo "* {{inventory_hostname}} (Tesseract)" >> "{{ deploy_logfile }}"
+    local_action: shell echo "* {{inventory_hostname}} (Dependencies)" >> "{{ deploy_logfile }}"
     when: result is succeeded

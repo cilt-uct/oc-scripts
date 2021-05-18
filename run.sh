@@ -407,7 +407,7 @@ main() {
 
         # the source is valid or we are just doing dev in which case
         # build source
-        if $valid_src || [ $DEPLOY_TYPE = "dev" ]; then
+        if [[ $valid_src == true || $DEPLOY_TYPE == "dev" ]]; then
 
             echo "Building source: "
             echo "    mvn -T 1C clean install -Dmaven.test.skip=true (takes around 3min)"
@@ -445,7 +445,7 @@ main() {
             fi
         else
 
-            if $( ! $valid_src); then
+            if [[ ! $valid_src == true ]]; then
                 echo "    NOT BUILD: source ($SRC) contains uncommited/added items."
                 echo
             fi
@@ -485,7 +485,7 @@ main() {
     extra_vars="production=$([ $DEPLOY_TYPE = "prod" ] && echo "true" || echo "false") deploy_date_time=\"$st\" by=\"$(getCurrentUser)\" "
 
     # the script folder is valid or we are just doing dev OR forced to deploy or rollback
-    if [[ $FORCE_DEPLOY == true || $ROLLBACK == true || $valid_script -eq 1 || $DEPLOY_TYPE == "dev" ]]; then
+    if [[ $FORCE_DEPLOY == true || $ROLLBACK == true || $valid_script == true || $DEPLOY_TYPE == "dev" ]]; then
 
         if [[ $DEPLOY == true || $RECONFIGURE == true || $ROLLBACK == true ]]; then
 
