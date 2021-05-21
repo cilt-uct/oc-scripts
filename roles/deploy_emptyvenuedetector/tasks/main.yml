@@ -27,6 +27,15 @@
         state: directory
       when: "'worker' in group_names or 'workernoexec' in group_names"
 
+    - name: Creating an empty file
+      file:
+        path: "{{ repo_dest }}/logs/logs.log"
+        owner: "{{system_user}}"
+        group: "{{system_group}}"
+        mode: "u=rw,g=rw,o=rw"
+        state: touch
+      when: "'worker' in group_names or 'workernoexec' in group_names"
+
     # - name: install requirements.txt
     #   shell: pip3 install -r {{ repo_dest }}requirements.txt
     #   when: "'worker' in group_names or 'workernoexec' in group_names"
