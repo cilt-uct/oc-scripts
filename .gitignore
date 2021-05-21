@@ -18,6 +18,7 @@ z.sh
 z.pl
 x.sh
 t.sh
+s.sh
 keystore.jks
 files/tmp/
 group_vars/all
@@ -32,3 +33,5 @@ files/shell_variable.sh
 .idea/oc-scripts.iml
 .idea/vcs.xml
 .idea/workspace.xml
+hosts/tmp
+callback_plugins/__pycache__/

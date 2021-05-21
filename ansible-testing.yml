@@ -1,0 +1,22 @@
+# Deploy Testing Script to the various nodes
+---
+- name: Deploy Testing binary
+  hosts: worker
+  become: true
+  vars:
+    script_action: "Deploy-Testing-Script"
+    deploy_logfile: "{{ folder_script }}log/{{ script_action | lower }}.{{ deploy_date_time | regex_replace(' ','.') | regex_replace(':','-') }}.log"
+
+  pre_tasks:
+    - name: Create log file
+      local_action: template src="{{ folder_script }}templates/tmpl-deploy.j2" dest="{{ deploy_logfile }}"
+      run_once: True
+
+  roles:
+    - { role: deploy_testing, when: "'ingest' not in group_names or 'dbservers' not in group_names" }
+
+  post_tasks:
+    - include_role:
+        name: jira_comment
+      when: production|bool
+

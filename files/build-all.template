@@ -1,4 +1,5 @@
 deploy_server_name=tmpl_deploy_server_name
+deploy_server_nodename=tmpl_deploy_server_nodename
 
 deploy_java_home=tmpl_java_home
 deploy_java_min_memory=tmpl_java_min_memory

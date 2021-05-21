@@ -108,7 +108,7 @@ echo
 
 echo "Tesseract: "
 tesseract_path=$( get_ini_value "" "tesseract_path" $CONFIG)
-tesseract=$( $tesseract_path --version 2>&1)
+tesseract=$( $tesseract_path --version 2>&1 | head -n 1)
 if [ $? -eq 0 ]; then
 
   check=$( get_ini_value "" "tesseract_version" $CONFIG)
@@ -272,3 +272,4 @@ perl "$DEPLOY_DIR/check.pl"
 rm $CONFIG;
 rm "$DEPLOY_DIR/$PROGNAME";
 rm "$DEPLOY_DIR/check.pl";
+

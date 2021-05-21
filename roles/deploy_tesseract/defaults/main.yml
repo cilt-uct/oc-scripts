@@ -1,5 +1,3 @@
 ---
-tesseract_src: /usr/local/src/tesseract-ocr-data/
-tesseract_dest: /usr/share/tesseract-ocr/tessdata/
 system_user: opencast
 system_group: opencast

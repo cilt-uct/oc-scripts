@@ -1,0 +1,8 @@
+#!/usr/bin/env ansible-playbook
+
+- hosts: all
+  gather_facts: no
+  tasks:
+  - name: show the groups the host(s) are in
+    debug:
+      msg: "{{group_names}}"

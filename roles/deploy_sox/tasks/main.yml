@@ -1,0 +1,20 @@
+---
+# This playbook will install Sox
+
+  - name: Install Sox
+    apt:
+      pkg:
+        - sox
+      state: latest
+      update_cache: true
+    register: result
+
+  - name: Link Sox
+    file:
+      src: /usr/bin/sox
+      dest: /usr/local/bin/sox
+      state: link   
+
+  - name: Append Deployment
+    local_action: shell echo "* {{inventory_hostname}} (Sox)" >> "{{ deploy_logfile }}"
+    when: result is succeeded

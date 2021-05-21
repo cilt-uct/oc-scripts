@@ -1,6 +1,9 @@
 ---
+track4k_src: /usr/local/src/track4k-static/
+track4k_dest: /opt/track4k-static/
 track4k_binary: /usr/local/bin/track4k
 track4k_cropvid: /usr/local/bin/cropvid
+track4k_wfexec_dir: /opt/opencast/wfexec/
 track4k_script_src: files/worker/wfexec/track4k.pl
 track4k_script_dest: /opt/opencast/wfexec/track4k.pl
 track4k_json_src: files/worker/wfexec/track4k.json

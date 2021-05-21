@@ -2,9 +2,14 @@
 ---
     # - name: Copy bash_aliases to profile
     #   copy: src="{{ alias_src }}" dest=/etc/profile.d/00-opencast-alias.sh owner=root group=root mode=0644
+    - name: Check if /data/opencast/ exists
+      stat:
+        path: /data/opencast/
+      register: data_folder_exists
 
     - name: Copy perl script to profile
       copy: src="{{ perl_src }}" dest=/data/opencast/fix_manifest.pl owner=opencast group=users mode=0771
+      when: data_folder_exists.stat.exists and data_folder_exists.stat.isdir
 
     - name: Copy bash_aliases to root
       copy: src="{{ alias_src }}" dest=/root/.bash_aliases owner=root group=root mode=0644

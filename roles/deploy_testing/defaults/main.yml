@@ -1,0 +1,5 @@
+---
+test_src: /usr/local/src/oc-3rd-party-tests/
+test_dest: /opt/oc-3rd-party-tests/
+system_user: opencast
+system_group: opencast

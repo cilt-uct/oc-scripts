@@ -1,25 +1,15 @@
 ---
-# This playbook will:
-# 1. Create tesseract destination folder
-# 2. Copy tesseract trained data from source to destination
+# This playbook will install Tesseract and all the related language packs
 
-    - file:
-        path: "{{ tesseract_dest }}"
-        state: directory
-        owner: opencast
-        group: opencast
-        mode: 0755
+  - name: Install Tesseract
+    apt:
+      pkg:
+        - tesseract-ocr
+        - tesseract-ocr-eng
+      state: latest
+      update_cache: true
+    register: result      
 
-    - name: Copy Tesseract Data
-      copy:
-        src: "{{ item }}"
-        dest: "{{ tesseract_dest }}{{ item.split('/')[-1] }}"
-        owner: "{{ system_user }}"
-        group: "{{ system_group }}"
-        mode: 0644
-      register: result
-      with_fileglob: "{{ tesseract_src }}*.traineddata"
-
-    - name: Append Deployment
-      local_action: shell echo "* {{inventory_hostname}} (Tesseract)" >> "{{ deploy_logfile }}"
-      when: result is succeeded
+  - name: Append Deployment
+    local_action: shell echo "* {{inventory_hostname}} (Tesseract)" >> "{{ deploy_logfile }}"
+    when: result is succeeded

@@ -3,19 +3,43 @@
 # The server it is run on has Track 4K deployed in it's location and is coppied to all the other servers
 # Deployed for Admin, Presentation and Worker
 
-  - name: Copy Track4k binary
-    copy: src="{{ track4k_binary }}" dest="{{ track4k_binary }}" owner="{{system_user}}" group="{{system_group}}" mode=0755
+  - name: Copy Track4k Static files (Takes a long time...)
+    copy:
+        src: "{{ track4k_src }}"
+        dest: "{{ track4k_dest }}"
+        owner: "{{ system_user }}"
+        group: "{{system_group}}"        
     register: result
 
-  - name: Copy cropvid binary
-    copy: src="{{ track4k_cropvid }}" dest="{{ track4k_cropvid }}" owner="{{system_user}}" group="{{system_group}}" mode=0755
+  - name: Copy Track4k deploy script
+    copy: src="{{ track4k_src }}deploy.sh" dest="{{ track4k_dest }}deploy.sh" owner="{{system_user}}" group="{{system_group}}" mode=0755
+
+  - name: Check if wfexec exists
+    stat:
+      path: "{{ track4k_wfexec_dir }}"
+    register: data_folder_exists
 
   - name: Copy Track4k wrapper script
     copy: src="{{ track4k_script_src }}" dest="{{ track4k_script_dest }}" owner="{{system_user}}" group="{{system_group}}" mode=0755
+    when: data_folder_exists.stat.exists and data_folder_exists.stat.isdir
 
   - name: Copy Track4k wrapper config
     copy: src="{{ track4k_json_src }}" dest="{{ track4k_json_dest }}" owner="{{system_user}}" group="{{system_group}}" mode=0644
+    when: data_folder_exists.stat.exists and data_folder_exists.stat.isdir
+
+  # fire and forget
+  - name: Run Script
+    shell: "{{ track4k_dest }}deploy.sh"
+    async: 500
+    poll: 0
+    register: run_script
+
+  - async_status: jid={{ run_script.ansible_job_id }}
+    register: log
+    until: log.finished
+    retries: 30
 
   - name: Append Deployment
     local_action: shell echo "* {{inventory_hostname}}" >> "{{ deploy_logfile }}"
     when: result is succeeded
+
