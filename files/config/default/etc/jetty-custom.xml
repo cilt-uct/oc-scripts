@@ -58,6 +58,7 @@
           </Array>
         </Arg>
         <Set name="name">default</Set>
+        <!-- Adjust the host and port settings to match the configuration in org.ops4j.pax.web.cfg -->
         <Set name="host">0.0.0.0</Set>
         <Set name="idleTimeout">600000</Set>
         <!-- This has to match what's in the pax-web config. Ugh -->
