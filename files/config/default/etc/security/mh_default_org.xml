@@ -698,7 +698,7 @@
         <property name="userDetailsService" ref="userDetailsService"/>
       </bean>
     </property>
-  </bean>
+  </bean> -->
 
   <!-- ################ -->
   <!-- # JWT Support # -->
@@ -835,7 +835,7 @@
                   interface="org.opencastproject.security.api.UserDirectoryService" />
 
   <!-- Uncomment this to enable LDAP -->
-  <!-- Make sure you provide the same instanceId you used in org.opencastproject.userdirectory.ldap-….cfg -->
+  <!-- Make sure you provide the same instanceId you used in org.opencastproject.userdirectory.ldap-ï¿½.cfg -->
   <!--
   <osgi:reference id="authoritiesPopulator" cardinality="1..1"
                   interface="org.springframework.security.ldap.userdetails.LdapAuthoritiesPopulator"
