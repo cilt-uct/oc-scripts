@@ -35,6 +35,6 @@ select 'OC_SERIES : Modified Timestamp' as 'ON';
 UPDATE oc_series
     SET modified_date = TIMESTAMP '1970-01-02 00:00:01'
     WHERE modified_date IS NULL;
-ALTER TABLE oc_series MODIFY modified_date TIMESTAMP NOT NULL;
+ALTER TABLE oc_series MODIFY modified_date TIMESTAMP NOT NULL DEFAULT '1970-01-02 00:00:01';
 
 select 'Done' as 'ON';
