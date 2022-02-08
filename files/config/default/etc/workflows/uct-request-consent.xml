@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<definition xmlns="http://workflow.opencastproject.org">
+
+  <id>uct-request-consent</id>
+  <title>Request consent</title>
+  <tags>
+    <!--tag>editor</tag-->
+    <tag>archive</tag>
+  </tags>
+  <description/>
+  <configuration_panel />
+
+  <operations>
+
+    <!-- Load workflow properties from metadata: update some workflow properties -->
+    <operation
+      id="execute-once"
+      max-attempts="3"
+      retry-strategy="hold"
+      fail-on-error="true"
+      exception-handler-workflow="partial-error"
+      description="Load workflow properties from settings in series">
+      <configurations>
+        <configuration key="exec">/opt/opencast/wfexec/get_organizer_details.pl</configuration>
+        <configuration key="load">0.1</configuration>
+        <configuration key="params">#{id} #{out}</configuration>
+        <configuration key="output-filename">series_organizer.txt</configuration>
+        <configuration key="set-workflow-properties">true</configuration>
+        <configuration key="expected-type">Attachment</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="send-email"
+      fail-on-error="true"
+      if="${organizer_email_valid} AND ${get_organizer_success}"
+      exception-handler-workflow="partial-error"
+      description="Sending email to organizer and notification list for consent">
+      <configurations>
+        <configuration key="to">${organizer_email}</configuration>
+        <configuration key="cc">${notification_list}</configuration>
+        <configuration key="subject">Requesting consent: ${series_title}</configuration>
+        <configuration key="body-template-file">request_consent</configuration>
+        <configuration key="use-html">true</configuration>
+      </configurations>
+    </operation>
+
+    <!-- Requesting consent -->
+    <operation
+      id="comment"
+      fail-on-error="false"
+      if="${organizer_email_valid} AND ${get_organizer_success}"
+      description="Consent: Add comment that request for consent was sent">
+      <configurations>
+        <configuration key="description">Consent: Requested from ${organizer_name} [${organizer_email}]. CC: $notification_list </configuration>
+        <configuration key="reason">EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.CONSENT</configuration>
+        <configuration key="action">create</configuration>
+      </configurations>
+    </operation>
+
+    <!-- Requesting consent -->
+    <operation
+      id="comment"
+      fail-on-error="false"
+      if="NOT(${organizer_email_valid} AND ${get_organizer_success})"
+      description="Consent: ERR : Could not send Consent mail">
+      <configurations>
+        <configuration key="description">Consent: Could not send email to ${organizer_name} [${organizer_email}]. CC: $notification_list </configuration>
+        <configuration key="reason">EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.OTHER</configuration>
+        <configuration key="action">create</configuration>
+      </configurations>
+    </operation>
+
+  </operations>
+</definition>

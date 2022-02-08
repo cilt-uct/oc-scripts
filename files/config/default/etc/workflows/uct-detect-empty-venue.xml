@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<definition xmlns="http://workflow.opencastproject.org">
+
+  <id>uct-detect-empty-venue</id>
+  <title>UCT - Empty venue detection</title>
+  <tags>
+    <tag>archive</tag>
+  </tags>
+  <description>Run VAD script, to analyse speech segments and in turn identify if venue is empty.</description>
+  <configuration_panel></configuration_panel>
+  
+  <operations>
+
+     <!-- Inspect the media -->
+    <operation
+      id="inspect"
+      exception-handler-workflow="partial-error"
+      description="Inspecting mediapackage track elements">
+      <configurations>
+          <configuration key="overwrite">true</configuration>
+          <configuration key="accept-no-media">false</configuration>
+          <configuration key="accurate-frame-count">false</configuration>
+      </configurations>
+    </operation>
+
+    <!-- Detect empty venue -->
+    <operation
+      id="execute-many"
+      fail-on-error="true"
+      retry-strategy="hold"
+      exception-handler-workflow="partial-error"
+      description="Detect empty venue">
+      <configurations>
+        <configuration key="exec">/opt/opencast/wfexec/detect-empty-venue.sh</configuration>
+        <configuration key="params">-i #{in} -o #{out}</configuration>
+        <configuration key="source-flavor">*/source</configuration>
+        <configuration key="output-filename">empty-venue.txt</configuration>
+        <configuration key="target-flavor">text/plain</configuration>
+        <configuration key="source-audio">true</configuration>
+        <configuration key="set-workflow-properties">true</configuration>
+        <configuration key="expected-type">Attachment</configuration>
+        <configuration key="load">4.0</configuration>
+      </configurations>
+    </operation>
+
+  </operations>
+</definition>

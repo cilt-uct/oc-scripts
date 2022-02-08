@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definition xmlns="http://workflow.opencastproject.org">
+
+  <id>uct-include-picture-in-picture</id>
+  <title>UCT - Include compose picture-in-picture</title>
+  <tags/>
+  <description>
+    REQUIRES:
+      Flavors:
+        */${result_publish_start}
+
+    Picture-in-Picture construct
+  </description>
+
+  <configuration_panel></configuration_panel>
+
+  <operations>
+    <!-- Apply the default workflow configuration -->
+    <operation
+      id="defaults"
+      description="Applying default configuration values for picture-in-picture">
+      <configurations>
+        <configuration key="result_publish_process">trimmed</configuration>
+
+        <configuration key="useBottomRight">true</configuration>
+        <configuration key="useBottomLeft">false</configuration>
+        <configuration key="useTopRight">false</configuration>
+        <configuration key="useTopLeft">false</configuration>
+      </configurations>
+    </operation>
+
+    <!-- Untag previous pic-in-pic flavors -->
+    <operation
+      id="tag"
+      description="Untag all pic-in-pic1 flavors">
+      <configurations>
+        <configuration key="source-flavors">pic-in-pic1/delivery</configuration>
+        <configuration key="target-tags">-rss,-atom,</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="tag"
+      description="Untag all pic-in-pic1 flavors">
+      <configurations>
+        <configuration key="source-flavors">pic-in-pic2/delivery</configuration>
+        <configuration key="target-tags">-rss,-atom,</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="include"
+      if="${useTopLeft}"
+      description="Include picture-in-picture Top Left">
+      <configurations>
+        <configuration key="workflow-id">uct-include-picture-in-picture-top-left</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="include"
+      if="${useTopRight}"
+      description="Include picture-in-picture Top Right">
+      <configurations>
+        <configuration key="workflow-id">uct-include-picture-in-picture-top-right</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="include"
+      if="${useBottomLeft}"
+      description="Include picture-in-picture Bottom Left">
+      <configurations>
+        <configuration key="workflow-id">uct-include-picture-in-picture-bottom-left</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="include"
+      if="${useBottomRight}"
+      description="Include picture-in-picture Bottom Right">
+      <configurations>
+        <configuration key="workflow-id">uct-include-picture-in-picture-bottom-right</configuration>
+      </configurations>
+    </operation>
+
+  </operations>
+</definition>
+

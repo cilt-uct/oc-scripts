@@ -1,0 +1,481 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<definition xmlns="http://workflow.opencastproject.org">
+
+  <id>fast</id>
+  <title>UCT - Publish Opencast Studio upload</title>
+  <tags/>
+  <description/>
+  <configuration_panel/>
+
+  <operations>
+  
+    <!-- Apply the default workflow configuration -->
+    <operation
+      id="defaults"
+      description="Applying default configuration values">
+      <configurations>
+        <configuration key="hasSlides">false</configuration>
+
+        <configuration key="thumbnailType">0</configuration>
+        <configuration key="thumbnailPosition">1</configuration>
+      </configurations>
+    </operation>
+
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      Inspect, analyze tracks (*/*), apply series access control
+      archive */source, and tag metadata for archive and publish.
+    -->
+
+    <!-- Inspect the media -->
+    <operation
+        id="inspect"
+        exception-handler-workflow="partial-error"
+        description="Inspecting source media">
+        <configurations>
+            <configuration key="overwrite">true</configuration>
+            <configuration key="accept-no-media">false</configuration>
+            <configuration key="accurate-frame-count">true</configuration>
+        </configurations>
+    </operation>
+
+    <!-- Load workflow properties from metadata: update some workflow properties -->
+    <!-- <operation
+      id="execute-once"
+      max-attempts="3"
+      retry-strategy="hold"
+      fail-on-error="true"
+      exception-handler-workflow="partial-error"
+      description="Load workflow properties from settings in series">
+      <configurations>
+        <configuration key="exec">/opt/opencast/wfexec/load-from-metadata.pl</configuration>
+        <configuration key="load">0.1</configuration>
+        <configuration key="params">#{id} #{out}</configuration>
+        <configuration key="output-filename">metadata_workflow.txt</configuration>
+        <configuration key="set-workflow-properties">true</configuration>
+        <configuration key="expected-type">Attachment</configuration>
+      </configurations>
+    </operation> -->
+
+    <!--
+      Apply access control lists from series to the mediapackage.
+      Only runs if Event is linked to Series, SKIPPED if not.
+    -->
+    <operation
+      id="series"
+      exception-handler-workflow="partial-error"
+      description="Applying access control entries">
+      <configurations>
+        <configuration key="attach">*</configuration>
+        <configuration key="apply-acl">true</configuration>
+      </configurations>
+    </operation>
+
+    <!-- make sure to save ACL and dublincore -->
+    <operation
+        id="tag"
+        exception-handler-workflow="partial-error"
+        description="Add archive tags for dublincore/*,security/*">
+        <configurations>
+            <configuration key="source-flavors">dublincore/*,security/*</configuration>
+            <configuration key="target-tags">archive</configuration>
+        </configurations>
+    </operation>
+
+    <!-- Tag the incoming metadata catalogs for publishing -->
+    <operation
+      id="tag"
+      description="Tagging metadata catalogs for publication">
+      <configurations>
+        <configuration key="source-flavors">dublincore/*</configuration>
+        <configuration key="target-tags">+engage-download</configuration>
+      </configurations>
+    </operation> 
+
+    <!-- Analyze Tracks: set flavor_source workflow properties -->
+    <operation
+      id="analyze-tracks"
+      fail-on-error="false"
+      exception-handler-workflow="partial-error"
+      description="Analyze: SOURCE">
+      <configurations>
+        <configuration key="source-flavor">*/source</configuration>
+        <configuration key="aspect-ratio">4/3,16/9</configuration>
+      </configurations>
+    </operation>
+
+    <!-- check if source video has audio and add to work versions -->
+    <operation
+      id="execute-many"
+      fail-on-error="true"
+      retry-strategy="hold"
+      exception-handler-workflow="partial-error"
+      description="Check if presenter has audio">
+      <configurations>
+        <configuration key="exec">/opt/opencast/wfexec/check-for-audio.sh</configuration>
+        <configuration key="params">-i #{in} -o #{out}</configuration>
+        <configuration key="source-flavor">presenter/source</configuration>
+        <configuration key="source-video">true</configuration>
+        <configuration key="output-filename">enhanced.mp4</configuration>
+        <configuration key="target-flavor">presenter/work</configuration>
+        <configuration key="expected-type">Track</configuration>
+        <configuration key="load">2.0</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="execute-many"
+      fail-on-error="true"
+      retry-strategy="hold"
+      exception-handler-workflow="partial-error"
+      description="Check if presentation has audio">
+      <configurations>
+        <configuration key="exec">/opt/opencast/wfexec/check-for-audio.sh</configuration>
+        <configuration key="params">-i #{in} -o #{out}</configuration>
+        <configuration key="source-flavor">presentation/source</configuration>
+        <configuration key="source-video">true</configuration>
+        <configuration key="output-filename">enhanced.mp4</configuration>
+        <configuration key="target-flavor">presentation/work</configuration>
+        <configuration key="expected-type">Track</configuration>
+        <configuration key="load">2.0</configuration>
+      </configurations>
+    </operation>
+
+    <!-- Tag the sources for archival -->
+    <operation
+      id="tag"
+      description="Tagging source material for archival">
+      <configurations>
+        <configuration key="source-flavors">*/*</configuration>
+        <configuration key="target-tags">+archive</configuration>
+      </configurations>
+    </operation>
+
+    <!-- Untag work flavors -->
+    <operation
+      id="tag"
+      description="Untag all work flavors">
+      <configurations>
+        <configuration key="source-flavors">*/work</configuration>
+        <configuration key="target-tags">-archive</configuration>
+      </configurations>
+    </operation>
+
+    <!-- Analyze Tracks -->
+    <operation
+      id="analyze-tracks"
+      fail-on-error="false"
+      exception-handler-workflow="partial-error"
+      description="Analyze: WORK">
+      <configurations>
+        <configuration key="source-flavor">*/work</configuration>
+      </configurations>
+    </operation>
+
+    <!-- Save workflow properties -->
+    <operation
+      id="export-wf-properties"
+      fail-on-error="false"
+      exception-handler-workflow="partial-error"
+      description="Export workflow settings to Java properties file">
+      <configurations>
+        <configuration key="target-flavor">processing/defaults</configuration>
+        <configuration key="target-tags">archive</configuration>
+      </configurations>
+    </operation>
+
+    <!-- Archive generated items -->
+    <operation
+      id="snapshot"
+      description="Archive source">
+      <configurations>
+        <configuration key="source-tags">archive</configuration>
+      </configurations>
+    </operation>
+
+    <!-- DO normalization here -->
+
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      Process video in parallel for publishing - without normalizing audio
+    -->
+
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <!-- Encode for publication to Engage                                  -->
+    <!--                                                                   -->
+    <!-- Encode audio and video formats to the distribution formats that   -->
+    <!-- are required by the Engage publication channel.                   -->
+    <!-- Also encode them for publication to rss and atom feeds.           -->
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+
+    <!--
+      Encoding presenter for Engage player and feeds
+
+      Video: MP4 container, H264 codec. [1080p 720p, 480p or other
+      Audio: 44100Hz 128k, NOT NORMALIZED
+    -->
+    <!-- A -->
+    <operation
+      id="encode"
+      if="(${presenter_work_resolution_y} &gt; 1079) OR (${presentation_work_resolution_y} &gt; 1079)"
+      fail-on-error="true"
+      exception-handler-workflow="partial-error"
+      description="Encoding for player and feeds (MP4) [1080p, 720p, 480p]: mp4-480-720-1080-parallel">
+      <configurations>
+        <configuration key="source-flavor">*/work</configuration>
+        <configuration key="target-flavor">*/delivery</configuration>
+        <configuration key="target-tags">engage-download,engage-streaming,rss,atom</configuration>
+        <configuration key="encoding-profile">mp4-480-720-1080-parallel.http</configuration>
+      </configurations>
+    </operation>
+
+    <!-- B -->
+    <operation
+      id="encode"
+      if="((${presenter_work_resolution_y} &lt; 1080) AND (${presenter_work_resolution_y} &gt; 719)) OR ((${presentation_work_resolution_y} &lt; 1080) AND (${presentation_work_resolution_y} &gt; 719))"
+      fail-on-error="true"
+      exception-handler-workflow="partial-error"
+      description="Encoding for player and feeds (MP4) [720p, 480p]: mp4-480-720-parallel">
+      <configurations>
+        <configuration key="source-flavor">*/work</configuration>
+        <configuration key="target-flavor">*/delivery</configuration>
+        <configuration key="target-tags">engage-download,engage-streaming,rss,atom</configuration>
+        <configuration key="encoding-profile">mp4-480-720-parallel.http</configuration>
+      </configurations>
+    </operation>
+
+    <!-- C -->
+    <operation
+      id="compose"
+      if="((${presenter_work_resolution_y} &lt; 720) AND (${presenter_work_resolution_y} &gt; 479)) OR ((${presentation_work_resolution_y} &lt; 720) AND (${presentation_work_resolution_y} &gt; 479))"
+      fail-on-error="true"
+      exception-handler-workflow="partial-error"
+      description="Encoding for player and feeds (MP4) [480p]: mp4-480">
+      <configurations>
+        <configuration key="source-flavor">*/work</configuration>
+        <configuration key="target-flavor">*/delivery</configuration>
+        <configuration key="target-tags">engage-download,engage-streaming,rss,atom</configuration>
+        <configuration key="encoding-profile">mp4-480.http</configuration>
+      </configurations>
+    </operation>
+
+    <!-- D -->
+    <operation
+      id="compose"
+      if="(${presenter_work_resolution_y} &lt; 480) OR (${presenter_work_resolution_y} &lt; 480)"
+      fail-on-error="true"
+      exception-handler-workflow="partial-error"
+      description="Encoding for player and feeds (MP4) [other]: mp4-other">
+      <configurations>
+        <configuration key="source-flavor">*/work</configuration>
+        <configuration key="target-flavor">*/delivery</configuration>
+        <configuration key="target-tags">engage-download,engage-streaming,rss,atom</configuration>
+        <configuration key="encoding-profile">mp4-other.http</configuration>
+      </configurations>
+    </operation>
+
+    <!--
+      Encoding audio for Engage player and feeds
+
+      Audio: MP4 container, 44.1khz 128Kbps
+
+      Note: We are not using themes yet
+            <configuration key="source-flavor">presenter/themed</configuration>
+    -->
+    <operation
+      id="compose"
+      fail-on-error="false"
+      exception-handler-workflow="partial-error"
+      if="${presenter_work_media} AND NOT(${presentation_work_media})"
+      description="Encoding audio for Engage player (MP3)">
+      <configurations>
+        <configuration key="source-flavor">*/work</configuration>
+        <configuration key="target-flavor">presenter/delivery</configuration>
+        <configuration key="target-tags">engage-download,engage-streaming,rss,atom</configuration>
+        <configuration key="encoding-profile">mp3.http</configuration>
+        <configuration key="process-first-match-only">true</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="compose"
+      fail-on-error="false"
+      exception-handler-workflow="partial-error"
+      if="${presentation_work_media} AND NOT(${presenter_work_media})"
+      description="Encoding audio for Engage player (MP3)">
+      <configurations>
+        <configuration key="source-flavor">*/work</configuration>
+        <configuration key="target-flavor">presentation/delivery</configuration>
+        <configuration key="target-tags">engage-download,engage-streaming,rss,atom</configuration>
+        <configuration key="encoding-profile">mp3.http</configuration>
+        <configuration key="process-first-match-only">true</configuration>
+      </configurations>
+    </operation>
+
+    <!-- Image - Search -->
+    <operation
+      id="image"
+      exception-handler-workflow="partial-error"
+      description="Creating search result thumbnails">
+      <configurations>
+        <configuration key="source-flavor">*/delivery</configuration>
+        <configuration key="source-tags"></configuration>
+        <configuration key="target-flavor">*/search+preview</configuration>
+        <configuration key="target-tags">engage-download</configuration>
+        <configuration key="encoding-profile">search-cover.http</configuration>
+        <configuration key="time">5</configuration>
+      </configurations>
+    </operation>
+
+    <!-- Image - Player preview -->
+    <operation
+      id="image"
+      exception-handler-workflow="partial-error"
+      description="Creating player preview image">
+      <configurations>
+        <configuration key="source-flavor">*/delivery</configuration>
+        <configuration key="source-tags"></configuration>
+        <configuration key="target-flavor">*/player+preview</configuration>
+        <configuration key="target-tags">engage-download</configuration>
+        <configuration key="encoding-profile">player-preview.http</configuration>
+        <configuration key="time">5</configuration>
+      </configurations>
+    </operation>
+
+    <!-- Encode to feed cover images -->
+    <operation
+      id="image"
+      exception-handler-workflow="partial-error"
+      description="Creating feed cover image">
+      <configurations>
+        <configuration key="source-flavor">*/delivery</configuration>
+        <configuration key="source-tags"></configuration>
+        <configuration key="target-flavor">*/feed+preview</configuration>
+        <configuration key="target-tags">atom,rss</configuration>
+        <configuration key="encoding-profile">feed-cover.http</configuration>
+        <configuration key="time">5</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="tag"
+      description="Removing unneeded cover from download publication">
+      <configurations>
+        <configuration key="source-flavors">*/player+preview</configuration>
+        <configuration key="target-tags">-engage-download</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="image"
+      exception-handler-workflow="partial-error"
+      description="Creating player preview image">
+      <configurations>
+        <configuration key="source-flavor">*/delivery</configuration>
+        <configuration key="source-tags"></configuration>
+        <configuration key="target-flavor">*/coverbackground</configuration>
+        <configuration key="encoding-profile">player-preview.http</configuration>
+        <configuration key="time">1</configuration>
+      </configurations>
+    </operation>
+
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      Create Composite download versions of presenter, presentation and
+      presentation2 in either 2 panel or 3 panel variant.
+
+       In: */${result_publish_process} default: normalized-trimmed
+      Out: composite/delivery
+    -->
+    <operation
+      id="include"
+      description="Include publishing for downloads">
+      <configurations>
+        <configuration key="workflow-id">uct-partial-publish-downloads</configuration>
+      </configurations>
+    </operation>
+
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <!-- Publish to publication channels                                   -->
+    <!--                                                                   -->
+    <!-- Send the encoded material along with the metadata to the          -->
+    <!-- publication channels.                                             -->
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <operation
+      id="publish-engage"
+      max-attempts="2"
+      exception-handler-workflow="partial-error"
+      description="Publishing to Opencast Media Module">
+      <configurations>
+        <configuration key="download-source-flavors">dublincore/*,security/*</configuration>
+        <configuration key="download-source-tags">engage-download,atom,rss,mobile</configuration>
+        <configuration key="streaming-source-tags">engage-streaming</configuration>
+        <configuration key="check-availability">true</configuration>
+      </configurations>
+    </operation>
+
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <!-- Archive                                                           -->
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <operation
+      id="snapshot"
+      description="Archive publishing information">
+      <configurations>
+        <configuration key="source-tags">archive</configuration>
+      </configurations>
+    </operation>
+
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      Do the work to prepare for editing. (*/preview)
+    -->
+    <operation
+      id="include"
+      if="${presenter_work_media} OR ${presentation_work_media}"
+      description="Prepare preview versions for Editing">
+      <configurations>
+        <configuration key="workflow-id">uct-partial-preview</configuration>
+      </configurations>
+    </operation>
+
+    <!-- Save workflow properties -->
+    <operation
+      id="export-wf-properties"
+      fail-on-error="true"
+      exception-handler-workflow="partial-error"
+      description="Export workflow settings to Java properties file">
+      <configurations>
+        <configuration key="target-flavor">processing/defaults</configuration>
+        <configuration key="target-tags">archive</configuration>
+      </configurations>
+    </operation>
+
+    <!-- Archive generated items -->
+    <operation
+      id="snapshot"
+      description="Archive work and preview information">
+      <configurations>
+        <configuration key="source-tags">archive</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="include"
+      description="Send e-mail to course organiser that event has been published">
+      <configurations>
+        <configuration key="workflow-id">uct-opencast-studio-notification</configuration>
+      </configurations>
+    </operation>
+
+    <!-- Clean up work artifacts -->
+    <operation
+        id="cleanup"
+        fail-on-error="false"
+        description="Cleaning up - remove temp processing artifacts">
+        <configurations>
+            <configuration key="delete-external">false</configuration>
+            <!-- FixMe Don't clean up ACLs until workflow service no longer looks for them in the WFR. -->
+            <configuration key="preserve-flavors">dublincore/*,security/*</configuration>
+            <configuration key="delay">5</configuration>
+        </configurations>
+    </operation>
+
+  </operations>
+
+</definition>

@@ -154,7 +154,6 @@
     <sec:intercept-url pattern="/admin-ng/event/*/comment/*/reply" method="POST" access="ROLE_ADMIN, ROLE_UI_EVENTS_DETAILS_COMMENTS_CREATE" />
     <sec:intercept-url pattern="/admin-ng/event/*/comment/*" method="POST" access="ROLE_ADMIN, ROLE_UI_EVENTS_DETAILS_COMMENTS_CREATE" />
     <sec:intercept-url pattern="/admin-ng/groups" method="POST" access="ROLE_ADMIN, ROLE_UI_GROUPS_CREATE" />
-    <sec:intercept-url pattern="/admin-ng/index/*" method="POST" access="ROLE_ADMIN" />
     <sec:intercept-url pattern="/admin-ng/series/deleteSeries" method="POST" access="ROLE_ADMIN, ROLE_UI_SERIES_DELETE" />
     <sec:intercept-url pattern="/admin-ng/series/new" method="POST" access="ROLE_ADMIN, ROLE_UI_SERIES_CREATE" />
     <sec:intercept-url pattern="/admin-ng/series/*/access" method="POST" access="ROLE_ADMIN, ROLE_UI_SERIES_DETAILS_ACL_EDIT" />
@@ -232,6 +231,7 @@
     <sec:intercept-url pattern="/api/events/*" method="POST" access="ROLE_ADMIN, ROLE_API_EVENTS_EDIT"/>
     <sec:intercept-url pattern="/api/events/*/acl/*" method="POST" access="ROLE_ADMIN, ROLE_API_EVENTS_ACL_EDIT"/>
     <sec:intercept-url pattern="/api/groups" method="POST" access="ROLE_ADMIN, ROLE_API_GROUPS_CREATE"/>
+    <sec:intercept-url pattern="/api/groups/*/members" method="POST" access="ROLE_ADMIN, ROLE_API_GROUPS_EDIT"/>
     <sec:intercept-url pattern="/api/groups/*/members/*" method="POST" access="ROLE_ADMIN, ROLE_API_GROUPS_EDIT"/>
     <sec:intercept-url pattern="/api/clearIndex" method="POST" access="ROLE_ADMIN"/>
     <sec:intercept-url pattern="/api/recreateIndex" method="POST" access="ROLE_ADMIN"/>
@@ -835,7 +835,7 @@
                   interface="org.opencastproject.security.api.UserDirectoryService" />
 
   <!-- Uncomment this to enable LDAP -->
-  <!-- Make sure you provide the same instanceId you used in org.opencastproject.userdirectory.ldap-�.cfg -->
+  <!-- Make sure you provide the same instanceId you used in org.opencastproject.userdirectory.ldap-….cfg -->
   <!--
   <osgi:reference id="authoritiesPopulator" cardinality="1..1"
                   interface="org.springframework.security.ldap.userdetails.LdapAuthoritiesPopulator"

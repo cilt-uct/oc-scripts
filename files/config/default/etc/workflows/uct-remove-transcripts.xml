@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<definition xmlns="http://workflow.opencastproject.org">
+
+  <id>uct-remove-transcripts</id>
+  <title>UCT - Remove Transcripts</title>
+  <tags>
+    <tag>archive</tag>
+  </tags>
+  <description>Remove transcripts from event</description>
+  <configuration_panel>
+    <![CDATA[
+      <div id="workflow-configuration">
+        <fieldset>
+          <legend>Remove transcript:</legend>
+          <ul>
+            <li>
+              <input id="googleTranscript" name="googleTranscript" type="checkbox" checked="checked" class="configField" value="true" />
+              <label for="googleTranscript">Remove google transcript</label>
+            </li>
+            <li>
+              <input id="nibityTranscript" name="nibityTranscript" type="checkbox" checked="checked" class="configField" value="true" />
+              <label for="nibityTranscript">Remove nibity transcript</label>
+            </li>
+            <li>
+              <input id="uploadedTranscript" name="uploadedTranscript" type="checkbox" checked="checked" class="configField" value="true" />
+              <label for="uploadedTranscript">Remove uploaded transcript</label>
+            </li>
+          </ul>
+        </fieldset>
+      </div>
+    ]]>
+  </configuration_panel>
+
+  <operations>
+
+    <!-- Defaults -->
+    <operation
+        id="defaults"
+        description="Applying default configuration values">
+      <configurations>
+        <configuration key="googleTranscript">false</configuration>
+        <configuration key="nibityTranscript">false</configuration>
+        <configuration key="uploadedTranscript">false</configuration>
+      </configurations>
+    </operation>
+
+    <!-- Remove google transcript -->
+    <operation
+      id="retract-partial"
+      fail-on-error="false"
+      if="${googleTranscript}"      
+      description="Retract google transcript from event">
+      <configurations>
+        <configuration key="retract-flavors">captions/timedtext</configuration>
+      </configurations>
+    </operation>
+
+    <!-- Remove nibity transcript -->
+    <operation
+      id="retract-partial"
+      fail-on-error="false"
+      if="${nibityTranscript}"
+      description="Retract google nibity from event">
+      <configurations>
+        <configuration key="retract-flavors">captions/vtt</configuration>
+      </configurations>
+    </operation>
+
+    <!-- Remove uploaded transcript -->
+    <operation
+      id="retract-partial"
+      fail-on-error="false"
+      if="${uploadedTranscript}"
+      description="Retract uploaded transcript from event">
+      <configurations>
+        <configuration key="retract-flavors">text/vtt</configuration>
+      </configurations>
+    </operation>
+
+  </operations>
+
+</definition>

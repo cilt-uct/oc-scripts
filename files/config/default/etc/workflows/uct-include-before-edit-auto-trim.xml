@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definition xmlns="http://workflow.opencastproject.org">
+
+  <id>uct-include-before-edit-auto-trim</id>
+  <title>UCT - Process for Editing (Auto Trim)</title>
+  <tags/>
+  <description>
+    REQUIRES:
+      Flavors:
+        */work
+        smil/cutting
+
+    Using the work flavors this workflow runs the publish workflow to cut and publish to engage.
+  </description>
+
+  <configuration_panel></configuration_panel>
+
+  <operations>
+    <!-- Apply the default workflow configuration -->
+    <operation
+      id="defaults"
+      description="Applying default configuration values">
+      <configurations>
+        <configuration key="publishToEngage">true</configuration>
+        <configuration key="publishToAws">false</configuration>
+        <configuration key="publishToApi">false</configuration>
+        <configuration key="publishToOaiPmh">false</configuration>
+        <configuration key="publishToYouTube">false</configuration>
+
+        <configuration key="thumbnailType">0</configuration>
+        <configuration key="thumbnailPosition">1</configuration>
+
+        <configuration key="presenter_work_video">false</configuration>
+        <configuration key="presenter_source_resolution_y">1080</configuration>
+
+        <configuration key="presentation_work_video">false</configuration>
+        <configuration key="presentation2_work_video">false</configuration>
+
+        <configuration key="use_watson">false</configuration>
+        <configuration key="use_nibity">false</configuration>
+        <configuration key="audio_trim_lapel">false</configuration>
+        <configuration key="transcription_src_flavor">normalized-trimmed</configuration>
+
+        <configuration key="doPictureInPicture">false</configuration>
+
+        <configuration key="result_publish_process">normalized-trimmed</configuration>
+      </configurations>
+    </operation>
+
+    <!-- Mark the recording as auto trimmed -->
+    <operation
+      id="comment"
+      fail-on-error="false"
+      description="Mark the recording as being automatically trimmed and published (create)">
+      <configurations>
+        <configuration key="description">Auto trimmed</configuration>
+        <configuration key="reason">EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.AUTOTRIM</configuration>
+        <configuration key="action">create</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="comment"
+      fail-on-error="false"
+      description="Mark the recording as being automatically trimmed and published (resolve)">
+      <configurations>
+        <configuration key="reason">EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.AUTOTRIM</configuration>
+        <configuration key="action">resolve</configuration>
+      </configurations>
+    </operation>
+
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <!-- Publish                                                           -->
+    <!--                                                                   -->
+    <!-- Encode and publish the recording to the selected publication      -->
+    <!-- channels, unless review for cutting has been selected.            -->
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <operation
+      id="include"
+      description="Publish the recording">
+      <configurations>
+        <configuration key="workflow-id">uct-partial-publish</configuration>
+      </configurations>
+    </operation>
+
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <!-- Transcription / Caption Services                                  -->
+    <!-- Source: ${transcription_src_flavor} - normalized-trimmed          -->
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <operation
+      id="include"
+      description="Include Captioning">
+      <configurations>
+        <configuration key="workflow-id">uct-include-captioning</configuration>
+      </configurations>
+    </operation>
+
+  </operations>
+</definition>

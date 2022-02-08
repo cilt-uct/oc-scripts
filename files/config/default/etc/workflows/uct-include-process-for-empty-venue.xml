@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definition xmlns="http://workflow.opencastproject.org">
+
+  <id>uct-include-process-for-empty-venue</id>
+  <title>UCT - Include process for empty venue</title>
+  <tags/>
+  <description>
+    REQUIRES:
+      Flavors:
+        */source
+      Workflow Properties:
+        empty_venue
+  </description>
+
+  <configuration_panel></configuration_panel>
+
+  <operations>
+
+    <!-- Archive source material and generated items -->
+    <operation
+      id="snapshot"
+      if="NOT(${empty_venue})"
+      description="Archive source">
+      <configurations>
+        <configuration key="source-tags">archive</configuration>
+      </configurations>
+    </operation>
+
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      Prepare work versions of the source material for further processing.
+      Preview and Publish use Work versions. (*/work)
+    -->
+    <operation
+      id="include"
+      if="NOT(${empty_venue})"
+      description="Prepare work version for processing">
+      <configurations>
+        <configuration key="workflow-id">uct-partial-work</configuration>
+      </configurations>
+    </operation>
+
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      Run the script to detect the audio points and create a smil/cutting if possible
+    -->
+    <!--operation
+      id="include"
+      if="NOT(${empty_venue})"
+      description="Run the audio analysis for (possible) autotrimming of the recording">
+      <configurations>
+        <configuration key="workflow-id">uct-include-autotrim-detection</configuration>
+      </configurations>
+    </operation-->
+
+    <operation
+      id="include"
+      if="NOT(${empty_venue})"
+      description="Process previews after auto trim detection">
+      <configurations>
+        <configuration key="workflow-id">uct-include-process-previews</configuration>
+      </configurations>
+    </operation>
+
+    <!-- Load workflow properties from metadata: update some workflow properties -->
+    <operation
+      id="execute-once"
+      if="${empty_venue}"
+      max-attempts="3"
+      retry-strategy="hold"
+      fail-on-error="true"
+      exception-handler-workflow="partial-error"
+      description="Load workflow properties from settings in series">
+      <configurations>
+        <configuration key="exec">/opt/opencast/wfexec/get_organizer_details.pl</configuration>
+        <configuration key="load">0.1</configuration>
+        <configuration key="params">#{id} #{out}</configuration>
+        <configuration key="output-filename">series_organizer.txt</configuration>
+        <configuration key="set-workflow-properties">true</configuration>
+        <configuration key="expected-type">Attachment</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="send-email"
+      fail-on-error="true"
+      if="${organizer_email_valid} AND ${get_organizer_success} AND ${empty_venue} AND ${valid_notification_list}"
+      exception-handler-workflow="partial-error"
+      description="Sending empty venue email to organizer and notification list">
+      <configurations>
+        <configuration key="to">${organizer_email}</configuration>
+        <configuration key="cc">${notification_list}</configuration>
+        <configuration key="subject">No lecture detected for ${series_title} on ${start_date}</configuration>
+        <configuration key="body-template-file">empty_venue_notification</configuration>
+        <configuration key="use-html">true</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="send-email"
+      fail-on-error="true"
+      if="${organizer_email_valid} AND ${get_organizer_success} AND ${empty_venue} AND NOT(${valid_notification_list})"
+      exception-handler-workflow="partial-error"
+      description="Sending empty venue email to organizer and notification list">
+      <configurations>
+        <configuration key="to">${organizer_email}</configuration>
+        <configuration key="subject">No lecture detected for ${series_title} at ${start_date}</configuration>
+        <configuration key="body-template-file">empty_venue_notification</configuration>
+        <configuration key="use-html">true</configuration>
+      </configurations>
+    </operation>
+
+    <!-- Add RESOLVED comment for empty venue -->
+    <operation
+      id="comment"
+      if="${empty_venue}"
+      description="Mark as empty venue">
+      <configurations>
+        <configuration key="description">Empty venue.</configuration>
+        <configuration key="reason">EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.REVIEW</configuration>
+        <configuration key="action">create</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="comment"
+      if="${empty_venue}"
+      description="Mark as empty venue (resolve)">
+      <configurations>
+        <configuration key="description">Empty venue.</configuration>
+        <configuration key="reason">EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.REVIEW</configuration>
+        <configuration key="action">resolve</configuration>
+      </configurations>
+    </operation>
+
+  </operations>
+</definition>

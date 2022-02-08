@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<definition xmlns="http://workflow.opencastproject.org">
+
+  <id>uct-transcript-watson</id>
+  <title>Submit trimmed audio for Watson Transcription</title>
+  <tags>
+    <tag>archive</tag>
+  </tags>
+  <description>Submit trimmed audio for Watson Transcription</description>
+  <configuration_panel>
+    <![CDATA[
+      <div id="workflow-configuration">
+
+        <fieldset>
+          <legend>Publication Options:</legend>
+          <ul>
+            <li>
+              <label>Audio channel to use:
+            </li>
+            <li>
+              <input id="workProfileChannel_left" name="workProfileChannel" type="radio" checked="checked" class="configField" value="true" />
+              <label for="workProfileChannel_left">Left</label>
+            </li>
+            <li>
+              <input id="workProfileChannel_right" name="workProfileChannel" type="radio" class="configField" value="true"/>
+              <label for="workProfileChannel_right">Right</label>
+            </li>
+            <li>
+              <input id="workProfileChannel_stereo" name="workProfileChannel" type="radio" class="configField" value="true"/>
+              <label for="workProfileChannel_stereo">Stereo</label>
+            </li>
+          </ul>
+        </fieldset>
+      </div>
+    ]]>
+  </configuration_panel>
+  <operations>
+
+    <!-- Apply the default workflow configuration -->
+    <operation
+      id="defaults"
+      description="Applying default configuration values">
+      <configurations>
+        <configuration key="workProfileChannel_left">true</configuration>
+        <configuration key="workProfileChannel_right">false</configuration>
+        <configuration key="workProfileChannel_stereo">false</configuration>
+
+        <configuration key="transcription_src_flavor">trimmed</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="defaults"
+      if="${workProfileChannel_left}"
+      description="Use left audio channel">
+      <configurations>
+        <configuration key="workProfileChannel">left</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="defaults"
+      if="${workProfileChannel_right}"
+      description="Use right audio channel">
+      <configurations>
+        <configuration key="workProfileChannel">right</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="defaults"
+      if="${workProfileChannel_stereo}"
+      description="Use stereo">
+      <configurations>
+        <configuration key="workProfileChannel">stereo</configuration>
+      </configurations>
+    </operation>
+
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      Prepare work versions of the source material for archive and processing.
+      Preview and Publish use Work versions. (*/work)
+
+       In: */source
+      Out: */work
+    -->
+    <operation
+      id="include"
+      description="Prepare work version for processing (${workProfileChannel})">
+      <configurations>
+        <configuration key="workflow-id">uct-partial-work-channel</configuration>
+      </configurations>
+    </operation>
+
+    <operation id="editor"
+      fail-on-error="true"
+      exception-handler-workflow="partial-error"
+      description="Cut the recording according to the edit decision list">
+      <configurations>
+        <configuration key="source-flavors">*/work</configuration>
+        <configuration key="smil-flavors">smil/cutting</configuration>
+        <configuration key="target-smil-flavor">smil/cutting</configuration>
+        <configuration key="target-flavor-subtype">trimmed</configuration>
+        <configuration key="interactive">false</configuration>
+      </configurations>
+    </operation>
+
+      <operation
+        id="include"
+        description="Do captioning with IBM Watson">
+        <configurations>
+          <configuration key="workflow-id">uct-include-transcription-watson</configuration>
+        </configurations>
+      </operation>
+
+    <!-- Clean up work artifacts -->
+    <operation
+        id="cleanup"
+        fail-on-error="false"
+        description="Cleaning up - remove temp processing artifacts">
+        <configurations>
+            <configuration key="delete-external">false</configuration>
+            <!-- FixMe Don't clean up ACLs until workflow service no longer looks for them in the WFR. -->
+            <configuration key="preserve-flavors">dublincore/*,security/*</configuration>
+            <configuration key="delay">5</configuration>
+        </configurations>
+    </operation>
+
+  </operations>
+</definition>

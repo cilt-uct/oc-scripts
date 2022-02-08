@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<definition xmlns="http://workflow.opencastproject.org">
+
+  <id>uct-include-autotrim-detection</id>
+  <title>Run the audio analysis for (possible) autotrimming of the recording</title>
+  <tags/>
+  <description>Run TrimPointDetector script, an Algorithm that utilises pyAudioAnalysis to detect the start and end trim points for Opencast recorded lectures.</description>
+  <configuration_panel></configuration_panel>
+  <operations>
+
+    <!-- extract audio from the first of the source streams, encode to wav for analysis to be run properly -->
+    <operation
+      id="compose"
+      fail-on-error="false"
+      description="Extracting audio for trim point detection">
+      <configurations>
+        <configuration key="source-flavor">*/source</configuration>
+        <configuration key="target-flavor">trim/detect</configuration>
+        <configuration key="encoding-profile">audio.wav</configuration>
+
+        <!-- If there is more than one file that match the source-tags, use only the first one -->
+        <configuration key="process-first-match-only">true</configuration>
+      </configurations>
+    </operation>
+
+    <!-- Analyze Tracks -->
+    <operation
+      id="analyze-tracks"
+      fail-on-error="false"
+      exception-handler-workflow="partial-error"
+      description="Analyze: Trim/Detect">
+      <configurations>
+        <configuration key="source-flavor">trim/detect</configuration>
+      </configurations>
+    </operation>
+    
+    <!-- Analyze Tracks -->
+    <operation
+      id="execute-once"
+      max-attempts="3"
+      retry-strategy="hold"
+      fail-on-error="true"
+      if="${trim_detect_media} AND ${trim_detect_audio}"
+      exception-handler-workflow="partial-error"
+      description="Get Audio Segments">
+      <configurations>
+        <configuration key="exec">/opt/opencast/wfexec/detect-trim-points.sh</configuration>
+        <configuration key="load">4.0</configuration>
+        <configuration key="params">-i #{flavor(trim/detect)} -o #{out} --venue ${event_location} --debug</configuration>
+        <configuration key="output-filename">segments.txt</configuration>
+        <configuration key="set-workflow-properties">true</configuration>
+        <configuration key="expected-type">Attachment</configuration>
+      </configurations>
+    </operation>
+
+    <!-- Create a smil/cutting description file if the recording has segments and is less than 01:12:00 -->
+    <operation
+      id="execute-once"
+      max-attempts="3"
+      retry-strategy="retry"
+      fail-on-error="true"
+      if="${trim_detect_media} AND ${trim_detect_audio} AND ${audio_trim_ishour}"
+      exception-handler-workflow="partial-error"
+      description="Construct SMIL">
+      <configurations>
+        <configuration key="exec">/opt/opencast/wfexec/create-smil-fromWorkflow.sh</configuration>
+        <configuration key="load">0.1</configuration>
+        <configuration key="params">#{id} #{out} ${presenter_work_video} ${presentation_work_video} ${presentation2_work_video} ${audio_trim_duration} ${audio_trim_segments}</configuration>
+        <configuration key="output-filename">cut.xml</configuration>
+        <configuration key="target-flavor">smil/cutting</configuration>
+        <configuration key="target-tags">archive</configuration>
+        <configuration key="expected-type">Catalog</configuration>
+      </configurations>
+    </operation>
+
+  </operations>
+</definition>

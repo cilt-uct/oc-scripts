@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<definition xmlns="http://workflow.opencastproject.org">
+
+  <id>uct-process-picture-in-picture</id>
+  <title>Add Picture-in-Picture download</title>
+  <tags>
+    <tag>archive</tag>
+    <!--tag>editor</tag-->
+  </tags>
+  <description/>
+  <configuration_panel>
+      <![CDATA[
+        <style type="text/css">
+        <!--
+            #workflow-configuration legend { padding-top:20px; padding-bottom:5px; }
+            #workflow-configuration li { padding-top:5px; padding-bottom:5px; line-height:14px }
+        -->
+        </style>
+        <div id="workflow-configuration">
+          <fieldset>
+            <legend>Position of Picture-in-Picture:</legend>
+            <ul>
+              <li>
+                <span>
+                  <input id="useBottomRight" type="radio" name="pic-in-pic-position" checked="checked" class="configField" value="true" />
+                  <span>&nbsp;Bottom Right</span>
+                </span>
+              </li>
+              <li>
+                <span>
+                  <input id="useBottomLeft" type="radio" name="pic-in-pic-position" class="configField" value="true" />
+                  <span>&nbsp;Bottom Left</span>
+                </span>
+              </li>
+              <li>
+                <span>
+                  <input id="useTopRight" type="radio" name="pic-in-pic-position" class="configField" value="true" />
+                  <span>&nbsp;Top Right</span>
+                </span>
+              </li>
+              <li>
+                <span>
+                  <input id="useTopLeft" type="radio" name="pic-in-pic-position" class="configField" value="true" />
+                  <span>&nbsp;Top Left</span>
+                </span>
+              </li>
+            </ul>
+          </fieldset>
+          <fieldset>
+            <legend>Normalize Audio:</legend>
+            <ul>
+              <li>
+                <span>
+                  <input id="doNormalizeAudio" type="checkbox" class="configField" value="true" />
+                  <span>&nbsp;Yes</span>
+                </span>
+              </li>
+            </ul>
+          </fieldset>
+          <fieldset>
+            <legend>Audio to use:</legend>
+            <ul>
+              <li>
+                <input id="workProfileChannel_left" name="workProfileChannel" type="radio" checked="checked" class="configField" value="true" />
+                <label for="workProfileChannel_left">Left</label>
+              </li>
+              <li>
+                <input id="workProfileChannel_right" name="workProfileChannel" type="radio" class="configField" value="true"/>
+                <label for="workProfileChannel_right">Right</label>
+              </li>
+              <li>
+                <input id="workProfileChannel_stereo" name="workProfileChannel" type="radio" class="configField" value="true"/>
+                <label for="workProfileChannel_stereo">Stereo</label>
+              </li>
+            </ul>
+          </fieldset>
+        </div>
+      ]]>
+  </configuration_panel>
+
+  <operations>
+    <operation
+      id="defaults"
+      description="Applying default configuration values for picture-in-picture">
+      <configurations>
+        <configuration key="doNormalizeAudio">false</configuration>
+        <configuration key="doPictureInPicture">true</configuration>
+
+        <configuration key="workProfileChannel_left">true</configuration>
+        <configuration key="workProfileChannel_right">false</configuration>
+        <configuration key="workProfileChannel_stereo">false</configuration>
+
+        <configuration key="result_publish_process">normalized-trimmed</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="defaults"
+      if="${workProfileChannel_left}"
+      description="Use left audio channel">
+      <configurations>
+        <configuration key="workProfileChannel">left</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="defaults"
+      if="${workProfileChannel_right}"
+      description="Use right audio channel">
+      <configurations>
+        <configuration key="workProfileChannel">right</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="defaults"
+      if="${workProfileChannel_stereo}"
+      description="Use stereo">
+      <configurations>
+        <configuration key="workProfileChannel">stereo</configuration>
+      </configurations>
+    </operation>
+
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      Prepare work versions of the source material for archive and processing.
+      Preview and Publish use Work versions. (*/work)
+
+       In: */source
+      Out: */work
+    -->
+    <operation
+      id="include"
+      description="Prepare work version for processing (${workProfileChannel})">
+      <configurations>
+        <configuration key="workflow-id">uct-partial-work-channel</configuration>
+      </configurations>
+    </operation>
+
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <!-- Cut the video according the SMIL file                             -->
+    <!--                                                                   -->
+    <!-- Perform cutting according to the edit decision list.              -->
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <operation
+      id="editor"
+      exception-handler-workflow="partial-error"
+      description="Cut the recording according to the edit decision list">
+      <configurations>
+        <configuration key="source-flavors">*/work</configuration>
+        <configuration key="smil-flavors">smil/cutting</configuration>
+        <configuration key="target-smil-flavor">smil/cutting</configuration>
+        <configuration key="target-flavor-subtype">trimmed</configuration>
+        <configuration key="interactive">false</configuration>
+      </configurations>
+    </operation>
+
+    <!--
+      Normalize Audio (*/trimmed > */normalized-trimmed)
+    -->
+    <operation
+      id="normalize-audio"
+      if="${doNormalizeAudio}"
+      fail-on-error="true"
+      exception-handler-workflow="partial-error"
+      description="Normalize audio stream">
+      <configurations>
+        <configuration key="source-flavor">*/trimmed</configuration>
+        <configuration key="target-flavor">*/normalized-trimmed</configuration>
+        <configuration key="target-decibel">-25</configuration>
+        <configuration key="force-transcode">true</configuration>
+      </configurations>
+    </operation>
+
+    <!-- Move if not normalizing -->
+    <operation
+      id="clone"
+      if="NOT(${doNormalizeAudio})"
+      fail-on-error="true"
+      exception-handler-workflow="partial-error"
+      description="Move trimmed to normalized-trimmed (if not normalizing audio)">
+      <configurations>
+        <configuration key="source-flavor">*/trimmed</configuration>
+        <configuration key="target-flavor">*/normalized-trimmed</configuration>
+      </configurations>
+    </operation>
+
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      Create a picture-in-picture variant of
+
+       In: */${result_publish_process} default: trimmed
+      Out: pic-in-pic/delivery
+    -->
+    <operation
+      id="include"
+      if="${doPictureInPicture}"
+      description="Include compose picture-in-picture">
+      <configurations>
+        <configuration key="workflow-id">uct-include-picture-in-picture</configuration>
+      </configurations>
+    </operation>
+
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <!-- Publish to publication channels                                   -->
+    <!--                                                                   -->
+    <!-- Send the encoded material along with the metadata to the          -->
+    <!-- publication channels.                                             -->
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <operation
+      id="publish-engage"
+      max-attempts="2"
+      exception-handler-workflow="partial-error"
+      description="Publishing to Opencast Media Module">
+      <configurations>
+        <configuration key="download-source-flavors">dublincore/*,security/*</configuration>
+        <configuration key="download-source-tags">engage-download,atom,rss,mobile</configuration>
+        <configuration key="streaming-source-tags">engage-streaming</configuration>
+        <configuration key="check-availability">true</configuration>
+        <configuration key="strategy">merge</configuration>
+      </configurations>
+    </operation>
+
+    <!-- Clean up work artifacts -->
+    <operation
+        id="cleanup"
+        fail-on-error="false"
+        description="Cleaning up - remove temp processing artifacts">
+        <configurations>
+            <configuration key="delete-external">false</configuration>
+            <!-- FixMe Don't clean up ACLs until workflow service no longer looks for them in the WFR. -->
+            <configuration key="preserve-flavors">dublincore/*,security/*</configuration>
+            <configuration key="delay">5</configuration>
+        </configurations>
+    </operation>
+
+  </operations>
+</definition>
+

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definition xmlns="http://workflow.opencastproject.org">
+
+  <id>uct-include-picture-in-picture-top-left</id>
+  <title>UCT - Include compose picture-in-picture - Top Left</title>
+  <tags/>
+  <description>
+    REQUIRES:
+      Flavors:
+        */${result_publish_start}
+
+    Picture-in-Picture Top Left
+  </description>
+
+  <configuration_panel></configuration_panel>
+
+  <operations>
+   <!--
+      Picture-in-Picture
+    -->
+    <operation
+      id="composite"
+      fail-on-error="false"
+      exception-handler-workflow="partial-error"
+      if="${presenter_work_video} AND ${presentation_work_video}"
+      description="Picture in picture using presentation">
+      <configurations>
+        <configuration key="source-flavor-lower">presentation/${result_publish_process}</configuration>
+        <configuration key="source-flavor-upper">presenter/${result_publish_process}</configuration>
+        <configuration key="encoding-profile">mp4-download.dual.http</configuration>
+        <configuration key="target-flavor">pic-in-pic1/delivery</configuration>
+        <configuration key="target-tags">rss,atom</configuration>
+	      <configuration key="output-resolution">1920x1080</configuration>
+        <configuration key="output-background">0x000000FF</configuration>
+        <configuration key="layout">preview</configuration>
+        <configuration key="layout-single">
+          {"horizontalCoverage":1.0,"anchorOffset":{"referring":{"left":0.0,"top":0.0},"reference":{"left":0.0,"top":0.0},"offset":{"x":0,"y":0}}};
+        </configuration>
+        <configuration key="layout-preview">
+          {"horizontalCoverage":1.0,"anchorOffset":{"referring":{"left":0.0,"top":0.0},"reference":{"left":0.0,"top":0.0},"offset":{"x":0,"y":0}}};
+          {"horizontalCoverage":0.333333333,"anchorOffset":{"referring":{"left":0.0,"top":0.0},"reference":{"left":0.0,"top":0.0},"offset":{"x":0,"y":0}}};
+        </configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="composite"
+      fail-on-error="false"
+      exception-handler-workflow="partial-error"
+      if="${presenter_work_video} AND ${presentation2_work_video} AND NOT(${presentation_work_video})"
+      description="Picture in picture using presentation2">
+      <configurations>
+        <configuration key="source-flavor-lower">presentation2/${result_publish_process}</configuration>
+        <configuration key="source-flavor-upper">presenter/${result_publish_process}</configuration>
+        <configuration key="encoding-profile">mp4-download.dual.http</configuration>
+        <configuration key="target-flavor">pic-in-pic2/delivery</configuration>
+	      <configuration key="target-tags">rss,atom</configuration>
+	      <configuration key="output-resolution">1920x1080</configuration>
+        <configuration key="output-background">0x000000FF</configuration>
+        <configuration key="layout">preview</configuration>
+        <configuration key="layout-single">
+          {"horizontalCoverage":1.0,"anchorOffset":{"referring":{"left":0.0,"top":0.0},"reference":{"left":0.0,"top":0.0},"offset":{"x":0,"y":0}}};
+        </configuration>
+        <configuration key="layout-preview">
+          {"horizontalCoverage":1.0,"anchorOffset":{"referring":{"left":0.0,"top":0.0},"reference":{"left":0.0,"top":0.0},"offset":{"x":0,"y":0}}};
+          {"horizontalCoverage":0.333333333,"anchorOffset":{"referring":{"left":0.0,"top":0.0},"reference":{"left":0.0,"top":0.0},"offset":{"x":0,"y":0}}};
+        </configuration>
+      </configurations>
+    </operation>
+
+  </operations>
+</definition>
+

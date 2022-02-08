@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definition xmlns="http://workflow.opencastproject.org">
+
+  <id>uct-include-captioning</id>
+  <title>UCT - Include captioning</title>
+  <tags/>
+  <description>
+    REQUIRES:
+      Flavors:
+        Source: ${transcription_src_flavor} - normalized-trimmed
+  </description>
+
+  <configuration_panel></configuration_panel>
+
+  <operations>
+      <!-- Apply the default workflow configuration -->
+        <operation
+        id="defaults"
+        if="${isUpload}"
+        description="Applying default configuration values for captions">
+        <configurations>
+          <configuration key="use_watson">false</configuration>
+          <configuration key="use_nibity">false</configuration>
+          <configuration key="use_google">true</configuration>
+          <configuration key="audio_trim_lapel">false</configuration>
+          <configuration key="transcription_src_flavor">delivery</configuration>
+        </configurations>
+      </operation>
+
+      <operation
+        id="defaults"
+        if="NOT(${isUpload})"
+        description="Applying default configuration values for captions">
+        <configurations>
+          <configuration key="use_watson">false</configuration>
+          <configuration key="use_nibity">false</configuration>
+          <configuration key="use_google">false</configuration>
+          <configuration key="audio_trim_lapel">false</configuration>
+          <configuration key="transcription_src_flavor">normalized-trimmed</configuration>
+        </configurations>
+      </operation>
+
+      <!--  and ${audio_trim_lapel} -->
+      <operation
+        id="include"
+        if="${use_watson}"
+        description="Do captioning with IBM Watson">
+        <configurations>
+          <configuration key="workflow-id">uct-include-transcription-watson</configuration>
+        </configurations>
+      </operation>
+
+      <!--  and ${audio_trim_lapel} -->
+      <operation
+        id="include"
+        if="${use_nibity}"
+        description="Do captioning with Way with Words (nibity)">
+        <configurations>
+          <configuration key="workflow-id">uct-include-transcription-nibity</configuration>
+        </configurations>
+      </operation>
+
+      <!--  and ${audio_trim_lapel} -->
+      <operation
+        id="include"
+        if="${use_google}"
+        description="Do captioning with Google Speech-to-Text">
+        <configurations>
+          <configuration key="workflow-id">uct-include-transcription-google</configuration>
+        </configurations>
+      </operation>
+
+  </operations>
+</definition>

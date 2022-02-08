@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<definition xmlns="http://workflow.opencastproject.org">
+
+  <id>uct-request-transcript</id>
+  <title>UCT - Request Transcript</title>
+  <tags>
+    <tag>archive</tag>
+  </tags>
+  <description>Transcript requested.</description>
+  <configuration_panel />
+
+  <operations>
+
+    <!--
+      Add comment for submission of transcript
+    -->
+    <operation
+      id="comment"
+      description="Add to trancription queue">
+      <configurations>
+        <configuration key="action">create</configuration>
+        <configuration key="reason">EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.TRANSCRIPT</configuration>
+        <configuration key="description">Recording has a transcript request.</configuration>        
+      </configurations>
+    </operation>
+
+    <!-- Send notification to series owner that a transcript request has been sent to nibity -->
+
+    <operation
+            id="execute-once"
+            max-attempts="3"
+            retry-strategy="hold"
+            fail-on-error="true"
+            exception-handler-workflow="partial-error"
+            description="Load workflow properties from settings in series">
+      <configurations>
+        <configuration key="exec">/opt/opencast/wfexec/get_organizer_details.pl</configuration>
+        <configuration key="load">0.1</configuration>
+        <configuration key="params">#{id} #{out}</configuration>
+        <configuration key="output-filename">series_organizer.txt</configuration>
+        <configuration key="set-workflow-properties">true</configuration>
+        <configuration key="expected-type">Attachment</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+            id="send-email"
+            fail-on-error="true"
+            if="${organizer_email_valid} AND ${get_organizer_success} AND ${valid_notification_list}"
+            exception-handler-workflow="partial-error"
+            description="Sending a transcript request email to organizer and notification list">
+      <configurations>
+        <configuration key="to">${organizer_email}</configuration>
+        <configuration key="cc">${notification_list}</configuration>
+        <configuration key="subject">A Transcript request for ${catalogs['episode']['title']} has been submitted</configuration>
+        <configuration key="body-template-file">nibity_request_sent</configuration>
+        <configuration key="use-html">true</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+            id="send-email"
+            fail-on-error="true"
+            if="${organizer_email_valid} AND ${get_organizer_success} AND NOT(${valid_notification_list})"
+            exception-handler-workflow="partial-error"
+            description="Sending a transcript request email to organizer and notification list">
+      <configurations>
+        <configuration key="to">${organizer_email}</configuration>
+        <configuration key="subject">A Transcript request for ${catalogs['episode']['title']} has been submitted</configuration>
+        <configuration key="body-template-file">nibity_request_sent</configuration>
+        <configuration key="use-html">true</configuration>
+      </configurations>
+    </operation>
+
+  </operations>
+</definition>

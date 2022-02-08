@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<definition xmlns="http://workflow.opencastproject.org">
+
+  <!-- OPENCAST-2548: Temporary workflow -->
+  <id>uct-clean-track4k</id>
+  <title>Clean up Track4k Files</title>
+  <tags>
+    <tag>archive</tag>
+  </tags>
+  <description/>
+  <configuration_panel />
+
+  <operations>
+    <operation
+        id="asset-delete"
+        fail-on-error="true"
+        exception-handler-workflow="error"
+        description="Delete from AssetManager">
+        <configurations>
+            <configuration key="keep-last-snapshot">true</configuration>
+        </configurations>
+    </operation>
+
+    <!-- Comment that we cleaned up this recording -->
+    <operation
+      id="comment"
+      fail-on-error="false"
+      description="Comment that we cleaned up Track4k files (create)">
+      <configurations>
+        <configuration key="description">Clean up Track4k Files.</configuration>
+        <configuration key="reason">EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.OTHER</configuration>
+        <configuration key="action">create</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="comment"
+      fail-on-error="false"
+      description="Comment that we cleaned up Track4k files (resolve)">
+      <configurations>
+        <configuration key="reason">EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.OTHER</configuration>
+        <configuration key="action">resolve</configuration>
+      </configurations>
+    </operation>
+
+    <!-- Clean up work artifacts -->
+    <operation
+        id="cleanup"
+        fail-on-error="false"
+        description="Cleaning up - remove temp processing artifacts">
+        <configurations>
+            <configuration key="delete-external">false</configuration>
+            <!-- FixMe Don't clean up ACLs until workflow service no longer looks for them in the WFR. -->
+            <configuration key="preserve-flavors">dublincore/*,security/*</configuration>
+            <configuration key="delay">5</configuration>
+        </configurations>
+    </operation>
+
+  </operations>
+</definition>

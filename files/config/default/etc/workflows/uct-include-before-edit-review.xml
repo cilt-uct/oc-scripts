@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definition xmlns="http://workflow.opencastproject.org">
+
+  <id>uct-include-before-edit-review</id>
+  <title>UCT - Process for Editing (Review)</title>
+  <tags/>
+  <description>
+    REQUIRES:
+      Flavors:
+        */work
+      Workflow Properties:
+        event_trim (true/false) [execute-once: event-timetable.pl]
+        timetable_comment
+        presenter_work_video (true/false) [analyze-tracks: */work]
+        presentation_work_video
+        presentation2_work_video
+
+    Using the work flavors this workflow creates */preview versions for review.
+  </description>
+
+  <configuration_panel></configuration_panel>
+
+  <operations>
+
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      Do the work to prepare for editing. (*/preview)
+    -->
+    <operation
+      id="include"
+      description="Prepare preview versions for Editing">
+      <configurations>
+        <configuration key="workflow-id">uct-partial-preview</configuration>
+      </configurations>
+    </operation>
+
+    <!-- Add comments in order to mark the recording for editing if not empty venue -->
+    <operation
+      id="comment"
+      if="${event_trim} AND NOT(${empty_venue})"
+      description="Mark for editing">
+      <configurations>
+        <configuration key="description">${timetable_comment}</configuration>
+        <configuration key="reason">EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.CUTTING</configuration>
+        <configuration key="action">create</configuration>
+      </configurations>
+    </operation>
+
+  </operations>
+</definition>
