@@ -19,8 +19,8 @@ my ($server, $oc_user, $oc_pass) = getOcAuth($oc_config);
 print "server: $server user: $oc_user pass: $oc_pass\n" if $debug;
 
 my ($vula_server, $vula_user, $vula_pass) = getVulaAuth($vula_config);
-$vula_server = "https://devslscle001.uct.ac.za" if $debug;
-$vula_server = "https://srvubucle201.uct.ac.za:8443"; ## REMOVE THIS LINE WHEN ALL SAKAI SERVERS ARE UPDATED ##
+# $vula_server = "https://vuladev.uct.ac.za" if $debug;
+# $vula_server = "https://srvubucle104.uct.ac.za:8443"; ## REMOVE THIS LINE WHEN ALL SAKAI SERVERS ARE UPDATED ##
 
 print "vula_server: $vula_server user: $vula_user pass: $vula_pass\n" if $debug;
 
@@ -79,7 +79,7 @@ try {
             } tries => 5, delay => 20;
 
             if ($session ne '') {
-                my $tool_response = $ua->post("$server_direct/sakai-ws/rest/uct/addExternalToolToUserHomeById", [
+                my $tool_response = $ua->post("$vula_server/sakai-ws/rest/uct/addExternalToolToUserHomeById", [
                         sessionid => $session,
                         tooltitle => "My Videos",
                         ltilaunchurl => "https://media.uct.ac.za/lti",
@@ -88,6 +88,7 @@ try {
                         userEid => $userEid
                     ]);
 
+                print "Tool response: " . $tool_response->code . "\n" if $debug;
                 if ($tool_response->code == 200) {
                     my ($action, $site_id) = split(':', $tool_response->decoded_content);
 
@@ -110,9 +111,11 @@ try {
                     } else {
                         $file_result = "set_tool_error: ". $action .' '. $series_id .' '. $site_id;
                     }
-                } # tool response
+                } else { # tool response
+                    $file_result = "error [". $mpid ."] tool response: ". $tool_response->code;
+                }
 
-                my $logout_response = $ua->post("$server_direct/sakai-ws/rest/login/logout", [ sessionid => $session ]);
+                my $logout_response = $ua->post("$vula_server/sakai-ws/rest/login/logout", [ sessionid => $session ]);
 
             } # not logged in
         } # if proper user EID
