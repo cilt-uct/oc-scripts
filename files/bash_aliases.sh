@@ -8,7 +8,7 @@ opclog=/opt/opencast/data/log/opencast.log
 alias tailopc='tail -f $opclog'
 
 useopc() {
-  "$@" $opclog
+    "$@" $opclog
 }
 
 dirUsed() {
@@ -32,9 +32,9 @@ dirSizeAndTime() {
 }
 
 getFileTypes() {
-  dir=$1
-  types=$(find $dir -type f | perl -ne 'print $1 if m/\.([^.\/]+)$/' | sort -u | tr '\n' ' ' | sed -e 's/[[:space:]]*$//')
-  printf "($types)"
+    dir=$1
+    types=$(find $dir -type f | perl -ne 'print $1 if m/\.([^.\/]+)$/' | sort -u | tr '\n' ' ' | sed -e 's/[[:space:]]*$//')
+    printf "($types)"
 }
 
 checkForArchiveVariance () {
@@ -81,184 +81,269 @@ checkForArchiveVariance () {
 
 showmedia () {
 
-  if [ "$1" != "" ]; then
-    media=$1
-    printf "Mediapackage_id: $media\n"
-  else
-    printf "Mediapackage_id: "
-    read media
-  fi
+    if [ "$1" != "" ]; then
+        media=$1
+        printf "Mediapackage_id: $media\n"
+    else
+        printf "Mediapackage_id: "
+        read media
+    fi
 
-  # Workspace
-  dir_shared_workspace="/data/opencast/archive/shared/workspace/mediapackage/$media"
-  dir_shared_files="/data/opencast/archive/shared/files/mediapackage/$media"
+    # Workspace
+    dir_shared_workspace="/data/opencast/archive/shared/workspace/mediapackage/$media"
+    dir_shared_files="/data/opencast/archive/shared/files/mediapackage/$media"
 
-  # Archive
-  dir_archive="/data/opencast/archive/mh_default_org/$media"
-  # Engage
-  dir_engage="/data/opencast/distribution/downloads/mh_default_org/engage-player/$media"
-  # Internal
-  dir_internal="/data/opencast/distribution/downloads/mh_default_org/internal/$media"
-  # Stream
-  dir_stream="/data/opencast/distribution/streams/mh_default_org/engage-player/$media"
+    # Archive
+    dir_archive="/data/opencast/archive/mh_default_org/$media"
+    # Engage
+    dir_engage="/data/opencast/distribution/downloads/mh_default_org/engage-player/$media"
+    # Internal
+    dir_internal="/data/opencast/distribution/downloads/mh_default_org/internal/$media"
+    # Stream
+    dir_stream="/data/opencast/distribution/streams/mh_default_org/engage-player/$media"
 
-  shared_workspace=$(dirUsed "$dir_shared_workspace")
-  shared_files=$(dirUsed "$dir_shared_files")
-  archive=$(dirUsed "$dir_archive")
-  engage=$(dirUsed "$dir_engage")
-  internal=$(dirUsed "$dir_internal")
-  stream=$(dirUsed "$dir_stream")
+    shared_workspace=$(dirUsed "$dir_shared_workspace")
+    shared_files=$(dirUsed "$dir_shared_files")
+    archive=$(dirUsed "$dir_archive")
+    engage=$(dirUsed "$dir_engage")
+    internal=$(dirUsed "$dir_internal")
+    stream=$(dirUsed "$dir_stream")
 
-  if [ "$shared_workspace" -eq "1" ]; then
-    tree $dir_shared_workspace
-  fi
+    if [ "$shared_workspace" -eq "1" ]; then
+        tree $dir_shared_workspace
+    fi
 
-  if [ "$shared_files" -eq "1" ]; then
-    tree $dir_shared_files
-  fi
+    if [ "$shared_files" -eq "1" ]; then
+        tree $dir_shared_files
+    fi
 
-  if [ "$archive" -eq "1" ]; then
-    tree $dir_archive
-  fi
+    if [ "$archive" -eq "1" ]; then
+        tree $dir_archive
+    fi
 
-  if [ "$engage" -eq "1" ]; then
-    tree $dir_engage
-  fi
+    if [ "$engage" -eq "1" ]; then
+        tree $dir_engage
+    fi
 
-  if [ "$internal" -eq "1" ]; then
-    tree $dir_internal
-  fi
+    if [ "$internal" -eq "1" ]; then
+        tree $dir_internal
+    fi
 
-  if [ "$stream" -eq "1" ]; then
-    tree $dir_stream
-  fi
+    if [ "$stream" -eq "1" ]; then
+        tree $dir_stream
+    fi
 
-  # summary
-  if [ "$archive" -eq "1" ]; then
-    printf '%11s' "Archive:"
-    dirSizeAndTime $dir_archive
-    printf " "
-    getFileTypes $dir_archive
-    printf "   Var: "
-    checkForArchiveVariance $dir_archive
-  fi
+    # summary
+    if [ "$archive" -eq "1" ]; then
+        printf '%11s' "Archive:"
+        dirSizeAndTime $dir_archive
+        printf " "
+        getFileTypes $dir_archive
+        printf "   Var: "
+        checkForArchiveVariance $dir_archive
+    fi
 
-  if [ "$engage" -eq "1" ]; then
-    printf '%11s' "Engage:"
-    dirSizeAndTime $dir_engage
-    printf " "
-    getFileTypes $dir_engage
-    printf "\n"
-  fi
+    if [ "$engage" -eq "1" ]; then
+        printf '%11s' "Engage:"
+        dirSizeAndTime $dir_engage
+        printf " "
+        getFileTypes $dir_engage
+        printf "\n"
+    fi
 
-  if [ "$internal" -eq "1" ]; then
-    printf '%11s' "Internal:"
-    dirSizeAndTime $dir_internal
-    printf " "
-    getFileTypes $dir_internal
-    printf "\n"
-  fi
+    if [ "$internal" -eq "1" ]; then
+        printf '%11s' "Internal:"
+        dirSizeAndTime $dir_internal
+        printf " "
+        getFileTypes $dir_internal
+        printf "\n"
+    fi
 
-  if [ "$stream" -eq "1" ]; then
-    printf '%11s' "Stream: "
-    dirSizeAndTime $dir_stream
-    printf " "
-    getFileTypes $dir_stream
-    printf "\n"
-  fi
+    if [ "$stream" -eq "1" ]; then
+        printf '%11s' "Stream: "
+        dirSizeAndTime $dir_stream
+        printf " "
+        getFileTypes $dir_stream
+        printf "\n"
+    fi
 }
 
 rmworkmedia() {
-  if [ "$1" != "" ]; then
-    media=$1
-    printf "Mediapackage_id: $media\n"
-  else
-    printf "Mediapackage_id: "
-    read media
-  fi
+    if [ "$1" != "" ]; then
+        media=$1
+        printf "Mediapackage_id: $media\n"
+    else
+        printf "Mediapackage_id: "
+        read media
+    fi
 
-  # Workspace
-  dir_shared_workspace="/data/opencast/archive/shared/workspace/mediapackage/$media"
-  dir_shared_files="/data/opencast/archive/shared/files/mediapackage/$media"
+    # Workspace
+    dir_shared_workspace="/data/opencast/archive/shared/workspace/mediapackage/$media"
+    dir_shared_files="/data/opencast/archive/shared/files/mediapackage/$media"
 
-  rm -rf $dir_shared_workspace
-  rm -rf $dir_shared_files
+    rm -rf $dir_shared_workspace
+    rm -rf $dir_shared_files
 
-  shared_workspace=$(dirUsed "$dir_shared_workspace")
-  shared_files=$(dirUsed "$dir_shared_files")
+    shared_workspace=$(dirUsed "$dir_shared_workspace")
+    shared_files=$(dirUsed "$dir_shared_files")
 
-  printf "  Out: $shared_workspace $shared_files\n"
+    printf "  Out: $shared_workspace $shared_files\n"
 }
 
 movemedia () {
-  from=$(pwd)
-  setnew=false
-  setnew=false
-  new_default=$(date +"%y%m%d-%H%M-%s")
+    from=$(pwd)
+    setnew=false
+    setnew=false
+    new_default=$(date +"%y%m%d-%H%M-%s")
 
-  ARGS=$(getopt -o ":n" -l ":new" -n "movemedia" -- "$@")
-  eval set -- "$ARGS"
-  while true; do
-    case "$1" in
-        -n|--new)
-            setnew=true
-            shift
-            ;;
-        --)
-            shift
-            break
-            ;;
-        # an option argument, continue
-        *) ;;
-    esac
-  done
+    ARGS=$(getopt -o ":n" -l ":new" -n "movemedia" -- "$@")
+    eval set -- "$ARGS"
+    while true; do
+        case "$1" in
+            -n|--new)
+                setnew=true
+                shift
+                ;;
+            --)
+                shift
+                break
+                ;;
+            # an option argument, continue
+            *) ;;
+        esac
+    done
 
-  printf "Mediapackage_id: "
-  read media
+    printf "This will move the chosen mediapackage from Media to Mediadev"
+    printf "Mediapackage_id: "
+    read media
 
-  if $setnew; then
-    printf "New id (default: $new_default): "
-    read ni
-    newid="$(echo -e "${ni}" | tr -d '[:space:]')"
-  fi
-
-  src1="/data/opencast/archive/mh_default_org/$media"
-  version=$(find $src1 -name "*.mp4" -o -name "*.avi" -o -name "*.mkv" -o -name "*.flac" | head -n 1 | cut -d '/' -f 7)
-
-  if [ -z "$version" ]; then
-    echo "Source folder does not exist !"
-  else
-    src="/data/opencast/archive/mh_default_org/$media/$version"
-    echo "Move $media [$src]"
-
-    if [ -d "$src" ]; then
-
-        dest="/data/opencast/archive/shared/qa/$(date +"%s")"
-        mkdir -p $dest
-
-        cp $src/* $dest
-
-        if $setnew; then
-
-            if [[ !  -z  $newid  ]]; then
-              /data/opencast/fix_manifest.pl $dest $newid
-            else
-              /data/opencast/fix_manifest.pl $dest $new_default
-            fi
-        else
-            /data/opencast/fix_manifest.pl $dest
-        fi
-
-        cd $dest
-        zip - * | ssh opencast@mediadev.uct.ac.za 'cat > /data/opencast/qa/live/$(echo $media).zip; cp /data/opencast/qa/live/$(echo $media).zip /opt/opencast/data/inbox/in.zip'
-
-        rm -rf $dest
-        echo "Done."
-    else
-      echo "Source folder does not exist !"
+    if $setnew; then
+        printf "New id (default: $new_default): "
+        read ni
+        newid="$(echo -e "${ni}" | tr -d '[:space:]')"
     fi
-  fi
-  cd $from
+
+    src1="/data/opencast/archive/mh_default_org/$media"
+    version=$(find $src1 -name "*.mp4" -o -name "*.avi" -o -name "*.mkv" -o -name "*.flac" | head -n 1 | cut -d '/' -f 7)
+
+    if [ -z "$version" ]; then
+        echo "Source folder does not exist !"
+    else
+        src="/data/opencast/archive/mh_default_org/$media/$version"
+        echo "Move $media [$src]"
+
+        if [ -d "$src" ]; then
+
+            dest="/data/opencast/archive/shared/qa/$(date +"%s")"
+            mkdir -p $dest
+
+            cp $src/* $dest
+
+            if $setnew; then
+
+                if [[ !  -z  $newid  ]]; then
+                /data/opencast/fix_manifest.pl $dest $newid
+                else
+                /data/opencast/fix_manifest.pl $dest $new_default
+                fi
+            else
+                /data/opencast/fix_manifest.pl $dest
+            fi
+
+            cd $dest
+            zip - * | ssh opencast@mediadev.uct.ac.za 'cat > /data/opencast/qa/live/$(echo $media).zip; cp /data/opencast/qa/live/$(echo $media).zip /opt/opencast/data/inbox/in.zip'
+
+            rm -rf $dest
+            echo "Done."
+        else
+            echo "Source folder does not exist !"
+        fi
+    fi
+    cd $from
+}
+
+do_fetchmedia() {
+    media=$1
+    version=$2
+    new_id=$3
+
+    src="/data/opencast/archive/mh_default_org/$media/$version"
+    echo "Fetching $media [$src]"
+
+    dest="/data/opencast/tmp/$(date +"%s")"
+    mkdir -p $dest
+
+    cd $dest
+    scp opencast@mediadev.uct.ac.za:$src/* .
+
+    if [[ !  -z  $new_id  ]]; then
+        /data/opencast/fix_manifest.pl $dest $newid
+    else
+        /data/opencast/fix_manifest.pl $dest
+    fi
+
+    zip /data/opencast/tmp/$media.zip *
+    cd /data/opencast/tmp/
+    rm -rf $dest
+
+    mv /data/opencast/tmp/$media.zip /data/opencast/inbox/
+
+    echo "Done."
+}
+
+fetchmedia () {
+    from=$(pwd)
+    setnew=false
+    setnew=false
+    new_default=$(date +"%y%m%d-%H%M-%s")
+
+    ARGS=$(getopt -o ":n" -l ":new" -n "fetchmedia" -- "$@")
+    eval set -- "$ARGS"
+    while true; do
+        case "$1" in
+            -n|--new)
+                setnew=true
+                shift
+                ;;
+            --)
+                shift
+                break
+                ;;
+            # an option argument, continue
+            *) ;;
+        esac
+    done
+
+    echo "This will FETCH the chosen mediapackage from Mediadev and ingest on Media"
+    printf "Mediapackage_id: "
+    read media
+
+    array=$(ssh opencast@mediadev.uct.ac.za "ls /data/opencast/archive/mh_default_org/$media")
+    if [ "$?" -ne 0 ]; then
+        echo
+        echo "Mediapackage does not have archived versions to move accross."
+        exit 0
+    fi
+
+    printf "Version [$array]: "
+    read version
+
+    if $setnew; then
+        printf "New id (default: $new_default): "
+        read ni
+        newid="$(echo -e "${ni}" | tr -d '[:space:]')"
+    else 
+        newid=""
+    fi
+
+    read -p "Fetch $media / $version [Y/n]: " yn
+    yn=${yn:-'Y'}
+
+    case $yn in
+        [Yy]* ) do_fetchmedia $media $version $newid
+    esac
+
+    cd $from
 }
 
 opcprobe () {
@@ -324,6 +409,12 @@ opchelp () {
     echo "         -n, --new"
     echo "         Define a new id for the media package."
     echo
+    echo "  fetchmedia"
+    echo "      fetch mediapackage from mediadev and ingest on media (should only be used on media)."
+    echo "      Options: "
+    echo "         -n, --new"
+    echo "         Define a new id for the media package."
+    echo    
     echo "  rmworkmedia"
     echo "      Remove the work folders for a media."
     echo
