@@ -97,6 +97,11 @@ deploy_server_lti_name=tmpl_server_lti_name
 deploy_server_lti_key=tmpl_server_lti_key
 deploy_server_lti_secret=tmpl_server_lti_secret
 
+#LTI Brightspace
+deploy_server_brightspace_lti_name=tmpl_server_brightspace_lti_name
+deploy_server_brightspace_lti_key=tmpl_server_brightspace_lti_key
+deploy_server_brightspace_lti_secret=tmpl_server_brightspace_lti_secret
+
 # Google
 deploy_google_on=tmpl_google_on
 deploy_google_id=tmpl_google_id
