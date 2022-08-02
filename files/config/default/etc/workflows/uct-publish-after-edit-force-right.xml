@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <definition xmlns="http://workflow.opencastproject.org">
 
-  <id>uct-publish-after-edit</id>
-  <title>UCT - Publish</title>
+  <id>uct-publish-after-edit-force-right</id>
+  <title>UCT - Publish (force right)</title>
   <tags>
     <tag>archive</tag>
   </tags>
@@ -19,19 +19,7 @@
               <label for="doNormalizeAudio">Normalize Audio</label>
             </li>
             <li>
-              <label>Audio channel to use:
-            </li>
-            <li>
-              <input id="workProfileChannel_left" name="workProfileChannel" type="radio" checked="checked" class="configField" value="true" />
-              <label for="workProfileChannel_left">Left</label>
-            </li>
-            <li>
-              <input id="workProfileChannel_right" name="workProfileChannel" type="radio" class="configField" value="true"/>
-              <label for="workProfileChannel_right">Right</label>
-            </li>
-            <li>
-              <input id="workProfileChannel_stereo" name="workProfileChannel" type="radio" class="configField" value="true"/>
-              <label for="workProfileChannel_stereo">Stereo</label>
+              <label>Audio channel to use <strong>Alternate Audio / Right</strong></label>
             </li>
             <li>
               <input id="doCaptioning" name="doCaptioning" type="checkbox" checked="checked" class="configField" value="true" />
@@ -74,51 +62,15 @@
         <configuration key="doNormalizeAudio">true</configuration>
         <configuration key="doPictureInPicture">true</configuration>
 
-        <configuration key="workProfileChannel_left">true</configuration>
-        <configuration key="workProfileChannel_right">false</configuration>
+        <configuration key="workProfileChannel_left">false</configuration>
+        <configuration key="workProfileChannel_right">true</configuration>
         <configuration key="workProfileChannel_stereo">false</configuration>
+
+        <configuration key="workProfileChannel">right</configuration>
 
         <configuration key="result_publish_process">normalized-trimmed</configuration>
       </configurations>
     </operation>
-
-    <operation
-      id="defaults"
-      if="${workProfileChannel_left}"
-      description="Use left audio channel">
-      <configurations>
-        <configuration key="workProfileChannel">left</configuration>
-      </configurations>
-    </operation>
-
-    <operation
-      id="defaults"
-      if="${workProfileChannel_right}"
-      description="Use right audio channel">
-      <configurations>
-        <configuration key="workProfileChannel">right</configuration>
-      </configurations>
-    </operation>
-
-    <operation
-      id="defaults"
-      if="${workProfileChannel_stereo}"
-      description="Use stereo">
-      <configurations>
-        <configuration key="workProfileChannel">stereo</configuration>
-      </configurations>
-    </operation>
-
-    <!-- load the values from before -->
-    <!--operation
-      id="import-wf-properties"
-      fail-on-error="true"
-      exception-handler-workflow="partial-error"
-      description="Load processing settings">
-      <configurations>
-        <configuration key="source-flavor">processing/defaults</configuration>
-      </configurations>
-    </operation-->
 
     <!-- Tag smil/cutting for later re-use in case of re-publishing of the event
          Note that WOH editor will re-use target-smil-flavor instead of adding a new one -->
