@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<definition xmlns="http://workflow.opencastproject.org">
+
+  <id>uct-test-video-horizontal-flip</id>
+  <title>UCT - Flip video horizontally</title>
+  <tags>
+    <tag>flip</tag>
+  </tags>
+  <description/>
+  <configuration_panel>
+     <![CDATA[
+      <div id="workflow-configuration">
+          <ul>
+            <li>
+              <label>Flip video horizontally on publish:</label>
+            </li>
+            <li>
+              <input id="flipVideo" name="flipVideo" type="checkbox" checked="checked" class="configField" value="false" />
+              <label for="flipVideo">Flip video horizontally on publish</label>
+            </li>
+          </ul>
+      </div>
+    ]]>
+  </configuration_panel>
+
+  <operations>
+    <!-- Apply the default workflow configuration -->
+    <operation
+      id="defaults"
+      description="Applying default configuration values">
+      <configurations>
+        <configuration key="flipVideoHorizontally">false</configuration>
+      </configurations>
+    </operation>
+
+    <!-- Encode to flip mp4 video horizontally -->
+    <operation
+      id="encode"
+      if="(${flipVideoHorizontally})"
+      fail-on-error="true"
+      exception-handler-workflow="partial-error"
+      description="Flip mp4 video horizontally">
+      <configurations>
+        <configuration key="source-flavor">*/source</configuration>
+        <configuration key="target-flavor">*/delivery</configuration>
+        <configuration key="target-tags">engage-download,engage-streaming,rss,atom</configuration>
+        <configuration key="encoding-profile">uct-mp4-flip.horizontal.http</configuration>
+        <configuration key="tag-with-profile">true</configuration>
+      </configurations>
+    </operation>
+  </options>
+
+</definition>

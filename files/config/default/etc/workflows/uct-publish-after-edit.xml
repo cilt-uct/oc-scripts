@@ -37,6 +37,13 @@
               <input id="doCaptioning" name="doCaptioning" type="checkbox" checked="checked" class="configField" value="true" />
               <label for="doCaptioning">Process Captioning if available</label>
             </li>
+            <li>
+              <label>Flip video on publish:</label>
+            </li>
+            <li>
+              <input id="flipVideo" name="flipVideo" type="checkbox" checked="checked" class="configField" value="false" />
+              <label for="flipVideo">Flip video horizontally on publish</label>
+            </li>
           </ul>
         </fieldset>
       </div>
@@ -79,6 +86,7 @@
         <configuration key="workProfileChannel_stereo">false</configuration>
 
         <configuration key="result_publish_process">normalized-trimmed</configuration>
+        <configuration key="flipVideoHorizontally">false</configuration>
       </configurations>
     </operation>
 
@@ -193,6 +201,21 @@
       description="Prepare work version for processing (${workProfileChannel})">
       <configurations>
         <configuration key="workflow-id">uct-partial-work-channel</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="encode"
+      description="Flip mp4 video horizontally"
+      if="(${flipVideoHorizontally})"
+      fail-on-error="true"
+      exception-handler-workflow="partial-error">
+      <configurations>
+        <configuration key="source-flavor">*/source</configuration>
+        <configuration key="target-flavor">*/delivery</configuration>
+        <configuration key="target-tags">engage-download,engage-streaming,rss,atom</configuration>
+        <configuration key="encoding-profile">uct-mp4-flip.horizontal.http</configuration>
+         <configuration key="tag-with-profile">true</configuration>
       </configurations>
     </operation>
 

@@ -25,6 +25,8 @@
 
         <configuration key="doPictureInPicture">true</configuration>
         <configuration key="result_publish_process">work</configuration>
+
+        <configuration key="flipVideoHorizontally">false</configuration>
       </configurations>
     </operation>
 
@@ -189,6 +191,21 @@
         <configuration key="target-flavor">*/delivery</configuration>
         <configuration key="target-tags">engage-download,engage-streaming,rss,atom</configuration>
         <configuration key="encoding-profile">mp4-480-720-parallel.http</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="encode"
+      if="(${flipVideoHorizontally})"
+      fail-on-error="true"
+      exception-handler-workflow="partial-error"
+      description="Encoding to flip mp4 video horizontally">
+      <configurations>
+        <configuration key="source-flavor">*/source</configuration>
+        <configuration key="target-flavor">*/delivery</configuration>
+        <configuration key="target-tags">engage-download,engage-streaming,rss,atom</configuration>
+        <configuration key="encoding-profile">uct-mp4-flip.horizontal.http</configuration>
+        <configuration key="tag-with-profile">true</configuration>
       </configurations>
     </operation>
 
