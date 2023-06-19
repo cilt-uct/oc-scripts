@@ -8,7 +8,25 @@
     <tag>upload</tag>
   </tags>
   <description/>
-  <configuration_panel/>
+   <configuration_panel>
+    <![CDATA[
+      <div id="workflow-configuration">
+
+        <fieldset>
+          <legend>Publication Options:</legend>
+          <ul>
+            <li>
+              <label>Flip video on publish:</label>
+            </li>
+            <li>
+              <input id="flipVideoHoriz" name="flipVideoHoriz" type="checkbox" class="configField" value="true" />
+              <label for="flipVideoHoriz">Flip video horizontally on publish</label>
+            </li>
+          </ul>
+        </fieldset>
+      </div>
+    ]]>
+  </configuration_panel>
 
   <operations>
     <operation
@@ -26,7 +44,16 @@
         <configuration key="doPictureInPicture">true</configuration>
         <configuration key="result_publish_process">work</configuration>
 
-        <configuration key="flipVideoHorizontally">false</configuration>
+        <configuration key="flipVideoHoriz">false</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="defaults"
+      if="${flipVideoHoriz}"
+      description="Flip video image horizontally">
+      <configurations>
+        <configuration key="flipVideoHoriz">hflip</configuration>
       </configurations>
     </operation>
 
@@ -191,21 +218,6 @@
         <configuration key="target-flavor">*/delivery</configuration>
         <configuration key="target-tags">engage-download,engage-streaming,rss,atom</configuration>
         <configuration key="encoding-profile">mp4-480-720-parallel.http</configuration>
-      </configurations>
-    </operation>
-
-    <operation
-      id="encode"
-      if="(${flipVideoHorizontally})"
-      fail-on-error="true"
-      exception-handler-workflow="partial-error"
-      description="Encoding to flip mp4 video horizontally">
-      <configurations>
-        <configuration key="source-flavor">*/source</configuration>
-        <configuration key="target-flavor">*/delivery</configuration>
-        <configuration key="target-tags">engage-download,engage-streaming,rss,atom</configuration>
-        <configuration key="encoding-profile">uct-mp4-flip.horizontal.http</configuration>
-        <configuration key="tag-with-profile">true</configuration>
       </configurations>
     </operation>
 
