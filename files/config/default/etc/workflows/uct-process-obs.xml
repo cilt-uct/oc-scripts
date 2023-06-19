@@ -53,7 +53,7 @@
       if="${flipVideoHoriz}"
       description="Flip video image horizontally">
       <configurations>
-        <configuration key="flipVideoHoriz">hflip</configuration>
+        <configuration key="workProfileFlip">hflip</configuration>
       </configurations>
     </operation>
 

@@ -46,7 +46,7 @@
       id="prepare-av"
       if="${flipVideoHoriz}"
       exception-handler-workflow="partial-error"
-      description="Preparing presenter (camera) audio and video work versions and ${workProfileFlip}">
+      description="Preparing presenter (camera) audio and video work versions and (${workProfileFlip})">
       <configurations>
         <configuration key="source-flavor">presenter/source</configuration>
         <configuration key="target-flavor">presenter/work</configuration>
