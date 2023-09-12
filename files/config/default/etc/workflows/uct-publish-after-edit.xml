@@ -37,6 +37,13 @@
               <input id="doCaptioning" name="doCaptioning" type="checkbox" checked="checked" class="configField" value="true" />
               <label for="doCaptioning">Process Captioning if available</label>
             </li>
+            <li>
+              <label>Flip video on publish:</label>
+            </li>
+            <li>
+              <input id="flipVideoHoriz" name="flipVideoHoriz" type="checkbox" class="configField" value="true" />
+              <label for="flipVideoHoriz">Flip video horizontally on publish</label>
+            </li>
           </ul>
         </fieldset>
       </div>
@@ -79,12 +86,13 @@
         <configuration key="workProfileChannel_stereo">false</configuration>
 
         <configuration key="result_publish_process">normalized-trimmed</configuration>
+        <configuration key="flipVideoHoriz">false</configuration>
       </configurations>
     </operation>
 
     <operation
       id="defaults"
-      if="${workProfileChannel_left}"
+      if="${workProfileChannel_left} AND NOT ${flipVideoHoriz}"
       description="Use left audio channel">
       <configurations>
         <configuration key="workProfileChannel">left</configuration>
@@ -93,7 +101,16 @@
 
     <operation
       id="defaults"
-      if="${workProfileChannel_right}"
+      if="${workProfileChannel_left} AND ${flipVideoHoriz}"
+      description="Use left audio channel and flip">
+      <configurations>
+        <configuration key="workProfileChannel">left-hflip</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="defaults"
+      if="${workProfileChannel_right} AND NOT ${flipVideoHoriz}"
       description="Use right audio channel">
       <configurations>
         <configuration key="workProfileChannel">right</configuration>
@@ -102,10 +119,28 @@
 
     <operation
       id="defaults"
-      if="${workProfileChannel_stereo}"
+      if="${workProfileChannel_right} AND ${flipVideoHoriz}"
+      description="Use right audio channel and flip">
+      <configurations>
+        <configuration key="workProfileChannel">right-hflip</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="defaults"
+      if="${workProfileChannel_stereo} AND NOT ${flipVideoHoriz}"
       description="Use stereo">
       <configurations>
         <configuration key="workProfileChannel">stereo</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="defaults"
+      if="${workProfileChannel_stereo} AND ${flipVideoHoriz}"
+      description="Use stereo and flip">
+      <configurations>
+        <configuration key="workProfileChannel">stereo-hflip</configuration>
       </configurations>
     </operation>
 

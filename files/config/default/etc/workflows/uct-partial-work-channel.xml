@@ -34,7 +34,7 @@
     <operation
       id="prepare-av"
       exception-handler-workflow="partial-error"
-      description="Preparing presenter (camera) audio and video work versions (${workProfileChannel})">">
+      description="Preparing presenter (camera) audio and video work versions (${workProfileChannel})">
       <configurations>
         <configuration key="source-flavor">presenter/source</configuration>
         <configuration key="target-flavor">presenter/work</configuration>
