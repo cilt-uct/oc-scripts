@@ -138,6 +138,14 @@
       </configurations>
     </operation>
 
+    <operation
+      id="snapshot"
+      description="Archive after ingest">
+      <configurations>
+        <configuration key="source-tags">archive</configuration>
+      </configurations>
+    </operation>
+
   </operations>
 
 </definition>
