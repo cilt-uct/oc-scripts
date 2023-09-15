@@ -22,7 +22,7 @@ dirUsed() {
 
 dirSizeAndTime() {
     dir=$1
-    size=$(du -sh --time $dir 2>/dev/null | awk '{print $1} {print $2} {print $3}');
+    size=$(du -B1 -sh --time $dir 2>/dev/null | awk '{print $1} {print $2} {print $3}');
     if [ -z "$size" ]; then
         printf "0"
     else
