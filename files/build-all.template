@@ -109,8 +109,8 @@ deploy_google_secret=tmpl_google_secret
 deploy_google_token=tmpl_google_token
 deploy_google_storage_bucket=tmpl_google_storage_bucket
 
-+# Elasticsearch
-+deploy_server_elasticsearch_user=tmpl_elasticsearch_user
-+deploy_server_elasticsearch_password=tmpl_elasticsearch_password
+# Elasticsearch
+deploy_server_elasticsearch_user=tmpl_elasticsearch_user
+deploy_server_elasticsearch_password=tmpl_elasticsearch_password
 
 ## LAST LINE ##############################
