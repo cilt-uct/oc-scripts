@@ -21,7 +21,8 @@
     <!-- ################ -->
 
     <!-- Allow anonymous access to the login form -->
-    <sec:intercept-url pattern="/admin-ng/login.html" access="ROLE_ANONYMOUS" />
+    <sec:intercept-url pattern="/" access="ROLE_ANONYMOUS" />
+    <sec:intercept-url pattern="/login.html" access="ROLE_ANONYMOUS" />
     <sec:intercept-url pattern="/sysinfo/bundles/version" method="GET" access="ROLE_ANONYMOUS" />
 
     <!-- Allow anonymous access to resources from runtime info ui -->
@@ -32,6 +33,9 @@
 
     <!-- Allow anonymous access to the player redirect -->
     <sec:intercept-url pattern="/play/*" access="ROLE_ANONYMOUS" />
+
+     <!-- Define roles for metrics endpoint -->
+    <sec:intercept-url pattern="/metrics" access="ROLE_ADMIN, ROLE_METRICS" />
 
     <!-- Protect admin UI facade -->
     <sec:intercept-url pattern="/workflow/definitions.json" method="GET" access="ROLE_ADMIN, ROLE_UI_EVENTS_CREATE" />
@@ -158,6 +162,7 @@
     <sec:intercept-url pattern="/admin-ng/series/*" method="DELETE" access="ROLE_ADMIN, ROLE_UI_SERIES_DELETE" />
     <sec:intercept-url pattern="/admin-ng/themes/*" method="DELETE" access="ROLE_ADMIN, ROLE_UI_THEMES_DELETE" />
     <sec:intercept-url pattern="/admin-ng/users/*" method="DELETE" access="ROLE_ADMIN, ROLE_UI_USERS_DELETE" />
+    <sec:intercept-url pattern="/admin-ng/adopter/**" method="DELETE" access="ROLE_ADMIN" />
 
     <!-- Securing the URLs for the external API interface -->
     <!-- External API GET Endpoints -->
@@ -247,9 +252,12 @@
     <!-- anonymous access to user interface configuration -->
     <sec:intercept-url pattern="/ui/config/**" access="ROLE_ANONYMOUS" />
 
-    <!-- Paella player -->
+    <!-- Paella player 6 -->
     <sec:intercept-url pattern="/paella/ui/auth.html" access="ROLE_USER" />
     <sec:intercept-url pattern="/paella/ui/**" access="ROLE_ANONYMOUS" />
+    <!-- Paella player 7 -->
+    <sec:intercept-url pattern="/paella7/ui/auth.html" access="ROLE_USER" />
+    <sec:intercept-url pattern="/paella7/ui/**" access="ROLE_ANONYMOUS" />
 
     <!-- Enable anonymous access to the engage player and the GET endpoints it requires -->
     <sec:intercept-url pattern="/engage/ui/**" access="ROLE_ANONYMOUS" />
@@ -261,8 +269,22 @@
     <sec:intercept-url pattern="/static/**" method="GET" access="ROLE_ANONYMOUS" />
     <sec:intercept-url pattern="/export/**" method="GET" access="ROLE_ANONYMOUS" />
 
-    <!-- Enable admin access to Opencast Studio -->
-    <sec:intercept-url pattern="/studio/**" access="ROLE_ADMIN, ROLE_UI_EVENTS_CREATE" />
+    <!-- Enable access to Opencast Studio -->
+    <!-- Admins can access it, as can users with 'ROLE_STUDIO'. A few static -->
+    <!-- files are also accessible to everyone: 'manifest.json' and source maps -->
+    <!-- are requested without cookies by most browsers. To prevent random -->
+    <!-- errors, we make those files public. They do not contain any secrets. -->
+    <sec:intercept-url pattern="/studio/manifest.json" access="ROLE_ANONYMOUS" />
+    <sec:intercept-url pattern="/studio/static/js/**" access="ROLE_ANONYMOUS" />
+    <sec:intercept-url pattern="/studio/**" access="ROLE_ADMIN, ROLE_STUDIO" />
+
+     <!-- Enable access to Opencast Editor -->
+    <sec:intercept-url pattern="/editor/**" access="ROLE_ADMIN, ROLE_USER" />
+    <sec:intercept-url pattern="/editor-ui/**" access="ROLE_ADMIN, ROLE_USER" />
+
+    <!-- Enable access to the Tobira module -->
+    <sec:intercept-url pattern="/tobira/**" access="ROLE_ADMIN" />
+    <sec:intercept-url pattern="/tobira/version" access="ROLE_ANONYMOUS" />
 
     <!-- Enable anonymous access to the annotation and the series endpoints -->
     <sec:intercept-url pattern="/series/**" method="GET" access="ROLE_ANONYMOUS, ROLE_CAPTURE_AGENT" />
@@ -309,16 +331,24 @@
     <!-- Enable access to the LTI tools -->
     <sec:intercept-url pattern="/ltitools/**" access="ROLE_OAUTH_USER" />
 
+    <!-- Enable access to the LTI service -->
+    <sec:intercept-url pattern="/lti-service-gui/**" access="ROLE_OAUTH_USER" />
+    <sec:intercept-url pattern="/lti-service/**" access="ROLE_ADMIN, ROLE_OAUTH_USER" />
+
     <sec:intercept-url pattern="/transcripts/watson/results*" method="GET" access="ROLE_ANONYMOUS" />
     <sec:intercept-url pattern="/transcripts/watson/results*" method="POST" access="ROLE_ANONYMOUS" />
     <sec:intercept-url pattern="/transcripts/nibity/submission/*" access="ROLE_ANONYMOUS" />
     <sec:intercept-url pattern="/transcripts/googlespeech/*" method="GET" access="ROLE_ANONYMOUS" />
+
+    <!-- Enable access to the redirect routes -->
+    <sec:intercept-url pattern="/redirect/**" access="ROLE_ANONYMOUS" />
 
     <!-- Everything else is for the admin users -->
     <sec:intercept-url pattern="/admin-ng" method="GET" access="ROLE_ADMIN, ROLE_ADMIN_UI" />
     <sec:intercept-url pattern="/admin-ng/" method="GET" access="ROLE_ADMIN, ROLE_ADMIN_UI" />
     <sec:intercept-url pattern="/admin-ng/index.html" access="ROLE_ADMIN, ROLE_ADMIN_UI" />
     <sec:intercept-url pattern="/index.html" access="ROLE_ADMIN, ROLE_ADMIN_UI" />
+    <sec:intercept-url pattern="/index.js" access="ROLE_ADMIN, ROLE_ADMIN_UI" />
     <sec:intercept-url pattern="/**" access="ROLE_ADMIN" />
 
     <!-- ############################# -->
@@ -329,15 +359,20 @@
     <!-- sec:x509 subject-principal-regex="CN=(.*?)," user-service-ref="userDetailsService" / -->
 
     <!-- Enable and configure the failure URL for form-based logins -->
-    <sec:form-login authentication-failure-url="/admin-ng/login.html?error" authentication-success-handler-ref="authSuccessHandler" />
+    <sec:form-login authentication-failure-url="/login.html?error" authentication-success-handler-ref="authSuccessHandler" />
 
-    <!-- Authentication filter chain -->
+    <!-- (Pre-)Authentication filter chain(s) -->
     <sec:custom-filter position="BASIC_AUTH_FILTER" ref="authenticationFilters" />
+    <sec:custom-filter position="PRE_AUTH_FILTER" ref="preAuthenticationFilters" />
 
     <sec:custom-filter ref="asyncTimeoutRedirectFilter" after="EXCEPTION_TRANSLATION_FILTER"/>
 
     <!-- Opencast is shipping its own implementation of the anonymous filter -->
     <sec:custom-filter ref="anonymousFilter" position="ANONYMOUS_FILTER" />
+
+    <!-- CAS Auth:  Uncomment this if using CAS authentication
+    <sec:custom-filter position="FORM_LOGIN_FILTER" ref="casFilter" />
+    -->
 
     <!-- Shibboleth header authentication filter
     <sec:custom-filter ref="shibbolethHeaderFilter" position="PRE_AUTH_FILTER"/>
@@ -352,12 +387,24 @@
     <!-- If any URLs are to be exposed to anonymous users, the "sec:anonymous" filter must be present -->
     <sec:anonymous enabled="false" />
 
+    <!-- CAS Auth:  Uncomment this if using CAS authentication  -->
+    <!-- Enables CAS Single Sign Out
+    <sec:logout logout-success-url="/cas-logout.jsp"/>
+    <sec:custom-filter ref="requestSingleLogoutFilter" before="LOGOUT_FILTER"/>
+    <sec:custom-filter ref="singleLogoutFilter" before="FORM_LOGIN_FILTER"/>
+    -->
+
     <!-- Enables log out -->
     <sec:logout success-handler-ref="logoutSuccessHandler" />
 
     <!-- Shibboleth log out
          Please specifiy the URL to return to after logging out
     <sec:logout logout-success-url="/Shibboleth.sso/Logout?return=http://www.opencast.org" />
+    -->
+
+    <!-- JWT single log out
+         Please specify the URL to return to after logging out. Comment out the logoutSuccessHandler above.
+    <sec:logout logout-success-url="https://auth.example.org/sign_out?rd=http://www.opencast.org" />
     -->
 
   </sec:http>
@@ -368,6 +415,13 @@
     <property name="tokenValiditySeconds" value="1209600"/>
     <property name="cookieName" value="oc-remember-me"/>
     <!-- The following key will be augmented by system properties. Thus, leaving this untouched is okay -->
+    <!-- This key must be equal to the key passed to rememberMeAuthenticationProvider (s. below) -->
+    <property name="key" value="opencast"/>
+  </bean>
+
+  <bean id="rememberMeAuthenticationProvider"
+        class="org.opencastproject.kernel.security.SystemTokenBasedRememberMeAuthenticationProvider">
+    <!-- This key must be equal to the key passed to rememberMeServices (s. above) -->
     <property name="key" value="opencast"/>
   </bean>
 
@@ -388,6 +442,24 @@
         <!-- 2-legged OAuth is used by trusted 3rd party applications, including LTI. -->
         <!-- Uncomment the line below to support LTI or other OAuth clients.          -->
         <ref bean="oauthProtectedResourceFilter" />
+      </list>
+    </property>
+  </bean>
+
+  <!-- ################################ -->
+  <!-- # Pre-Aauthentication Filters    # -->
+  <!-- ################################ -->
+
+  <bean id="preAuthenticationFilters" class="org.springframework.web.filter.CompositeFilter">
+    <property name="filters">
+      <list>
+        <!-- Uncomment the line below to support Shibboleth. -->
+        <!-- <ref bean="shibbolethHeaderFilter" /> -->
+
+        <!-- Uncomment the line below to support JWT.
+        <ref bean="jwtHeaderFilter" /> -->
+        <!-- Additionally/alternatively uncomment this to support passing a JWT in a URL parameter.
+        <ref bean="jwtRequestParameterFilter" /> -->
       </list>
     </property>
   </bean>
@@ -420,12 +492,20 @@
   <bean id="opencastEntryPoint" class="org.opencastproject.kernel.security.DelegatingAuthenticationEntryPoint">
     <property name="userEntryPoint" ref="userEntryPoint" />
     <property name="digestAuthenticationEntryPoint" ref="digestEntryPoint" />
+    <property name="basicAuthenticationEntryPoint" ref="basicEntryPoint" />
   </bean>
 
   <!-- Redirects unauthenticated requests to the login form -->
   <bean id="userEntryPoint" class="org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint">
-    <property name="loginFormUrl" value="/admin-ng/login.html" />
+    <property name="loginFormUrl" value="/login.html" />
   </bean>
+
+  <!-- Redirect unauthenticated requests to custom login url with configurable redirect query parameter
+       Example: http://localhost/Shibboleth.sso/Login?target=<RELATIVE_REQUEST_URL> -->
+  <!--bean id="userEntryPoint" class="org.opencastproject.kernel.security.RedirectQueryParamAuthenticationEntryPoint">
+    <constructor-arg index="0" value="/Shibboleth.sso/Login" />
+    <constructor-arg index="1" value="target" />
+  </bean-->
 
   <!-- Returns a 401 request for authentication via digest auth -->
   <bean id="digestEntryPoint" class="org.springframework.security.web.authentication.www.DigestAuthenticationEntryPoint">
@@ -442,8 +522,8 @@
     <property name="securityService" ref="securityService" />
     <property name="welcomePages">
       <map>
-        <entry key="ROLE_ADMIN" value="/admin-ng/index.html" />
-        <entry key="ROLE_ADMIN_UI" value="/admin-ng/index.html" />
+        <entry key="ROLE_ADMIN" value="/index.html" />
+        <entry key="ROLE_ADMIN_UI" value="/index.html" />
         <entry key="*" value="/engage/ui/index.html" /> <!-- Any role not listed explicitly will redirect here -->
       </map>
     </property>
@@ -493,6 +573,59 @@
     <property name="authHandler" ref="ltiLaunchAuthenticationHandler" />
   </bean>
 
+  <!-- ############### -->
+  <!-- # CAS Support # -->
+  <!-- ############### -->
+  <!--
+  <bean id="casFilter"
+    class="org.springframework.security.cas.web.CasAuthenticationFilter">
+    <property name="authenticationManager" ref="authenticationManager"/>
+    <property name="authenticationSuccessHandler" ref="authSuccessHandler" />
+    <property name="serviceProperties" ref="serviceProperties" />
+    <property name="authenticationDetailsSource">
+      <bean class="org.springframework.security.cas.web.authentication.ServiceAuthenticationDetailsSource"/>
+    </property>
+  </bean>
+
+  <bean id="casEntryPoint"
+    class="org.springframework.security.cas.web.CasAuthenticationEntryPoint">
+    <property name="loginUrl" value="https://auth-test.berkeley.edu/cas/login"/>
+    <property name="serviceProperties" ref="serviceProperties"/>
+  </bean>
+
+  <bean id="serviceProperties"
+    class="org.springframework.security.cas.ServiceProperties">
+    <property name="service" value="https://localhost/j_spring_cas_security_check"/>
+    <property name="sendRenew" value="false"/>
+  </bean>
+
+  <bean id="casAuthenticationProvider"
+    class="org.springframework.security.cas.authentication.CasAuthenticationProvider">
+    <property name="serviceProperties" ref="serviceProperties" />
+    <property name="authenticationUserDetailsService">
+      <bean class="org.springframework.security.core.userdetails.UserDetailsByNameServiceWrapper">
+          <constructor-arg ref="userDetailsService" />
+      </bean>
+    </property>
+    <property name="ticketValidator">
+      <bean class="org.jasig.cas.client.validation.Cas20ServiceTicketValidator">
+        <constructor-arg index="0" value="https://auth-test.berkeley.edu/cas" />
+      </bean>
+    </property>
+    <property name="key" value="cas"/>
+  </bean>
+
+  <bean id="singleLogoutFilter" class="org.jasig.cas.client.session.SingleSignOutFilter"/>
+
+  <bean id="requestSingleLogoutFilter" class="org.springframework.security.web.authentication.logout.LogoutFilter">
+    <constructor-arg value="https://auth-test.berkeley.edu/cas/logout"/>
+    <constructor-arg>
+      <bean class= "org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler"/>
+    </constructor-arg>
+    <property name="filterProcessesUrl" value="https://localhost/j_spring_security_logout"/>
+  </bean>
+  -->
+
   <!-- ###################### -->
   <!-- # Shibboleth Support # -->
   <!-- ###################### -->
@@ -516,7 +649,56 @@
   </bean>
   -->
 
-  <!--
+  <!-- Dynamic AAI Loginhandler
+  <bean id="aaiLoginHandler" class="org.opencastproject.security.aai.DynamicLoginHandler">
+    <property name="securityService" ref="securityService" />
+    <property name="userReferenceProvider" ref="userReferenceProvider" />
+    <property name="attributeMapper" ref="attributeMapper" />
+  </bean>
+
+  <bean id="attributeMapper" class="org.opencastproject.security.aai.api.AttributeMapper">
+    <property name="useHeader" value="true" />
+    <property name="multiValueDelimiter" value=";" />
+    <property name="attributeMap" ref="attributeMap" />
+    <property name="aaiAttributes" ref="aaiAttributes" />
+  </bean>
+
+  <util:list id="aaiAttributes" value-type="java.lang.String">
+    <value>sn</value>
+    <value>givenName</value>
+    <value>mail</value>
+    <value>homeOrganization</value>
+    <value>eduPersonEntitlement</value>
+    <value>eduPersonPrincipalName</value>
+    <value>homeOrganization</value>
+  </util:list>
+
+  <util:map id="attributeMap" map-class="java.util.HashMap">
+    <entry key="roles" value-ref="roleMapping" />
+    <entry key="displayName" value-ref="displayNameMapping" />
+    <entry key="mail" value-ref="mailMapping" />
+  </util:map>
+
+  <util:list id="displayNameMapping" value-type="java.lang.String">
+    <value>['givenName'][0] + ' ' + ['sn'][0]</value>
+  </util:list>
+
+  <util:list id="mailMapping" value-type="java.lang.String">
+    <value>['mail'][0]</value>
+  </util:list>
+
+  <util:list id="roleMapping" value-type="java.lang.String">
+    <value>'ROLE_AAI_USER'</value>
+    <value>'ROLE_AAI_USER_' + ['eduPersonPrincipalName']</value>
+    <value>('ROLE_AAI_OWNER_' + ['eduPersonPrincipalName']).replaceAll("[^a-zA-Z0-9]","_").toUpperCase()</value>
+    <value>['homeOrganization'] != null ? 'ROLE_AAI_ORG_' + ['homeOrganization'] + '_MEMBER' : null</value>
+    <value>['eduPersonEntitlement'].contains('urn:mace:opencast.org:permission:shibboleth:opencast_admin') ? 'ROLE_ADMIN' : null</value>
+    <value>['eduPersonPrincipalName'].contains('john.doe@example.org') ? 'ROLE_ADMIN' : null</value>
+    <value>['eduPersonScopedAffiliation'].contains('faculty@example.org') ? 'ROLE_GROUP_AAI_TRAINER' : null</value>
+  </util:list>
+
+   -->
+
   <bean id="preauthAuthProvider"
         class="org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationProvider">
     <property name="preAuthenticatedUserDetailsService">
@@ -524,6 +706,139 @@
         <property name="userDetailsService" ref="userDetailsService"/>
       </bean>
     </property>
+  </bean>
+
+  <!-- ################ -->
+  <!-- # JWT Support # -->
+  <!-- ################ -->
+
+  <!-- General JWT header extraction filter
+  <bean id="jwtHeaderFilter" class="org.opencastproject.security.jwt.JWTRequestHeaderAuthenticationFilter">
+    <property name="principalRequestHeader" value="Authorization"/>
+    <property name="principalPrefix" value="Bearer "/>
+    <property name="authenticationManager" ref="authenticationManager" />
+    <property name="loginHandler" ref="jwtLoginHandler" />
+    <property name="exceptionIfHeaderMissing" value="false" />
+    <property name="debug" value="false" />
+  </bean>-->
+
+  <!-- General JWT request parameter extraction filter
+  <bean id="jwtRequestParameterFilter" class="org.opencastproject.security.jwt.JWTRequestParameterAuthenticationFilter">
+    <property name="parameterName" value="jwt" />
+    <property name="authenticationManager" ref="authenticationManager" />
+    <property name="loginHandler" ref="jwtLoginHandler" />
+    <property name="exceptionIfParameterMissing" value="false" />
+    <property name="debug" value="false" />
+  </bean>-->
+
+  <!-- JWT login handler
+  <bean id="jwtLoginHandler" class="org.opencastproject.security.jwt.DynamicLoginHandler">
+    <property name="userDetailsService" ref="userDetailsService" />
+    <property name="userDirectoryService" ref="userDirectoryService" />
+    <property name="securityService" ref="securityService" />
+    <property name="userReferenceProvider" ref="userReferenceProvider" />
+    <property name="jwksUrl" value="https://auth.example.org/.well-known/jwks.json" />
+    <property name="jwksCacheExpiresIn" value="1440" />
+    <property name="secret" value="***" />
+    <property name="expectedAlgorithms" ref="jwtExpectedAlgorithms" />
+    <property name="claimConstraints" ref="jwtClaimConstraints" />
+    <property name="usernameMapping" value="['username'].asString()" />
+    <property name="nameMapping" value="['name'].asString()" />
+    <property name="emailMapping" value="['email'].asString()" />
+    <property name="roleMappings" ref="jwtRoleMappings" />
+    <property name="jwtCacheSize" value="500" />
+    <property name="jwtCacheExpiresIn" value="60" />
+  </bean>-->
+
+  <!-- The signing algorithms expected for the JWT signature
+  <util:list id="jwtExpectedAlgorithms" value-type="java.lang.String">
+    <value>RS256</value>
+  </util:list>-->
+
+  <!-- The claim constraints that are expected to be fulfilled by the JWT
+       If you are using JWTs for OpenID Connect, see the specification for claims that must be validated:
+       https://openid.net/specs/openid-connect-core-1_0.html#IDTokenValidation
+  <util:list id="jwtClaimConstraints" value-type="java.lang.String">
+    <value>containsKey('iss')</value>
+    <value>containsKey('aud')</value>
+    <value>containsKey('username')</value>
+    <value>containsKey('name')</value>
+    <value>containsKey('email')</value>
+    <value>containsKey('domain')</value>
+    <value>containsKey('affiliation')</value>
+    <value>['iss'].asString() eq 'https://auth.example.org'</value>
+    <value>['aud'].asString() eq 'client-id'</value>
+    <value>['username'].asString() matches '.*@example\.org'</value>
+    <value>['domain'].asString() eq 'example.org'</value>
+    <value>['affiliation'].asList(T(String)).contains('faculty@example.org')</value>
+  </util:list>-->
+
+  <!-- The mapping from JWT claims to Opencast roles
+  <util:list id="jwtRoleMappings" value-type="java.lang.String">
+    <value>'ROLE_JWT_USER'</value>
+    <value>'ROLE_JWT_USER_' + ['username'].asString()</value>
+    <value>('ROLE_JWT_OWNER_' + ['username'].asString()).replaceAll("[^a-zA-Z0-9]","_").toUpperCase()</value>
+    <value>['domain'] != null ? 'ROLE_JWT_ORG_' + ['domain'].asString() + '_MEMBER' : null</value>
+    <value>['username'].asString() eq ('j_doe01@example.org') ? 'ROLE_ADMIN' : null</value>
+    <value>['affiliation'].asList(T(String)).contains('faculty@example.org') ? 'ROLE_GROUP_JWT_TRAINER' : null</value>
+  </util:list>-->
+
+  <!-- ################ -->
+  <!-- # LDAP Support # -->
+  <!-- ################ -->
+
+  <!--
+  <bean id="contextSource"
+    class="org.springframework.security.ldap.DefaultSpringSecurityContextSource">
+    < ! - - URL of the LDAP server - - >
+    <constructor-arg value="ldap://myldapserver:myport" />
+    < ! - - "Distinguished name" for the unprivileged user - - >
+    < ! - - This user is merely to perform searches in the LDAP to find the users to login - - >
+    <property name="userDn" value="uid=user-id,dc=example,dc=com" />
+    < ! - - Password of the user above - - >
+    <property name="password" value="mypassword" />
+  </bean>
+  -->
+
+  <!--
+  <bean id="userDetailsMapper" class="org.opencastproject.security.ldap.OpencastUserDetailsMapper">
+    <constructor-arg ref="userDetailsService" />
+  </bean>
+  -->
+
+  <!--
+  <bean id="ldapAuthProvider"
+    class="org.springframework.security.ldap.authentication.LdapAuthenticationProvider">
+    <constructor-arg>
+      <bean
+        class="org.springframework.security.ldap.authentication.BindAuthenticator">
+        <constructor-arg ref="contextSource" />
+        <property name="userDnPatterns">
+          <list>
+            < ! - - Dn patterns to search for valid users. Multiple "<value>" tags are allowed - - >
+            <value>uid={0},dc=example,dc=com</value>
+          </list>
+        </property>
+        < ! - - If your user IDs are not part of the user Dn's, you can use a search filter to find them - - >
+        < ! - - This property can be used together with the "userDnPatterns" above - - >
+        < ! - -
+        <property name="userSearch">
+          <bean name="filterUserSearch" class="org.springframework.security.ldap.search.FilterBasedLdapUserSearch">
+            < ! - - Base Dn from where the users will be searched for - - >
+            <constructor-arg index="0" value="ou=GroupName,dc=my-institution,dc=country" />
+            < ! - - Filter to located valid users. Use {0} as a placeholder for the login name - - >
+            <constructor-arg index="1" value="(uid={0})" />
+            <constructor-arg ref="contextSource" />
+          </bean>
+        </property>
+        - - >
+      </bean>
+    </constructor-arg>
+    < ! - - Retrieve user and attributes from opencasts user details service - - >
+    <property name="userDetailsContextMapper" ref="userDetailsMapper"/>
+    < ! - - Defines how the user attributes are converted to authorities (roles) - - >
+    < ! - - Output is ignored if used together with userDetailsMapper - - >
+    < ! - - constructor-arg ref="authoritiesPopulator" /- - >
   </bean>
   -->
 
@@ -545,6 +860,14 @@
   <osgi:reference id="userDirectoryService" cardinality="1..1"
                   interface="org.opencastproject.security.api.UserDirectoryService" />
 
+  <!-- Uncomment this as an alternative to the userDetailsMapper -->
+  <!-- Make sure you provide the same instanceId you used in org.opencastproject.userdirectory.ldap-….cfg -->
+  <!--
+  <osgi:reference id="authoritiesPopulator" cardinality="1..1"
+                  interface="org.springframework.security.ldap.userdetails.LdapAuthoritiesPopulator"
+                  filter="(instanceId=theId)"/>
+  -->
+
   <osgi:reference id="oAuthConsumerDetailsService" cardinality="1..1"
                   interface="org.springframework.security.oauth.provider.ConsumerDetailsService" />
 
@@ -561,6 +884,10 @@
   <sec:authentication-manager alias="authenticationManager">
     <!-- Uncomment this if using Shibboleth authentication -->
     <!--sec:authentication-provider ref="preauthAuthProvider" /-->
+    <!-- Uncomment this if using Shibboleth or JWT authentication -->
+    <!-- <sec:authentication-provider ref="preauthAuthProvider" /> -->
+    <!-- Uncomment the following line if using LDAP -->
+    <!-- <sec:authentication-provider ref="ldapAuthProvider" /> -->
     <sec:authentication-provider user-service-ref="userDetailsService">
       <sec:password-encoder ref="passwordEncoder">
         <!-- This salt is used only for decoding legacy MD5 hased passwords -->
