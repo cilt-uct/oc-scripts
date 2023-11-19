@@ -9,6 +9,8 @@
   </tags>
   <description>
     A simple and fast workflow for publishing videos created by Opencast Studio.
+
+    If straight to publishing is checked, then the uploaded media will be published to engage without cutting.
   </description>
 
   <configuration_panel>
@@ -22,6 +24,10 @@
               <label for="skipEditorPreview">Skip generating editor preview</label>
             </li>
           </ul>
+        </fieldset>
+        <fieldset>
+          <input id="straightToPublishing" name="straightToPublishing" type="checkbox" class="configField" value="true" checked=checked />
+          <label for="straightToPublishing">Straight to publishing</label>
         </fieldset>
         <fieldset>
           <legend>Publish right away to</legend>
@@ -101,6 +107,18 @@
       </script>
     ]]>
   </configuration_panel>
+  <configuration_panel_json>
+    [{
+      "fieldset": [
+        {
+          "type": "checkbox",
+          "name": "straightToPublishing",
+          "label": "Straight to publishing",
+          "value": true
+        }
+      ]
+    }]
+  </configuration_panel_json>
 
   <operations>
 
@@ -115,6 +133,7 @@
         <configuration key="publishToApi">true</configuration>
         <configuration key="publishToOaiPmh">false</configuration>
         <configuration key="publishToAws">false</configuration>
+        <configuration key="straightToPublishing">true</configuration>
         <configuration key="thumbnailType">0</configuration>
         <configuration key="thumbnailPosition">1</configuration>
         <configuration key="doCaptioning">false</configuration>
@@ -148,7 +167,7 @@
         exception-handler-workflow="partial-error"
         description="Tagging source material for archival">
       <configurations>
-        <configuration key="source-flavors">dublincore/*,security/*,*/source</configuration>
+        <configuration key="source-flavors">*/*</configuration>
         <configuration key="target-tags">+archive</configuration>
       </configurations>
     </operation>
@@ -165,7 +184,7 @@
         id="snapshot"
         fail-on-error="true"
         exception-handler-workflow="partial-error"
-        description="Archiving">
+        description="Archive raw recording after ingest">
       <configurations>
         <configuration key="source-tags">archive</configuration>
       </configurations>
@@ -314,7 +333,7 @@
             <configuration key="source-flavor">*/normalized-trimmed</configuration>
     -->
     <operation
-      id="compose"
+      id="encode"
       fail-on-error="false"
       exception-handler-workflow="partial-error"
       description="Encoding audio for Engage player (MP3)">
