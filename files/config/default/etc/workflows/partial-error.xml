@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definition xmlns="http://workflow.opencastproject.org">
+
+  <id>partial-error</id>
+  <description>Cleanup after a processing failure (UCT)</description>
+  <operations>
+
+    <!-- Comment that we cleaned up this recording -->
+    <operation
+      id="comment"
+      fail-on-error="false"
+      description="Comment that this recording has failed">
+      <configurations>
+        <configuration key="description">Recording has failed with a partial error.</configuration>
+        <configuration key="reason">EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.PROCESSING_FAILURE</configuration>
+        <configuration key="action">create</configuration>
+      </configurations>
+    </operation>
+
+    <!-- Archive the current state of the media package -->
+    <operation
+      id="snapshot"
+      fail-on-error="false"
+      description="Preserve the current recording state">
+      <configurations>
+        <configuration key="source-flavors">*/source,dublincore/*,security/*,captions/*</configuration>
+        <configuration key="source-tags">archive</configuration>
+      </configurations>
+    </operation>
+
+    <!-- Clean up the temporary files from the working file repository -->
+    <operation
+      id="cleanup"
+      fail-on-error="false"
+      description="Cleaning up">
+      <configurations>
+        <!-- On systems with shared workspace or working file repository -->
+        <!-- you want to set this option to false. -->
+        <configuration key="delete-external">true</configuration>
+        <!-- ACLs are required again when working through ActiveMQ messages -->
+        <configuration key="preserve-flavors">security/*</configuration>
+      </configurations>
+    </operation>
+
+  </operations>
+</definition>
