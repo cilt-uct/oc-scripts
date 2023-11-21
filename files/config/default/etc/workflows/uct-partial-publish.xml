@@ -13,7 +13,7 @@
     <operation
       id="analyze-tracks"
       exception-handler-workflow="partial-error"
-      description="Analyze tracks in media package a set control variables">
+      description="Analyze tracks in media package and set control variables">
       <configurations>
         <configuration key="source-flavor">*/work</configuration>
       </configurations>
@@ -94,7 +94,8 @@
       <configurations>
         <configuration key="source-flavor">*/trimmed</configuration>
         <configuration key="target-flavor">*/normalized-trimmed</configuration>
-        <configuration key="target-decibel">-25</configuration>
+        <configuration key="target-tags">norm</configuration>
+        <configuration key="target-decibel">-30</configuration>
         <configuration key="force-transcode">true</configuration>
       </configurations>
     </operation>
@@ -372,7 +373,7 @@
     </operation>
 
     <operation
-      id="compose"
+      id="encode"
       if="(${presenter_source_resolution_y} &lt; 720) AND (${presenter_source_resolution_y} &gt; 479)"
       fail-on-error="true"
       exception-handler-workflow="partial-error"
@@ -386,7 +387,7 @@
     </operation>
 
     <operation
-      id="compose"
+      id="encode"
       if="(${presenter_source_resolution_y} &lt; 480)"
       fail-on-error="true"
       exception-handler-workflow="partial-error"
@@ -408,7 +409,7 @@
             <configuration key="source-flavor">*/normalized-trimmed</configuration>
     -->
     <operation
-      id="compose"
+      id="encode"
       fail-on-error="false"
       exception-handler-workflow="partial-error"
       description="Encoding audio for Engage player (MP3)">
