@@ -55,10 +55,7 @@ main() {
     cp $working/etc/workflows-default/cleanup-publish-placeholder.xml $working/etc/workflows/cleanup-publish-placeholder.xml
     cp $working/etc/workflows-default/delete.xml $working/etc/workflows/delete.xml
     cp $working/etc/workflows-default/import.xml $working/etc/workflows/import.xml
-    #cp $working/etc/workflows-default/google-speech-attach-transcripts.xml $working/etc/workflows/google-speech-attach-transcripts.xml
     cp $working/etc/workflows-default/google-speech-start-transcription.xml $working/etc/workflows/google-speech-start-transcription.xml
-    #cp $working/etc/workflows-default/nibity-start-transcription.xml $working/etc/workflows/nibity-start-transcription.xml
-    cp $working/etc/workflows-default/partial-error.xml $working/etc/workflows/partial-error.xml
     cp $working/etc/workflows-default/partial-retract.xml $working/etc/workflows/partial-retract.xml
     cp $working/etc/workflows-default/partial-title-slide.xml $working/etc/workflows/partial-title-slide.xml
     cp $working/etc/workflows-default/offload.xml $working/etc/workflows/offload.xml
