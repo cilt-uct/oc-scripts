@@ -143,6 +143,14 @@
       </configurations>
     </operation>
 
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <!-- Tag for archival                                                  -->
+    <!--                                                                   -->
+    <!-- Tag the recording sources, metadata and access control lists for  -->
+    <!-- archival.                                                         -->
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+
+    <!-- Tag the incoming source material for archival -->
     <operation
         id="tag"
         exception-handler-workflow="partial-error"
@@ -160,6 +168,8 @@
         <configuration key="workflow-id">partial-transcode-studio-tracks</configuration>
       </configurations>
     </operation>
+
+    <!-- Archive the source material -->
 
     <operation
         id="snapshot"

@@ -58,7 +58,7 @@
           </Array>
         </Arg>
         <Set name="name">default</Set>
-        <Set name="host">0.0.0.0</Set>
+        <Set name="host">127.0.0.1</Set>
         <Set name="idleTimeout">600000</Set>
         <!-- This has to match what's in the pax-web config. Ugh -->
         <Set name="port">8080</Set>

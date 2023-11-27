@@ -1,37 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <definition xmlns="http://workflow.opencastproject.org">
 
-  <id>partial-watermark</id>
-  <title>Render watermark</title>
+  <id>partial-theming-watermark</id>
+  <title>Render watermark into trimmed video</title></title>
   <tags/>
   <description>
      Render watermark into presenter and presentation tracks
   </description>
   <configuration_panel/>
-
   <operations>
 
+      <!-- Replace trimmed with branded variants -->
       <operation
         id="analyze-tracks"
         exception-handler-workflow="partial-error"
         description="Analyze trimmed tracks">
         <configurations>
           <configuration key="source-flavor">*/trimmed</configuration>
+           <configuration key="target-flavor">*/branding</configuration>
         </configurations>
       </operation>
 
       <operation
         id="composite"
-        description="Render watermark into presenter track"
         if="${presenter_trimmed_video}"
-        fail-on-error="true"
-        exception-handler-workflow="partial-error">
+        exception-handler-workflow="partial-error"
+        description="Render watermark into presenter track">
         <configurations>
-          <configuration key="source-flavor-lower">presenter/trimmed</configuration>
+          <configuration key="source-flavor-lower">presenter/branding</configuration>
           <configuration key="source-flavor-upper">not/available</configuration>
           <configuration key="source-flavor-watermark">branding/watermark</configuration>
           <configuration key="encoding-profile">composite.http</configuration>
-          <configuration key="target-flavor">presenter/branded</configuration>
+          <configuration key="target-flavor">presenter/trimmed</configuration>
           <configuration key="output-resolution">lower</configuration>
           <configuration key="output-background">0x000000FF</configuration>
           <configuration key="layout-single">
@@ -43,16 +43,15 @@
 
       <operation
         id="composite"
-        description="Render watermark into presentation track"
         if="${presentation_trimmed_video}"
-        fail-on-error="true"
-        exception-handler-workflow="partial-error">
+        exception-handler-workflow="partial-error"
+        description="Render watermark into presentation track">
         <configurations>
-          <configuration key="source-flavor-lower">presentation/trimmed</configuration>
+          <configuration key="source-flavor-lower">presentation/branding</configuration>
           <configuration key="source-flavor-upper">not/available</configuration>
           <configuration key="source-flavor-watermark">branding/watermark</configuration>
           <configuration key="encoding-profile">composite.http</configuration>
-          <configuration key="target-flavor">presentation/branded</configuration>
+          <configuration key="target-flavor">presentation/trimmed</configuration>
           <configuration key="output-resolution">lower</configuration>
           <configuration key="output-background">0x000000FF</configuration>
           <configuration key="layout-single">
@@ -69,11 +68,11 @@
         fail-on-error="true"
         exception-handler-workflow="partial-error">
         <configurations>
-          <configuration key="source-flavor-lower">presentation2/trimmed</configuration>
+          <configuration key="source-flavor-lower">presentation2/branding</configuration>
           <configuration key="source-flavor-upper">not/available</configuration>
           <configuration key="source-flavor-watermark">branding/watermark</configuration>
           <configuration key="encoding-profile">composite.http</configuration>
-          <configuration key="target-flavor">presentation/branded</configuration>
+          <configuration key="target-flavor">presentation/trimmed</configuration>
           <configuration key="output-resolution">lower</configuration>
           <configuration key="output-background">0x000000FF</configuration>
           <configuration key="layout-single">
@@ -84,5 +83,4 @@
       </operation>
 
   </operations>
-
 </definition>
