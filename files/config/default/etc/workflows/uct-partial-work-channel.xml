@@ -86,7 +86,7 @@
 
         <!-- Audio Only : [EDGE CASE - Podcast] Edge case -->
         <!--operation
-          id="compose"
+          id="encode"
           if="NOT(${presenter_work_video}) AND ${presenter_source_audio} AND NOT(${presentation_work_video}) AND NOT(${presentation2_work_video})"
           fail-on-error="true"
           exception-handler-workflow="partial-error"

@@ -20,7 +20,7 @@
     </operation>
 
     <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      Compose or Composite previews, create waveform, tag and
+      Encode or Composite previews, create waveform, tag and
       publish internally (Editor).
     -->
     <operation id="encode"

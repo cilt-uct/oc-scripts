@@ -22,7 +22,7 @@
 
     <!--  Encode audio to flac -->
     <operation
-      id="compose"
+      id="encode"
       fail-on-error="true"
       exception-handler-workflow="partial-error"
       description="Extract audio for transcript generation">
@@ -45,7 +45,7 @@
         <!--  Skip this operation if flavor already exists. Used for cases when mp already has captions. -->
         <configuration key="skip-if-flavor-exists">${skipFlavor}</configuration>
         <configuration key="language-code">${languageCode}</configuration>
-        <!-- Audio to be translated, produced in the previous compose operation -->
+        <!-- Audio to be translated, produced in the previous encode operation -->
         <configuration key="source-tag">transcript</configuration>
       </configurations>
     </operation>

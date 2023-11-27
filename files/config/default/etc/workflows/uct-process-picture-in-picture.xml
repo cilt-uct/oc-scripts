@@ -193,7 +193,7 @@
     <operation
       id="include"
       if="${doPictureInPicture}"
-      description="Include compose picture-in-picture">
+      description="Include encode picture-in-picture">
       <configurations>
         <configuration key="workflow-id">uct-include-picture-in-picture</configuration>
       </configurations>

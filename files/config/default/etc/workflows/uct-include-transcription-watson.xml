@@ -19,7 +19,7 @@
 
     <!-- Extract audio from video in ogg/opus format -->
     <operation
-      id="compose"
+      id="encode"
       fail-on-error="true"
       exception-handler-workflow="partial-error"
       description="Extract audio for transcript generation">
@@ -45,7 +45,7 @@
       <configurations>
         <!--  Skip this operation if flavor already exists. Used for cases when mp already has captions. -->
         <configuration key="skip-if-flavor-exists">captions/vtt+en</configuration>
-        <!-- Audio to be translated, produced in the previous compose operation -->
+        <!-- Audio to be translated, produced in the previous encode operation -->
         <configuration key="source-tag">transcript</configuration>
       </configurations>
     </operation>
