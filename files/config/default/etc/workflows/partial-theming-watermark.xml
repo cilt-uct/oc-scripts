@@ -2,7 +2,7 @@
 <definition xmlns="http://workflow.opencastproject.org">
 
   <id>partial-theming-watermark</id>
-  <title>Render watermark into trimmed video</title></title>
+  <title>Render watermark into trimmed video</title>
   <tags/>
   <description>
      Render watermark into presenter and presentation tracks
