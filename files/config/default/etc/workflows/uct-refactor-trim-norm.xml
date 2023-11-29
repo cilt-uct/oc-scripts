@@ -11,7 +11,7 @@
   <operations>
 
       <!-- re-encode -->
-      <operation id="compose"
+      <operation id="encode"
         description="Encode trimmed-normalized to source"
         fail-on-error="true"
         exception-handler-workflow="partial-error">

@@ -186,7 +186,7 @@
 
     <!-- C -->
     <operation
-      id="compose"
+      id="encode"
       if="(${presenter_source_resolution_y} &lt; 720) AND (${presenter_source_resolution_y} &gt; 479)"
       fail-on-error="true"
       exception-handler-workflow="partial-error"
@@ -201,7 +201,7 @@
 
     <!-- D -->
     <operation
-      id="compose"
+      id="encode"
       if="(${presenter_source_resolution_y} &lt; 480)"
       fail-on-error="true"
       exception-handler-workflow="partial-error"
@@ -223,7 +223,7 @@
             <configuration key="source-flavor">presenter/themed</configuration>
     -->
     <operation
-      id="compose"
+      id="encode"
       fail-on-error="false"
       exception-handler-workflow="partial-error"
       description="Encoding audio for Engage player (MP3)">

@@ -20,10 +20,10 @@
     </operation>
 
     <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      Compose or Composite previews, create waveform, tag and
+      Encode or Composite previews, create waveform, tag and
       publish internally (Editor).
     -->
-    <operation id="compose"
+    <operation id="encode"
       description="a. i. Create single-stream preview - presenter_work_video / audio"
       if="${presenter_work_video} AND NOT(${presentation_work_video}) AND NOT(${presentation2_work_video})"
       fail-on-error="true"
@@ -36,7 +36,7 @@
       </configurations>
     </operation>
 
-    <operation id="compose"
+    <operation id="encode"
       description="a. ii. Create audio only preview - presenter_source_audio"
       if="${presenter_source_audio} AND NOT(${presenter_work_video}) AND NOT(${presentation_work_video}) AND NOT(${presentation2_work_video})"
       fail-on-error="true"
@@ -49,7 +49,7 @@
       </configurations>
     </operation>
 
-    <operation id="compose"
+    <operation id="encode"
       description="b. Create single-stream preview - presentation_work_video / audio"
       if="${presentation_work_video} AND NOT(${presenter_work_video}) AND NOT(${presentation2_work_video})"
       fail-on-error="true"
@@ -62,7 +62,7 @@
       </configurations>
     </operation>
 
-    <operation id="compose"
+    <operation id="encode"
       description="c. Create single-stream preview - presentation2_work_video / audio"
       if="${presentation2_work_video} AND NOT(${presentation_work_video}) AND NOT(${presenter_work_video})"
       fail-on-error="true"

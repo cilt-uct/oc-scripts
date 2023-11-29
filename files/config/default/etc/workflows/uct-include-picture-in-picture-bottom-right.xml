@@ -2,7 +2,7 @@
 <definition xmlns="http://workflow.opencastproject.org">
 
   <id>uct-include-picture-in-picture-bottom-right</id>
-  <title>UCT - Include compose picture-in-picture - Bottom Right</title>
+  <title>UCT - Include encode picture-in-picture - Bottom Right</title>
   <tags/>
   <description>
     REQUIRES:

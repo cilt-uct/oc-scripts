@@ -244,7 +244,7 @@
 
     <!-- C -->
     <operation
-      id="compose"
+      id="encode"
       if="((${presenter_work_resolution_y} &lt; 720) AND (${presenter_work_resolution_y} &gt; 479)) OR ((${presentation_work_resolution_y} &lt; 720) AND (${presentation_work_resolution_y} &gt; 479))"
       fail-on-error="true"
       exception-handler-workflow="partial-error"
@@ -259,7 +259,7 @@
 
     <!-- D -->
     <operation
-      id="compose"
+      id="encode"
       if="(${presenter_work_resolution_y} &lt; 480) OR (${presenter_work_resolution_y} &lt; 480)"
       fail-on-error="true"
       exception-handler-workflow="partial-error"
@@ -281,7 +281,7 @@
             <configuration key="source-flavor">presenter/themed</configuration>
     -->
     <operation
-      id="compose"
+      id="encode"
       fail-on-error="false"
       exception-handler-workflow="partial-error"
       if="${presenter_work_media} AND NOT(${presentation_work_media})"
@@ -296,7 +296,7 @@
     </operation>
 
     <operation
-      id="compose"
+      id="encode"
       fail-on-error="false"
       exception-handler-workflow="partial-error"
       if="${presentation_work_media} AND NOT(${presenter_work_media})"

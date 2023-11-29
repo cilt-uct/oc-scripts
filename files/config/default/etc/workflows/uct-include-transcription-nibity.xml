@@ -46,10 +46,10 @@
     </operation>
 
     <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      Compose or Composite previews, create waveform, tag and
+      Encode or Composite previews, create waveform, tag and
       publish internally (Editor).
     -->
-    <operation id="compose"
+    <operation id="encode"
       description="a. i. Create single-stream preview - presenter_transcription_video / audio"
       if="${presenter_transcription_video} AND NOT(${presentation_transcription_video}) AND NOT(${presentation2_transcription_video})"
       fail-on-error="true"
@@ -61,7 +61,7 @@
       </configurations>
     </operation>
 
-    <operation id="compose"
+    <operation id="encode"
       description="a. ii. Create audio only preview - presenter_source_audio"
       if="${presenter_source_audio} AND NOT(${presenter_transcription_video}) AND NOT(${presentation_transcription_video}) AND NOT(${presentation2_transcription_video})"
       fail-on-error="true"
@@ -73,7 +73,7 @@
       </configurations>
     </operation>
 
-    <operation id="compose"
+    <operation id="encode"
       description="b. Create single-stream preview - presentation_transcription_video / audio"
       if="${presentation_transcription_video} AND NOT(${presenter_transcription_video}) AND NOT(${presentation2_transcription_video})"
       fail-on-error="true"
@@ -85,7 +85,7 @@
       </configurations>
     </operation>
 
-    <operation id="compose"
+    <operation id="encode"
       description="c. Create single-stream preview - presentation2_transcription_video / audio"
       if="${presentation2_transcription_video} AND NOT(${presentation_transcription_video}) AND NOT(${presenter_transcription_video})"
       fail-on-error="true"
@@ -189,7 +189,7 @@
       <configurations>
         <!--  Skip this operation if flavor already exists. Used for cases when mp already has captions. -->
         <configuration key="skip-if-flavor-exists">captions/vtt+en</configuration>
-        <!-- Audio to be translated, produced in the previous compose operation -->
+        <!-- Audio to be translated, produced in the previous encode operation -->
         <configuration key="source-flavor">*/${preview_out_flavor}</configuration>
       </configurations>
     </operation>
