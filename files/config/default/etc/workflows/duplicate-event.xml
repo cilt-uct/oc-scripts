@@ -212,13 +212,14 @@
       </configurations>
     </operation>
 
-    <operation
+    <!-- To activate and test post OC14 upgrade -->
+    <!--<operation
       id="start-workflow">
       <configurations>
         <configuration key="media-packages">${duplicate_media_package_ids}</configuration>
         <configuration key="workflow-definition">fast</configuration>
       </configurations>
-    </operation>
+    </operation>-->
 
     <!-- Clean up work artifacts -->
     <operation
