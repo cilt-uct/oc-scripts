@@ -1,34 +1,34 @@
 [production]
 srvubuopc001.uct.ac.za
 srvubuopc420.uct.ac.za
-srvubuopc421.uct.ac.za
-srvubuopc422.uct.ac.za
-srvubuopc423.uct.ac.za
-srvubuopc424.uct.ac.za
-srvubuopc425.uct.ac.za
-srvubuopc426.uct.ac.za
-srvubuopc427.uct.ac.za
+# srvubuopc421.uct.ac.za
+# srvubuopc422.uct.ac.za
+# srvubuopc423.uct.ac.za
+# srvubuopc424.uct.ac.za
+# srvubuopc425.uct.ac.za
+# srvubuopc426.uct.ac.za
+# srvubuopc427.uct.ac.za
 srvubuopc201.uct.ac.za
-srvubuopc202.uct.ac.za
+# srvubuopc202.uct.ac.za
 
 [dbservers]
-srvubuopc003.uct.ac.za
+# srvubuopc003.uct.ac.za
 
 [adminpresentation]
 srvubuopc001.uct.ac.za
 
 [ingest]
 srvubuopc201.uct.ac.za
-srvubuopc202.uct.ac.za
+#srvubuopc202.uct.ac.za
 
 [worker]
 srvubuopc420.uct.ac.za
-srvubuopc421.uct.ac.za
-srvubuopc422.uct.ac.za
-srvubuopc423.uct.ac.za
-srvubuopc424.uct.ac.za
-srvubuopc425.uct.ac.za
-srvubuopc426.uct.ac.za
-srvubuopc427.uct.ac.za
+# srvubuopc421.uct.ac.za
+# srvubuopc422.uct.ac.za
+# srvubuopc423.uct.ac.za
+# srvubuopc424.uct.ac.za
+# srvubuopc425.uct.ac.za
+# srvubuopc426.uct.ac.za
+# srvubuopc427.uct.ac.za
 
 [workernoexec]
