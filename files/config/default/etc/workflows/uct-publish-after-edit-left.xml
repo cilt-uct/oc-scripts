@@ -2,12 +2,12 @@
 <definition xmlns="http://workflow.opencastproject.org">
 
   <id>uct-publish-after-edit-left</id>
-  <title>Publish (Default)</title>
+  <title>Publish (Default - Left)</title>
   <tags>
     <tag>editor</tag>
   </tags>
   <description/>
-  <displayOrder>3</displayOrder>
+  <displayOrder>1</displayOrder>
   <configuration_panel />
 
   <operations>
