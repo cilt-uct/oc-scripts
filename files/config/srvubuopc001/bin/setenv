@@ -37,7 +37,6 @@ export JAVA_HOME="deploy_java_home"
 export KARAF_DATA="deploy_karaf_data"
 
 # CILT-498 - Log4j-2 RCE : 2.0 <= Apache log4j <= 2.14.1 [-DformatMsgNoLookups=true]
-# export EXTRA_JAVA_OPTS="-javaagent:/opt/newrelic/newrelic.jar -DformatMsgNoLookups=true -Dorg.eclipse.jetty.server.Request.maxFormContentSize=1500000 -Dfile.encoding=UTF-8 -XX:+UseG1GC -XX:MaxGCPauseMillis=3000 -verbose:gc -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+PrintGCDateStamps -Xloggc:/opt/logtmp/gc.log -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=3 -XX:GCLogFileSize=10M"
 export EXTRA_JAVA_OPTS="-javaagent:/opt/newrelic/newrelic.jar -DformatMsgNoLookups=true -Dorg.eclipse.jetty.server.Request.maxFormContentSize=1500000 -Dfile.encoding=UTF-8 -Xlog:gc*,safepoint:gc.log:time,uptime:filecount=3,filesize=10M"
 
 # export DEFAULT_JAVA_OPTS="-Xms256M -Xmx512M -Xss1M -XX:+UnlockDiagnosticVMOptions -XX:+UnsyncloadClass"
