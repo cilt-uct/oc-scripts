@@ -355,7 +355,7 @@
       exception-handler-workflow="partial-error"
       description="Publish to preview publication channel">
       <configurations>
-        <configuration key="source-tags">preview</configuration>
+        <configuration key="download-source-tags">preview,editor</configuration>
         <configuration key="channel-id">internal</configuration>
         <configuration key="url-pattern">deploy_server_admin_url/deploy_publish_internal_path/events/events/${event_id}/tools/playback</configuration>
       </configurations>
