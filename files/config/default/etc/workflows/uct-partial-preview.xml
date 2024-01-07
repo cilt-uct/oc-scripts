@@ -29,47 +29,8 @@
       fail-on-error="true"
       exception-handler-workflow="partial-error">
       <configurations>
-        <configuration key="source-flavors">presenter/work</configuration>
-        <configuration key="target-flavor">presenter/preview</configuration>
-        <configuration key="target-tags">preview</configuration>
-        <configuration key="encoding-profile">uct-mp4-preview.http</configuration>
-      </configurations>
-    </operation>
-
-    <operation id="encode"
-      description="a. ii. Create audio only preview - presenter_source_audio"
-      if="${presenter_source_audio} AND NOT(${presenter_work_video}) AND NOT(${presentation_work_video}) AND NOT(${presentation2_work_video})"
-      fail-on-error="true"
-      exception-handler-workflow="partial-error">
-      <configurations>
-        <configuration key="source-flavors">presenter/work</configuration>
-        <configuration key="target-flavor">presenter/preview</configuration>
-        <configuration key="target-tags">preview</configuration>
-        <configuration key="encoding-profile">copy.audio</configuration>
-      </configurations>
-    </operation>
-
-    <operation id="encode"
-      description="b. Create single-stream preview - presentation_work_video / audio"
-      if="${presentation_work_video} AND NOT(${presenter_work_video}) AND NOT(${presentation2_work_video})"
-      fail-on-error="true"
-      exception-handler-workflow="partial-error">
-      <configurations>
-        <configuration key="source-flavors">presentation/work</configuration>
-        <configuration key="target-flavor">presentation/preview</configuration>
-        <configuration key="target-tags">preview</configuration>
-        <configuration key="encoding-profile">uct-mp4-preview.http</configuration>
-      </configurations>
-    </operation>
-
-    <operation id="encode"
-      description="c. Create single-stream preview - presentation2_work_video / audio"
-      if="${presentation2_work_video} AND NOT(${presentation_work_video}) AND NOT(${presenter_work_video})"
-      fail-on-error="true"
-      exception-handler-workflow="partial-error">
-      <configurations>
-        <configuration key="source-flavors">presentation2/work</configuration>
-        <configuration key="target-flavor">presentation2/preview</configuration>
+        <configuration key="source-flavors">*/work</configuration>
+        <configuration key="target-flavor">*/preview</configuration>
         <configuration key="target-tags">preview</configuration>
         <configuration key="encoding-profile">uct-mp4-preview.http</configuration>
       </configurations>
@@ -85,6 +46,7 @@
         <configuration key="source-flavor-lower">presentation/work</configuration>
         <configuration key="source-flavor-upper">presenter/work</configuration>
         <configuration key="encoding-profile">uct-mp4-preview.dual.http</configuration>
+        <configuration key="source-audio-name">upper</configuration>
         <configuration key="target-flavor">composite/preview</configuration>
         <configuration key="target-tags">preview</configuration>
         <configuration key="output-resolution">1280x360</configuration>
