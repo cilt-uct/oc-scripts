@@ -37,16 +37,6 @@
     </operation>
 
     <operation
-      id="analyze-tracks"
-      fail-on-error="false"
-      exception-handler-workflow="partial-error"
-      description="Analyze: Preview before composite">
-      <configurations>
-        <configuration key="source-flavor">*/preview</configuration>
-      </configurations>
-    </operation>
-
-    <operation
       id="composite"
       description="d. Create dual-stream preview (Presenter + Presentation)"
       if="NOT(${presentation2_work_video}) AND ${presenter_work_video} AND ${presentation_work_video}"
