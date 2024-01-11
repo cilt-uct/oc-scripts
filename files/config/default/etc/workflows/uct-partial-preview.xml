@@ -75,6 +75,32 @@
       </configurations>
     </operation>
 
+    <operation id="encode"
+      description="c2. Create dual-stream preview - (Presenter + Presentation)"
+      if="${presenter_work_video} AND ${presentation_work_video} AND NOT(${presentation2_work_video})"
+      fail-on-error="true"
+      exception-handler-workflow="partial-error">
+      <configurations>
+        <configuration key="source-flavors">presenter/work,presentation/work</configuration>
+        <configuration key="target-flavor">*/preview</configuration>
+        <configuration key="target-tags">preview</configuration>
+        <configuration key="encoding-profile">uct-mp4-preview.http</configuration>
+      </configurations>
+    </operation>
+
+    <operation id="encode"
+      description="c3. Create triple-stream preview - (Presenter + Presentation + Presentation2_work_video / audio)"
+      if="${presenter_work_video} AND ${presentation_work_video} AND ${presentation2_work_video}"
+      fail-on-error="true"
+      exception-handler-workflow="partial-error">
+      <configurations>
+        <configuration key="source-flavors">presenter/work,presentation/work,presentation2/work</configuration>
+        <configuration key="target-flavor">*/preview</configuration>
+        <configuration key="target-tags">preview</configuration>
+        <configuration key="encoding-profile">uct-mp4-preview.http</configuration>
+      </configurations>
+    </operation>
+
     <operation
       id="composite"
       description="d. Create dual-stream preview (Presenter + Presentation)"
@@ -221,7 +247,7 @@
     <operation
       id="waveform"
       fail-on-error="false"
-      description="Generating waveform">
+      description="Generating audio preview waveform">
       <configurations>
         <configuration key="source-flavor">*/work</configuration>
         <configuration key="target-flavor">*/audio+preview</configuration>
