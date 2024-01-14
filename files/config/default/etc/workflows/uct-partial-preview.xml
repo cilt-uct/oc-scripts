@@ -114,7 +114,7 @@
     <operation
       id="waveform"
       fail-on-error="false"
-      description="Generating waveform">
+      description="Generating audio preview waveform">
       <configurations>
         <configuration key="source-flavor">*/work</configuration>
         <configuration key="target-flavor">*/audio+preview</configuration>
