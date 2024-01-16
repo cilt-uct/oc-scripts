@@ -91,6 +91,7 @@ deploy_watson_email=tmpl_watson_email
 # Nibity
 deploy_nibity_id=tmpl_nibity_id
 deploy_nibity_key=tmpl_nibity_key
+deploy_nibity_token=tmpl_nibity_token
 
 # LTI Vula
 deploy_server_lti_name=tmpl_server_lti_name
