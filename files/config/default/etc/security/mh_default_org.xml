@@ -330,7 +330,7 @@
     <sec:intercept-url pattern="/lti/**" access="ROLE_OAUTH_USER" />
 
     <!-- Enable access to the LTI tools -->
-    <sec:intercept-url pattern="/ltitools/**" access="ROLE_OAUTH_USER" />
+    <sec:intercept-url pattern="/ltitools/uct/**" access="ROLE_OAUTH_USER" />
 
     <!-- Enable access to the LTI service -->
     <sec:intercept-url pattern="/lti-service-gui/**" access="ROLE_OAUTH_USER" />
