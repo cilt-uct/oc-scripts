@@ -83,7 +83,7 @@ try {
                         sessionid => $session,
                         tooltitle => "My Videos",
                         ltilaunchurl => "https://media.uct.ac.za/lti",
-                        lticustomparams => "tool=ltitools/manage/\nsid=$series_id\ntype=personal",
+                        lticustomparams => "tool=ltitools/uct/manage/\nsid=$series_id\ntype=personal",
                         toolid => "sakai.opencast.personal",
                         userEid => $userEid
                     ]);
