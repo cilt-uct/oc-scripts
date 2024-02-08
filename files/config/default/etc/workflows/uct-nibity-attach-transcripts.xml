@@ -78,7 +78,7 @@
         <!-- This is filled out by the transcription service when starting this workflow -->
         <configuration key="transcription-job-id">${transcriptionJobId}</configuration>
         <!-- Caption generated will have the default flavor based on the target-caption-format and language e.g. captions/vtt+en -->
-        <configuration key="target-caption-format">vtt</configuration>
+        <configuration key="target-flavor">captions/vtt+en-US</configuration>
         <configuration key="target-tag">engage-download</configuration>
       </configurations>
     </operation>
