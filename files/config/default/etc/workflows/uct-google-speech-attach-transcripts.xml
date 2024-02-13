@@ -38,7 +38,7 @@
         <!-- This is filled out by the transcription service when starting this workflow -->
         <configuration key="transcription-job-id">${transcriptionJobId}</configuration>
         <configuration key="line-size">80</configuration>
-        <configuration key="target-flavor">captions/timedtext</configuration>
+        <configuration key="target-flavor">captions/timedtext+en-US</configuration>
         <configuration key="target-tag">archive,engage-download</configuration>
         <configuration key="target-caption-format">vtt</configuration>
       </configurations>
