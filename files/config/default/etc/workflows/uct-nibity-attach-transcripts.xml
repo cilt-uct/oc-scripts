@@ -45,7 +45,7 @@
             id="tag"
             description="Untag Google Speech captions">
       <configurations>
-        <configuration key="source-flavors">captions/timedtext</configuration>
+        <configuration key="source-flavors">captions/timedtext+en-US</configuration>
         <configuration key="target-tags">-engage-download</configuration>
       </configurations>
     </operation>
@@ -78,6 +78,7 @@
         <!-- This is filled out by the transcription service when starting this workflow -->
         <configuration key="transcription-job-id">${transcriptionJobId}</configuration>
         <!-- Caption generated will have the default flavor based on the target-caption-format and language e.g. captions/vtt+en -->
+        <configuration key="target-flavor">captions/vtt+en-US</configuration>
         <configuration key="target-caption-format">vtt</configuration>
         <configuration key="target-tag">engage-download</configuration>
       </configurations>
