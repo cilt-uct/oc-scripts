@@ -800,6 +800,11 @@
     <value>containsKey('email')</value>
     <value>containsKey('domain')</value>
     <value>containsKey('affiliation')</value>
+    <value>['iss'].asString() eq 'https://ucttest.brightspace.com'</value>
+    <value>['aud'].asString() eq 'client-id'</value>
+    <value>['username'].asString() matches '.*'</value>
+    <value>['domain'].asString() eq 'ucttest.brightspace.com'</value>
+    <value>['affiliation'].asList(T(String)).contains('*')</value>
   </util:list>
 
   <!-- The mapping from JWT claims to Opencast roles -->
@@ -808,8 +813,8 @@
     <value>'ROLE_JWT_USER_' + ['username'].asString()</value>
     <value>('ROLE_JWT_OWNER_' + ['username'].asString()).replaceAll("[^a-zA-Z0-9]","_").toUpperCase()</value>
     <value>['domain'] != null ? 'ROLE_JWT_ORG_' + ['domain'].asString() + '_MEMBER' : null</value>
-    <value>['username'].asString() eq ('nickchoga') ? 'ROLE_ADMIN' : null</value>
-    <value>['affiliation'].asList(T(String)).contains('uct.ac.za') ? 'ROLE_GROUP_JWT_TRAINER' : null</value>
+    <value>['username'].asString() eq ('*') ? 'ROLE_ADMIN' : null</value>
+    <value>['affiliation'].asList(T(String)).contains('*') ? 'ROLE_GROUP_JWT_TRAINER' : null</value>
   </util:list>
 
   <!-- ################ -->
@@ -912,8 +917,6 @@
   <!-- The JPA user directory stores md5 hashed, salted passwords, so we must use a username-salted md5 password encoder. -->
   <sec:authentication-manager alias="authenticationManager">
     <sec:authentication-provider ref="rememberMeAuthenticationProvider"/>
-    <!-- Uncomment this if using Shibboleth authentication -->
-    <!--sec:authentication-provider ref="preauthAuthProvider" /-->
     <!-- Uncomment this if using Shibboleth or JWT authentication -->
      <sec:authentication-provider ref="preauthAuthProvider" />
     <!-- Uncomment the following line if using LDAP -->
