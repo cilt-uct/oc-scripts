@@ -40,7 +40,7 @@
         <configuration key="to">${organizer_email}</configuration>
         <configuration key="cc">${notification_list}</configuration>
         <configuration key="subject">Requesting consent: ${series_title}</configuration>
-        <configuration key="body-template-file">request_consent</configuration>
+        <configuration key="body-html-template-file">request_consent</configuration>
         <configuration key="use-html">true</configuration>
       </configurations>
     </operation>

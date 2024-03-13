@@ -108,7 +108,7 @@
         <configuration key="to">${organizer_email}</configuration>
         <configuration key="cc">${notification_list}</configuration>
         <configuration key="subject">Google Speech captions have been published for ${catalogs['episode']['title']}</configuration>
-        <configuration key="body-template-file">google_speech_publication</configuration>
+        <configuration key="body-html-template-file">google_speech_publication</configuration>
         <configuration key="use-html">true</configuration>
       </configurations>
     </operation>
@@ -122,7 +122,7 @@
       <configurations>
         <configuration key="to">${organizer_email}</configuration>
         <configuration key="subject">Google Speech captions have been published for ${catalogs['episode']['title']}</configuration>
-        <configuration key="body-template-file">google_speech_publication</configuration>
+        <configuration key="body-html-template-file">google_speech_publication</configuration>
         <configuration key="use-html">true</configuration>
       </configurations>
     </operation>
