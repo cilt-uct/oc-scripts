@@ -41,10 +41,21 @@
         <configuration key="googleTranscript">false</configuration>
         <configuration key="nibityTranscript">false</configuration>
         <configuration key="uploadedTranscript">false</configuration>
+        <configuration key="languageCode">en-US</configuration>
       </configurations>
     </operation>
 
-    <!-- Remove google transcript -->
+    <!-- Remove google transcript with language code -->
+    <operation
+      id="retract-partial"
+      fail-on-error="false"
+      if="${googleTranscript}"      
+      description="Retract google transcript from event (with language code)">
+      <configurations>
+        <configuration key="retract-flavors">captions/timedtext+${languageCode}</configuration>
+      </configurations>
+    </operation>
+
     <operation
       id="retract-partial"
       fail-on-error="false"
@@ -55,14 +66,36 @@
       </configurations>
     </operation>
 
+    <!-- Remove nibity transcript with language code-->
+    <operation
+      id="retract-partial"
+      fail-on-error="false"
+      if="${nibityTranscript}"
+      description="Retract nibity from event (with language code)">
+      <configurations>
+        <configuration key="retract-flavors">captions/vtt+${languageCode}</configuration>
+      </configurations>
+    </operation>
+
     <!-- Remove nibity transcript -->
     <operation
       id="retract-partial"
       fail-on-error="false"
       if="${nibityTranscript}"
-      description="Retract google nibity from event">
+      description="Retract nibity from event">
       <configurations>
         <configuration key="retract-flavors">captions/vtt</configuration>
+      </configurations>
+    </operation>
+
+    <!-- Remove uploaded transcript with language code-->
+    <operation
+      id="retract-partial"
+      fail-on-error="false"
+      if="${uploadedTranscript}"
+      description="Retract uploaded transcript from event (with language code)">
+      <configurations>
+        <configuration key="retract-flavors">text/vtt+${languageCode}</configuration>
       </configurations>
     </operation>
 
