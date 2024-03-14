@@ -157,7 +157,7 @@
         <configuration key="to">${organizer_email}</configuration>
         <configuration key="cc">${notification_list}</configuration>
         <configuration key="subject">Event ${catalogs['episode']['title']} has been sent to WayWithWords for transcription</configuration>
-        <configuration key="body-template-file">nibity_sent</configuration>
+        <configuration key="body-html-template-file">nibity_sent</configuration>
         <configuration key="use-html">true</configuration>
       </configurations>
     </operation>
@@ -171,7 +171,7 @@
       <configurations>
         <configuration key="to">${organizer_email}</configuration>
         <configuration key="subject">Event ${catalogs['episode']['title']} has been sent to WayWithWords for transcription</configuration>
-        <configuration key="body-template-file">nibity_sent</configuration>
+        <configuration key="body-html-template-file">nibity_sent</configuration>
         <configuration key="use-html">true</configuration>
       </configurations>
     </operation>

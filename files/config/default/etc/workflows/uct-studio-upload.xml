@@ -546,7 +546,7 @@
         <configuration key="to">${organizer_email}</configuration>
         <configuration key="cc">${notification_list}</configuration>
         <configuration key="subject">Screencast titled ${catalogs['episode']['title']} has been published</configuration>
-        <configuration key="body-template-file">screencast_publication</configuration>
+        <configuration key="body-html-template-file">screencast_publication</configuration>
         <configuration key="use-html">true</configuration>
       </configurations>
     </operation>
@@ -560,7 +560,7 @@
       <configurations>
         <configuration key="to">${organizer_email}</configuration>
         <configuration key="subject">Screencast titled ${catalogs['episode']['title']} has been published</configuration>
-        <configuration key="body-template-file">screencast_publication</configuration>
+        <configuration key="body-html-template-file">screencast_publication</configuration>
         <configuration key="use-html">true</configuration>
       </configurations>
     </operation>

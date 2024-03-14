@@ -53,7 +53,7 @@
         <configuration key="to">${organizer_email}</configuration>
         <configuration key="cc">${notification_list}</configuration>
         <configuration key="subject">A Transcript request for ${catalogs['episode']['title']} has been submitted</configuration>
-        <configuration key="body-template-file">nibity_request_sent</configuration>
+        <configuration key="body-html-template-file">nibity_request_sent</configuration>
         <configuration key="use-html">true</configuration>
       </configurations>
     </operation>
@@ -67,7 +67,7 @@
       <configurations>
         <configuration key="to">${organizer_email}</configuration>
         <configuration key="subject">A Transcript request for ${catalogs['episode']['title']} has been submitted</configuration>
-        <configuration key="body-template-file">nibity_request_sent</configuration>
+        <configuration key="body-html-template-file">nibity_request_sent</configuration>
         <configuration key="use-html">true</configuration>
       </configurations>
     </operation>
