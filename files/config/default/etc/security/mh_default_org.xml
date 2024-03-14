@@ -239,7 +239,7 @@
     <sec:intercept-url pattern="/api/events/*" method="POST" access="ROLE_ADMIN, ROLE_API_EVENTS_EDIT"/>
     <sec:intercept-url pattern="/api/events/*/acl/*" method="POST" access="ROLE_ADMIN, ROLE_API_EVENTS_ACL_EDIT"/>
     <sec:intercept-url pattern="/api/groups" method="POST" access="ROLE_ADMIN, ROLE_API_GROUPS_CREATE"/>
-    <sec:intercept-url pattern="/api/groups/*/members/*" method="POST" access="ROLE_ADMIN, ROLE_API_GROUPS_EDIT"/>
+    <sec:intercept-url pattern="/api/groups/*/members" method="POST" access="ROLE_ADMIN, ROLE_API_GROUPS_EDIT"/>
     <sec:intercept-url pattern="/api/clearIndex" method="POST" access="ROLE_ADMIN"/>
     <sec:intercept-url pattern="/api/recreateIndex" method="POST" access="ROLE_ADMIN"/>
     <sec:intercept-url pattern="/api/recreateIndex/*" method="POST" access="ROLE_ADMIN"/>
@@ -753,7 +753,6 @@
     <property name="authenticationManager" ref="authenticationManager" />
     <property name="loginHandler" ref="jwtLoginHandler" />
     <property name="exceptionIfHeaderMissing" value="false" />
-    <property name="debug" value="true" />
   </bean>
 
   <!-- General JWT request parameter extraction filter -->
@@ -762,7 +761,6 @@
     <property name="authenticationManager" ref="authenticationManager" />
     <property name="loginHandler" ref="jwtLoginHandler" />
     <property name="exceptionIfParameterMissing" value="false" />
-    <property name="debug" value="true" />
   </bean>
 
   <!-- JWT login handler -->
@@ -800,10 +798,10 @@
     <value>containsKey('email')</value>
     <value>containsKey('domain')</value>
     <value>containsKey('affiliation')</value>
-    <value>['iss'].asString() eq 'https://ucttest.brightspace.com'</value>
+    <value>['iss'].asString() eq 'https://mediadev.uct.ac.za'</value>
     <value>['aud'].asString() eq 'client-id'</value>
     <value>['username'].asString() matches '.*'</value>
-    <value>['domain'].asString() eq 'ucttest.brightspace.com'</value>
+    <value>['domain'].asString() eq 'mediadev.uct.ac.za'</value>
     <value>['affiliation'].asList(T(String)).contains('*')</value>
   </util:list>
 
