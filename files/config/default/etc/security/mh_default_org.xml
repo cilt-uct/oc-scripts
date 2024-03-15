@@ -487,8 +487,8 @@
         <!-- Uncomment the line below to support Shibboleth. -->
         <!-- <ref bean="shibbolethHeaderFilter" /> -->
 
-        <!-- Uncomment the line below to support JWT. -->
-        <ref bean="jwtHeaderFilter" />
+        <!-- Uncomment the line below to support JWT.
+        <ref bean="jwtHeaderFilter" /> -->
         <!-- Additionally/alternatively uncomment this to support passing a JWT in a URL parameter.
         <ref bean="jwtRequestParameterFilter" /> -->
       </list>
@@ -746,14 +746,14 @@
   <!-- # JWT Support # -->
   <!-- ################ -->
 
-  <!-- General JWT header extraction filter -->
+  <!-- General JWT header extraction filter
   <bean id="jwtHeaderFilter" class="org.opencastproject.security.jwt.JWTRequestHeaderAuthenticationFilter">
     <property name="principalRequestHeader" value="Authorization"/>
     <property name="principalPrefix" value="Bearer "/>
     <property name="authenticationManager" ref="authenticationManager" />
     <property name="loginHandler" ref="jwtLoginHandler" />
     <property name="exceptionIfHeaderMissing" value="false" />
-  </bean>
+  </bean> -->
 
   <!-- General JWT request parameter extraction filter
   <bean id="jwtRequestParameterFilter" class="org.opencastproject.security.jwt.JWTRequestParameterAuthenticationFilter">
