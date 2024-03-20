@@ -52,7 +52,7 @@
             <configuration key="source-flavor-lower">composite/inter</configuration>
             <configuration key="encoding-profile">mp4-download.dual.http</configuration>
             <configuration key="target-flavor">composite/delivery</configuration>
-            <configuration key="target-tags">rss,atom,composite</configuration>
+            <configuration key="target-tags">rss,atom,composite,engage-download</configuration>
             <configuration key="output-resolution">1440x540</configuration>
             <configuration key="output-background">0x000000FF</configuration>
             <configuration key="layout">preview</configuration>
