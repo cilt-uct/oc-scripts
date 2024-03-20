@@ -29,7 +29,7 @@
         <configuration key="source-flavor-upper">presenter/${result_publish_process}</configuration>
         <configuration key="encoding-profile">mp4-download.dual.http</configuration>
         <configuration key="target-flavor">pic-in-pic1/delivery</configuration>
-	      <configuration key="target-tags">rss,atom</configuration>
+        <configuration key="target-tags">rss,atom,engage-download</configuration>
         <configuration key="output-resolution">1920x1080</configuration>
         <configuration key="output-background">0x000000FF</configuration>
         <configuration key="layout">preview</configuration>
@@ -54,7 +54,7 @@
         <configuration key="source-flavor-upper">presenter/${result_publish_process}</configuration>
         <configuration key="encoding-profile">mp4-download.dual.http</configuration>
         <configuration key="target-flavor">pic-in-pic2/delivery</configuration>
-	      <configuration key="target-tags">rss,atom</configuration>
+        <configuration key="target-tags">rss,atom,engage-download</configuration>
         <configuration key="output-resolution">1920x1080</configuration>
         <configuration key="output-background">0x000000FF</configuration>
         <configuration key="layout">preview</configuration>

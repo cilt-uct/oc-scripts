@@ -35,16 +35,16 @@
       description="Untag all pic-in-pic1 flavors">
       <configurations>
         <configuration key="source-flavors">pic-in-pic1/delivery</configuration>
-        <configuration key="target-tags">-rss,-atom,</configuration>
+        <configuration key="target-tags">-rss,-atom,-engage-download</configuration>
       </configurations>
     </operation>
 
     <operation
       id="tag"
-      description="Untag all pic-in-pic1 flavors">
+      description="Untag all pic-in-pic2 flavors">
       <configurations>
         <configuration key="source-flavors">pic-in-pic2/delivery</configuration>
-        <configuration key="target-tags">-rss,-atom,</configuration>
+        <configuration key="target-tags">-rss,-atom,-engage-download</configuration>
       </configurations>
     </operation>
 
