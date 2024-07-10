@@ -166,7 +166,7 @@
                                             <p>Your video "<b>${catalogs['episode']['title']}</b>" has been processed and is ready for publication. To publish this, and other recordings in this (<i>${catalogs['series']['title']}</i>) series, we need consent for all the presenters.</p>
                                             <br/>
                                             <p>Please click here
-                                                <a href="mailto:help@vula.uct.ac.za?cc=icts-css@uct.ac.za&subject=Consent: ${catalogs['series']['title']}&body=Good day,%0D%0A%0D%0AI (${catalogs['series']['creator']}) hereby provide consent for my series (${catalogs['series']['title']}).%0D%0A%0D%0AI undertake to:%0D%0A    1.  Inform students that the lecture series is being recorded.%0D%0A    2.  Obtain written consent required from any additional or guest presenters not listed on this form (including students who present as part of a lecture).%0D%0A%0D%0A%0D%0ARegards,%0D%0A${catalogs['series']['creator']}">
+                                                <a href="mailto:cilt-helpdesk@uct.ac.za?cc=icts-css@uct.ac.za&subject=Consent: ${catalogs['series']['title']}&body=Good day,%0D%0A%0D%0AI (${catalogs['series']['creator']}) hereby provide consent for my series (${catalogs['series']['title']}).%0D%0A%0D%0AI undertake to:%0D%0A    1.  Inform students that the lecture series is being recorded.%0D%0A    2.  Obtain written consent required from any additional or guest presenters not listed on this form (including students who present as part of a lecture).%0D%0A%0D%0A%0D%0ARegards,%0D%0A${catalogs['series']['creator']}">
                                                     to provide consent
                                                 </a>.
                                             </p>
@@ -179,7 +179,7 @@
                                             <br/>
                                             <p>Thank you,</p>
                                             <p>UCT Lecture Recording Team</p>
-                                            <p>Email: <a href="mailto:help@vula.uct.ac.za?subject=Consent: ${catalogs['series']['title']}" title="Help at Vula">help@vula.uct.ac.za</a></p>
+                                            <p>Email: <a href="mailto:cilt-helpdesk@uct.ac.za?subject=Consent: ${catalogs['series']['title']}" title="CILT Helpdesk">cilt-helpdesk@uct.ac.za</a></p>
                                             <p>Phone: 021-650-5500</p>
                                         </div>
                                     </td>
