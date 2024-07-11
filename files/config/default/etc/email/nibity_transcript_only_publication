@@ -184,11 +184,11 @@
                                                 <br/>
                                                 <p>Unfortunately, Way With Words was not able to successfully generate captions for this recording. Students can however use the transcript available under Downloads under the recording.</p>
                                                 <br/>
-                                                <p>If you have further questions, please contact help@vula.uct.ac.za.</p>
+                                                <p>If you have further questions, please contact cilt-helpdesk@uct.ac.za.</p>
                                                 <br/>
                                                 <p>Thank you,</p>
                                                 <p>UCT Lecture Recording Team</p>
-                                                <p>Email: <a href="mailto:help@vula.uct.ac.za?subject=WayWithWords publication: ${workflowConfig['series_title']}" title="Help at Vula">help@vula.uct.ac.za</a></p>
+                                                <p>Email: <a href="mailto:cilt-helpdesk@uct.ac.za?subject=WayWithWords publication: ${workflowConfig['series_title']}" title="CILT Helpdesk">cilt-helpdesk@uct.ac.za</a></p>
                                                 <p>Phone: 021-650-5500</p>
                                             </div>
                                         </td>

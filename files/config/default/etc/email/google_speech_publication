@@ -191,7 +191,7 @@
                                                 <br/>
                                                 <p>Thank you,</p>
                                                 <p>UCT Lecture Recording Team</p>
-                                                <p>Email: <a href="mailto:help@vula.uct.ac.za?subject=Google Speech publication: ${workflowConfig['series_title']}" title="Help at Vula">help@vula.uct.ac.za</a></p>
+                                                <p>Email: <a href="mailto:cilt-helpdesk@uct.ac.za?subject=Google Speech publication: ${workflowConfig['series_title']}" title="CILT Helpdesk">cilt-helpdesk@uct.ac.za</a></p>
                                                 <p>Phone: 021-650-5500</p>
                                             </div>
                                         </td>
