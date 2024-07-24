@@ -166,11 +166,14 @@
                                                 <p>
                                                     <span>A transcript by WayWithWords for the following recording is now available on your </span>
                                                     <#if workflowConfig['site_id']?has_content>
-                                                        <a href="https://vula.uct.ac.za/portal/site/${workflowConfig['site_id']}">Vula site</a>
+                                                        <#if workflowConfig['site_id']?matches("^[0-9]+$")>
+                                                            <a href="https://amathuba.uct.ac.za/d2l/home/${workflowConfig['site_id']}">Amathuba site</a>:
+                                                        <#else>
+                                                            <a href="https://vula.uct.ac.za/portal/site/${workflowConfig['site_id']}">Vula site</a>:
+                                                        </#if>
                                                     <#else>
-                                                        <a href="https://vula.uct.ac.za/">Vula site</a>
+                                                        site:
                                                     </#if>
-                                                    <span>:</span>
                                                 </p>
                                                 <br/>
                                                 <p>Event: <b>${catalogs['episode']['title']}</b></p>
