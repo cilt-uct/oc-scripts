@@ -98,35 +98,6 @@
       </configurations>
     </operation>
 
-    <operation
-            id="send-email"
-            fail-on-error="true"
-            if="${organizer_email_valid} AND ${get_organizer_success} AND ${valid_notification_list}"
-            exception-handler-workflow="partial-error"
-            description="Sending google captions email to organizer and notification list">
-      <configurations>
-        <configuration key="to">${organizer_email}</configuration>
-        <configuration key="cc">${notification_list}</configuration>
-        <configuration key="subject">Google Speech captions have been published for ${catalogs['episode']['title']}</configuration>
-        <configuration key="body-html-template-file">google_speech_publication</configuration>
-        <configuration key="use-html">true</configuration>
-      </configurations>
-    </operation>
-
-    <operation
-            id="send-email"
-            fail-on-error="true"
-            if="${organizer_email_valid} AND ${get_organizer_success} AND NOT(${valid_notification_list})"
-            exception-handler-workflow="partial-error"
-            description="Sending google captions email to organizer and notification list">
-      <configurations>
-        <configuration key="to">${organizer_email}</configuration>
-        <configuration key="subject">Google Speech captions have been published for ${catalogs['episode']['title']}</configuration>
-        <configuration key="body-html-template-file">google_speech_publication</configuration>
-        <configuration key="use-html">true</configuration>
-      </configurations>
-    </operation>
-
     <!-- Clean up work artifacts -->
     <operation
         id="cleanup"
