@@ -38,9 +38,21 @@
         <!-- This is filled out by the transcription service when starting this workflow -->
         <configuration key="transcription-job-id">${transcriptionJobId}</configuration>
         <configuration key="line-size">80</configuration>
-        <configuration key="target-flavor">captions/timedtext+en-US</configuration>
-        <configuration key="target-tag">archive,engage-download</configuration>
+        <!-- Change captions flavor from "captions/timedtext" to "captions/source"  -->
+        <configuration key="target-flavor">captions/source</configuration>
+        <configuration key="target-tag">engage-download</configuration>
         <configuration key="target-caption-format">vtt</configuration>
+        <configuration key="target-element-type">track</configuration>
+      </configurations>
+    </operation>
+
+    <!-- Tag captions with laguage code -->
+    <operation
+            id="tag"
+            description="Tagging captions with language code">
+      <configurations>
+        <configuration key="source-flavors">captions/source</configuration>
+        <configuration key="target-tags">+lang:en,+generator:google-speech,+generator-type:auto</configuration>
       </configurations>
     </operation>
 
