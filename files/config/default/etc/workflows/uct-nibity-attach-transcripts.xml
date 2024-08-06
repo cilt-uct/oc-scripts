@@ -131,33 +131,6 @@
       </configurations>
     </operation>
 
-    <!-- Send notification to the media package creator -->
-    <operation
-            id="execute-once"
-            max-attempts="3"
-            retry-strategy="hold"
-            fail-on-error="true"
-            exception-handler-workflow="partial-error"
-            description="Load workflow properties from settings in series">
-      <configurations>
-        <configuration key="exec">/opt/opencast/wfexec/get_organizer_details.pl</configuration>
-        <configuration key="load">0.1</configuration>
-        <configuration key="params">#{id} #{out}</configuration>
-        <configuration key="output-filename">series_organizer.txt</configuration>
-        <configuration key="set-workflow-properties">true</configuration>
-        <configuration key="expected-type">Attachment</configuration>
-      </configurations>
-    </operation>
-
-    <!--  Send nibity transcription email -->
-    <operation
-            id="include"
-            description="Send Nibity Transcription Email">
-      <configurations>
-        <configuration key="workflow-id">uct-include-nibity-transcription-email</configuration>
-      </configurations>
-    </operation>
-
     <!-- Clean up work artifacts -->
     <operation
         id="cleanup"
