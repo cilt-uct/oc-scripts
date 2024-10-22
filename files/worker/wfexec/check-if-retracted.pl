@@ -1,9 +1,9 @@
 #! /usr/bin/perl
 
-## Check if a retract workflow was run on the event 
+## Check if a retract workflow was run on the event
 ## set workflow property called retracted_event = true/false
-# https://jira.cilt.uct.ac.za/browse/OPENCAST-2989
-# https://jira.cilt.uct.ac.za/browse/OPENCAST-2902
+# https://cilt.atlassian.net/browse/OPENCAST-2989
+# https://cilt.atlassian.net/browse/OPENCAST-2902
 
 # Created: Ngoni Choga (2020-09-14)
 
@@ -57,7 +57,7 @@ try {
     if (defined($retracted) && $retracted ne "") {
       $process_completed = 1;
     }
-    
+
     if ($debug) {
         print "retracted_event: $retracted\n";
         print "-------------------------\n";
