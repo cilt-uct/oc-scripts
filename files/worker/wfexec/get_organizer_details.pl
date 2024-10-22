@@ -2,7 +2,7 @@
 
 ## Get the information to send a consent request email to
 ## the Organizer and NotificationList of a series
-# https://jira.cilt.uct.ac.za/browse/OPENCAST-2247
+# https://cilt.atlassian.net/browse/OPENCAST-2247
 
 # TODO: get notification list from series metadata when it is added
 
@@ -207,7 +207,7 @@ sub getWorklowSubmitter($$) {
   my $workflows = $json->utf8->canonical->decode($response->decoded_content);
   my @results = @{$workflows->{results}};
   my $workflow_id = getWorkflowID(@results);
-  
+
   $mech->get("$server/admin-ng/event/$mp/workflows/$workflow_id");
   my $response = $mech->response();
   if (!$response->is_success) {
