@@ -11,7 +11,7 @@ use JSON;
 
 my $debug = 0;
 my $oc_config = "/opt/opencast/etc/custom.properties";
-my $tt_ws = "https://srvslscet001.uct.ac.za/timetable/";
+my $tt_ws = "https://srvubuclt001.uct.ac.za/timetable/";
 my $this_timezone = 'Africa/Johannesburg';
 
 my %tt_comment;
