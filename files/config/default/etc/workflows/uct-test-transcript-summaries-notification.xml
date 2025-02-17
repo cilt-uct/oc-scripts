@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definition xmlns="http://workflow.opencastproject.org">
+
+  <id>middleware-lecture-summaries-notification</id>
+  <title>Notify Middleware of Lecture Summaries</title>
+  <tags>
+    <tag>archive</tag>
+  </tags>
+  <description>Notify Middleware of Lecture Summaries</description>
+
+  <operations>
+
+   <!-- <operation
+    id="http-notify"
+    description="Notify Middleware of Lecture Summaries">
+    <configurations>
+      <configuration key="url">https://srvubuclt002.uct.ac.za/d2l/api/notification</configuration>
+      <configuration key="subject">update-lecture-summary</configuration>
+      <configuration key="method">post</configuration>
+      <configuration key="max-retry">3</configuration>
+      <configuration key="timeout">5</configuration>
+    </configurations>
+   </operation> -->
+
+    <operation
+      id="execute-once"
+      max-attempts="3"
+      retry-strategy="hold"
+      fail-on-error="true"
+      exception-handler-workflow="partial-error"
+      description="Notify Middleware of Lecture Summaries">
+      <configurations>
+        <configuration key="exec">/opt/opencast/wfexec/post-notification.pl</configuration>
+        <configuration key="load">0.1</configuration>
+        <configuration key="params">#{id} oc-publish-captions</configuration>
+      </configurations>
+    </operation>
+
+  </operations>
+
+</definition>

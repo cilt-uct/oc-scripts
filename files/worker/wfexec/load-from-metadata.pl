@@ -37,32 +37,38 @@ try {
 
     my $json = new JSON;
 
-    my $event_metadata_json = getEventMetadata($mech, $server, $mpid);
-    my $event_m = $json->utf8->canonical->decode($event_metadata_json);
+    my $event_metadata_str = getEventMetadata($mech, $server, $mpid);
+    if ($event_metadata_str ne "") {
+        my $event_m = $json->utf8->canonical->decode($event_metadata_str);
 
-    # Event fields - start_time is GMT
-    my $series         = getEventField($event_m, "isPartOf");
-    my $event_date     = getEventField($event_m, "startDate");
-    my $gmt_start_time = getEventField($event_m, "startTime");
-    my $duration       = getEventField($event_m, "duration");
-    my $location       = getEventField($event_m, "location");
-    my $title          = getEventField($event_m, "title");
+        # Event fields - start_time is GMT
+        my $series         = getEventField($event_m, "isPartOf");
+        my $event_date     = getEventField($event_m, "startDate");
+        my $gmt_start_time = getEventField($event_m, "startTime");
+        my $duration       = getEventField($event_m, "duration");
+        my $location       = getEventField($event_m, "location");
+        my $title          = getEventField($event_m, "title");
 
-    if (defined($series) && $series ne "") {
-        my $series_acl = getSeriesACL($mech, $server, $series);
-        my $series_metadata_json = getSeriesMetadata($mech, $server, $series);
+        if (defined($series) && $series ne "") {
+            my $series_acl = getSeriesACL($mech, $server, $series);
+            my $series_metadata_json = getSeriesMetadata($mech, $server, $series);
 
-        if ($series_metadata_json ne "") {
-            my $series_m = $json->utf8->canonical->decode($series_metadata_json);
-            my $series_title = getSeriesField($series_m, "title");
-            $course = getSeriesField($series_m, "course");
-            $caption_provider = getSeriesField($series_m, "caption-type");
-            $is_personal_series = ( begins_with($series_title, "Personal Series") ? "true" : "false" );
+            if ($series_metadata_json ne "") {
+                my $series_m = $json->utf8->canonical->decode($series_metadata_json);
+                my $series_title = getSeriesField($series_m, "title");
+                $course = getSeriesField($series_m, "course");
+                $caption_provider = getSeriesField($series_m, "caption-type");
+                $is_personal_series = ( begins_with($series_title, "Personal Series") ? "true" : "false" );
 
-            $process_completed = 1;
+                $process_completed = 1;
+            }
+        } else {
+            $final_result = "Unable to get series metadata for $series";
         }
+    } else {
+        $process_completed = 0;
+        $final_result = "Unable to get event metadata for $mpid";
     }
-
 } catch {
   $process_completed = 0;
   $process_result = $_;
@@ -119,18 +125,14 @@ sub getSeriesACL($$) {
     my $mech = shift;
     my $server = shift;
     my $series = shift;
-    my $result = "";
 
     $mech->get("$server/series/$series/acl.json");
     my $response = $mech->response();
-
-    if (!$response->is_success) {
-        $final_result = "Unable to get series ACL for series $series: " . $response->status_line;
-    } else {
-        $result = $response->decoded_content;
+    if ($response->is_success) {
+        return $response->decoded_content;
     }
 
-    return $result;
+    return "";
 }
 
 # Series Metadata
@@ -139,17 +141,14 @@ sub getSeriesMetadata($$) {
     my $mech = shift;
     my $server = shift;
     my $series = shift;
-    my $result = "";
 
     $mech->get("$server/api/series/$series/metadata");
     my $response = $mech->response();
-    if (!$response->is_success) {
-        $final_result = "Unable to get series metadata for series $series: " . $response->status_line;
-    } else {
-        $result = $response->decoded_content;
+    if ($response->is_success) {
+        return $response->decoded_content;
     }
 
-    return $result;
+    return "";
 }
 
 # Event Metadata
