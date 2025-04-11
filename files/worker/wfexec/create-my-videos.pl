@@ -20,7 +20,7 @@ print "server: $server user: $oc_user pass: $oc_pass\n" if $debug;
 
 my ($vula_server, $vula_user, $vula_pass) = getVulaAuth($vula_config);
 $vula_server = "https://devslscle001.uct.ac.za" if $debug;
-$vula_server = "https://srvubucle201.uct.ac.za:8443"; ## REMOVE THIS LINE WHEN ALL SAKAI SERVERS ARE UPDATED ##
+$vula_server = "https://vula.uct.ac.za";
 
 print "vula_server: $vula_server user: $vula_user pass: $vula_pass\n" if $debug;
 
