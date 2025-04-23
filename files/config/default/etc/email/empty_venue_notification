@@ -179,16 +179,21 @@
                                                     <p>Venue: <b>${catalogs['episode']['spatial']}</b></p>
                                                 <#else>
                                                     <p>Venue: The venue was not been set for this event.</p>
-                                                </#if>  
+                                                </#if>
                                                 <br/>
                                                 <p>
-                                                    <span>We recommend updating the recordings so that these align with the course/event schedule. You can cancel and/or add recordings in your </span>
+                                                    <span>We recommend updating the recordings so that these align with the course/event schedule.&nbsp;</span>
                                                     <#if workflowConfig['site_id']?has_content>
-                                                        <a href="https://vula.uct.ac.za/portal/site/${workflowConfig['site_id']}">Vula site</a>
+                                                        <span>You can cancel and/or add recordings in your </span>
+                                                        <#if workflowConfig['site_id']?matches("^[0-9]+$")>
+                                                            <a href="https://amathuba.uct.ac.za/d2l/home/${workflowConfig['site_id']}">Amathuba site</a>
+                                                        <#else>
+                                                            <a href="https://vula.uct.ac.za/portal/site/${workflowConfig['site_id']}">Vula site</a>
+                                                        </#if>
+                                                        <span> under Lecture Videos | Manage.</span>
                                                     <#else>
-                                                        <a href="https://vula.uct.ac.za/">Vula site</a>
+                                                        <span>You can cancel and/or add recordings in your course site, under Lecture Videos | Manage.</span>
                                                     </#if>
-                                                    <span> under Lecture Videos | Manage.</span>
                                                 </p>
                                                 <br/>
                                                 <p>If a lecture did occur, please reply to this email within 3 days and we will investigate further.</p>

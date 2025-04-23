@@ -27,19 +27,3 @@
         state: absent
       with_items: "{{ result.files|default([]) }}"
       when: full_clean|bool and result.matched|int > 0
-
-    #- name: Start Opencast
-    #  service: name=opencast state=started
-    #  when: start_service|bool
-    #  ignore_errors: yes
-
-    #- name: Create a Opencast Group
-    #  uri:
-    #    url: "{{ oc_system_url }}/api/groups/"
-    #    method: POST
-    #    user: "{{ oc_system_username }}"
-    #    password: "{{ oc_system_password }}"
-    #    body: "name=ROLE_GROUP_SAKAI&description=Users who exist in Vula. Some ROLE_UI_* roles are required for correct operation of Instructor view in the LTI tool.&roles=ROLE_UI_EVENTS_CREATE,ROLE_UI_EVENTS_DELETE,ROLE_UI_EVENTS_DETAILS_METADATA_EDIT,ROLE_UI_EVENTS_DETAILS_METADATA_VIEW,ROLE_UI_EVENTS_DETAILS_VIEW,ROLE_UI_EVENTS_VIEW"
-    #    force_basic_auth: yes
-    #    status_code: 201
-    #  when: "'adminpresentation' in group_names"

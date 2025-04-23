@@ -194,7 +194,7 @@
                                         <div style="line-height: 24px">
                                             <p>Dear ${catalogs['series']['creator']},</p>
                                             <br/>
-                                            <p>Your video "<b>${catalogs['episode']['title']}</b>" has been <span style="color: #5caad2;">published and is available</span> on your Vula Home page, under <a href="https://vula.uct.ac.za/"></a>"My Videos"</a>.</p>
+                                            <p>Your video "<b>${catalogs['episode']['title']}</b>" has been <span style="color: #5caad2;">published and is available</span> on your Home page, under "My Videos"</a>.</p>
                                             <br/>
                                             <p>Please visit <a href="www.cilt.uct.ac.za/onebuttonstudio" title="CILT - One Button Studio">One Button Studio</a> for videos and training material related to editing and publishing your videos to your other courses.</p>
                                             <br/>
