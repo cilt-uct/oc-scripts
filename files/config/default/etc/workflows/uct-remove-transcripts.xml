@@ -50,41 +50,21 @@
       id="retract-partial"
       fail-on-error="false"
       if="${googleTranscript}"      
-      description="Retract Google Speech transcript from event (with language code)">
-      <configurations>
-        <configuration key="retract-flavors">captions/timedtext+${languageCode}</configuration>
-      </configurations>
-    </operation>
-
-    <operation
-      id="retract-partial"
-      fail-on-error="false"
-      if="${googleTranscript}"      
       description="Retract Google Speech transcript from event">
       <configurations>
-        <configuration key="retract-flavors">captions/timedtext</configuration>
+	  <configuration key="retract-flavors">captions/*</configuration>
+	  <configuration key="source-tags">engage-download,generator:google-speech,lang:en</configuration>
       </configurations>
     </operation>
 
-    <!-- Remove nibity transcript with language code-->
-    <operation
-      id="retract-partial"
-      fail-on-error="false"
-      if="${nibityTranscript}"
-      description="Retract WayWithWords transcript from event (with language code)">
-      <configurations>
-        <configuration key="retract-flavors">captions/vtt+${languageCode}</configuration>
-      </configurations>
-    </operation>
-
-    <!-- Remove nibity transcript -->
-    <operation
+     <operation
       id="retract-partial"
       fail-on-error="false"
       if="${nibityTranscript}"
       description="Retract WayWithWords transcript from event">
       <configurations>
-        <configuration key="retract-flavors">captions/vtt</configuration>
+        <configuration key="retract-flavors">captions/*</configuration>
+        <configuration key="source-tags">engage-download,generator:waywithwords,lang:en</configuration>
       </configurations>
     </operation>
 

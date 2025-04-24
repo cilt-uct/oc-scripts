@@ -3,9 +3,7 @@
 
     <id>uct-untag-google-transcripts</id>
     <title>UCT - Untag Google Transcript</title>
-    <tags>
-        <tag>archive</tag>
-    </tags>
+    <tags/>
     <description>Untag Google Transcript</description>
     <configuration_panel />
 
@@ -15,7 +13,7 @@
         <operation
                 id="tag"
                 description="Untag Google Speech captions">
-	<configurations>
+	    <configurations>
 		<configuration key="source-tags">archive,engage-download,generator-type:auto,generator:google-speech,lang:en</configuration>
                 <configuration key="source-flavors">captions/source</configuration>
                 <configuration key="target-tags">-engage-download</configuration>
@@ -36,10 +34,11 @@
                 id="publish-engage"
                 exception-handler-workflow="partial-error"
                 description="Update recording in Opencast Media Module">
-            <configurations>
-                <configuration key="download-source-flavors">captions/source</configuration>
+	<configurations>
+		<configuration key="download-source-flavors">dublincore/*,security/*</configuration>
+                <configuration key="download-source-tags">engage-download</configuration>
                 <configuration key="strategy">merge</configuration>
-                <configuration key="check-availability">false</configuration>
+                <configuration key="check-availability">true</configuration>
             </configurations>
         </operation>
 
