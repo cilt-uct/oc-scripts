@@ -14,7 +14,8 @@
       <configurations>
         <configuration key="transcription_src_flavor">delivery</configuration>
 
-        <configuration key="skipFlavor">captions/timedtext</configuration>
+	<configuration key="skipFlavor">captions/source</configuration>
+	<configuration key="source-tags">engage-download,generator-type:auto,generator:google-speech,lang:en</configuration>
         <configuration key="languageCode">en-GB</configuration>
       </configurations>
     </operation>

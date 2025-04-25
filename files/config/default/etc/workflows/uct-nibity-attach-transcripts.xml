@@ -45,7 +45,8 @@
             id="tag"
             description="Untag Google Speech captions">
       <configurations>
-        <configuration key="source-flavors">captions/timedtext+en-US</configuration>
+	<configuration key="source-flavors">captions/*</configuration>
+	<configuration key="source-tags">engage-download,generator:google-speech,lang:en</configuration>
         <configuration key="target-tags">-engage-download</configuration>
       </configurations>
     </operation>
