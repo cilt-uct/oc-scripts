@@ -98,7 +98,7 @@
     </operation>
 
     <!-- Analyze Tracks : [EDGE CASE - Podcast]  :p -->
-    <!--operation
+    <operation
       id="analyze-tracks"
       fail-on-error="false"
       exception-handler-workflow="partial-error"
@@ -106,21 +106,21 @@
       <configurations>
         <configuration key="source-flavor">*/work</configuration>
       </configurations>
-    </operation-->
+    </operation>
 
-        <!-- Audio Only : [EDGE CASE - Podcast] Edge case -->
-        <!--operation
-          id="encode"
-          if="NOT(${presenter_work_video}) AND ${presenter_source_audio} AND NOT(${presentation_work_video}) AND NOT(${presentation2_work_video})"
-          fail-on-error="true"
-          exception-handler-workflow="partial-error"
-          description="Create presenter_work version for audio only">
-          <configurations>
-            <configuration key="source-flavor">presenter/source</configuration>
-            <configuration key="target-flavor">presenter/work</configuration>
-            <configuration key="encoding-profiles">for-audio.only</configuration>
-          </configurations>
-        </operation-->
+    <!-- Audio Only : [EDGE CASE - Podcast] Edge case -->
+    <operation
+      id="encode"
+      if="NOT(${presenter_work_video}) AND ${presenter_source_audio} AND NOT(${presentation_work_video}) AND NOT(${presentation2_work_video})"
+      fail-on-error="true"
+      exception-handler-workflow="partial-error"
+      description="Create presenter_work version for audio only">
+      <configurations>
+        <configuration key="source-flavor">presenter/source</configuration>
+        <configuration key="target-flavor">presenter/work</configuration>
+        <configuration key="encoding-profile">for-audio.only</configuration>
+      </configurations>
+    </operation>
 
     <!-- Untag work flavors -->
     <operation
