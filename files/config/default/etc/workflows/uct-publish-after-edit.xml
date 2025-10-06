@@ -246,14 +246,11 @@
     </operation>
 
     <!-- Republish metadata -->
-     <operation
-      id="publish-engage"
-      exception-handler-workflow="partial-error"
-      description="Update the publications with the latest metadata">
+    <operation
+      id="include"
+      description="Republish metadata">
       <configurations>
-        <configuration key="download-source-flavors">dublincore/*,security/*</configuration>
-        <configuration key="strategy">merge</configuration>
-        <configuration key="check-availability">false</configuration>
+        <configuration key="workflow-id">uct-republish-metadata</configuration>
       </configurations>
     </operation>
 
