@@ -245,6 +245,18 @@
       </configurations>
     </operation>
 
+    <!-- Republish metadata -->
+     <operation
+      id="publish-engage"
+      exception-handler-workflow="partial-error"
+      description="Update the publications with the latest metadata">
+      <configurations>
+        <configuration key="download-source-flavors">dublincore/*,security/*</configuration>
+        <configuration key="strategy">merge</configuration>
+        <configuration key="check-availability">false</configuration>
+      </configurations>
+    </operation>
+
     <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
     <!-- Archive                                                           -->
     <!--                                                                   -->
