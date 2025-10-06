@@ -245,12 +245,18 @@
       </configurations>
     </operation>
 
-    <!-- Republish metadata -->
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <!-- Republish metadata                                                -->
+    <!--                                                                   -->
+    <!-- Fixes issue (OPENCAST-3340) where recordings remained listed in   -->
+    <!-- the original personal series after being moved.                   -->
+    <!-- Republishing metadata again resolves the inconsistency.           -->
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
     <operation
       id="include"
       description="Republish metadata">
       <configurations>
-        <configuration key="workflow-id">uct-republish-metadata</configuration>
+        <configuration key="workflow-id">republish-metadata</configuration>
       </configurations>
     </operation>
 
