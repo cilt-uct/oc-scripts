@@ -12,10 +12,6 @@
   <operations>
     <!-- Use get-event-details.pl to populate workflow properties -->
     <!-- we need this for : event_location value -->
-    <!--
-        max-attempts="3"
-        retry-strategy="hold"
-    -->
     <operation
       id="execute-once"
       fail-on-error="false"
@@ -55,7 +51,7 @@
       description="Track4K">
       <configurations>
         <configuration key="exec">/opt/opencast/wfexec/track4k.sh</configuration>
-        <configuration key="params">-i #{in} -o #{out} -l hoerilt2</configuration>
+        <configuration key="params">-i #{in} -o #{out} -l ${event_location}</configuration>
         <!-- <configuration key="params">-i #{in} -o #{out} -l ${event_location}</configuration> -->
         <configuration key="source-flavor">presenter/source</configuration>
         <configuration key="source-video">true</configuration>
