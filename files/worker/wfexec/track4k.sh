@@ -4,6 +4,9 @@
 # track4k.sh
 # ===========================
 
+# Docker image to use
+IMAGE="devubuopc003.uct.ac.za:5001/docker-track4k:latest"
+
 # Values to be filled from wfexec
 input_filename=""
 out_filename=""
@@ -12,9 +15,6 @@ location=""
 DEBUG=false
 OPTIONS=i:o:l:d
 LONGOPTIONS=input:,output:,location:,debug
-
-# pass these files and loc to perl script
-PERL_SCRIPT="/data/src/docker-track4k/run-wrapper.pl"
 
 # Server info for logging
 EXEC_USER=$(whoami)
@@ -41,17 +41,16 @@ while true; do
   esac
 done
 
-# Default dir to current working directory if not set
-dir=$(pwd)
-
 # Logging setup
-> "$LOGFILE"  # clear log
 exec 1>> "$LOGFILE" 2>&1
 
 # Enable command tracing only if --debug
 if [ "$DEBUG" = true ]; then
   set -x
 fi
+
+# Default dir to current working directory if not set
+dir=$(pwd)
 
 # check path parameters, fix // if needed
 if [[ "$input_filename" = /* ]]; then
@@ -66,14 +65,21 @@ else
   OUTPUT_FILE_PATH="${dir%/}/$out_filename"
 fi
 
+if ! docker image inspect "$IMAGE" >/dev/null 2>&1; then
+  echo "Image not found locally, pulling..."
+  if ! docker pull "$IMAGE"; then
+    echo "ERROR: Failed to pull docker image: $IMAGE"
+    exit 1
+  fi
+fi
+
 # --- Docker run ---
 docker run --rm \
+#   --cpus=2 \
+#   --memory=4g \
   -v "$(dirname "$input_filename")":/data_in \
   -v "$(dirname "$out_filename")":/data_out \
-  docker-track4k \
+  $IMAGE \
   /data_in/"$(basename "$input_filename")" \
   /data_out/"$(basename "$out_filename")" \
   "$location"
-
-# Execute the Perl script, passing the required arguments
-perl "$PERL_SCRIPT" "$INPUT_FILE_PATH" "$OUTPUT_FILE_PATH" "$location" >> "$LOGFILE" 2>&1

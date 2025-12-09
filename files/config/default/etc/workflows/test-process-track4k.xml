@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <definition xmlns="http://workflow.opencastproject.org">
 
-  <id>uct-process-track4k</id>
-  <title>TEST - Process Source with Track4K</title>
+  <id>test-process-track4k</id>
+  <title>Test - Track4K docker test</title>
   <tags>
     <tag>archive</tag>
   </tags>
@@ -48,11 +48,10 @@
       id="execute-many"
       fail-on-error="true"
       exception-handler-workflow="partial-error"
-      description="Track4K">
+      description="Track4K (Docker)">
       <configurations>
         <configuration key="exec">/opt/opencast/wfexec/track4k.sh</configuration>
         <configuration key="params">-i #{in} -o #{out} -l ${event_location}</configuration>
-        <!-- <configuration key="params">-i #{in} -o #{out} -l ${event_location}</configuration> -->
         <configuration key="source-flavor">presenter/source</configuration>
         <configuration key="source-video">true</configuration>
         <configuration key="output-filename">tracked.mp4</configuration>
