@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<definition xmlns="http://workflow.opencastproject.org">
+
+  <id>test-process-track4k</id>
+  <title>Test - Track4K docker test</title>
+  <tags>
+    <tag>archive</tag>
+  </tags>
+  <description/>
+  <configuration_panel/>
+
+  <operations>
+    <!-- Use get-event-details.pl to populate workflow properties -->
+    <!-- we need this for : event_location value -->
+    <operation
+      id="execute-once"
+      fail-on-error="false"
+      exception-handler-workflow="partial-error"
+      description="Get Event Details">
+      <configurations>
+        <configuration key="exec">/opt/opencast/wfexec/get-event-details.pl</configuration>
+        <configuration key="load">0.1</configuration>
+        <configuration key="params">#{id} #{out}</configuration>
+        <configuration key="output-filename">eventinfo.txt</configuration>
+        <configuration key="set-workflow-properties">true</configuration>
+        <configuration key="expected-type">Attachment</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="execute-many"
+      fail-on-error="true"
+      exception-handler-workflow="partial-error"
+      description="ExecuteMany properties">
+      <configurations>
+        <configuration key="exec">/opt/opencast/wfexec/test-multi-props.pl</configuration>
+        <configuration key="params">#{in} #{out}</configuration>
+        <configuration key="source-flavor">presenter/source</configuration>
+        <configuration key="source-video">true</configuration>
+        <configuration key="set-workflow-properties">true</configuration>
+        <configuration key="output-filename">wf.properties</configuration>
+        <configuration key="expected-type">Attachment</configuration>
+      </configurations>
+    </operation>
+
+    <!-- Run track4k on presenter/source to presenter/tracked ${event_location} -->
+    <operation
+      id="execute-many"
+      fail-on-error="true"
+      exception-handler-workflow="partial-error"
+      description="Track4K (Docker)">
+      <configurations>
+        <configuration key="exec">/opt/opencast/wfexec/track4k.sh</configuration>
+        <configuration key="params">-i #{in} -o #{out} -l ${event_location}</configuration>
+        <configuration key="source-flavor">presenter/source</configuration>
+        <configuration key="source-video">true</configuration>
+        <configuration key="output-filename">tracked.mp4</configuration>
+        <configuration key="target-flavor">presenter/tracked</configuration>
+        <configuration key="target-tags">archive</configuration>
+        <configuration key="expected-type">Track</configuration>
+      </configurations>
+    </operation>
+
+    <!-- Archive generated items -->
+    <operation
+      id="snapshot"
+      description="Archive work and preview information">
+      <configurations>
+        <configuration key="source-tags">archive</configuration>
+      </configurations>
+    </operation>
+
+    <!-- Clean up work artifacts -->
+    <operation
+        id="cleanup"
+        fail-on-error="false"
+        description="Cleaning up - remove temp processing artifacts">
+        <configurations>
+            <configuration key="delete-external">false</configuration>
+            <!-- FixMe Don't clean up ACLs until workflow service no longer looks for them in the WFR. -->
+            <configuration key="preserve-flavors">dublincore/*,security/*</configuration>
+            <configuration key="delay">5</configuration>
+        </configurations>
+    </operation>
+
+  </operations>
+
+</definition>
