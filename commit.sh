@@ -35,6 +35,14 @@ getCurrentUser() {
   fi
 }
 
+pre-commit
+ret=$?
+if [ $ret -ne 0 ]; then
+    echo
+    git status
+    exit 0
+fi
+
 branch_name=$(git rev-parse --symbolic-full-name --abbrev-ref HEAD)
 user="$(getCurrentUser)"
 
@@ -52,4 +60,3 @@ fi
 case $yn in
     [Yy]* ) bash push.sh;;
 esac
-

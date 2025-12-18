@@ -93,9 +93,6 @@ class CallbackModule(CallbackBase):
         # Otherwise it's a string, (or an int, float, etc.) just return it
         return str(output)
 
-    def on_any(self, *args, **kwargs):
-        pass
-
     def runner_on_failed(self, host, res, ignore_errors=False):
         self.human_log(res)
 
@@ -158,9 +155,6 @@ class CallbackModule(CallbackBase):
 
 
     ####### V2 METHODS ######
-    def v2_on_any(self, *args, **kwargs):
-        pass
-
     def v2_runner_on_failed(self, result, ignore_errors=False):
         self.human_log(result._result)
 

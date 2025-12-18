@@ -10,4 +10,3 @@
       operation: comment
       comment: "{{ lookup('file', '{{ deploy_logfile }}') }}"
     run_once: True
-

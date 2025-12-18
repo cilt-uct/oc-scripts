@@ -56,4 +56,3 @@ CURRENT_DIR=${PWD}
 mkdir -p $LOG_DIR
 mkdir -p $TMP_DIR
 mkdir -p $PATCHES_DIR
-

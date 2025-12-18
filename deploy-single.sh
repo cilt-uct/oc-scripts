@@ -253,7 +253,7 @@ main() {
         $ROLLBACK && ACTIONS=$((ACTIONS-1))
         RECONFIGURE=false
         ROLLBACK=false
-    fi 
+    fi
 
     # if we rollback then we can't deploy or reconfigure
     if [[ $RECONFIGURE == true && $ROLLBACK == true ]]; then
@@ -303,7 +303,7 @@ main() {
     $OCR && [ "$ACTIONS" -gt "1" ] && printf " - " && ACTIONS=$((ACTIONS-1))
 
     $SOX && printf "Deploy Sox"
-    $SOX && [ "$ACTIONS" -gt "1" ] && printf " - " && ACTIONS=$((ACTIONS-1))    
+    $SOX && [ "$ACTIONS" -gt "1" ] && printf " - " && ACTIONS=$((ACTIONS-1))
 
     echo
     echo
@@ -342,13 +342,14 @@ main() {
 
     # the script folder is valid or we are just doing dev OR forced to deploy or rollback
     if [[ $FORCE_DEPLOY == true || $ROLLBACK == true || $valid_script == true || $DEPLOY_TYPE == "dev" ]]; then
-    
+
         if [[ $DEPLOY == true || $RECONFIGURE == true || $ROLLBACK == true ]]; then
 
             cd $YML
 
             # copy workflow scripts to default
             mkdir -p $FILES/config/default/wfexec/
+            rm -rf $FILES/config/default/wfexec/*
             cp -pr $FILES/worker/wfexec/* $FILES/config/default/wfexec/
 
             echo "    Packaging configurations:"
@@ -367,7 +368,7 @@ main() {
         if $DEPLOY && [ $compiled -eq 1 ]; then
 
             cd $YML
-            echo "Deploy: ($HOSTS_FILE)"                    
+            echo "Deploy: ($HOSTS_FILE)"
             $LIVE && ansible-playbook -i $HOSTS_FILE ansible-deploy.yml --extra-vars "$extra_vars gitbranch=\"$branch\" gitlog=\"$gitlog\" "
             $LIVE && echo $(addDeploymentMarker $production "Deploy" $gitlog $branch)
         fi
@@ -387,7 +388,7 @@ main() {
             echo "Rollback: ($HOSTS_FILE)"
             $LIVE && ansible-playbook -i $HOSTS_FILE ansible-rollback.yml --extra-vars "$extra_vars gitbranch=\"$branch\" gitlog=\"$gitlog\" "
             $LIVE && echo $(addDeploymentMarker $production "Rollback" $gitlog $branch)
-        fi                
+        fi
 
         echo
     else
@@ -475,7 +476,7 @@ main() {
         cd $YML
         echo "Deploy Testing Script: ($HOSTS_FILE)"
         $LIVE && ansible-playbook -i $HOSTS_FILE ansible-testing.yml --extra-vars "$extra_vars gitbranch=\"$branch\" gitlog=\"$gitlog\" "
-    fi    
+    fi
 
     if $TRACK4K; then
         track_log=$(git -C $TRACK4K_SRC show --oneline | head -n 1)
@@ -519,7 +520,7 @@ main() {
         echo "Deploy Sox: ($HOSTS_FILE)"
         $LIVE && ansible-playbook -i $HOSTS_FILE ansible-deploy-sox.yml --extra-vars "$extra_vars gitbranch=\"$branch\" gitlog=\"$gitlog\" "
         $LIVE && echo $(addDeploymentMarker $production "Sox" $gitlog $branch)
-    fi   
+    fi
 
     end_time=`date +%s`
     duration=$(( $(date "+%s") - $(echo $start_time) ))
@@ -574,7 +575,7 @@ usage() {
     echo
     echo "  --sox"
     echo "      Deploy Sox."
-    echo    
+    echo
     echo "  --test"
     echo "      Deploy Opencast dependency testing script and run it."
     echo
@@ -665,7 +666,7 @@ while true; do
             $MORE && INSTALL=true
             $MORE && ACTIONS=$((ACTIONS+1))
             shift
-            ;;                    
+            ;;
         -t|--lti-deploy)
             $MORE && LTI=true
             $MORE && ACTIONS=$((ACTIONS+1))

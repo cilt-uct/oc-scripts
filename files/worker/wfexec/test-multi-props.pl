@@ -18,4 +18,3 @@ print $fh "test$$=$trackname\n";
 close $fh;
 
 exit 0;
-

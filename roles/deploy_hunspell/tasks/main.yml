@@ -8,14 +8,14 @@
         - hunspell-af
         - hunspell-en-za
         - hunspell-en-au
-        - hunspell-en-ca 
+        - hunspell-en-ca
         - hunspell-en-gb
         - hunspell-en-med
         - hunspell-en-us
         - hunspell-en-za
       state: latest
       update_cache: true
-    register: result      
+    register: result
 
   - name: Append Deployment
     local_action: shell echo "* {{inventory_hostname}} (Hunspell)" >> "{{ deploy_logfile }}"

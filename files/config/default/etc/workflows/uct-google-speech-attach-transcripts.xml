@@ -57,7 +57,7 @@
     </operation>
 
     <!-- Merge caption/transcript to existing publication and republish -->
-    <operation 
+    <operation
             id="publish-engage"
             fail-on-error="true"
             if="NOT(${retracted_event})"
@@ -107,4 +107,3 @@
   </operations>
 
 </definition>
-

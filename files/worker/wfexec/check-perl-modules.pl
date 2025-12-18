@@ -51,7 +51,7 @@ for my $file (@files) {
 
   while (defined( my $line = <$fh> )) {
     my @matches = $line =~ /^use (\w*::\w*::\w*|\w*::\w*|\w*).*\;/g;
-    
+
     foreach my $tester (@ignore_list) {
         @matches = grep ! /$tester/, @matches;
     }
@@ -72,7 +72,7 @@ foreach my $item (@result) {
             print "Trying to install ($item)\n" if $debug;
             system("perl -MCPAN -e 'install $item'");
         } else {
-            
+
             if (!check_install($item)) {
                 print "ERROR ($item) not found\n" if !$debug;
                 $err = ++($err)

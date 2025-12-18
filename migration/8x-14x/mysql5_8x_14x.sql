@@ -18,7 +18,7 @@ ALTER TABLE oc_assets_asset MODIFY COLUMN mime_type VARCHAR (255);
 -- we instead derive the modification dates from the series' events. Unix epoch only for series
 -- without events.
 --
--- We use 1970-01-02 instead of 1970-01-01 to work around possible timezone problems. The exact value 
+-- We use 1970-01-02 instead of 1970-01-01 to work around possible timezone problems. The exact value
 -- doesn't matter anyway.
 ALTER TABLE oc_series ADD deletion_date TIMESTAMP NULL;
 ALTER TABLE oc_series ADD modified_date TIMESTAMP NULL;

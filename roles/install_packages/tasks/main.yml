@@ -19,7 +19,7 @@
       state: present
 
   # - name: Create archive directory
-  #   file: 
+  #   file:
   #     path: "/data/opencast/archive"
   #     owner: "{{system_user}}"
   #     group: "{{system_group}}"
@@ -27,7 +27,7 @@
   #     state: directory
 
   # - name: Create distribution directory
-  #   file: 
+  #   file:
   #     path: "/data/opencast/distribution"
   #     owner: "{{system_user}}"
   #     group: "{{system_group}}"
@@ -38,30 +38,30 @@
     apt:
       pkg:
         - net-tools
-        - tree 
-        - htop 
-        - synfig 
-        - netcat 
-        - libwww-mechanize-perl 
-        - libtry-tiny-perl 
-        - libjson-perl 
-        - libdatetime-perl 
-        - libdatetime-format-strptime-perl 
+        - tree
+        - htop
+        - synfig
+        - netcat
+        - libwww-mechanize-perl
+        - libtry-tiny-perl
+        - libjson-perl
+        - libdatetime-perl
+        - libdatetime-format-strptime-perl
         - libdatetime-format-w3cdtf-perl
         - libfile-find-rule-perl
-        - libclass-unload-perl        
-        - ffmpeg 
-        - hunspell 
-        - sox 
+        - libclass-unload-perl
+        - ffmpeg
+        - hunspell
+        - sox
         - tesseract-ocr
-        - hunspell-af 
-        - hunspell-en-za 
-        - hunspell-en-au 
-        - hunspell-en-ca 
-        - hunspell-en-gb 
-        - hunspell-en-med 
-        - hunspell-en-us 
-        - hunspell-en-za 
+        - hunspell-af
+        - hunspell-en-za
+        - hunspell-en-au
+        - hunspell-en-ca
+        - hunspell-en-gb
+        - hunspell-en-med
+        - hunspell-en-us
+        - hunspell-en-za
         - tesseract-ocr-eng
         - openjdk-8-jdk
         - python3-pip
@@ -74,9 +74,9 @@
       name: "{{item}}"
       selection: hold
     loop:
-      - ffmpeg 
-      - hunspell 
-      - sox 
+      - ffmpeg
+      - hunspell
+      - sox
       - tesseract-ocr
 
   # requires: ansible-galaxy collection install community.general
@@ -88,15 +88,15 @@
   - name: Install python packages
     pip:
       name:
-        - numpy 
-        - matplotlib 
-        - scipy 
-        - sklearn 
-        - hmmlearn 
-        - simplejson 
-        - eyed3 
-        - pydub 
-        - soundfile 
+        - numpy
+        - matplotlib
+        - scipy
+        - sklearn
+        - hmmlearn
+        - simplejson
+        - eyed3
+        - pydub
+        - soundfile
         - moviepy
       executable: pip3
 

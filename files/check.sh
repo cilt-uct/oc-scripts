@@ -200,7 +200,7 @@ if [ $? -eq 0 ]; then
 
   echo
   echo "pyAudioAnalysis:"
-  py1=$($python_path -c 'import pkgutil; print("pyAudioAnalysis exists" if pkgutil.find_loader("pyAudioAnalysis") else "NO pyAudioAnalysis")' 2>&1 | grep exists)
+  py1=$($python_path -c 'import importlib.util; print("pyAudioAnalysis exists" if importlib.util.find_spec("pyAudioAnalysis") else "NO pyAudioAnalysis")' 2>&1 | grep exists)
   if [ -z "$py1" ]; then
     printf "${RED}FAIL${NC}\n"
   else
@@ -272,4 +272,3 @@ perl "$DEPLOY_DIR/check.pl"
 rm $CONFIG;
 rm "$DEPLOY_DIR/$PROGNAME";
 rm "$DEPLOY_DIR/check.pl";
-

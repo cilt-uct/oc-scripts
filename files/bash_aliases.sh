@@ -6,6 +6,9 @@ export LC_ALL=en_ZA.UTF-8
 opclog=/opt/opencast/data/log/opencast.log
 
 alias tailopc='tail -f $opclog'
+alias pa='source .venv/bin/activate'
+alias pd='deactivate'
+
 
 useopc() {
   "$@" $opclog
@@ -327,6 +330,60 @@ opchelp () {
     echo "  rmworkmedia"
     echo "      Remove the work folders for a media."
     echo
+}
+
+mine() {
+    # Get the original user, even if running with sudo
+    local user="${SUDO_USER:-$USER}"
+
+    # Case 1: filename provided as first argument
+    local file="$1"
+
+    # Case 2 and 3: no filename passed as argument
+    if [ -z "$file" ]; then
+        read -p "Enter filename (leave blank to chown current directory recursively): " file
+    fi
+
+    if [ -n "$file" ]; then
+        # File provided or entered interactively
+        if [ ! -e "$file" ]; then
+            echo "Error: File '$file' does not exist."
+            return 1
+        fi
+        sudo chown "$user" "$file"
+        echo "Ownership of '$file' changed to '$user'."
+    else
+        # No filename provided or entered — change ownership of current directory recursively
+        sudo chown -R "$user" .
+        echo "Ownership of current directory and all subfolders changed to '$user'."
+    fi
+}
+
+to_root() {
+    # Always use root as the owner
+    local user="root"
+
+    # Case 1: filename provided as first argument
+    local file="$1"
+
+    # Case 2 and 3: no filename passed as argument
+    if [ -z "$file" ]; then
+        read -p "Enter filename (leave blank to chown current directory recursively): " file
+    fi
+
+    if [ -n "$file" ]; then
+        # File provided or entered interactively
+        if [ ! -e "$file" ]; then
+            echo "Error: File '$file' does not exist."
+            return 1
+        fi
+        sudo chown "$user" "$file"
+        echo "Ownership of '$file' changed to '$user'."
+    else
+        # No filename provided or entered — change ownership of current directory recursively
+        sudo chown -R "$user" .
+        echo "Ownership of current directory and all subfolders changed to '$user'."
+    fi
 }
 
 cd () {

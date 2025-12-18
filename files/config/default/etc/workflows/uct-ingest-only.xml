@@ -5,6 +5,7 @@
   <title>UCT - Ingest Only</title>
   <tags>
     <tag>schedule</tag>
+    <tag>upload</tag>
   </tags>
   <description>Ingest source material</description>
   <configuration_panel />

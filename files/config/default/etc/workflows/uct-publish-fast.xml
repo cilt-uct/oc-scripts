@@ -8,7 +8,7 @@
   <configuration_panel/>
 
   <operations>
-  
+
     <!-- Apply the default workflow configuration -->
     <operation
       id="defaults"
@@ -89,7 +89,7 @@
         <configuration key="source-flavors">dublincore/*</configuration>
         <configuration key="target-tags">+engage-download</configuration>
       </configurations>
-    </operation> 
+    </operation>
 
     <!-- Analyze Tracks: set flavor_source workflow properties -->
     <operation

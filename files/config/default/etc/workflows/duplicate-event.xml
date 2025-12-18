@@ -1,246 +1,298 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <definition xmlns="http://workflow.opencastproject.org">
 
-  <id>duplicate-event</id>
-  <title>Duplicate Event</title>
-  <tags>
-    <tag>archive</tag>
-  </tags>
-  <description/>
-  <displayOrder>10</displayOrder>
-  <configuration_panel>
-    <![CDATA[
-        <div id="workflow-configuration">
-          <fieldset>
-            <legend>Duplication Options:</legend>
-            <br/>
-            <div>
-              <label for="mpTitle" style="width: 150px;">Title of Duplicate:</label>
-              <input id="mpTitle" name="mpTitle" type="text" style="width: 400px;" value=" " class="configField" />
-            </div>
-            <br/>
-            <div>
-              <label for="seriesId" style="width: 150px;">Series Id:</label>
-              <input id="seriesId" name="seriesId" type="text" maxlength="255" style="width: 400px;" value=" " class="configField" />
-            </div>
-            <br/>
-            <div>
-              <label for="startDateTime" style="width: 150px;">Date time:</label>
-              <input id="startDateTime" name="startDateTime" type="datetime-local" style="width: 300px;" class="configField" required />
-            </div>
-            <br/>
-            <div>
-              <label for="numberOfEvents" style="width: 150px;">Number of Events</label>
-              <input
-                id="numberOfEvents"
-                name="numberOfEvents"
-                type="number"
-                class="configField"
-                onkeypress="return event.charCode > 47"
-                oninput="checkValueInBounds()"
-                min="1"
-                value="1"
-                max="25"
-              />
-            </div>
-            <br/>
-            <ul>
-              <li>
-                <label>Flavors to use:
-              </li>
-              <li>
-                <input id="usePresentation" name="usePresentation" type="checkbox" checked="checked" class="configField" value="true" />
-                <label for="usePresentation">Presentation</label>
-              </li>
-              <li>
-                <input id="usePresentation2" name="usePresentation2" type="checkbox" checked="checked" class="configField" value="true" />
-                <label for="usePresentation2">Presentation2</label>
-              </li>
-            </ul>
-            <br/>
-            <div>
-              <fieldset>
-                <input id="noCopySuffix" name="noCopySuffix" type="checkbox" class="configField" value="false" />
-                <label for="noCopySuffix">Do not use copy suffix</label>
-              </fieldset>
-            </div>
-          </fieldset>
-        </div>
+    <id>duplicate-event</id>
+    <title>Duplicate Event</title>
+    <tags>
+        <tag>archive</tag>
+    </tags>
+    <description/>
+    <displayOrder>10</displayOrder>
 
-        <script type="text/javascript">
-          function checkValueInBounds() {
-            var value = $('#numberOfEvents').val();
-            var max = $('#numberOfEvents').attr('max');
-            var min = $('#numberOfEvents').attr('min');
-            if (parseInt(value) < parseInt(min)) $('#numberOfEvents').val(min);
-            if (parseInt(value) > parseInt(max)) $('#numberOfEvents').val(max);
-          }
+    <configuration_panel>
+        <![CDATA[
+            <div id="workflow-configuration">
+            <fieldset>
+                <legend>Duplication Options:</legend>
+                <br/>
+                <div>
+                <label for="mpTitle" style="width: 150px;">Title of Duplicate:</label>
+                <input id="mpTitle" name="mpTitle" type="text" style="width: 400px;" value=" " class="configField" />
+                </div>
+                <br/>
+                <div>
+                <label for="seriesId" style="width: 150px;">Series Id:</label>
+                <input id="seriesId" name="seriesId" type="text" maxlength="255" style="width: 400px;" value=" " class="configField" />
+                </div>
+                <br/>
+                <div>
+                <label for="startDateTime" style="width: 150px;">Date time:</label>
+                <input id="startDateTime" name="startDateTime" type="datetime-local" style="width: 300px;" class="configField" required />
+                </div>
+                <br/>
+                <div>
+                <label for="numberOfEvents" style="width: 150px;">Number of Events</label>
+                <input
+                    id="numberOfEvents"
+                    name="numberOfEvents"
+                    type="number"
+                    class="configField"
+                    onkeypress="return event.charCode > 47"
+                    oninput="checkValueInBounds()"
+                    min="1"
+                    value="1"
+                    max="25"
+                />
+                </div>
+                <br/>
+                <ul>
+                <li>
+                    <label>Flavors to use:
+                </li>
+                <li>
+                    <input id="usePresenter" name="usePreseusePresenterntation" type="checkbox" checked="checked" class="configField" value="true" />
+                    <label for="usePresenter">Presenter</label>
+                </li>
+                <li>
+                    <input id="usePresentation" name="usePresentation" type="checkbox" checked="checked" class="configField" value="true" />
+                    <label for="usePresentation">Presentation</label>
+                </li>
+                <li>
+                    <input id="usePresentation2" name="usePresentation2" type="checkbox" checked="checked" class="configField" value="true" />
+                    <label for="usePresentation2">Presentation2</label>
+                </li>
+                </ul>
+                <br/>
+                <div>
+                <fieldset>
+                    <input id="noCopySuffix" name="noCopySuffix" type="checkbox" class="configField" value="false" />
+                    <label for="noCopySuffix">Do not use copy suffix</label>
+                </fieldset>
+                </div>
+            </fieldset>
+            </div>
 
-          $.fn.setNow = function (onlyBlank) {
-            var now = new Date($.now()), year, month, date, hours, minutes, seconds, formattedDateTime;
-            year = now.getFullYear();
-            month = now.getMonth().toString().length === 1 ? '0' + (now.getMonth() + 1).toString() : now.getMonth() + 1;
-            date = now.getDate().toString().length === 1 ? '0' + (now.getDate()).toString() : now.getDate();
-            hours = now.getHours().toString().length === 1 ? '0' + now.getHours().toString() : now.getHours();
-            minutes = now.getMinutes().toString().length === 1 ? '0' + now.getMinutes().toString() : now.getMinutes();
-            seconds = now.getSeconds().toString().length === 1 ? '0' + now.getSeconds().toString() : now.getSeconds();
-            formattedDateTime = year + '-' + month + '-' + date + 'T' + hours + ':' + minutes + ':' + seconds;
-
-            if ((onlyBlank === true) && $(this).val()) {
-              return this;
+            <script type="text/javascript">
+            function checkValueInBounds() {
+                var value = $('#numberOfEvents').val();
+                var max = $('#numberOfEvents').attr('max');
+                var min = $('#numberOfEvents').attr('min');
+                if (parseInt(value) < parseInt(min)) $('#numberOfEvents').val(min);
+                if (parseInt(value) > parseInt(max)) $('#numberOfEvents').val(max);
             }
-            $(this).val(formattedDateTime);
-            return this;
-          }
 
-          $(function () {
-              $('input[type="datetime-local"]').setNow();
-          });
+            $.fn.setNow = function (onlyBlank) {
+                var now = new Date($.now()), year, month, date, hours, minutes, seconds, formattedDateTime;
+                year = now.getFullYear();
+                month = now.getMonth().toString().length === 1 ? '0' + (now.getMonth() + 1).toString() : now.getMonth() + 1;
+                date = now.getDate().toString().length === 1 ? '0' + (now.getDate()).toString() : now.getDate();
+                hours = now.getHours().toString().length === 1 ? '0' + now.getHours().toString() : now.getHours();
+                minutes = now.getMinutes().toString().length === 1 ? '0' + now.getMinutes().toString() : now.getMinutes();
+                seconds = now.getSeconds().toString().length === 1 ? '0' + now.getSeconds().toString() : now.getSeconds();
+                formattedDateTime = year + '-' + month + '-' + date + 'T' + hours + ':' + minutes + ':' + seconds;
 
-        </script>
-      ]]>
-  </configuration_panel>
-  <configuration_panel_json>
-    [
-      {
-        "description": "Title of Duplicate:",
-        "fieldset": [
-          {
-            "name": "mpTitle",
-            "type": "text",
-            "value": " "
-          }
-        ]
-      },
-      {
-        "description": "Series Id:",
-        "fieldset": [
+                if ((onlyBlank === true) && $(this).val()) {
+                return this;
+                }
+                $(this).val(formattedDateTime);
+                return this;
+            }
+
+            $(function () {
+                $('input[type="datetime-local"]').setNow();
+            });
+
+            </script>
+        ]]>
+    </configuration_panel>
+
+    <configuration_panel_json>
+        [
+        {
+            "description": "Title of Duplicate:",
+            "fieldset": [
             {
-            "name": "seriesId",
-            "type": "text",
-            "value": " "
-          }
+                "name": "mpTitle",
+                "type": "text",
+                "value": " "
+            }
+            ]
+        },
+        {
+            "description": "Series Id:",
+            "fieldset": [
+                {
+                "name": "seriesId",
+                "type": "text",
+                "value": " "
+            }
+            ]
+        },
+        {
+            "description": "Insert the number of duplicated events",
+            "fieldset": [
+            {
+                "name": "numberOfEvents",
+                "type": "number",
+                "label": "Number of Events",
+                "min": "1",
+                "max": "25",
+                "value": "1"
+            }
+            ]
+        },
+        {
+            "fieldset": [
+            {
+                "name": "noCopySuffix",
+                "type": "checkbox",
+                "label": "Do not use copy suffix",
+                "value": false
+            }
+            ]
+        }
         ]
-      },
-      {
-        "description": "Insert the number of duplicated events",
-        "fieldset": [
-          {
-            "name": "numberOfEvents",
-            "type": "number",
-            "label": "Number of Events",
-            "min": "1",
-            "max": "25",
-            "value": "1"
-          }
-        ]
-      },
-      {
-        "fieldset": [
-          {
-            "name": "noCopySuffix",
-            "type": "checkbox",
-            "label": "Do not use copy suffix",
-            "value": false
-          }
-        ]
-      }
-    ]
-  </configuration_panel_json>
-  <operations>
-    <!-- Apply the default workflow configuration -->
-    <operation
-        id="defaults"
-        description="Applying default configuration values">
-        <configurations>
-            <configuration key="usePresentation">true</configuration>
-            <configuration key="usePresentation2">true</configuration>
-        </configurations>
-    </operation>
+    </configuration_panel_json>
 
-    <operation
-        id="defaults"
-        if="${usePresentation} AND ${usePresentation2}"
-        description="Use everything">
-        <configurations>
-        <configuration key="copy_flavor">*/*</configuration>
-        </configurations>
-    </operation>
+    <operations>
+        <!-- Apply the default workflow configuration -->
+        <operation
+            id="defaults"
+            description="Applying default configuration values">
+            <configurations>
+                <configuration key="usePresenter">true</configuration>
+                <configuration key="usePresentation">true</configuration>
+                <configuration key="usePresentation2">true</configuration>
+            </configurations>
+        </operation>
 
-    <operation
-        id="defaults"
-        if="${usePresentation} AND NOT(${usePresentation2})"
-        description="Use presentation">
-        <configurations>
-        <configuration key="copy_flavor">presenter/source,presentation/source</configuration>
-        </configurations>
-    </operation>
+        <!-- None : 0|0|0 -->
+        <operation
+            id="defaults"
+            if="NOT(${usePresenter}) AND NOT(${usePresentation}) AND NOT(${usePresentation2})"
+            description="Use everything">
+            <configurations>
+                <configuration key="copy_flavor">none/none</configuration>
+            </configurations>
+        </operation>
 
-    <operation
-        id="defaults"
-        if="NOT(${usePresentation}) AND ${usePresentation2}"
-        description="Use presentation2">
-        <configurations>
-        <configuration key="copy_flavor">presenter/source,presentation2/source</configuration>
-        </configurations>
-    </operation>
+        <!-- 0|0|1 -->
+        <operation
+            id="defaults"
+            if="NOT(${usePresenter}) AND NOT(${usePresentation}) AND ${usePresentation2}"
+            description="Use everything">
+            <configurations>
+                <configuration key="copy_flavor">presentation2/source</configuration>
+            </configurations>
+        </operation>
 
-    <operation
-        id="defaults"
-        if="NOT(${usePresentation}) AND NOT(${usePresentation2})"
-        description="Just presenter">
-        <configurations>
-        <configuration key="copy_flavor">presenter/source</configuration>
-        </configurations>
-    </operation>
+        <!-- 0|1|0 -->
+        <operation
+            id="defaults"
+            if="NOT(${usePresenter}) AND ${usePresentation} AND NOT(${usePresentation2})"
+            description="Use everything">
+            <configurations>
+                <configuration key="copy_flavor">presentation/source</configuration>
+            </configurations>
+        </operation>
 
-    <!-- Create the new events -->
-    <operation
-      id="duplicate-event"
-      exception-handler-workflow="partial-error"
-      description="Duplicate Event">
-      <configurations>
-        <configuration key="source-flavors">*/*</configuration>
-        <configuration key="number-of-events">${numberOfEvents}</configuration>
-        <configuration key="set-series-id">${seriesId}</configuration>
-        <configuration key="set-title">${mpTitle}</configuration>
-        <configuration key="set-start-date-time">${startDateTime}</configuration>
-        <configuration key="target-tags"></configuration>
-        <configuration key="property-namespaces">org.opencastproject.assetmanager.security,org.opencastproject.workflow.configuration</configuration>
-        <configuration key="no-suffix">${noCopySuffix}</configuration>
-        <configuration key="copy-number-prefix">copy</configuration>
-      </configurations>
-    </operation>
+        <!-- 0|1|1 -->
+        <operation
+            id="defaults"
+            if="NOT(${usePresenter}) AND ${usePresentation} AND ${usePresentation2}"
+            description="Use everything">
+            <configurations>
+                <configuration key="copy_flavor">presentation/source,presentation2/source</configuration>
+            </configurations>
+        </operation>
 
-    <!-- To activate and test post OC14 upgrade -->
-    <!--<operation
-      id="start-workflow">
-      <configurations>
-        <configuration key="media-packages">${duplicate_media_package_ids}</configuration>
-        <configuration key="workflow-definition">fast</configuration>
-      </configurations>
-    </operation>-->
+        <!-- 1|0|0 -->
+        <operation
+            id="defaults"
+            if="${usePresenter} AND NOT(${usePresentation}) AND NOT(${usePresentation2})"
+            description="Use everything">
+            <configurations>
+                <configuration key="copy_flavor">presenter/source</configuration>
+            </configurations>
+        </operation>
 
-    <!-- Clean up work artifacts -->
-    <operation
-      id="cleanup"
-      fail-on-error="false"
-      description="Cleaning up - remove temporary processing artifacts">
-      <configurations>
-        <!-- On systems with shared workspace or working file repository -->
-        <!-- you want to set this option to false. -->
-        <configuration key="delete-external">false</configuration>
-        <!-- FixMe Don't clean up ACLs until workflow service no longer looks for them in the WFR. -->
-        <!-- ACLs are required again when working through ActiveMQ messages -->
-        <configuration key="preserve-flavors">dublincore/*,security/*</configuration>
-      </configurations>
-    </operation>
+        <!-- 1|0|1 -->
+        <operation
+            id="defaults"
+            if="${usePresenter} AND NOT(${usePresentation}) AND ${usePresentation2}"
+            description="Use everything">
+            <configurations>
+                <configuration key="copy_flavor">presenter/source,presentation2/source</configuration>
+            </configurations>
+        </operation>
 
-  </operations>
+        <!-- 1|1|0 -->
+        <operation
+            id="defaults"
+            if="${usePresenter} AND ${usePresentation} AND NOT(${usePresentation2})"
+            description="Use everything">
+            <configurations>
+                <configuration key="copy_flavor">presenter/source,presentation/source</configuration>
+            </configurations>
+        </operation>
 
-  <state-mappings>
-    <state-mapping state="running">EVENTS.EVENTS.STATE_MAPPING.DUPLICATING</state-mapping>
-    <state-mapping state="failing">EVENTS.EVENTS.STATE_MAPPING.DUPLICATING</state-mapping>
-  </state-mappings>
+        <!-- ALL : 1|1|1 -->
+        <operation
+            id="defaults"
+            if="${usePresenter} AND ${usePresentation} AND ${usePresentation2}"
+            description="Use everything">
+            <configurations>
+                <configuration key="copy_flavor">*/*</configuration>
+            </configurations>
+        </operation>
+
+        <!-- Create the new events -->
+        <operation
+            id="duplicate-event"
+            exception-handler-workflow="partial-error"
+            description="Duplicate Event">
+            <configurations>
+                <configuration key="source-flavors">${copy_flavor}</configuration>
+                <configuration key="number-of-events">${numberOfEvents}</configuration>
+                <configuration key="set-series-id">${seriesId}</configuration>
+                <configuration key="set-title">${mpTitle}</configuration>
+                <configuration key="set-start-date-time">${startDateTime}</configuration>
+                <configuration key="target-tags"></configuration>
+                <configuration key="property-namespaces">org.opencastproject.assetmanager.security,org.opencastproject.workflow.configuration</configuration>
+                <configuration key="no-suffix">${noCopySuffix}</configuration>
+                <configuration key="copy-number-prefix">copy</configuration>
+            </configurations>
+        </operation>
+
+        <!-- To activate and test post OC14 upgrade -->
+        <!--<operation
+            id="start-workflow">
+            <configurations>
+                <configuration key="media-packages">${duplicate_media_package_ids}</configuration>
+                <configuration key="workflow-definition">fast</configuration>
+            </configurations>
+        </operation>-->
+
+        <!-- Clean up work artifacts -->
+        <operation
+            id="cleanup"
+            fail-on-error="false"
+            description="Cleaning up - remove temporary processing artifacts">
+            <configurations>
+                <!-- On systems with shared workspace or working file repository -->
+                <!-- you want to set this option to false. -->
+                <configuration key="delete-external">false</configuration>
+                <!-- FixMe Don't clean up ACLs until workflow service no longer looks for them in the WFR. -->
+                <!-- ACLs are required again when working through ActiveMQ messages -->
+                <configuration key="preserve-flavors">dublincore/*,security/*</configuration>
+            </configurations>
+        </operation>
+
+    </operations>
+
+    <state-mappings>
+        <state-mapping state="running">EVENTS.EVENTS.STATE_MAPPING.DUPLICATING</state-mapping>
+        <state-mapping state="failing">EVENTS.EVENTS.STATE_MAPPING.DUPLICATING</state-mapping>
+    </state-mappings>
 
 </definition>
