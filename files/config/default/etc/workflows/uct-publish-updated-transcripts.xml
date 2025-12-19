@@ -19,6 +19,7 @@
                 <configuration key="googleTranscript">true</configuration>
                 <configuration key="nibityTranscript">true</configuration>
                 <configuration key="uploadedTranscript">true</configuration>
+                <configuration key="whisperTranscript">true</configuration>
                 <configuration key="download-source-flavors">text/*,captions/*</configuration>
             </configurations>
         </operation>

@@ -122,4 +122,10 @@ deploy_google_storage_bucket=tmpl_google_storage_bucket
 deploy_server_elasticsearch_user=tmpl_elasticsearch_user
 deploy_server_elasticsearch_password=tmpl_elasticsearch_password
 
+# Whisper (OpenAI)
+deploy_whisper_api_on=tmpl_whisper_api_on
+deploy_whisper_api_key=tmpl_whisper_api_key
+deploy_whisper_api_secret=tmpl_whisper_api_secret
+deploy_whisper_api_workflow=tmpl_whisper_api_workflow
+
 ## LAST LINE ##############################
