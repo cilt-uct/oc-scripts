@@ -2,7 +2,7 @@
 <definition xmlns="http://workflow.opencastproject.org">
 
   <id>uct-include-transcription-whisper</id>
-  <title>Submit trimmed audio for Whisper API Transcription</title>
+  <title>Submit trimmed audio for Whisper Transcription</title>
   <tags/>
   <description>Runs after real publishing of media</description>
   <configuration_panel></configuration_panel>
@@ -10,39 +10,34 @@
 
     <!-- Apply the default workflow configuration -->
     <operation
-      id="defaults"
-      description="Applying default configuration values - Whisper Transcription">
-      <configurations>
-         <configuration key="transcription_src_flavor">normalized-trimmed</configuration>
-         <configuration key="preview_src_flavor">transcription</configuration>
-         <configuration key="preview_out_flavor">transcription-preview</configuration>
-         <configuration key="preview_out_tags">transcription-preview</configuration>
-      </configurations>
+        id="defaults"
+        description="Applying default configuration values - Whisper Transcription">
+        <configurations>
+            <configuration key="transcription_src_flavor">normalized-trimmed</configuration>
+            <configuration key="preview_src_flavor">transcription</configuration>
+            <configuration key="preview_out_flavor">transcription-preview</configuration>
+            <configuration key="preview_out_tags">transcription-preview</configuration>
+        </configurations>
     </operation>
 
     <operation
-      id="clone"
-      fail-on-error="true"
-      exception-handler-workflow="partial-error"
-      description="Clone from transcription_src_flavor to outr work flavor">
-      <configurations>
-              <configuration key="source-flavor">*/${transcription_src_flavor}</configuration>
-              <configuration key="target-flavor">*/transcription</configuration>
-      </configurations>
+        id="clone"
+        fail-on-error="true"
+        exception-handler-workflow="partial-error"
+        description="Clone from transcription_src_flavor to outr work flavor">
+        <configurations>
+                <configuration key="source-flavor">*/${transcription_src_flavor}</configuration>
+                <configuration key="target-flavor">*/transcription</configuration>
+        </configurations>
     </operation>
 
-    <!--
-      OPENCAST-2580: Nibity requires a video with audio, and the video we want to submit
-        is a composite side-by-side video if there are >=2 streams,
-        or single presenter video if not.
-    -->
     <operation
-      id="analyze-tracks"
-      exception-handler-workflow="partial-error"
-      description="Analyze tracks in media package an set control variables">
-      <configurations>
-        <configuration key="source-flavor">*/transcription</configuration>
-      </configurations>
+        id="analyze-tracks"
+        exception-handler-workflow="partial-error"
+        description="Analyze tracks in media package an set control variables">
+        <configurations>
+            <configuration key="source-flavor">*/transcription</configuration>
+        </configurations>
     </operation>
 
     <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -50,151 +45,149 @@
       publish internally (Editor).
     -->
     <operation id="encode"
-      description="a. i. Create single-stream preview - presenter_transcription_video / audio"
-      if="${presenter_transcription_video} AND NOT(${presentation_transcription_video}) AND NOT(${presentation2_transcription_video})"
-      fail-on-error="true"
-      exception-handler-workflow="partial-error">
-      <configurations>
-        <configuration key="source-flavors">presenter/transcription</configuration>
-        <configuration key="target-flavor">presenter/${preview_out_flavor}</configuration>
-        <configuration key="encoding-profile">uct-mp4-preview.http</configuration>
-      </configurations>
+        description="a. i. Create single-stream preview - presenter_transcription_video / audio"
+        if="${presenter_transcription_video} AND NOT(${presentation_transcription_video}) AND NOT(${presentation2_transcription_video})"
+        fail-on-error="true"
+        exception-handler-workflow="partial-error">
+        <configurations>
+            <configuration key="source-flavors">presenter/transcription</configuration>
+            <configuration key="target-flavor">presenter/${preview_out_flavor}</configuration>
+            <configuration key="encoding-profile">uct-mp4-preview.http</configuration>
+        </configurations>
     </operation>
 
     <operation id="encode"
-      description="a. ii. Create audio only preview - presenter_source_audio"
-      if="${presenter_source_audio} AND NOT(${presenter_transcription_video}) AND NOT(${presentation_transcription_video}) AND NOT(${presentation2_transcription_video})"
-      fail-on-error="true"
-      exception-handler-workflow="partial-error">
-      <configurations>
-        <configuration key="source-flavors">presenter/transcription</configuration>
-        <configuration key="target-flavor">presenter/${preview_out_flavor}</configuration>
-        <configuration key="encoding-profile">copy.audio</configuration>
-      </configurations>
+        description="a. ii. Create audio only preview - presenter_source_audio"
+        if="${presenter_source_audio} AND NOT(${presenter_transcription_video}) AND NOT(${presentation_transcription_video}) AND NOT(${presentation2_transcription_video})"
+        fail-on-error="true"
+        exception-handler-workflow="partial-error">
+        <configurations>
+            <configuration key="source-flavors">presenter/transcription</configuration>
+            <configuration key="target-flavor">presenter/${preview_out_flavor}</configuration>
+            <configuration key="encoding-profile">copy.audio</configuration>
+        </configurations>
     </operation>
 
     <operation id="encode"
-      description="b. Create single-stream preview - presentation_transcription_video / audio"
-      if="${presentation_transcription_video} AND NOT(${presenter_transcription_video}) AND NOT(${presentation2_transcription_video})"
-      fail-on-error="true"
-      exception-handler-workflow="partial-error">
-      <configurations>
-        <configuration key="source-flavors">presentation/transcription</configuration>
-        <configuration key="target-flavor">presentation/${preview_out_flavor}</configuration>
-        <configuration key="encoding-profile">uct-mp4-preview.http</configuration>
-      </configurations>
+        description="b. Create single-stream preview - presentation_transcription_video / audio"
+        if="${presentation_transcription_video} AND NOT(${presenter_transcription_video}) AND NOT(${presentation2_transcription_video})"
+        fail-on-error="true"
+        exception-handler-workflow="partial-error">
+        <configurations>
+            <configuration key="source-flavors">presentation/transcription</configuration>
+            <configuration key="target-flavor">presentation/${preview_out_flavor}</configuration>
+            <configuration key="encoding-profile">uct-mp4-preview.http</configuration>
+        </configurations>
     </operation>
 
     <operation id="encode"
-      description="c. Create single-stream preview - presentation2_transcription_video / audio"
-      if="${presentation2_transcription_video} AND NOT(${presentation_transcription_video}) AND NOT(${presenter_transcription_video})"
-      fail-on-error="true"
-      exception-handler-workflow="partial-error">
-      <configurations>
-        <configuration key="source-flavors">presentation2/transcription</configuration>
-        <configuration key="target-flavor">presentation2/${preview_out_flavor}</configuration>
-        <configuration key="encoding-profile">uct-mp4-preview.http</configuration>
-      </configurations>
+        description="c. Create single-stream preview - presentation2_transcription_video / audio"
+        if="${presentation2_transcription_video} AND NOT(${presentation_transcription_video}) AND NOT(${presenter_transcription_video})"
+        fail-on-error="true"
+        exception-handler-workflow="partial-error">
+        <configurations>
+            <configuration key="source-flavors">presentation2/transcription</configuration>
+            <configuration key="target-flavor">presentation2/${preview_out_flavor}</configuration>
+            <configuration key="encoding-profile">uct-mp4-preview.http</configuration>
+        </configurations>
     </operation>
 
     <operation
-      id="composite"
-      description="d. Create dual-stream preview (Presenter + Presentation)"
-      if="NOT(${presentation2_transcription_video}) AND ${presenter_transcription_video} AND ${presentation_transcription_video}"
-      fail-on-error="true"
-      exception-handler-workflow="partial-error">
-      <configurations>
-        <configuration key="source-flavor-lower">presentation/transcription</configuration>
-        <configuration key="source-flavor-upper">presenter/transcription</configuration>
-        <configuration key="encoding-profile">uct-mp4-preview.dual.http</configuration>
-        <configuration key="target-flavor">composite/${preview_out_flavor}</configuration>
-        <configuration key="output-resolution">2560x720</configuration>
-        <configuration key="output-background">0x000000FF</configuration>
-        <configuration key="layout">preview</configuration>
-        <configuration key="layout-single">
-          {"horizontalCoverage":1.0,"anchorOffset":{"referring":{"left":0.0,"top":0.0},"reference":{"left":0.0,"top":0.0},"offset":{"x":0,"y":0}}};
-        </configuration>
-        <configuration key="layout-preview">
-          {"horizontalCoverage":0.5,"anchorOffset":{"referring":{"left":1.0,"top":0.0},"reference":{"left":1.0,"top":0.0},"offset":{"x":0,"y":0}}};
-          {"horizontalCoverage":0.5,"anchorOffset":{"referring":{"left":0.0,"top":0.0},"reference":{"left":0.0,"top":0.0},"offset":{"x":0,"y":0}}};
-        </configuration>
-      </configurations>
+        id="composite"
+        description="d. Create dual-stream preview (Presenter + Presentation)"
+        if="NOT(${presentation2_transcription_video}) AND ${presenter_transcription_video} AND ${presentation_transcription_video}"
+        fail-on-error="true"
+        exception-handler-workflow="partial-error">
+        <configurations>
+            <configuration key="source-flavor-lower">presentation/transcription</configuration>
+            <configuration key="source-flavor-upper">presenter/transcription</configuration>
+            <configuration key="encoding-profile">uct-mp4-preview.dual.http</configuration>
+            <configuration key="target-flavor">composite/${preview_out_flavor}</configuration>
+            <configuration key="output-resolution">2560x720</configuration>
+            <configuration key="output-background">0x000000FF</configuration>
+            <configuration key="layout">preview</configuration>
+            <configuration key="layout-single">
+            {"horizontalCoverage":1.0,"anchorOffset":{"referring":{"left":0.0,"top":0.0},"reference":{"left":0.0,"top":0.0},"offset":{"x":0,"y":0}}};
+            </configuration>
+            <configuration key="layout-preview">
+            {"horizontalCoverage":0.5,"anchorOffset":{"referring":{"left":1.0,"top":0.0},"reference":{"left":1.0,"top":0.0},"offset":{"x":0,"y":0}}};
+            {"horizontalCoverage":0.5,"anchorOffset":{"referring":{"left":0.0,"top":0.0},"reference":{"left":0.0,"top":0.0},"offset":{"x":0,"y":0}}};
+            </configuration>
+        </configurations>
     </operation>
 
     <operation
-      id="composite"
-      description="e. Create dual-stream preview (Presenter + Presentation2)"
-      if="NOT(${presentation_transcription_video}) AND ${presenter_transcription_video} AND ${presentation2_transcription_video}"
-      fail-on-error="true"
-      exception-handler-workflow="partial-error">
-      <configurations>
-        <configuration key="source-flavor-lower">presentation2/transcription</configuration>
-        <configuration key="source-flavor-upper">presenter/transcription</configuration>
-        <configuration key="encoding-profile">mp4-preview.dual.http</configuration>
-        <configuration key="target-flavor">composite/${preview_out_flavor}</configuration>
-        <configuration key="output-resolution">2560x720</configuration>
-        <configuration key="output-background">0x000000FF</configuration>
-        <configuration key="layout">preview</configuration>
-        <configuration key="layout-single">
-          {"horizontalCoverage":1.0,"anchorOffset":{"referring":{"left":0.0,"top":0.0},"reference":{"left":0.0,"top":0.0},"offset":{"x":0,"y":0}}};
-        </configuration>
-        <configuration key="layout-preview">
-          {"horizontalCoverage":0.5,"anchorOffset":{"referring":{"left":1.0,"top":0.0},"reference":{"left":1.0,"top":0.0},"offset":{"x":0,"y":0}}};
-          {"horizontalCoverage":0.5,"anchorOffset":{"referring":{"left":0.0,"top":0.0},"reference":{"left":0.0,"top":0.0},"offset":{"x":0,"y":0}}};
-        </configuration>
-      </configurations>
+        id="composite"
+        description="e. Create dual-stream preview (Presenter + Presentation2)"
+        if="NOT(${presentation_transcription_video}) AND ${presenter_transcription_video} AND ${presentation2_transcription_video}"
+        fail-on-error="true"
+        exception-handler-workflow="partial-error">
+        <configurations>
+            <configuration key="source-flavor-lower">presentation2/transcription</configuration>
+            <configuration key="source-flavor-upper">presenter/transcription</configuration>
+            <configuration key="encoding-profile">mp4-preview.dual.http</configuration>
+            <configuration key="target-flavor">composite/${preview_out_flavor}</configuration>
+            <configuration key="output-resolution">2560x720</configuration>
+            <configuration key="output-background">0x000000FF</configuration>
+            <configuration key="layout">preview</configuration>
+            <configuration key="layout-single">
+            {"horizontalCoverage":1.0,"anchorOffset":{"referring":{"left":0.0,"top":0.0},"reference":{"left":0.0,"top":0.0},"offset":{"x":0,"y":0}}};
+            </configuration>
+            <configuration key="layout-preview">
+            {"horizontalCoverage":0.5,"anchorOffset":{"referring":{"left":1.0,"top":0.0},"reference":{"left":1.0,"top":0.0},"offset":{"x":0,"y":0}}};
+            {"horizontalCoverage":0.5,"anchorOffset":{"referring":{"left":0.0,"top":0.0},"reference":{"left":0.0,"top":0.0},"offset":{"x":0,"y":0}}};
+            </configuration>
+        </configurations>
     </operation>
 
     <operation
-      id="composite"
-      description="f. Create dual-stream preview (Presentation + Presentation2)"
-      if="NOT(${presenter_transcription_video}) AND ${presentation_transcription_video} AND ${presentation2_transcription_video}"
-      fail-on-error="true"
-      exception-handler-workflow="partial-error">
-      <configurations>
-        <configuration key="source-flavor-lower">presentation2/transcription</configuration>
-        <configuration key="source-flavor-upper">presentation/transcription</configuration>
-        <configuration key="encoding-profile">mp4-preview.dual.http</configuration>
-        <configuration key="target-flavor">composite/${preview_out_flavor}</configuration>
-        <configuration key="output-resolution">2560x720</configuration>
-        <configuration key="output-background">0x000000FF</configuration>
-        <configuration key="layout">preview</configuration>
-        <configuration key="layout-single">
-          {"horizontalCoverage":1.0,"anchorOffset":{"referring":{"left":0.0,"top":0.0},"reference":{"left":0.0,"top":0.0},"offset":{"x":0,"y":0}}};
-        </configuration>
-        <configuration key="layout-preview">
-          {"horizontalCoverage":0.5,"anchorOffset":{"referring":{"left":1.0,"top":0.0},"reference":{"left":1.0,"top":0.0},"offset":{"x":0,"y":0}}};
-          {"horizontalCoverage":0.5,"anchorOffset":{"referring":{"left":0.0,"top":0.0},"reference":{"left":0.0,"top":0.0},"offset":{"x":0,"y":0}}};
-        </configuration>
-      </configurations>
+        id="composite"
+        description="f. Create dual-stream preview (Presentation + Presentation2)"
+        if="NOT(${presenter_transcription_video}) AND ${presentation_transcription_video} AND ${presentation2_transcription_video}"
+        fail-on-error="true"
+        exception-handler-workflow="partial-error">
+        <configurations>
+            <configuration key="source-flavor-lower">presentation2/transcription</configuration>
+            <configuration key="source-flavor-upper">presentation/transcription</configuration>
+            <configuration key="encoding-profile">mp4-preview.dual.http</configuration>
+            <configuration key="target-flavor">composite/${preview_out_flavor}</configuration>
+            <configuration key="output-resolution">2560x720</configuration>
+            <configuration key="output-background">0x000000FF</configuration>
+            <configuration key="layout">preview</configuration>
+            <configuration key="layout-single">
+            {"horizontalCoverage":1.0,"anchorOffset":{"referring":{"left":0.0,"top":0.0},"reference":{"left":0.0,"top":0.0},"offset":{"x":0,"y":0}}};
+            </configuration>
+            <configuration key="layout-preview">
+            {"horizontalCoverage":0.5,"anchorOffset":{"referring":{"left":1.0,"top":0.0},"reference":{"left":1.0,"top":0.0},"offset":{"x":0,"y":0}}};
+            {"horizontalCoverage":0.5,"anchorOffset":{"referring":{"left":0.0,"top":0.0},"reference":{"left":0.0,"top":0.0},"offset":{"x":0,"y":0}}};
+            </configuration>
+        </configurations>
     </operation>
 
     <operation
-      id="include"
-      if="${presenter_transcription_video} AND ${presentation_transcription_video} AND ${presentation2_transcription_video}"
-      description="g. Include composite for tri-stream">
-      <configurations>
-        <configuration key="workflow-id">uct-include-partial-preview-abde</configuration>
-      </configurations>
+        id="include"
+        if="${presenter_transcription_video} AND ${presentation_transcription_video} AND ${presentation2_transcription_video}"
+        description="g. Include composite for tri-stream">
+        <configurations>
+            <configuration key="workflow-id">uct-include-partial-preview-abde</configuration>
+        </configurations>
     </operation>
 
     <!-- Start Whisper transcription job -->
     <operation
-      id="whisper-start-transcription"
-      max-attempts="3"
-      retry-strategy="hold"
-      fail-on-error="true"
-      exception-handler-workflow="partial-error"
-      description="Start Whisper transcription job">
-      <configurations>
-        <!--  Skip this operation if flavor already exists. Used for cases when mp already has captions. -->
-        <configuration key="skip-if-flavor-exists">captions/vtt+en</configuration>
-        <configuration key="language-code">en-US</configuration>
-        <!-- Audio to be translated, produced in the previous encode operation -->
-        <configuration key="source-flavor">*/${preview_out_flavor}</configuration>
-      </configurations>
+        id="whisper-start-transcription"
+        max-attempts="3"
+        retry-strategy="hold"
+        fail-on-error="true"
+        exception-handler-workflow="partial-error"
+        description="Start Whisper captions job">
+        <configurations>
+            <!--  Skip this operation if flavor already exists. Used for cases when mp already has captions. -->
+            <configuration key="skip-if-flavor-exists">captions/vtt+en</configuration>
+            <!-- Audio to be translated, produced in the previous encode operation -->
+            <configuration key="source-flavor">*/${preview_out_flavor}</configuration>
+        </configurations>
     </operation>
-
 
   </operations>
 </definition>
