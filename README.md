@@ -120,7 +120,7 @@ Note: `server_url` in `conf-[servername].cfg` should be identical to `deploy_ser
       Deploy or update the audio trim detector script from github.
 
   --emptyvenue
-      Deploy or update the empty venue detector script from github.    
+      Deploy or update the empty venue detector script from github.
 
   -r, --reconfig
       Reconfigure the respective servers. Deploy configuration build to each,

@@ -8,7 +8,7 @@
         - tesseract-ocr-eng
       state: latest
       update_cache: true
-    register: result      
+    register: result
 
   - name: Append Deployment
     local_action: shell echo "* {{inventory_hostname}} (Tesseract)" >> "{{ deploy_logfile }}"

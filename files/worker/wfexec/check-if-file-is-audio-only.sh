@@ -51,7 +51,7 @@ done
 
 # handle non-option arguments
 
-if [ -z "$media" ] && [ -z "$output_file" ]; 
+if [ -z "$media" ] && [ -z "$output_file" ];
     then
         echo "Required: input and output file (-i /path/to/file-media-wav -o /path/to/output.txt)"
         exit 4

@@ -13,6 +13,19 @@
 
 source config-dist.sh
 
+# Before we start let's make sure all the XML is well-formed, don't want to deploy broken Workflows
+xml_files=$(find . -name "*.xml" -type f)
+output=$(pre-commit run check-xml --files $xml_files 2>&1)
+exit_code=$?
+
+if [ $exit_code -ne 0 ]; then
+    echo ""
+    echo "XML validation failed! Please fix the XML errors before proceeding."
+    echo "$output"  # Show the captured output
+    echo ""
+    exit 1
+fi
+
 # internal configuration
 CONFIG_DIR="config"
 SRC_VERSION=$(xmlstarlet sel -t -v "/_:project/_:version" $SRC/pom.xml)
@@ -309,7 +322,7 @@ main() {
         $ROLLBACK && ACTIONS=$((ACTIONS-1))
         RECONFIGURE=false
         ROLLBACK=false
-    fi 
+    fi
 
     # if we rollback then we can't deploy or reconfigure
     if [[ $RECONFIGURE == true && $ROLLBACK == true ]]; then
@@ -345,7 +358,7 @@ main() {
 
     $TEST && printf "Run Dependency Test"
     $TEST && [ "$ACTIONS" -gt "1" ] && printf " - " && ACTIONS=$((ACTIONS-1))
-    
+
     $TRACK4K && printf "Deploy Track4K"
     $TRACK4K && [ "$ACTIONS" -gt "1" ] && printf " - " && ACTIONS=$((ACTIONS-1))
 
@@ -359,7 +372,7 @@ main() {
     $OCR && [ "$ACTIONS" -gt "1" ] && printf " - " && ACTIONS=$((ACTIONS-1))
 
     $SOX && printf "Deploy Sox"
-    $SOX && [ "$ACTIONS" -gt "1" ] && printf " - " && ACTIONS=$((ACTIONS-1))    
+    $SOX && [ "$ACTIONS" -gt "1" ] && printf " - " && ACTIONS=$((ACTIONS-1))
 
     if $LIST && $( ! $STATUS); then
         printf "Display List Servers"
@@ -495,7 +508,10 @@ main() {
 
             # copy workflow scripts to default
             mkdir -p $FILES/config/default/wfexec/
+            rm -rf $FILES/config/default/wfexec/*
             cp -pr $FILES/worker/wfexec/* $FILES/config/default/wfexec/
+
+            rm -rf $FILES/config/*.tar.gz
 
             echo "    Packaging configurations:"
             printf "       "
@@ -513,7 +529,7 @@ main() {
         if $DEPLOY && [ $compiled -eq 1 ]; then
 
             cd $YML
-            echo "Deploy: ($HOSTS_FILE)"                    
+            echo "Deploy: ($HOSTS_FILE)"
             $LIVE && ansible-playbook -i $HOSTS_FILE ansible-deploy.yml --extra-vars "$extra_vars gitbranch=\"$branch\" gitlog=\"$gitlog\" "
             $LIVE && echo $(addDeploymentMarker $production "Deploy" $gitlog $branch)
         fi
@@ -533,7 +549,7 @@ main() {
             echo "Rollback: ($HOSTS_FILE)"
             $LIVE && ansible-playbook -i $HOSTS_FILE ansible-rollback.yml --extra-vars "$extra_vars gitbranch=\"$branch\" gitlog=\"$gitlog\" "
             $LIVE && echo $(addDeploymentMarker $production "Rollback" $gitlog $branch)
-        fi                
+        fi
 
         echo
     else
@@ -671,7 +687,7 @@ main() {
         echo "Deploy Sox: ($HOSTS_FILE)"
         $LIVE && ansible-playbook -i $HOSTS_FILE ansible-deploy-sox.yml --extra-vars "$extra_vars gitbranch=\"$branch\" gitlog=\"$gitlog\" "
         $LIVE && echo $(addDeploymentMarker $production "Sox" $gitlog $branch)
-    fi    
+    fi
 
     if $STATUS; then
 
@@ -766,7 +782,7 @@ usage() {
     echo
     echo "  --sox"
     echo "      Deploy Sox."
-    echo    
+    echo
     echo "  --test"
     echo "      Deploy Opencast dependency testing script and run it."
     echo
@@ -863,7 +879,7 @@ while true; do
             $MORE && DEPLOY=true
             $MORE && ACTIONS=$((ACTIONS+1))
             shift
-            ;;             
+            ;;
         -t|--lti-deploy)
             $MORE && LTI=true
             $MORE && ACTIONS=$((ACTIONS+1))
@@ -873,7 +889,7 @@ while true; do
             $MORE && TEST=true
             $MORE && ACTIONS=$((ACTIONS+1))
             shift
-            ;;            
+            ;;
         --track4k)
             $MORE && TRACK4K=true
             $MORE && ACTIONS=$((ACTIONS+1))
@@ -1035,4 +1051,3 @@ cd $CURRENT_DIR
 
 # run main code
 main
-

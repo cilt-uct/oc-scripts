@@ -33,7 +33,7 @@
         <configuration key="source-flavor">trim/detect</configuration>
       </configurations>
     </operation>
-    
+
     <!-- Analyze Tracks -->
     <operation
       id="execute-once"

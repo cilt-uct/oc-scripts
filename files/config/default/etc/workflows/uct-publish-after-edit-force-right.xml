@@ -168,7 +168,7 @@
     <!-- Download from external ingest nodes, tag, inspect and and prepare -->
     <!-- source recording and metadata catalogs.                           -->
     <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-    
+
     <!-- Save workflow properties -->
     <operation
       id="export-wf-properties"
@@ -180,7 +180,7 @@
         <configuration key="target-tags">archive</configuration>
       </configurations>
     </operation>
-    
+
     <operation
       id="snapshot"
       description="Archive publishing information">

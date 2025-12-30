@@ -94,7 +94,7 @@ fi
 
 # get length of an array
 tLen=${#segments[@]}
- 
+
 #for (( i=0; i<${tLen}; i+=2 ));
 #do
 for element in "${segments[@]}"

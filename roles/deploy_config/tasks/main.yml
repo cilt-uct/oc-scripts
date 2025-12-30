@@ -25,4 +25,3 @@
   - name: Append Deployment
     local_action: shell echo "* {{inventory_hostname}}" >> "{{ deploy_logfile }}"
     when: log is succeeded
-

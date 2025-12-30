@@ -240,7 +240,7 @@ CREATE TRIGGER oc_update_oaipmh_date BEFORE UPDATE ON `oc_oaipmh`
 FOR EACH ROW SET NEW.modification_date = NOW();
 
 RENAME TABLE mh_oaipmh_elements TO oc_oaipmh_elements;
-ALTER TABLE oc_oaipmh_elements ADD CONSTRAINT FK_oc_oaipmh_elements 
+ALTER TABLE oc_oaipmh_elements ADD CONSTRAINT FK_oc_oaipmh_elements
     FOREIGN KEY (mp_id, repo_id, organization)
     REFERENCES oc_oaipmh (mp_id, repo_id, organization)
     ON DELETE CASCADE ON UPDATE CASCADE;

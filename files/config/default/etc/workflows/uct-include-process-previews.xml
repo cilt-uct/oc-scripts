@@ -18,7 +18,7 @@
   <configuration_panel></configuration_panel>
 
   <operations>
-    
+
     <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       Decide Auto trimming and publish or Review
       If a recording has a good_start, good_end, isHour and non speech used

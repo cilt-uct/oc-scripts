@@ -8,7 +8,7 @@
         src: "{{ track4k_src }}"
         dest: "{{ track4k_dest }}"
         owner: "{{ system_user }}"
-        group: "{{system_group}}"        
+        group: "{{system_group}}"
     register: result
 
   - name: Copy Track4k deploy script
@@ -42,4 +42,3 @@
   - name: Append Deployment
     local_action: shell echo "* {{inventory_hostname}}" >> "{{ deploy_logfile }}"
     when: result is succeeded
-

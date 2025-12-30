@@ -34,7 +34,7 @@
         <configuration key="apply-acl">true</configuration>
       </configurations>
     </operation>
-    
+
     <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       Prepare work versions of the source material for archive and processing.
       Preview and Publish use Work versions. (*/work)

@@ -14,13 +14,13 @@
       file:
         path: "{{ repo_dest }}"
         state: directory
-        owner: "{{system_user}}" 
+        owner: "{{system_user}}"
         group: "{{system_group}}"
         recurse: yes
       when: "'worker' in group_names or 'workernoexec' in group_names"
 
     - name: Create log directory
-      file: 
+      file:
         path: "{{ repo_dest }}/logs"
         owner: "{{system_user}}"
         group: "{{system_group}}"
@@ -35,4 +35,3 @@
     - name: Append Deployment
       local_action: shell echo "* {{inventory_hostname}}" >> "{{ deploy_logfile }}"
       when: result is succeeded
-

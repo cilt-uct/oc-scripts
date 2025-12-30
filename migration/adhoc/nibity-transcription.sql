@@ -16,4 +16,3 @@ CREATE TABLE `oc_transcription_service_provider` (
   `provider` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-

@@ -7,7 +7,7 @@
         src: "{{ test_src }}"
         dest: "{{ test_dest }}"
         owner: "{{ system_user }}"
-        group: "{{ system_group }}"        
+        group: "{{ system_group }}"
     register: result
 
   - name: Copy deploy script
@@ -28,4 +28,3 @@
   - name: Append Deployment
     local_action: shell echo "* {{inventory_hostname}}" >> "{{ deploy_logfile }}"
     when: result is succeeded
-

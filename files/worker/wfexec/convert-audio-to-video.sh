@@ -52,11 +52,10 @@ done
 
 # handle non-option arguments
 
-if [ -z "$media" ] && [ -z "$output_file" ]; 
+if [ -z "$media" ] && [ -z "$output_file" ];
     then
         echo "Required: input and output file (-i /path/to/file-media-wav -o /path/to/output.txt)"
         exit 4
 fi
 
 ffmpeg -loop 1 -i $image -i $media -vf scale=-2:480 -c:a aac -c:v libx264 -shortest $output_file > /dev/null 2>&1 < /dev/null
-

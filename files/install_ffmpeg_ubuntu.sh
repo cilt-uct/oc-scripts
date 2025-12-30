@@ -35,7 +35,7 @@ sudo checkinstall --pkgname=fdk-aac --pkgversion="0.1.0" --backup=no \
 
 # Install VP8 video encoder and decoder.
 cd
-git clone --depth 1 https://chromium.googlesource.com/webm/libvpx 
+git clone --depth 1 https://chromium.googlesource.com/webm/libvpx
 cd libvpx
 ./configure
 make
@@ -59,7 +59,7 @@ git clone --depth 1 git://source.ffmpeg.org/ffmpeg
 cd ffmpeg
 ./configure --enable-gpl --enable-libfaac --enable-libmp3lame --enable-libopencore-amrnb \
   --enable-libopencore-amrwb --enable-librtmp --enable-libtheora --enable-libvorbis \
-    --enable-libvpx --enable-libx264 --enable-nonfree --enable-version3 
+    --enable-libvpx --enable-libx264 --enable-nonfree --enable-version3
 make
 sudo checkinstall --pkgname=ffmpeg --pkgversion="5:$(date +%Y%m%d%H%M)-git" --backup=no \
   --deldoc=yes --fstrans=no --default

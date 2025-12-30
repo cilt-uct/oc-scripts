@@ -49,7 +49,7 @@
     <operation
       id="retract-partial"
       fail-on-error="false"
-      if="${googleTranscript}"      
+      if="${googleTranscript}"
       description="Retract Google Speech transcript from event">
       <configurations>
 	  <configuration key="retract-flavors">captions/*</configuration>
