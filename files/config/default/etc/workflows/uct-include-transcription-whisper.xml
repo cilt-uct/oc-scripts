@@ -184,7 +184,9 @@
         <configurations>
             <!--  Skip this operation if flavor already exists. Used for cases when mp already has captions. -->
             <configuration key="skip-if-flavor-exists">captions/vtt+en</configuration>
-            <!-- Audio to be translated, produced in the previous encode operation -->
+            <configuration key="language">en</configuration>
+            <configuration key="model">gpt-4o-transcribe</configuration>
+            <configuration key="responseformat">vtt</configuration>
             <configuration key="source-flavor">*/${preview_out_flavor}</configuration>
         </configurations>
     </operation>
