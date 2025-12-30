@@ -33,6 +33,7 @@
 
         <configuration key="use_watson">false</configuration>
         <configuration key="use_nibity">false</configuration>
+        <configuration key="use_whisper">false</configuration>
 
         <configuration key="timetabled">false</configuration>
         <configuration key="audio_trim_autotrim">false</configuration>

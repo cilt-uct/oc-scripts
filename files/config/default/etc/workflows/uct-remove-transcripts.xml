@@ -40,6 +40,7 @@
       <configurations>
         <configuration key="googleTranscript">false</configuration>
         <configuration key="nibityTranscript">false</configuration>
+        <configuration key="whisperTranscript">false</configuration>
         <configuration key="uploadedTranscript">false</configuration>
         <configuration key="languageCode">en-US</configuration>
       </configurations>
@@ -65,6 +66,17 @@
       <configurations>
         <configuration key="retract-flavors">captions/*</configuration>
         <configuration key="source-tags">engage-download,generator:waywithwords,lang:en</configuration>
+      </configurations>
+    </operation>
+
+    <operation
+      id="retract-partial"
+      fail-on-error="false"
+      if="${whisperTranscript}"
+      description="Retract Whisper transcript from event">
+      <configurations>
+        <configuration key="retract-flavors">captions/*</configuration>
+        <configuration key="source-tags">engage-download,generator:whisperapi,lang:en</configuration>
       </configurations>
     </operation>
 

@@ -23,7 +23,7 @@
                 <configuration key="use_nibity">false</configuration>
                 <configuration key="use_google">true</configuration>
                 <configuration key="use_whisper">false</configuration>
-            <configuration key="audio_trim_lapel">false</configuration>
+                <configuration key="audio_trim_lapel">false</configuration>
                 <configuration key="transcription_src_flavor">delivery</configuration>
             </configurations>
         </operation>
@@ -35,6 +35,7 @@
             <configurations>
                 <configuration key="use_watson">false</configuration>
                 <configuration key="use_nibity">false</configuration>
+                <configuration key="use_whisper">false</configuration>
                 <configuration key="use_google">false</configuration>
                 <configuration key="audio_trim_lapel">false</configuration>
                 <configuration key="transcription_src_flavor">normalized-trimmed</configuration>
@@ -71,6 +72,7 @@
             </configurations>
         </operation>
 
+        <!--  and ${audio_trim_lapel} -->
         <operation
             id="include"
             if="${use_whisper}"
@@ -80,5 +82,5 @@
             </configurations>
         </operation>
 
-  </operations>
+    </operations>
 </definition>
