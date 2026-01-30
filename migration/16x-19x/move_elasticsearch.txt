@@ -1,0 +1,46 @@
+/opt/elasticsearch#
+
+bash check_index.sh
+
+health status index            uuid                   pri rep docs.count docs.deleted store.size pri.store.size
+green  open   .geoip_databases vWkjVG2CQ0qFv2KWEllxQw   1   0         41           41     39.4mb         39.4mb
+green  open   opencast_series  r3Zc4Iy5TgWsu0qZKPdqRA   1   0      10125            0     20.8mb         20.8mb
+green  open   opencast_theme   6PaqOBXpQHGVOjtPV0F05A   1   0          1            0        3kb            3kb
+green  open   opencast_version H-RBdt3zRHaectTh1jBbAw   1   0          1            0      3.3kb          3.3kb
+green  open   opencast_search  torFiF-rRruXfFUCAdx5Xw   1   0     172538        23550      2.2gb          2.2gb
+green  open   opencast_event   6eIZJ1toQ4uiXsRzTJoTkA   1   0    2140325            0      1.7gb          1.7gb
+
+
+
+# Make new folder
+sudo mkdir -p /data/opencast/local/index
+sudo chown -R 1000:1000 /data/opencast/local/index
+sudo chmod -R 750 /data/opencast/local/index
+
+# shutdown elasticsearch
+./stop.sh
+
+# make backup
+sudo cp -a /var/lib/docker/volumes/elasticsearch_data/_data /var/lib/docker/volumes/elasticsearch_data/_data_backup
+
+# copy to new folder
+sudo rsync -a --chown=1000:1000 /var/lib/docker/volumes/elasticsearch_data/_data/ /data/opencast/local/index/
+
+# Startup elasticsearch
+./start.sh
+
+# check docker config:
+docker inspect elasticsearch --format '{{ json .Mounts }}' | jq
+
+# verify indexes
+bash check_index.sh
+
+# After
+
+health status index            uuid                   pri rep docs.count docs.deleted store.size pri.store.size
+green  open   .geoip_databases vWkjVG2CQ0qFv2KWEllxQw   1   0         41           41    118.4mb        118.4mb
+green  open   opencast_series  r3Zc4Iy5TgWsu0qZKPdqRA   1   0      10125            0     20.8mb         20.8mb
+green  open   opencast_theme   6PaqOBXpQHGVOjtPV0F05A   1   0          1            0        3kb            3kb
+green  open   opencast_version H-RBdt3zRHaectTh1jBbAw   1   0          1            0      3.3kb          3.3kb
+green  open   opencast_search  torFiF-rRruXfFUCAdx5Xw   1   0     172538        23550      2.2gb          2.2gb
+green  open   opencast_event   6eIZJ1toQ4uiXsRzTJoTkA   1   0    2140325            0      1.7gb          1.7gb
