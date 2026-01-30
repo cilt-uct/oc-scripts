@@ -1,0 +1,17 @@
+id: uct-publish-after-edit-Stereo
+title: Publish (Stereo)
+tags:
+  - editor
+displayOrder: 3
+operations:
+  - id: defaults
+    description: Select stereo for publication
+    configurations:
+      - workProfileChannel_left: false
+      - workProfileChannel_right: false
+      - workProfileChannel_stereo: true
+      - workProfileChannel: stereo
+  - id: include
+    description: Process publish - stereo
+    configurations:
+      - workflow-id: uct-publish-after-edit

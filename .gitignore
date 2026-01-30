@@ -13,6 +13,7 @@
 !deploy-example.cfg
 files/config/build-all.cfg
 files/config/build-default.cfg
+files/config/default/wfexec/*
 config.sh
 z.sh
 z.pl
@@ -35,3 +36,4 @@ files/shell_variable.sh
 .idea/workspace.xml
 hosts/tmp
 callback_plugins/__pycache__/
+.venv

@@ -1,0 +1,50 @@
+id: uct-request-consent
+title: Request consent
+tags:
+  - archive
+operations:
+  # Load workflow properties from metadata: update some workflow properties
+  - id: execute-once
+    max-attempts: 3
+    retry-strategy: hold
+    fail-on-error: true
+    exception-handler-workflow: partial-error
+    description: Load workflow properties from settings in series
+    configurations:
+      - exec: /opt/opencast/wfexec/get_organizer_details.pl
+      - load: '0.1'
+      - params: '#{id} #{out}'
+      - output-filename: series_organizer.txt
+      - set-workflow-properties: true
+      - expected-type: Attachment
+  - id: send-email
+    fail-on-error: true
+    if: ${organizer_email_valid} AND ${get_organizer_success}
+    exception-handler-workflow: partial-error
+    description: Sending email to organizer and notification list for consent
+    configurations:
+      - to: ${organizer_email}
+      - cc: ${notification_list}
+      - subject: 'Requesting consent: ${series_title}'
+      - body-html-template-file: request_consent
+      - use-html: true
+  # Requesting consent
+  - id: comment
+    fail-on-error: false
+    if: ${organizer_email_valid} AND ${get_organizer_success}
+    description: 'Consent: Add comment that request for consent was sent'
+    configurations:
+      - description: 'Consent: Requested from ${organizer_name} [${organizer_email}].
+          CC: $notification_list'
+      - reason: EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.CONSENT
+      - action: create
+  # Requesting consent
+  - id: comment
+    fail-on-error: false
+    if: NOT(${organizer_email_valid} AND ${get_organizer_success})
+    description: 'Consent: ERR : Could not send Consent mail'
+    configurations:
+      - description: 'Consent: Could not send email to ${organizer_name} [${organizer_email}].
+          CC: $notification_list'
+      - reason: EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.OTHER
+      - action: create

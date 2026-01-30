@@ -1,0 +1,29 @@
+id: partial-error
+description: |-
+  Cleanup after a processing failure (UCT)
+operations:
+  # Comment that we cleaned up this recording
+  - id: comment
+    fail-on-error: false
+    description: Comment that this recording has failed
+    configurations:
+      - description: Recording has failed with a partial error.
+      - reason: EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.PROCESSING_FAILURE
+      - action: create
+  # Archive the current state of the media package
+  - id: snapshot
+    fail-on-error: false
+    description: Preserve the current recording state
+    configurations:
+      - source-flavors: '*/source,dublincore/*,security/*,captions/*'
+      - source-tags: archive
+  # Clean up the temporary files from the working file repository
+  - id: cleanup
+    fail-on-error: false
+    description: Cleaning up
+    configurations:
+      # On systems with shared workspace or working file repository
+      # you want to set this option to false.
+      - delete-external: true
+      # ACLs are required again when working through ActiveMQ messages
+      - preserve-flavors: security/*

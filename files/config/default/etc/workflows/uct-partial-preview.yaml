@@ -1,0 +1,184 @@
+id: uct-partial-preview
+title: Prepare preview artifacts (*/work > */preview)
+tags: []
+operations:
+  - id: analyze-tracks
+    exception-handler-workflow: partial-error
+    description: Analyze tracks in media package an set control variables
+    configurations:
+      - source-flavor: '*/work'
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  #       Encode or Composite previews, create waveform, tag and
+  #       publish internally (Editor).
+  - id: encode
+    description: a. i. Create single-stream preview - presenter_work_video /
+      audio
+    if: ${presenter_work_video}
+    fail-on-error: true
+    exception-handler-workflow: partial-error
+    configurations:
+      - source-flavors: presenter/work
+      - target-flavor: presenter/preview
+      - target-tags: preview
+      - encoding-profile: uct-mp4-preview.http
+  - id: encode
+    description: b. Create single-stream preview - presentation_work_video /
+      audio
+    if: ${presentation_work_video}
+    fail-on-error: true
+    exception-handler-workflow: partial-error
+    configurations:
+      - source-flavors: presentation/work
+      - target-flavor: presentation/preview
+      - target-tags: preview
+      - encoding-profile: uct-mp4-preview.http
+  - id: encode
+    description: c. Create single-stream preview - presentation2_work_video /
+      audio
+    if: ${presentation2_work_video}
+    fail-on-error: true
+    exception-handler-workflow: partial-error
+    configurations:
+      - source-flavors: presentation2/work
+      - target-flavor: presentation2/preview
+      - target-tags: preview
+      - encoding-profile: uct-mp4-preview.http
+  # Analyze Tracks :p
+  - id: analyze-tracks
+    fail-on-error: false
+    exception-handler-workflow: partial-error
+    description: 'Analyze: Preview'
+    configurations:
+      - source-flavor: '*/preview'
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Audio waveform
+
+  # Create the waveform.
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  - id: waveform
+    fail-on-error: false
+    description: Generating waveform
+    configurations:
+      - source-flavor: '*/preview'
+      - target-flavor: '*/waveform'
+      - target-tags: preview
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Track previews
+
+  # Create track previews for video editor stream selection feature
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  - id: image
+    description: Create video preview images for presenter and presentation
+    exception-handler-workflow: partial-error
+    configurations:
+      - source-flavor: '*/work'
+      - target-flavor: '*/video+preview'
+      - target-tags: preview
+      - encoding-profile: editor.tracks.preview
+      - time: 50%
+  # Once WOH waveform supports setting the image size of the waveform image,
+  #          those preview images should be way smaller than the preview image used for the timeline
+  #          as those previews cannot be zoomed
+  - id: waveform
+    fail-on-error: false
+    description: Generating audio preview waveform
+    configurations:
+      - source-flavor: '*/work'
+      - target-flavor: '*/audio+preview'
+      - target-tags: preview
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Extract the thumbnail preview image for the video editor
+  # Depending on the processing settings of the event, this might be
+  # either the default thumbnail, an uploaded thumbnail or a
+  # snapshot thumbnail.
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Default Thumbnail (0)
+  #          The default thumbnail needs to be extracted from fixed offset (in seconds) relative to the cutted media.
+  #          The variable thumbnailPosition contains the respective absolute position relative to the uncutted media
+  #          so we don't need access to the cutted media for extraction here.
+  # If we have a presenter track, we extract the default thumbnail from the presenter track
+  - id: image
+    if: ${thumbnailType} == 0 AND ${presenter_work_video}
+    exception-handler-workflow: partial-error
+    description: Extract default thumbnail preview image from presenter track
+    configurations:
+      - source-flavor: presenter/work
+      - target-flavor: thumbnail/preview
+      - target-tags: preview
+      - encoding-profile: editor.thumbnail.preview
+      - time: ${thumbnailPosition}
+  # If we don't have a presenter track, but we do have a presentation track, we extract the thumbnail from the
+  #          presentation track
+  - id: image
+    if: ${thumbnailType} == 0 AND ${presentation_work_video} AND NOT
+      (${presenter_work_video})
+    exception-handler-workflow: partial-error
+    description: Extract thumbnail preview image from presentation track
+    configurations:
+      - source-flavor: presentation/work
+      - target-flavor: thumbnail/preview
+      - target-tags: preview
+      - encoding-profile: editor.thumbnail.preview
+      - time: ${thumbnailPosition}
+  # Upload thumbnail (1)
+  #          The uploaded thumbnail is archived in the media package. We just need to convert the image
+  #          to a resolution optimized for the video editor here
+  - id: image-convert
+    description: Convert uploaded thumbnail to thumbnail preview image
+    configurations:
+      - source-flavors: thumbnail/source
+      - target-flavor: thumbnail/preview
+      - target-tags: preview
+      - encoding-profiles: editor.thumbnail.preview.downscale
+  # Snapshot Thumbnail (2)
+  #          The snapshot thumbnail is extracted from the flavor type as provided by the variable
+  #          thumbnailTrack at position thumbnailPosition relative to the uncutted media.
+  - id: image
+    if: ${thumbnailType} == 2
+    exception-handler-workflow: partial-error
+    description: Extract snapshot thumbnail preview image
+    configurations:
+      - source-flavor: ${thumbnailTrack}/source
+      - target-flavor: thumbnail/preview
+      - target-tags: preview
+      - encoding-profile: editor.thumbnail.preview
+      - time: ${thumbnailPosition}
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Silence detection
+
+  # Run silence detection to provide hints to the video editor.
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Run silence detection
+  - id: silence
+    fail-on-error: false
+    description: Detecting silence
+    configurations:
+      - source-flavors: '*/preview'
+      - smil-flavor-subtype: silence
+      - reference-tracks-flavor: '*/work'
+  # Tag the results for internal publishing
+  # Fixme: remove once "silence" operation supports target-tags
+  - id: tag
+    description: Tag silence for archiving
+    configurations:
+      - source-flavors: '*/silence'
+      - target-tags: +archive
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Publish previews
+
+  # Distributing preview artifacts to preview publication channel.
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Publish previews
+  #       Take all the flavors tagged as "preview" and publish.
+
+  #       The url-pattern includes "deploy_server_admin_url" that will be
+  #       replaced on building and deploying of the files.
+  - id: publish-configure
+    exception-handler-workflow: partial-error
+    description: Publish to preview publication channel
+    configurations:
+      - source-tags: preview
+      - download-source-tags: preview,editor
+      - channel-id: internal
+      - url-pattern:
+          deploy_server_admin_url/deploy_publish_internal_path/events/events/${event_id}/tools/editor

@@ -1,0 +1,92 @@
+id: uct-include-process-for-empty-venue
+title: UCT - Include process for empty venue
+tags: []
+description: |-
+  REQUIRES:
+        Flavors:
+          */source
+        Workflow Properties:
+          empty_venue
+operations:
+  # Archive source material and generated items
+  - id: snapshot
+    if: NOT(${empty_venue})
+    description: Archive source
+    configurations:
+      - source-tags: archive
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  #       Prepare work versions of the source material for further processing.
+  #       Preview and Publish use Work versions. (*/work)
+  - id: include
+    if: NOT(${empty_venue})
+    description: Prepare work version for processing
+    configurations:
+      - workflow-id: uct-partial-work
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  #       Run the script to detect the audio points and create a smil/cutting if possible
+  # operation
+  #       id="include"
+  #       if="NOT(${empty_venue})"
+  #       description="Run the audio analysis for (possible) autotrimming of the recording">
+  #       <configurations>
+  #         <configuration key="workflow-id">uct-include-autotrim-detection</configuration>
+  #       </configurations>
+  #     </operation
+  - id: include
+    if: NOT(${empty_venue})
+    description: Process previews after auto trim detection
+    configurations:
+      - workflow-id: uct-include-process-previews
+  # Load workflow properties from metadata: update some workflow properties
+  - id: execute-once
+    if: ${empty_venue}
+    max-attempts: 3
+    retry-strategy: hold
+    fail-on-error: true
+    exception-handler-workflow: partial-error
+    description: Load workflow properties from settings in series
+    configurations:
+      - exec: /opt/opencast/wfexec/get_organizer_details.pl
+      - load: '0.1'
+      - params: '#{id} #{out}'
+      - output-filename: series_organizer.txt
+      - set-workflow-properties: true
+      - expected-type: Attachment
+  - id: send-email
+    fail-on-error: true
+    if: ${organizer_email_valid} AND ${get_organizer_success} AND ${empty_venue}
+      AND ${valid_notification_list}
+    exception-handler-workflow: partial-error
+    description: Sending empty venue email to organizer and notification list
+    configurations:
+      - to: ${organizer_email}
+      - cc: ${notification_list}
+      - subject: No lecture detected for ${series_title} on ${start_date}
+      - body-html-template-file: empty_venue_notification
+      - use-html: true
+  - id: send-email
+    fail-on-error: true
+    if: ${organizer_email_valid} AND ${get_organizer_success} AND ${empty_venue}
+      AND NOT(${valid_notification_list})
+    exception-handler-workflow: partial-error
+    description: Sending empty venue email to organizer and notification list
+    configurations:
+      - to: ${organizer_email}
+      - subject: No lecture detected for ${series_title} at ${start_date}
+      - body-html-template-file: empty_venue_notification
+      - use-html: true
+  # Add RESOLVED comment for empty venue
+  - id: comment
+    if: ${empty_venue}
+    description: Mark as empty venue
+    configurations:
+      - description: Empty venue.
+      - reason: EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.REVIEW
+      - action: create
+  - id: comment
+    if: ${empty_venue}
+    description: Mark as empty venue (resolve)
+    configurations:
+      - description: Empty venue.
+      - reason: EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.REVIEW
+      - action: resolve

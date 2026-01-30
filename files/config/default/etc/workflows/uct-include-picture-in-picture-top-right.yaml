@@ -1,0 +1,48 @@
+id: uct-include-picture-in-picture-top-right
+title: UCT - Include encode picture-in-picture - Top Right
+tags: []
+description: |-
+  REQUIRES:
+        Flavors:
+          */${result_publish_start}
+
+      Picture-in-Picture Top Right
+operations:
+  # Picture-in-Picture
+  - id: composite
+    fail-on-error: false
+    exception-handler-workflow: partial-error
+    if: ${presenter_work_video} AND ${presentation_work_video}
+    description: Picture in picture using presentation
+    configurations:
+      - source-flavor-lower: presentation/${result_publish_process}
+      - source-flavor-upper: presenter/${result_publish_process}
+      - encoding-profile: mp4-download.dual.http
+      - target-flavor: pic-in-pic1/delivery
+      - target-tags: rss,atom,engage-download
+      - output-resolution: 1920x1080
+      - output-background: '0x000000FF'
+      - layout: preview
+      - layout-single: '{"horizontalCoverage":1.0,"anchorOffset":{"referring":{"left":0.0,"top":0.0},"reference":{"left":0.0,"top":0.0},"offset":{"x":0,"y":0}}};'
+      - layout-preview: |-
+          {"horizontalCoverage":1.0,"anchorOffset":{"referring":{"left":0.0,"top":0.0},"reference":{"left":0.0,"top":0.0},"offset":{"x":0,"y":0}}};
+                    {"horizontalCoverage":0.333333333,"anchorOffset":{"referring":{"left":1.0,"top":0.0},"reference":{"left":1.0,"top":0.0},"offset":{"x":0,"y":0}}};
+  - id: composite
+    fail-on-error: false
+    exception-handler-workflow: partial-error
+    if: ${presenter_work_video} AND ${presentation2_work_video} AND
+      NOT(${presentation_work_video})
+    description: Picture in picture using presentation2
+    configurations:
+      - source-flavor-lower: presentation2/${result_publish_process}
+      - source-flavor-upper: presenter/${result_publish_process}
+      - encoding-profile: mp4-download.dual.http
+      - target-flavor: pic-in-pic2/delivery
+      - target-tags: rss,atom,engage-download
+      - output-resolution: 1920x1080
+      - output-background: '0x000000FF'
+      - layout: preview
+      - layout-single: '{"horizontalCoverage":1.0,"anchorOffset":{"referring":{"left":0.0,"top":0.0},"reference":{"left":0.0,"top":0.0},"offset":{"x":0,"y":0}}};'
+      - layout-preview: |-
+          {"horizontalCoverage":1.0,"anchorOffset":{"referring":{"left":0.0,"top":0.0},"reference":{"left":0.0,"top":0.0},"offset":{"x":0,"y":0}}};
+                    {"horizontalCoverage":0.333333333,"anchorOffset":{"referring":{"left":1.0,"top":0.0},"reference":{"left":1.0,"top":0.0},"offset":{"x":0,"y":0}}};

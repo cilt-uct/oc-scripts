@@ -1,0 +1,42 @@
+id: uct-include-partial-download-abde
+title: Download for ABDE
+tags: []
+operations:
+  # Stacked on top of each other 640x720 (640x360 x 2)
+  - id: composite
+    fail-on-error: false
+    exception-handler-workflow: partial-error
+    description: 'Downloads: Presentation + Presentation2 (Temporary)'
+    configurations:
+      - source-flavor-lower: presentation/${result_publish_process}
+      - source-flavor-upper: presentation2/${result_publish_process}
+      - encoding-profile: mp4-download.dual.http
+      - target-flavor: composite/inter
+      - output-resolution: 640x720
+      - output-background: '0x000000FF'
+      - layout: preview
+      - layout-single: '{"horizontalCoverage":1.0,"anchorOffset":{"referring":{"left":0.0,"top":0.0},"reference":{"left":0.0,"top":0.0},"offset":{"x":0,"y":0}}};'
+      - layout-preview: |-
+          {"horizontalCoverage":1.0,"anchorOffset":{"referring":{"left":0.0,"top":0.0},"reference":{"left":0.0,"top":0.0},"offset":{"x":0,"y":0}}};
+                        {"horizontalCoverage":1.0,"anchorOffset":{"referring":{"left":1.0,"top":1.0},"reference":{"left":1.0,"top":1.0},"offset":{"x":0,"y":0}}};
+  # Full: 1920x720
+  #           Half: 960x360
+  #               : 1248x468
+  #               : 1440x540
+  - id: composite
+    fail-on-error: false
+    exception-handler-workflow: partial-error
+    description: 'Downloads: Presenter + Presentation + Presentation2'
+    configurations:
+      - source-flavor-upper: presenter/${result_publish_process}
+      - source-flavor-lower: composite/inter
+      - encoding-profile: mp4-download.dual.http
+      - target-flavor: composite/delivery
+      - target-tags: rss,atom,composite,engage-download
+      - output-resolution: 1440x540
+      - output-background: '0x000000FF'
+      - layout: preview
+      - layout-single: '{"horizontalCoverage":1.0,"anchorOffset":{"referring":{"left":0.0,"top":0.0},"reference":{"left":0.0,"top":0.0},"offset":{"x":0,"y":0}}};'
+      - layout-preview: |-
+          {"horizontalCoverage":0.333333333,"anchorOffset":{"referring":{"left":1.0,"top":1.0},"reference":{"left":1.0,"top":1.0},"offset":{"x":0,"y":0}}};
+                        {"horizontalCoverage":1.0,"anchorOffset":{"referring":{"left":0.0,"top":0.0},"reference":{"left":0.0,"top":0.0},"offset":{"x":0,"y":0}}};

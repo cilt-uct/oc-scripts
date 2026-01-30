@@ -7,9 +7,6 @@
 - name: Remove the admin ui data folder
   file: path={{ folder_ui }} state=absent
 
-- name: Remove the solr-indexes folder
-  file: path={{ folder_solr_index }} state=absent
-
 - name: Remove the index folder
   file: path={{ folder_index }} state=absent
 

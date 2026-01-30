@@ -1,0 +1,17 @@
+id: uct-publish-after-edit-right
+title: Publish (Alternate Audio - Right)
+tags:
+  - editor
+displayOrder: 2
+operations:
+  - id: defaults
+    description: Select right channel for publication
+    configurations:
+      - workProfileChannel_left: false
+      - workProfileChannel_right: true
+      - workProfileChannel_stereo: false
+      - workProfileChannel: right
+  - id: include
+    description: Process publish - right channel
+    configurations:
+      - workflow-id: uct-publish-after-edit

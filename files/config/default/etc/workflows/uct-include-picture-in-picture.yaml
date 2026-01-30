@@ -1,0 +1,50 @@
+id: uct-include-picture-in-picture
+title: UCT - Include encode picture-in-picture
+tags: []
+description: |-
+  REQUIRES:
+        Flavors:
+          */${result_publish_start}
+
+      Picture-in-Picture construct
+operations:
+  # Apply the default workflow configuration
+  - id: defaults
+    description: Applying default configuration values for picture-in-picture
+    configurations:
+      - result_publish_process: trimmed
+      - useBottomRight: true
+      - useBottomLeft: false
+      - useTopRight: false
+      - useTopLeft: false
+  # Untag previous pic-in-pic flavors
+  - id: tag
+    description: Untag all pic-in-pic1 flavors
+    configurations:
+      - source-flavors: pic-in-pic1/delivery
+      - target-tags: -rss,-atom,-engage-download
+  - id: tag
+    description: Untag all pic-in-pic2 flavors
+    configurations:
+      - source-flavors: pic-in-pic2/delivery
+      - target-tags: -rss,-atom,-engage-download
+  - id: include
+    if: ${useTopLeft}
+    description: Include picture-in-picture Top Left
+    configurations:
+      - workflow-id: uct-include-picture-in-picture-top-left
+  - id: include
+    if: ${useTopRight}
+    description: Include picture-in-picture Top Right
+    configurations:
+      - workflow-id: uct-include-picture-in-picture-top-right
+  - id: include
+    if: ${useBottomLeft}
+    description: Include picture-in-picture Bottom Left
+    configurations:
+      - workflow-id: uct-include-picture-in-picture-bottom-left
+  - id: include
+    if: ${useBottomRight}
+    description: Include picture-in-picture Bottom Right
+    configurations:
+      - workflow-id: uct-include-picture-in-picture-bottom-right

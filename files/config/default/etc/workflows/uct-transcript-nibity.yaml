@@ -1,0 +1,119 @@
+id: uct-transcript-nibity
+title: Submit trimmed video for Nibity Captions
+tags:
+  - archive
+description: |-
+  Submit trimmed video for Nibity Captions
+operations:
+  # Apply the default workflow configuration
+  - id: defaults
+    description: Applying default configuration values
+    configurations:
+      - workProfileChannel_left: true
+      - workProfileChannel_right: false
+      - workProfileChannel_stereo: false
+      - publishedChannel: false
+      - transcription_src_flavor: trimmed
+  - id: import-wf-properties
+    if: ${publishedChannel}
+    fail-on-error: true
+    exception-handler-workflow: partial-error
+    description: Load processing settings
+    configurations:
+      - source-flavor: processing/defaults
+      - keys: workProfileChannel
+  - id: defaults
+    if: ${workProfileChannel_left}
+    description: Use left audio channel
+    configurations:
+      - workProfileChannel: left
+  - id: defaults
+    if: ${workProfileChannel_right}
+    description: Use right audio channel
+    configurations:
+      - workProfileChannel: right
+  - id: defaults
+    if: ${workProfileChannel_stereo}
+    description: Use stereo
+    configurations:
+      - workProfileChannel: stereo
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  #       Prepare work versions of the source material for archive and processing.
+  #       Preview and Publish use Work versions. (*/work)
+
+  #        In: */source
+  #       Out: */work
+  - id: include
+    description: Prepare work version for processing (${workProfileChannel})
+    configurations:
+      - workflow-id: uct-partial-work-channel
+  - id: editor
+    fail-on-error: true
+    exception-handler-workflow: partial-error
+    description: Cut the recording according to the edit decision list
+    configurations:
+      - source-flavors: '*/work'
+      - smil-flavors: smil/cutting
+      - target-smil-flavor: smil/cutting
+      - target-flavor-subtype: trimmed
+      - interactive: false
+  - id: include
+    description: Do captioning with Way with Words (nibity)
+    configurations:
+      - workflow-id: uct-include-transcription-nibity
+  # Send notification to the media package creator
+  # - id: execute-once
+  #   max-attempts: 3
+  #   retry-strategy: hold
+  #   fail-on-error: true
+  #   exception-handler-workflow: partial-error
+  #   description: Load workflow properties from settings in series
+  #   configurations:
+  #     - exec: /opt/opencast/wfexec/get_organizer_details.pl
+  #     - load: '0.1'
+  #     - params: '#{id} #{out}'
+  #     - output-filename: series_organizer.txt
+  #     - set-workflow-properties: true
+  #     - expected-type: Attachment
+  # - id: send-email
+  #   fail-on-error: true
+  #   if: ${organizer_email_valid} AND ${get_organizer_success} AND
+  #     ${valid_notification_list}
+  #   exception-handler-workflow: partial-error
+  #   description: Sending nibity submission email to organizer and notification
+  #     list
+  #   configurations:
+  #     - to: ${organizer_email}
+  #     - cc: ${notification_list}
+  #     - subject: Event ${catalogs['episode']['title']} has been sent to
+  #         WayWithWords for transcription
+  #     - body-html-template-file: nibity_sent
+  #     - use-html: true
+  # - id: send-email
+  #   fail-on-error: true
+  #   if: ${organizer_email_valid} AND ${get_organizer_success} AND
+  #     NOT(${valid_notification_list})
+  #   exception-handler-workflow: partial-error
+  #   description: Sending nibity submission email to organizer and notification
+  #     list
+  #   configurations:
+  #     - to: ${organizer_email}
+  #     - subject: Event ${catalogs['episode']['title']} has been sent to
+  #         WayWithWords for transcription
+  #     - body-html-template-file: nibity_sent
+  #     - use-html: true
+  - id: comment
+    fail-on-error: false
+    description: Resolve transcript submitted comment
+    configurations:
+      - reason: EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.TRANSCRIPT
+      - action: resolve
+  # Clean up work artifacts
+  - id: cleanup
+    fail-on-error: false
+    description: Cleaning up - remove temp processing artifacts
+    configurations:
+      - delete-external: false
+      # FixMe Don't clean up ACLs until workflow service no longer looks for them in the WFR.
+      - preserve-flavors: dublincore/*,security/*
+      - delay: 5

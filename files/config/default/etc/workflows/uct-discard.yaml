@@ -1,0 +1,105 @@
+id: uct-discard
+title: UCT - Discard Media
+tags:
+  - archive
+description: |-
+  Discard all the media from this event.
+operations:
+  # Make sure the workflow contains at least a default configuration
+  - id: defaults
+    description: Applying default configuration values
+    configurations:
+      - removeSource: true
+      - removePreview: true
+      - removeWork: true
+      - removeTrimmed: true
+      - removeNormalizedTrimmed: true
+      - retractFromEngage: true
+      - retractFromApi: true
+      - retractPreview: true
+      - retractFromYouTube: true
+  # Retract from engage player
+  - id: retract-engage
+    fail-on-error: true
+    exception-handler-workflow: partial-error
+    if: ${retractFromEngage}
+    description: Retract recording from Engage
+  # Retract from external applications
+  - id: retract-configure
+    if: ${retractFromApi}
+    fail-on-error: true
+    exception-handler-workflow: partial-error
+    description: Retract recording from external application
+    configurations:
+      - channel-id: api
+  # Remove the internal publication if the mediapackage is being deleted.
+  - id: retract-configure
+    if: ${retractPreview}
+    exception-handler-workflow: partial-error
+    description: Retract from internal publication channel
+    configurations:
+      - channel-id: internal
+  # Retract from YouTube
+  - id: retract-youtube
+    if: ${retractFromYouTube}
+    fail-on-error: true
+    exception-handler-workflow: partial-error
+    description: Retract recording from YouTube
+  - id: tag
+    max-attempts: 2
+    fail-on-error: true
+    if: ${removeSource}
+    exception-handler-workflow: partial-error
+    description: Removing archive tags for */source
+    configurations:
+      - source-flavors: '*/source'
+      - target-tags: -archive
+  - id: tag
+    max-attempts: 2
+    fail-on-error: true
+    if: ${removePreview}
+    exception-handler-workflow: partial-error
+    description: Removing archive tags for */preview
+    configurations:
+      - source-flavors: '*/preview'
+      - target-tags: -archive
+  - id: tag
+    max-attempts: 2
+    fail-on-error: true
+    if: ${removeWork}
+    exception-handler-workflow: partial-error
+    description: Removing archive tags for */work
+    configurations:
+      - source-flavors: '*/work'
+      - target-tags: -archive
+  - id: tag
+    max-attempts: 2
+    fail-on-error: true
+    if: ${removeTrimmed}
+    exception-handler-workflow: partial-error
+    description: Removing archive tags for */trimmed
+    configurations:
+      - source-flavors: '*/trimmed'
+      - target-tags: -archive
+  - id: tag
+    max-attempts: 2
+    fail-on-error: true
+    if: ${removeNormalizedTrimmed}
+    exception-handler-workflow: partial-error
+    description: Removing archive tags for */normalized-trimmed
+    configurations:
+      - source-flavors: '*/normalized-trimmed'
+      - target-tags: -archive
+  - id: snapshot
+    description: Archive current state of recording
+    configurations:
+      - source-tags: archive
+  # Clean up work artifacts
+  - id: cleanup
+    fail-on-error: false
+    description: Cleaning up - remove temp processing artifacts
+    configurations:
+      - delete-external: false
+      # FixMe Don't clean up ACLs until workflow service no longer looks for them in the WFR.
+      - preserve-flavors: dublincore/*,security/*
+      - delay: 5

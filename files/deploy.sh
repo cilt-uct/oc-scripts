@@ -90,10 +90,10 @@ main() {
     tar -zxf $DEPLOY_DIR/$CONFIG_FILES -C $working/
 
     # Move some workflows back - used by default for some of the processes.
-    cp $working/etc/workflows-default/delete.xml $working/etc/workflows/delete.xml
-    cp $working/etc/workflows-default/republish-metadata.xml $working/etc/workflows/republish-metadata.xml
-    cp $working/etc/workflows-default/retract.xml $working/etc/workflows/retract.xml
-    cp $working/etc/workflows-default/partial-preview.xml $working/etc/workflows/partial-preview.xml
+    cp $working/etc/workflows-default/delete.yaml $working/etc/workflows/delete.yaml
+    cp $working/etc/workflows-default/republish-metadata.yaml $working/etc/workflows/republish-metadata.yaml
+    cp $working/etc/workflows-default/retract.yaml $working/etc/workflows/retract.yaml
+    cp $working/etc/workflows-default/partial-preview.yaml $working/etc/workflows/partial-preview.yaml
 
     echo " Done."
   else

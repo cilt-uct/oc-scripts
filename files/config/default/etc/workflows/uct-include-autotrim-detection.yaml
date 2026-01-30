@@ -1,0 +1,55 @@
+id: uct-include-autotrim-detection
+title: Run the audio analysis for (possible) autotrimming of the recording
+tags: []
+description: |-
+  Run TrimPointDetector script, an Algorithm that utilises pyAudioAnalysis to detect the start and end trim points for Opencast recorded lectures.
+operations:
+  # extract audio from the first of the source streams, encode to wav for analysis to be run properly
+  - id: encode
+    fail-on-error: false
+    description: Extracting audio for trim point detection
+    configurations:
+      - source-flavor: '*/source'
+      - target-flavor: trim/detect
+      - encoding-profile: audio.wav
+      # If there is more than one file that match the source-tags, use only the first one
+      - process-first-match-only: true
+  # Analyze Tracks
+  - id: analyze-tracks
+    fail-on-error: false
+    exception-handler-workflow: partial-error
+    description: 'Analyze: Trim/Detect'
+    configurations:
+      - source-flavor: trim/detect
+  # Analyze Tracks
+  - id: execute-once
+    max-attempts: 3
+    retry-strategy: hold
+    fail-on-error: true
+    if: ${trim_detect_media} AND ${trim_detect_audio}
+    exception-handler-workflow: partial-error
+    description: Get Audio Segments
+    configurations:
+      - exec: /opt/opencast/wfexec/detect-trim-points.sh
+      - load: '4.0'
+      - params: '-i #{flavor(trim/detect)} -o #{out} --venue ${event_location} --debug'
+      - output-filename: segments.txt
+      - set-workflow-properties: true
+      - expected-type: Attachment
+  # Create a smil/cutting description file if the recording has segments and is less than 01:12:00
+  - id: execute-once
+    max-attempts: 3
+    retry-strategy: retry
+    fail-on-error: true
+    if: ${trim_detect_media} AND ${trim_detect_audio} AND ${audio_trim_ishour}
+    exception-handler-workflow: partial-error
+    description: Construct SMIL
+    configurations:
+      - exec: /opt/opencast/wfexec/create-smil-fromWorkflow.sh
+      - load: '0.1'
+      - params: '#{id} #{out} ${presenter_work_video} ${presentation_work_video} ${presentation2_work_video}
+          ${audio_trim_duration} ${audio_trim_segments}'
+      - output-filename: cut.xml
+      - target-flavor: smil/cutting
+      - target-tags: archive
+      - expected-type: Catalog

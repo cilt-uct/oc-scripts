@@ -1,0 +1,51 @@
+id: uct-include-partial-preview-abde
+title: Preview for ABDE
+tags: []
+operations:
+  # Apply the default workflow configuration
+  - id: defaults
+    description: Applying default configuration values - Preview for ABDE
+    configurations:
+      - preview_src_flavor: work
+      - preview_out_flavor: preview
+      - preview_out_tags: preview
+  # Half of presentation size (0.5)
+  #           640x720
+  - id: composite
+    fail-on-error: true
+    exception-handler-workflow: partial-error
+    description: g. i. Composite (Temporary)
+    configurations:
+      - source-flavor-upper: presentation/${preview_src_flavor}
+      - source-flavor-lower: presentation2/${preview_src_flavor}
+      - encoding-profile: mp4-preview.dual.http
+      # configuration key="target-tags">tmp</configuration
+      - target-flavor: composite/inter
+      - output-resolution: 640x720
+      - output-background: '0x000000FF'
+      - layout: preview
+      - layout-single: '{"horizontalCoverage":1.0,"anchorOffset":{"referring":{"left":0.0,"top":0.0},"reference":{"left":0.0,"top":0.0},"offset":{"x":0,"y":0}}};'
+      - layout-preview: |-
+          {"horizontalCoverage":1.0,"anchorOffset":{"referring":{"left":0.0,"top":0.0},"reference":{"left":0.0,"top":0.0},"offset":{"x":0,"y":0}}};
+                        {"horizontalCoverage":1.0,"anchorOffset":{"referring":{"left":1.0,"top":1.0},"reference":{"left":1.0,"top":1.0},"offset":{"x":0,"y":0}}};
+  # Full: 1920x720
+  #           Half: 960x360
+  #               : 1248x468
+  #               : 1440x540
+  - id: composite
+    fail-on-error: true
+    exception-handler-workflow: partial-error
+    description: g. ii. Composite (Presenter + Presentation + Presentation2)
+    configurations:
+      - source-flavor-upper: presenter/${preview_src_flavor}
+      - source-flavor-lower: composite/inter
+      - encoding-profile: mp4-preview.dual.http
+      - target-tags: ${preview_out_tags}
+      - target-flavor: composite/${preview_out_flavor}
+      - output-resolution: 1248x468
+      - output-background: '0x000000FF'
+      - layout: preview
+      - layout-single: '{"horizontalCoverage":1.0,"anchorOffset":{"referring":{"left":0.0,"top":0.0},"reference":{"left":0.0,"top":0.0},"offset":{"x":0,"y":0}}};'
+      - layout-preview: |-
+          {"horizontalCoverage":0.333333333,"anchorOffset":{"referring":{"left":1.0,"top":1.0},"reference":{"left":1.0,"top":1.0},"offset":{"x":0,"y":0}}};
+                        {"horizontalCoverage":1.0,"anchorOffset":{"referring":{"left":0.0,"top":0.0},"reference":{"left":0.0,"top":0.0},"offset":{"x":0,"y":0}}};

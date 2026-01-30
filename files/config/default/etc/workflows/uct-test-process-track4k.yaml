@@ -1,0 +1,58 @@
+id: test-process-track4k
+title: Test - Track4K docker test
+tags:
+  - archive
+operations:
+  # Use get-event-details.pl to populate workflow properties
+  # we need this for : event_location value
+  - id: execute-once
+    fail-on-error: false
+    exception-handler-workflow: partial-error
+    description: Get Event Details
+    configurations:
+      - exec: /opt/opencast/wfexec/get-event-details.pl
+      - load: '0.1'
+      - params: '#{id} #{out}'
+      - output-filename: eventinfo.txt
+      - set-workflow-properties: true
+      - expected-type: Attachment
+  - id: execute-many
+    fail-on-error: true
+    exception-handler-workflow: partial-error
+    description: ExecuteMany properties
+    configurations:
+      - exec: /opt/opencast/wfexec/test-multi-props.pl
+      - params: '#{in} #{out}'
+      - source-flavor: presenter/source
+      - source-video: true
+      - set-workflow-properties: true
+      - output-filename: wf.properties
+      - expected-type: Attachment
+  # Run track4k on presenter/source to presenter/tracked ${event_location}
+  - id: execute-many
+    fail-on-error: true
+    exception-handler-workflow: partial-error
+    description: Track4K (Docker)
+    configurations:
+      - exec: /opt/opencast/wfexec/track4k.sh
+      - params: '-i #{in} -o #{out} -l ${event_location}'
+      - source-flavor: presenter/source
+      - source-video: true
+      - output-filename: tracked.mp4
+      - target-flavor: presenter/tracked
+      - target-tags: archive
+      - expected-type: Track
+  # Archive generated items
+  - id: snapshot
+    description: Archive work and preview information
+    configurations:
+      - source-tags: archive
+  # Clean up work artifacts
+  - id: cleanup
+    fail-on-error: false
+    description: Cleaning up - remove temp processing artifacts
+    configurations:
+      - delete-external: false
+      # FixMe Don't clean up ACLs until workflow service no longer looks for them in the WFR.
+      - preserve-flavors: dublincore/*,security/*
+      - delay: 5

@@ -1,0 +1,119 @@
+id: uct-process-picture-in-picture
+title: Add Picture-in-Picture download
+tags:
+  - archive
+operations:
+  - id: defaults
+    description: Applying default configuration values for picture-in-picture
+    configurations:
+      - doNormalizeAudio: false
+      - doPictureInPicture: true
+      - workProfileChannel_left: true
+      - workProfileChannel_right: false
+      - workProfileChannel_stereo: false
+      - result_publish_process: normalized-trimmed
+  - id: defaults
+    if: ${workProfileChannel_left}
+    description: Use left audio channel
+    configurations:
+      - workProfileChannel: left
+  - id: defaults
+    if: ${workProfileChannel_right}
+    description: Use right audio channel
+    configurations:
+      - workProfileChannel: right
+  - id: defaults
+    if: ${workProfileChannel_stereo}
+    description: Use stereo
+    configurations:
+      - workProfileChannel: stereo
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  #       Prepare work versions of the source material for archive and processing.
+  #       Preview and Publish use Work versions. (*/work)
+
+  #        In: */source
+  #       Out: */work
+  - id: include
+    description: Prepare work version for processing (${workProfileChannel})
+    configurations:
+      - workflow-id: uct-partial-work-channel
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Cut the video according the SMIL file
+
+  # Perform cutting according to the edit decision list.
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  - id: editor
+    exception-handler-workflow: partial-error
+    description: Cut the recording according to the edit decision list
+    configurations:
+      - source-flavors: '*/work'
+      - smil-flavors: smil/cutting
+      - target-smil-flavor: smil/cutting
+      - target-flavor-subtype: trimmed
+      - interactive: false
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - --
+  #  TODO: Normalize Audio (*/trimmed > */normalized-trimmed)
+  #      Since OC18+ the normalize-audio workflow operation is no longer
+  #      supported. SoX-based modules were removed in Opencast 18+
+  #      (see GitHub PR #6682).
+  #
+  #      This workflow operation (normalize-audio) needs to be updated to
+  #      use FFmpeg-based audio normalization
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  #
+  # - id: normalize-audio
+  #   if: ${doNormalizeAudio}
+  #   fail-on-error: true
+  #   exception-handler-workflow: partial-error
+  #   description: Normalize audio stream
+  #   configurations:
+  #     - source-flavor: '*/trimmed'
+  #     - target-flavor: '*/normalized-trimmed'
+  #     - target-decibel: '-25'
+  #     - force-transcode: true
+
+  # Move if not normalizing
+  - id: clone
+    if: NOT(${doNormalizeAudio})
+    fail-on-error: true
+    exception-handler-workflow: partial-error
+    description: Move trimmed to normalized-trimmed (if not normalizing audio)
+    configurations:
+      - source-flavor: '*/trimmed'
+      - target-flavor: '*/normalized-trimmed'
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  #       Create a picture-in-picture variant of
+
+  #        In: */${result_publish_process} default: trimmed
+  #       Out: pic-in-pic/delivery
+  - id: include
+    if: ${doPictureInPicture}
+    description: Include encode picture-in-picture
+    configurations:
+      - workflow-id: uct-include-picture-in-picture
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Publish to publication channels
+
+  # Send the encoded material along with the metadata to the
+  # publication channels.
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  - id: publish-engage
+    max-attempts: 2
+    exception-handler-workflow: partial-error
+    description: Publishing to Opencast Media Module
+    configurations:
+      - download-source-flavors: dublincore/*,security/*
+      - download-source-tags: engage-download,atom,rss,mobile
+      - streaming-source-tags: engage-streaming
+      - check-availability: true
+      - strategy: merge
+  # Clean up work artifacts
+  - id: cleanup
+    fail-on-error: false
+    description: Cleaning up - remove temp processing artifacts
+    configurations:
+      - delete-external: false
+      # FixMe Don't clean up ACLs until workflow service no longer looks for them in the WFR.
+      - preserve-flavors: dublincore/*,security/*
+      - delay: 5

@@ -1,0 +1,36 @@
+id: uct-untag-google-transcripts
+title: UCT - Untag Google Transcript
+tags: []
+description: |-
+  Untag Google Transcript
+operations:
+  # Untag Google Speech captions
+  - id: tag
+    description: Untag Google Speech captions
+    configurations:
+      - source-tags:
+          archive,engage-download,generator-type:auto,generator:google-speech,lang:en
+      - source-flavors: captions/source
+      - target-tags: -engage-download
+  # Archive the current state of the mediapackage
+  - id: snapshot
+    description: Archive the current state
+    configurations:
+      - source-flavors: '*/*'
+  # Publish updated Google Speech transcript tag
+  - id: publish-engage
+    exception-handler-workflow: partial-error
+    description: Update recording in Opencast Media Module
+    configurations:
+      - download-source-flavors: dublincore/*,security/*
+      - download-source-tags: engage-download
+      - strategy: merge
+      - check-availability: true
+  # Clean up work artifacts
+  - id: cleanup
+    fail-on-error: false
+    description: Cleaning up - remove temp processing artifacts
+    configurations:
+      - delete-external: false
+      # FixMe Don't clean up ACLs until workflow service no longer looks for them in the WFR.
+      - preserve-flavors: dublincore/*,security/*

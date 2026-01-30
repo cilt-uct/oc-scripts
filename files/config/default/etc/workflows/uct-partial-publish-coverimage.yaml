@@ -1,0 +1,13 @@
+id: uct-partial-publish-coverimage
+title: UCT - Publish Coverimage
+tags: []
+operations:
+  - id: image
+    exception-handler-workflow: partial-error
+    description: Creating player preview image
+    configurations:
+      - source-flavor: presenter/themed
+      - source-tags: ''
+      - target-flavor: presenter/coverbackground
+      - encoding-profile: player-preview.http
+      - time: 1

@@ -1,0 +1,42 @@
+id: uct-opencast-studio-notification
+title: UCT - Send e-mail to course organiser that event has been published
+tags: []
+operations:
+  - id: execute-once
+    max-attempts: 3
+    retry-strategy: hold
+    fail-on-error: true
+    exception-handler-workflow: partial-error
+    description: Load workflow properties from settings in series
+    configurations:
+      - exec: /opt/opencast/wfexec/get_organizer_details.pl
+      - load: '0.1'
+      - params: '#{id} #{out}'
+      - output-filename: series_organizer.txt
+      - set-workflow-properties: true
+      - expected-type: Attachment
+  - id: send-email
+    fail-on-error: true
+    if: ${organizer_email_valid} AND ${get_organizer_success} AND
+      ${valid_notification_list}
+    exception-handler-workflow: partial-error
+    description: Sending empty venue email to organizer and notification list
+    configurations:
+      - to: ${organizer_email}
+      - cc: ${notification_list}
+      - subject: Screencast has been published for ${series_title} on
+          ${start_date}
+      - body-html-template-file: screencast_publication
+      - use-html: true
+  - id: send-email
+    fail-on-error: true
+    if: ${organizer_email_valid} AND ${get_organizer_success} AND
+      NOT(${valid_notification_list})
+    exception-handler-workflow: partial-error
+    description: Sending empty venue email to organizer and notification list
+    configurations:
+      - to: ${organizer_email}
+      - subject: Screencast has been published for ${series_title} at
+          ${start_date}
+      - body-html-template-file: screencast_publication
+      - use-html: true

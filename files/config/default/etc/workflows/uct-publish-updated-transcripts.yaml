@@ -1,0 +1,40 @@
+id: uct-publish-updated-transcripts
+title: UCT - Publish updated transcript
+tags: []
+description: |-
+  UCT - Publish updated transcript
+operations:
+  # Apply the default workflow configuration
+  - id: defaults
+    description: Applying default configuration values
+    configurations:
+      - googleTranscript: true
+      - nibityTranscript: true
+      - uploadedTranscript: true
+      - whisperTranscript: true
+      - download-source-flavors: text/*,captions/*
+  # Untagging existing captions
+  - id: tag
+    description: Untag existing captions
+    configurations:
+      - source-flavors: text/*,captions/*
+      - target-tags: -engage-download
+  # Remove published transcripts
+  - id: include
+    fail-on-error: true
+    exception-handler-workflow: partial-error
+    description: Retract published transcripts from event
+    configurations:
+      - workflow-id: uct-remove-transcripts
+  # Archive the current state of the mediapackage
+  - id: snapshot
+    description: Archiving new assets
+    configurations:
+      - source-flavors: '*/*'
+  # Publish to updated transcript
+  - id: include
+    fail-on-error: true
+    exception-handler-workflow: partial-error
+    description: Publish updated transcript
+    configurations:
+      - workflow-id: publish-uploaded-assets

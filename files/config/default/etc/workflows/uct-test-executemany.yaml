@@ -1,0 +1,17 @@
+id: uct-test-executemany
+title: UCT - Test ExecuteMany
+tags:
+  - archive
+operations:
+  - id: execute-many
+    fail-on-error: true
+    exception-handler-workflow: partial-error
+    description: ExecuteMany properties
+    configurations:
+      - exec: /opt/opencast/wfexec/test-multi-props.pl
+      - params: '#{in} #{out}'
+      - source-flavor: presenter/source
+      - set-workflow-properties: true
+      - source-audio: true
+      - output-filename: wf.properties
+      - expected-type: Attachment

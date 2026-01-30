@@ -1,0 +1,59 @@
+id: partial-watermark
+title: Render watermark
+tags: []
+description: |-
+  Render watermark into presenter and presentation tracks
+operations:
+  - id: analyze-tracks
+    exception-handler-workflow: partial-error
+    description: Analyze trimmed tracks
+    configurations:
+      - source-flavor: '*/trimmed'
+  - id: composite
+    description: Render watermark into presenter track
+    if: ${presenter_trimmed_video}
+    fail-on-error: true
+    exception-handler-workflow: partial-error
+    configurations:
+      - source-flavor-lower: presenter/trimmed
+      - source-flavor-upper: not/available
+      - source-flavor-watermark: branding/watermark
+      - encoding-profile: composite.http
+      - target-flavor: presenter/branded
+      - output-resolution: lower
+      - output-background: '0x000000FF'
+      - layout-single: |-
+          {"horizontalCoverage":1.0,"anchorOffset":{"referring":{"left":1.0,"top":0.0},"reference":{"left":1.0,"top":0.0},"offset":{"x":0,"y":0}}};
+                      ${theme_watermark_layout_variable}
+  - id: composite
+    description: Render watermark into presentation track
+    if: ${presentation_trimmed_video}
+    fail-on-error: true
+    exception-handler-workflow: partial-error
+    configurations:
+      - source-flavor-lower: presentation/trimmed
+      - source-flavor-upper: not/available
+      - source-flavor-watermark: branding/watermark
+      - encoding-profile: composite.http
+      - target-flavor: presentation/branded
+      - output-resolution: lower
+      - output-background: '0x000000FF'
+      - layout-single: |-
+          {"horizontalCoverage":1.0,"anchorOffset":{"referring":{"left":1.0,"top":0.0},"reference":{"left":1.0,"top":0.0},"offset":{"x":0,"y":0}}};
+                      ${theme_watermark_layout_variable}
+  - id: composite
+    description: Render watermark into presentation2 track
+    if: ${presentation2_trimmed_video}
+    fail-on-error: true
+    exception-handler-workflow: partial-error
+    configurations:
+      - source-flavor-lower: presentation2/trimmed
+      - source-flavor-upper: not/available
+      - source-flavor-watermark: branding/watermark
+      - encoding-profile: composite.http
+      - target-flavor: presentation/branded
+      - output-resolution: lower
+      - output-background: '0x000000FF'
+      - layout-single: |-
+          {"horizontalCoverage":1.0,"anchorOffset":{"referring":{"left":1.0,"top":0.0},"reference":{"left":1.0,"top":0.0},"offset":{"x":0,"y":0}}};
+                      ${theme_watermark_layout_variable}

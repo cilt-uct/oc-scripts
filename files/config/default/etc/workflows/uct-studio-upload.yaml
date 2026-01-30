@@ -1,0 +1,334 @@
+id: studio-upload
+title: Studio Upload
+tags:
+  - archive
+  - upload
+description: |-
+  A simple and fast workflow for publishing videos created by Opencast Studio.
+
+      If straight to publishing is checked, then the uploaded media will be published to engage without cutting.
+configuration_panel_json: |2-
+
+      [{
+        "fieldset": [
+          {
+            "type": "checkbox",
+            "name": "straightToPublishing",
+            "label": "Straight to publishing",
+            "value": true
+          }
+        ]
+      }]
+
+operations:
+  # Apply the default workflow configuration
+  - id: defaults
+    description: Applying default configuration values
+    configurations:
+      - skipEditorPreview: false
+      - publishToEngage: true
+      - publishToApi: true
+      - publishToOaiPmh: false
+      - publishToAws: false
+      - straightToPublishing: true
+      - thumbnailType: 0
+      - thumbnailPosition: 1
+      - doCaptioning: false
+      - isUpload: true
+  - id: inspect
+    exception-handler-workflow: partial-error
+    description: Inspecting audio and video streams
+    configurations:
+      - overwrite: false
+      - accept-no-media: false
+  - id: series
+    exception-handler-workflow: partial-error
+    description: Applying series dublincore catalogs and access control entries
+    configurations:
+      # <configuration key="series">[put your fixed series id here]</configuration>
+      - attach: '*'
+      - apply-acl: true
+  - id: tag
+    exception-handler-workflow: partial-error
+    description: Tagging source material for archival
+    configurations:
+      - source-flavors: '*/*'
+      - target-tags: +archive
+  - id: include
+    description: Include studio tracks normalization tasks
+    configurations:
+      - workflow-id: partial-transcode-studio-tracks
+  - id: snapshot
+    fail-on-error: true
+    exception-handler-workflow: partial-error
+    description: Archive raw recording after ingest
+    configurations:
+      - source-tags: archive
+  - id: prepare-av
+    exception-handler-workflow: partial-error
+    description: Preparing presenter (camera) audio and video work versions
+    configurations:
+      - source-flavor: presenter/source
+      - target-flavor: presenter/prepared
+      - target-tags: -archive
+      - rewrite: false
+      - audio-muxing-source-flavors: '*/?,*/*'
+  - id: prepare-av
+    exception-handler-workflow: partial-error
+    description: Preparing presentation (screen) audio and video work version
+    configurations:
+      - source-flavor: presentation/source
+      - target-flavor: presentation/prepared
+      - target-tags: -archive
+      - rewrite: false
+      - audio-muxing-source-flavors: '*/?,*/*'
+  - id: analyze-tracks
+    fail-on-error: true
+    exception-handler-workflow: partial-error
+    description: Analyze tracks in media package and set control variables
+    configurations:
+      - source-flavor: presenter/prepared
+  - id: analyze-tracks
+    fail-on-error: true
+    exception-handler-workflow: partial-error
+    description: Analyze tracks in media package and set control variables
+    configurations:
+      - source-flavor: presentation/prepared
+  - id: composite
+    description: 'Downloads: Presenter + Presentation (360p)'
+    if: ${presentation_prepared_media} AND ${presenter_prepared_media}
+    fail-on-error: false
+    exception-handler-workflow: partial-error
+    configurations:
+      - source-flavor-lower: presentation/prepared
+      - source-flavor-upper: presenter/prepared
+      - encoding-profile: mp4-download.dual.http
+      - target-flavor: composite/delivery
+      - target-tags: rss,atom,composite
+      - output-resolution: 1280x360
+      - output-background: '0x000000FF'
+      - layout: preview
+      - layout-single: '{"horizontalCoverage":1.0,"anchorOffset":{"referring":{"left":0.0,"top":0.0},"reference":{"left":0.0,"top":0.0},"offset":{"x":0,"y":0}}};'
+      - layout-preview: |-
+          {"horizontalCoverage":0.5,"anchorOffset":{"referring":{"left":1.0,"top":0.0},"reference":{"left":1.0,"top":0.0},"offset":{"x":0,"y":0}}};
+                    {"horizontalCoverage":0.5,"anchorOffset":{"referring":{"left":0.0,"top":0.0},"reference":{"left":0.0,"top":0.0},"offset":{"x":0,"y":0}}};
+  - id: composite
+    description: 'Downloads: Presenter + Presentation (720p)'
+    if: ${presentation_prepared_media} AND ${presenter_prepared_media}
+    fail-on-error: false
+    exception-handler-workflow: partial-error
+    configurations:
+      - source-flavor-lower: presentation/prepared
+      - source-flavor-upper: presenter/prepared
+      - encoding-profile: mp4-download.dual.http
+      - target-flavor: composite/delivery
+      - target-tags: rss,atom,composite
+      - output-resolution: 2560x720
+      - output-background: '0x000000FF'
+      - layout: preview
+      - layout-single: '{"horizontalCoverage":1.0,"anchorOffset":{"referring":{"left":0.0,"top":0.0},"reference":{"left":0.0,"top":0.0},"offset":{"x":0,"y":0}}};'
+      - layout-preview: |-
+          {"horizontalCoverage":0.5,"anchorOffset":{"referring":{"left":1.0,"top":0.0},"reference":{"left":1.0,"top":0.0},"offset":{"x":0,"y":0}}};
+                    {"horizontalCoverage":0.5,"anchorOffset":{"referring":{"left":0.0,"top":0.0},"reference":{"left":0.0,"top":0.0},"offset":{"x":0,"y":0}}};
+  # Create preview artifacts
+  - id: include
+    if: NOT ${skipEditorPreview}
+    description: Prepare preview versions of the recording
+    configurations:
+      - workflow-id: partial-preview
+  - id: encode
+    exception-handler-workflow: partial-error
+    description: Encoding videos to delivery formats
+    configurations:
+      - source-flavor: '*/prepared'
+      - target-flavor: '*/delivery'
+      - target-tags: engage-download,engage-streaming
+      - encoding-profile: uct.studio.adaptive-parallel.http
+  # Generate timeline preview images
+  - id: timelinepreviews
+    fail-on-error: false
+    exception-handler-workflow: partial-error
+    description: Creating timeline preview images
+    configurations:
+      - source-flavor: '*/prepared'
+      - target-flavor: '*/timeline+preview'
+      - target-tags: engage-download
+      - image-count: 100
+  # Encoding audio for Engage player and feeds
+
+  #       Audio: MP4 container, 44.1khz 128Kbps
+
+  #       Note: We are not using themes yet
+  #             <configuration key="source-flavor">*/normalized-trimmed</configuration>
+  - id: encode
+    fail-on-error: false
+    exception-handler-workflow: partial-error
+    description: Encoding audio for Engage player (MP3)
+    configurations:
+      - source-flavor: '*/prepared'
+      - target-flavor: presenter/delivery
+      - target-tags: engage-download,engage-streaming,rss,atom
+      - encoding-profile: mp3.http
+      - process-first-match-only: true
+  # Encode to engage player preview images
+  - id: image
+    exception-handler-workflow: partial-error
+    description: Creating player preview image
+    configurations:
+      - source-flavor: '*/prepared'
+      - target-flavor: '*/player+preview'
+      - target-tags: engage-download
+      - encoding-profile: player-preview.http
+      - time: 1
+  # NOTE: feed previews generation no longer supported from OC16+
+  # Encode to feed cover images
+  # - id: image
+  #   exception-handler-workflow: partial-error
+  #   description: Creating feed cover image
+  #   configurations:
+  #     - source-flavor: '*/prepared'
+  #     - source-tags: ''
+  #     - target-flavor: '*/feed+preview'
+  #     - target-tags: atom,rss
+  #     - encoding-profile: feed-cover.http
+  #     - time: 1
+  # Create a cover image with the default template
+  - id: tag
+    description: Removing unneeded presenter-cover from download publication
+    configurations:
+      - source-flavors: presenter/player+preview
+      - target-tags: -engage-download
+  - id: image
+    exception-handler-workflow: partial-error
+    description: Creating player preview image
+    configurations:
+      - source-flavor: presenter/prepared
+      - source-tags: ''
+      - target-flavor: presenter/coverbackground
+      - encoding-profile: player-preview.http
+      - time: 1
+  - id: cover-image
+    exception-handler-workflow: partial-error
+    description: Create a cover image
+    configurations:
+      - stylesheet: file://${karaf.etc}/branding/coverimage.xsl
+      - width: 1920
+      - height: 1080
+      - posterimage-flavor: presenter/coverbackground
+      - target-flavor: presenter/player+preview
+      - target-tags: archive, engage-download
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Segment video streams and extract metadata
+
+  # Apply the video segmentation algorithm to the presentation tracks
+  # and extract segment preview images and metadata.
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Run the videosegmentation
+  - id: segment-video
+    fail-on-error: false
+    description: Detecting slide transitions in presentation track
+    configurations:
+      - source-flavor: presentation/prepared
+      - target-tags: engage-download
+  # Generate segment preview images
+  - id: segmentpreviews
+    fail-on-error: false
+    description: Creating preview images for presentation segments
+    configurations:
+      - source-flavor: presentation/prepared
+      - target-flavor: presentation/segment+preview
+      - reference-flavor: presentation/delivery
+      - reference-tags: engage-download
+      - target-tags: engage-download
+      - encoding-profile: player-slides.http
+  # Extract text form slide preview images
+  - id: extract-text
+    fail-on-error: false
+    description: Extracting text from presentation segments
+    configurations:
+      - source-flavor: presentation/prepared
+      - target-tags: engage-download
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Transcription / Caption Services
+  # Source: ${transcription_src_flavor} - delivery
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  - id: include
+    if: ${doCaptioning}
+    description: Include Captioning
+    configurations:
+      - workflow-id: uct-include-captioning
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Publish to publication channels
+
+  # Send the encoded material along with the metadata to the
+  # publication channels.
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Publish to engage player
+  - id: publish-engage
+    if: ${publishToEngage}
+    max-attempts: 2
+    exception-handler-workflow: partial-error
+    description: Publishing to Opencast Media Module
+    configurations:
+      - download-source-flavors: dublincore/*,security/*
+      - download-source-tags: engage-download,atom,rss,mobile
+      - streaming-source-tags: engage-streaming
+      - check-availability: true
+  - id: tag
+    fail-on-error: false
+    description: Remove processing tags
+    configurations:
+      - source-tags: archive
+      - target-tags: -engage-download
+  - id: snapshot
+    exception-handler-workflow: partial-error
+    description: Archiving
+    configurations:
+      - source-tags: archive
+  # Send notification to series owner that studio upload has been published
+  - id: execute-once
+    max-attempts: 3
+    retry-strategy: hold
+    fail-on-error: true
+    exception-handler-workflow: partial-error
+    description: Load workflow properties from settings in series
+    configurations:
+      - exec: /opt/opencast/wfexec/get_organizer_details.pl
+      - load: '0.1'
+      - params: '#{id} #{out}'
+      - output-filename: series_organizer.txt
+      - set-workflow-properties: true
+      - expected-type: Attachment
+  # - id: send-email
+  #   fail-on-error: false
+  #   if: ${organizer_email_valid} AND ${get_organizer_success} AND
+  #     ${valid_notification_list}
+  #   exception-handler-workflow: partial-error
+  #   description: Sending studio upload email to organizer and notification list
+  #   configurations:
+  #     - to: ${organizer_email}
+  #     - cc: ${notification_list}
+  #     - subject: Screencast titled ${catalogs['episode']['title']} has been
+  #         published
+  #     - body-html-template-file: screencast_publication
+  #     - use-html: true
+  # - id: send-email
+  #   fail-on-error: false
+  #   if: ${organizer_email_valid} AND ${get_organizer_success} AND
+  #     NOT(${valid_notification_list})
+  #   exception-handler-workflow: partial-error
+  #   description: Sending studio upload email to organizer and notification list
+  #   configurations:
+  #     - to: ${organizer_email}
+  #     - subject: Screencast titled ${catalogs['episode']['title']} has been
+  #         published
+  #     - body-html-template-file: screencast_publication
+  #     - use-html: true
+  - id: cleanup
+    fail-on-error: false
+    description: Cleaning up - remove temp processing artifacts
+    configurations:
+      - delete-external: false
+      # FixMe Don't clean up ACLs until workflow service no longer looks for them in the WFR.
+      - preserve-flavors: dublincore/*,security/*
+      - delay: 5

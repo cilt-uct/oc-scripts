@@ -1,0 +1,55 @@
+id: uct-request-transcript
+title: UCT - Request Transcript
+tags:
+  - archive
+description: |-
+  Transcript requested.
+operations:
+  # Add comment for submission of transcript
+  - id: comment
+    description: Add to trancription queue
+    configurations:
+      - action: create
+      - reason: EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.TRANSCRIPT
+      - description: Recording has a transcript request.
+  # Send notification to series owner that a transcript request has been sent to nibity
+  - id: execute-once
+    max-attempts: 3
+    retry-strategy: hold
+    fail-on-error: true
+    exception-handler-workflow: partial-error
+    description: Load workflow properties from settings in series
+    configurations:
+      - exec: /opt/opencast/wfexec/get_organizer_details.pl
+      - load: '0.1'
+      - params: '#{id} #{out}'
+      - output-filename: series_organizer.txt
+      - set-workflow-properties: true
+      - expected-type: Attachment
+  - id: send-email
+    fail-on-error: true
+    if: ${organizer_email_valid} AND ${get_organizer_success} AND
+      ${valid_notification_list}
+    exception-handler-workflow: partial-error
+    description: Sending a transcript request email to organizer and
+      notification list
+    configurations:
+      - to: ${organizer_email}
+      - cc: ${notification_list}
+      - subject: A Transcript request for ${catalogs['episode']['title']} has
+          been submitted
+      - body-html-template-file: nibity_request_sent
+      - use-html: true
+  - id: send-email
+    fail-on-error: true
+    if: ${organizer_email_valid} AND ${get_organizer_success} AND
+      NOT(${valid_notification_list})
+    exception-handler-workflow: partial-error
+    description: Sending a transcript request email to organizer and
+      notification list
+    configurations:
+      - to: ${organizer_email}
+      - subject: A Transcript request for ${catalogs['episode']['title']} has
+          been submitted
+      - body-html-template-file: nibity_request_sent
+      - use-html: true

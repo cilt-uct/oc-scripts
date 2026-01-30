@@ -1,0 +1,34 @@
+id: change-subtitles-type
+title: Change Subtitles Type
+tags:
+  - archive
+description: |-
+  Change captions type to track
+operations:
+  # Add a language tag for the english subtitles
+  - id: tag
+    description: Tagging captions with language code
+    configurations:
+      - source-flavors: captions/*
+      - target-tags: +lang:en
+  # Change the type of all files with the "captions/*" flavor to track
+  # And their flavor to "captions/source"
+  - id: changetype
+    description: Changing captions flavor and type
+    configurations:
+      - source-flavors: captions/*
+      - target-flavor: captions/source
+      - target-type: track
+  # Save changes
+  - id: snapshot
+    description: Archive the current state
+    configurations:
+      - source-tags: archive
+  # Clean up work artifacts
+  - id: cleanup
+    fail-on-error: false
+    description: Remove temporary processing artifacts
+    configurations:
+      - delete-external: true
+      # FixMe Don't clean up ACLs until workflow service no longer looks for them in the WFR.
+      - preserve-flavors: security/*

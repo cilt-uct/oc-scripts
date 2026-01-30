@@ -1,0 +1,34 @@
+id: uct-update-transcript-tags
+title: UCT Update Transcript Tags
+tags: []
+description: |-
+  Update Google Speech Transcript tags
+operations:
+  # Tag Google Speech captions for publication
+  - id: tag
+    description: Tagging Google Speech captions for publication
+    configurations:
+      - source-flavors: captions/source
+      - source-tags: generator-type:auto,generator:google-speech,lang:en
+      - target-tags: +engage-download
+  # Archive the current state of the mediapackage
+  - id: snapshot
+    description: Archiving new assets
+    configurations:
+      - source-flavors: '*/*'
+  # Publish updated Google Speech transcript tag
+  - id: publish-engage
+    exception-handler-workflow: partial-error
+    description: Update recording in Opencast Media Module
+    configurations:
+      - download-source-flavors: captions/source
+      - strategy: merge
+      - check-availability: false
+  # Clean up work artifacts
+  - id: cleanup
+    fail-on-error: false
+    description: Cleaning up - remove temp processing artifacts
+    configurations:
+      - delete-external: false
+      # FixMe Don't clean up ACLs until workflow service no longer looks for them in the WFR.
+      - preserve-flavors: dublincore/*,security/*

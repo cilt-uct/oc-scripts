@@ -1,0 +1,10 @@
+id: uct-publish-after-edit-left
+title: Publish (Default - Left)
+tags:
+  - editor
+displayOrder: 1
+operations:
+  - id: include
+    description: Process publish - left channel
+    configurations:
+      - workflow-id: uct-publish-after-edit

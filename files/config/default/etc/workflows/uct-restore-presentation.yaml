@@ -1,0 +1,57 @@
+id: uct-restore-presentation
+title: Restore presentation/source
+tags:
+  - archive
+operations:
+  - id: clone
+    description: Clone presentation-backup > presentation-source
+    exception-handler-workflow: partial-error
+    configurations:
+      - source-flavor: presentation/backup
+      - target-flavor: presentation/source
+  # untag presentation-source
+  - id: tag
+    description: Exclude presentation-backup from archive
+    configurations:
+      - source-flavors: presentation/backup
+      - target-tags: -archive
+  - id: tag
+    description: Include presentation-source from archive
+    configurations:
+      - source-flavors: presentation/source
+      - target-tags: +archive
+  # snapshot
+  - id: snapshot
+    description: Archive current state of recording
+    configurations:
+      - source-tags: archive
+  # clean older snapshots
+  - id: asset-delete
+    fail-on-error: true
+    exception-handler-workflow: error
+    description: Delete from AssetManager
+    configurations:
+      - keep-last-snapshot: true
+  # Comment that we cleaned up this recording
+  - id: comment
+    fail-on-error: false
+    description: Comment to say Restore presentation-source (create)
+    configurations:
+      - description: Restored presentation-source from presentation-backup.
+      - reason: EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.OTHER
+      - action: create
+  - id: comment
+    fail-on-error: false
+    description: Comment to say Restore presentation-source (resolve)
+    configurations:
+      - reason: EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.OTHER
+      - action: resolve
+  # Clean up work artifacts
+  - id: cleanup
+    fail-on-error: false
+    description: Cleaning up - remove temp processing artifacts
+    configurations:
+      - delete-external: false
+      # FixMe Don't clean up ACLs until workflow service no longer looks for them in the WFR.
+      - preserve-flavors: dublincore/*,security/*
+      - delay: 5

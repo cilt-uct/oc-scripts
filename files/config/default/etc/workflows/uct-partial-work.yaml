@@ -1,0 +1,103 @@
+id: uct-partial-work
+title: Prepare work versions
+tags: []
+operations:
+  # Analyze Tracks: set flavor_source workflow properties
+  - id: analyze-tracks
+    fail-on-error: false
+    exception-handler-workflow: partial-error
+    description: 'Analyze: SOURCE'
+    configurations:
+      - source-flavor: '*/source'
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Prepare the work media
+
+  # Ensure the work media is in a format that allows Opencast to do
+  # its work. This includes potentially rewriting the container and
+  # making sure that the audio track is part of each video track.
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # 6.x : fails at this point in time
+  # operation
+  #       id="select-tracks"
+  #       exception-handler-workflow="partial-error"
+  #       description="Preparing presenter (camera) audio and video work versions">
+  #       <configurations>
+  #         <configuration key="source-flavor">*/source</configuration>
+  #         <configuration key="target-flavor">*/work</configuration>
+  #         <configuration key="target-tags">-archive</configuration>
+  #       </configurations>
+  #     </operation
+  # 4.x : works :)
+  - id: prepare-av
+    if: ${flipVideoHoriz}
+    exception-handler-workflow: partial-error
+    description: Preparing presenter (camera) audio and video work versions and
+      flip
+    configurations:
+      - source-flavor: presenter/source
+      - target-flavor: presenter/work
+      - rewrite: true
+      - audio-muxing-source-flavors: presenter/?,presentation/?,*/*
+      - mux-encoding-profile: uct-mux-av-stereo-${workProfileFlip}.work
+      - audio-video-encoding-profile: uct-av-stereo-${workProfileFlip}.work
+  - id: prepare-av
+    if: NOT(${flipVideoHoriz})
+    exception-handler-workflow: partial-error
+    description: Preparing presenter (camera) audio and video work versions
+    configurations:
+      - source-flavor: presenter/source
+      - target-flavor: presenter/work
+      - rewrite: false
+      - audio-muxing-source-flavors: presenter/?,presentation/?,*/*
+      - mux-encoding-profile: uct-mux-av-stereo.work
+  - id: prepare-av
+    exception-handler-workflow: partial-error
+    description: Preparing presentation (screen) audio and video work version
+    configurations:
+      - source-flavor: presentation/source
+      - target-flavor: presentation/work
+      - rewrite: false
+      - audio-muxing-source-flavors: presenter/?,presentation/?,*/*
+      - mux-encoding-profile: uct-mux-av-stereo.work
+  - id: prepare-av
+    exception-handler-workflow: partial-error
+    description: Preparing presentation 2nd (screen) audio and video work
+      version
+    configurations:
+      - source-flavor: presentation2/source
+      - target-flavor: presentation2/work
+      - rewrite: false
+      - audio-muxing-source-flavors: presenter/?,presentation2/?,*/*
+      - mux-encoding-profile: uct-mux-av-stereo.work
+  # Analyze Tracks : [EDGE CASE - Podcast]  :p
+  - id: analyze-tracks
+    fail-on-error: false
+    exception-handler-workflow: partial-error
+    description: 'Analyze: WORK (A)'
+    configurations:
+      - source-flavor: '*/work'
+  # Audio Only : [EDGE CASE - Podcast] Edge case
+  - id: encode
+    if: NOT(${presenter_work_video}) AND ${presenter_source_audio} AND
+      NOT(${presentation_work_video}) AND NOT(${presentation2_work_video})
+    fail-on-error: true
+    exception-handler-workflow: partial-error
+    description: Create presenter_work version for audio only
+    configurations:
+      - source-flavor: presenter/source
+      - target-flavor: presenter/work
+      - encoding-profile: for-audio.only
+  # Untag work flavors
+  - id: tag
+    description: Untag all work flavors
+    configurations:
+      - source-flavors: '*/work'
+      - target-tags: -archive
+  # DO normalization here
+  # Analyze Tracks
+  - id: analyze-tracks
+    fail-on-error: false
+    exception-handler-workflow: partial-error
+    description: 'Analyze: WORK'
+    configurations:
+      - source-flavor: '*/work'

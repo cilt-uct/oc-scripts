@@ -1,0 +1,86 @@
+id: uct-partial-publish-downloads
+title: UCT Publish Downloads
+tags: []
+operations:
+  # Apply the default workflow configuration
+  - id: defaults
+    description: Applying default configuration values for downloads
+    configurations:
+      - result_publish_process: normalized-trimmed
+  # Untag previous composite flavors
+  - id: tag
+    description: Untag all composite flavors
+    configurations:
+      - source-flavors: composite/delivery
+      - target-tags: -rss,-atom,-composite,-engage-download
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  #       Create composite media for downloading on LTI tool and
+  #       for publication to feeds (Atom / RSS).
+
+  #       Video: MP4 container, H264 codec.
+
+  #       2 Panel > (presenter and/or presentation and/or presentation2): 1280x360 (640x360 x 2)
+  #       3 Panel > (presenter and 2 x presentation): 1920 x 720 (1280 x 720 for presenter, stacked 640x360 for presentation)
+  - id: composite
+    description: 'Downloads: Presenter + Presentation'
+    if: NOT(${presentation2_work_video}) AND ${presenter_work_video} AND
+      ${presentation_work_video}
+    fail-on-error: false
+    exception-handler-workflow: partial-error
+    configurations:
+      - source-flavor-lower: presentation/${result_publish_process}
+      - source-flavor-upper: presenter/${result_publish_process}
+      - encoding-profile: mp4-download.dual.http
+      - target-flavor: composite/delivery
+      - target-tags: rss,atom,composite,engage-download
+      - output-resolution: 2560x720
+      - output-background: '0x000000FF'
+      - layout: preview
+      - layout-single: '{"horizontalCoverage":1.0,"anchorOffset":{"referring":{"left":0.0,"top":0.0},"reference":{"left":0.0,"top":0.0},"offset":{"x":0,"y":0}}};'
+      - layout-preview: |-
+          {"horizontalCoverage":0.5,"anchorOffset":{"referring":{"left":1.0,"top":0.0},"reference":{"left":1.0,"top":0.0},"offset":{"x":0,"y":0}}};
+                    {"horizontalCoverage":0.5,"anchorOffset":{"referring":{"left":0.0,"top":0.0},"reference":{"left":0.0,"top":0.0},"offset":{"x":0,"y":0}}};
+  - id: composite
+    description: 'Downloads: Presenter + Presentation2'
+    if: NOT(${presentation_work_video}) AND ${presenter_work_video} AND
+      ${presentation2_work_video}
+    fail-on-error: false
+    exception-handler-workflow: partial-error
+    configurations:
+      - source-flavor-lower: presentation2/${result_publish_process}
+      - source-flavor-upper: presenter/${result_publish_process}
+      - encoding-profile: mp4-download.dual.http
+      - target-flavor: composite/delivery
+      - target-tags: rss,atom,composite,engage-download
+      - output-resolution: 2560x720
+      - output-background: '0x000000FF'
+      - layout: preview
+      - layout-single: '{"horizontalCoverage":1.0,"anchorOffset":{"referring":{"left":0.0,"top":0.0},"reference":{"left":0.0,"top":0.0},"offset":{"x":0,"y":0}}};'
+      - layout-preview: |-
+          {"horizontalCoverage":0.5,"anchorOffset":{"referring":{"left":1.0,"top":0.0},"reference":{"left":1.0,"top":0.0},"offset":{"x":0,"y":0}}};
+                    {"horizontalCoverage":0.5,"anchorOffset":{"referring":{"left":0.0,"top":0.0},"reference":{"left":0.0,"top":0.0},"offset":{"x":0,"y":0}}};
+  - id: composite
+    description: 'Downloads: Presentation + Presentation2'
+    if: NOT(${presenter_work_video}) AND ${presentation_work_video} AND
+      ${presentation2_work_video}
+    fail-on-error: false
+    exception-handler-workflow: partial-error
+    configurations:
+      - source-flavor-lower: presentation2/${result_publish_process}
+      - source-flavor-upper: presentation/${result_publish_process}
+      - encoding-profile: mp4-download.dual.http
+      - target-flavor: composite/delivery
+      - target-tags: rss,atom,composite,engage-download
+      - output-resolution: 2560x720
+      - output-background: '0x000000FF'
+      - layout: preview
+      - layout-single: '{"horizontalCoverage":1.0,"anchorOffset":{"referring":{"left":0.0,"top":0.0},"reference":{"left":0.0,"top":0.0},"offset":{"x":0,"y":0}}};'
+      - layout-preview: |-
+          {"horizontalCoverage":0.5,"anchorOffset":{"referring":{"left":1.0,"top":0.0},"reference":{"left":1.0,"top":0.0},"offset":{"x":0,"y":0}}};
+                    {"horizontalCoverage":0.5,"anchorOffset":{"referring":{"left":0.0,"top":0.0},"reference":{"left":0.0,"top":0.0},"offset":{"x":0,"y":0}}};
+  - id: include
+    if: ${presenter_work_video} AND ${presentation_work_video} AND
+      ${presentation2_work_video}
+    description: 'Downloads: Include composite for tri-stream'
+    configurations:
+      - workflow-id: uct-include-partial-download-abde

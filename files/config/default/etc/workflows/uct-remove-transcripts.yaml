@@ -1,0 +1,52 @@
+id: uct-remove-transcripts
+title: UCT - Remove Transcripts
+tags:
+  - archive
+description: |-
+  Remove transcripts from event
+operations:
+  # Defaults
+  - id: defaults
+    description: Applying default configuration values
+    configurations:
+      - googleTranscript: false
+      - nibityTranscript: false
+      - whisperTranscript: false
+      - uploadedTranscript: false
+      - languageCode: en-US
+  # Remove google transcript with language code
+  - id: retract-partial
+    fail-on-error: false
+    if: ${googleTranscript}
+    description: Retract Google Speech transcript from event
+    configurations:
+      - retract-flavors: captions/*
+      - source-tags: engage-download,generator:google-speech,lang:en
+  - id: retract-partial
+    fail-on-error: false
+    if: ${nibityTranscript}
+    description: Retract WayWithWords transcript from event
+    configurations:
+      - retract-flavors: captions/*
+      - source-tags: engage-download,generator:waywithwords,lang:en
+  - id: retract-partial
+    fail-on-error: false
+    if: ${whisperTranscript}
+    description: Retract Whisper transcript from event
+    configurations:
+      - retract-flavors: captions/*
+      - source-tags: engage-download,generator:whisperapi,lang:en
+  # Remove uploaded transcript with language code
+  - id: retract-partial
+    fail-on-error: false
+    if: ${uploadedTranscript}
+    description: Retract uploaded transcript from event (with language code)
+    configurations:
+      - retract-flavors: captions/upload+${languageCode}
+  # Remove uploaded transcript
+  - id: retract-partial
+    fail-on-error: false
+    if: ${uploadedTranscript}
+    description: Retract uploaded transcript from event
+    configurations:
+      - retract-flavors: text/vtt

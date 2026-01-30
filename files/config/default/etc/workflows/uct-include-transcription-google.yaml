@@ -1,0 +1,37 @@
+id: uct-include-transcription-google
+title: Submit trimmed audio for Google Speech Transcription
+tags: []
+description: |-
+  Runs before real publishing of media
+operations:
+  # Configuration values
+  - id: defaults
+    description: 'INIT: Applying default values'
+    configurations:
+      - transcription_src_flavor: delivery
+      - skipFlavor: captions/source
+      - source-tags:
+          engage-download,generator-type:auto,generator:google-speech,lang:en
+      - languageCode: en-GB
+  # Encode audio to flac
+  - id: encode
+    fail-on-error: true
+    exception-handler-workflow: partial-error
+    description: Extract audio for transcript generation
+    configurations:
+      - source-flavor: '*/${transcription_src_flavor}'
+      - target-flavor: audio/flac
+      - target-tags: transcript
+      - encoding-profile: audio-flac
+      - process-first-match-only: true
+  # Start Google Speech transcription job
+  - id: google-speech-start-transcription
+    fail-on-error: true
+    exception-handler-workflow: partial-error
+    description: Start Google Speech transcription job
+    configurations:
+      # Skip this operation if flavor already exists. Used for cases when mp already has captions.
+      - skip-if-flavor-exists: ${skipFlavor}
+      - language-code: ${languageCode}
+      # Audio to be translated, produced in the previous encode operation
+      - source-tag: transcript
