@@ -299,31 +299,31 @@ operations:
       - output-filename: series_organizer.txt
       - set-workflow-properties: true
       - expected-type: Attachment
-  # - id: send-email
-  #   fail-on-error: false
-  #   if: ${organizer_email_valid} AND ${get_organizer_success} AND
-  #     ${valid_notification_list}
-  #   exception-handler-workflow: partial-error
-  #   description: Sending studio upload email to organizer and notification list
-  #   configurations:
-  #     - to: ${organizer_email}
-  #     - cc: ${notification_list}
-  #     - subject: Screencast titled ${catalogs['episode']['title']} has been
-  #         published
-  #     - body-html-template-file: screencast_publication
-  #     - use-html: true
-  # - id: send-email
-  #   fail-on-error: false
-  #   if: ${organizer_email_valid} AND ${get_organizer_success} AND
-  #     NOT(${valid_notification_list})
-  #   exception-handler-workflow: partial-error
-  #   description: Sending studio upload email to organizer and notification list
-  #   configurations:
-  #     - to: ${organizer_email}
-  #     - subject: Screencast titled ${catalogs['episode']['title']} has been
-  #         published
-  #     - body-html-template-file: screencast_publication
-  #     - use-html: true
+  - id: send-email
+    fail-on-error: false
+    if: ${organizer_email_valid} AND ${get_organizer_success} AND
+      ${valid_notification_list}
+    exception-handler-workflow: partial-error
+    description: Sending studio upload email to organizer and notification list
+    configurations:
+      - to: ${organizer_email}
+      - cc: ${notification_list}
+      - subject: Screencast titled ${catalogs['episode']['title']} has been
+          published
+      - body-html-template-file: screencast_publication
+      - use-html: true
+  - id: send-email
+    fail-on-error: false
+    if: ${organizer_email_valid} AND ${get_organizer_success} AND
+      NOT(${valid_notification_list})
+    exception-handler-workflow: partial-error
+    description: Sending studio upload email to organizer and notification list
+    configurations:
+      - to: ${organizer_email}
+      - subject: Screencast titled ${catalogs['episode']['title']} has been
+          published
+      - body-html-template-file: screencast_publication
+      - use-html: true
   - id: cleanup
     fail-on-error: false
     description: Cleaning up - remove temp processing artifacts
