@@ -1,4 +1,4 @@
-#! /usr/bin/perl
+#!/usr/bin/perl
 
 # Notify middleware of a workflow operation
 # https://cilt.atlassian.net/browse/OPENCAST-3291

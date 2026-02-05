@@ -11,7 +11,7 @@ operations:
     exception-handler-workflow: partial-error
     description: Load workflow properties from settings in series
     configurations:
-      - exec: /opt/opencast/wfexec/get_organizer_details.pl
+      - exec: /opt/opencast/wfexec/wrapper-get-organizer-details.sh
       - load: '0.1'
       - params: '#{id} #{out}'
       - output-filename: series_organizer.txt

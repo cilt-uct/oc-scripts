@@ -3,14 +3,14 @@ title: Test - Track4K docker test
 tags:
   - archive
 operations:
-  # Use get-event-details.pl to populate workflow properties
+  # Use get-event-details to populate workflow properties
   # we need this for : event_location value
   - id: execute-once
     fail-on-error: false
     exception-handler-workflow: partial-error
     description: Get Event Details
     configurations:
-      - exec: /opt/opencast/wfexec/get-event-details.pl
+      - exec: /opt/opencast/wfexec/wrapper-get-event-details.sh
       - load: '0.1'
       - params: '#{id} #{out}'
       - output-filename: eventinfo.txt
@@ -21,7 +21,7 @@ operations:
     exception-handler-workflow: partial-error
     description: ExecuteMany properties
     configurations:
-      - exec: /opt/opencast/wfexec/test-multi-props.pl
+      - exec: /opt/opencast/wfexec/wrapper-test-multi-props.sh
       - params: '#{in} #{out}'
       - source-flavor: presenter/source
       - source-video: true

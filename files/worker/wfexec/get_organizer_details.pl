@@ -1,4 +1,4 @@
-#! /usr/bin/perl
+#!/usr/bin/perl
 
 ## Get the information to send a consent request email to
 ## the Organizer and NotificationList of a series

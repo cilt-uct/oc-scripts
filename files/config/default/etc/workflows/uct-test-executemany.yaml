@@ -1,17 +1,34 @@
 id: uct-test-executemany
 title: UCT - Test ExecuteMany
+
 tags:
   - archive
+
 operations:
   - id: execute-many
     fail-on-error: true
     exception-handler-workflow: partial-error
     description: ExecuteMany properties
     configurations:
-      - exec: /opt/opencast/wfexec/test-multi-props.pl
+      - exec: /opt/opencast/wfexec/wrapper-test-multi-props.sh
       - params: '#{in} #{out}'
       - source-flavor: presenter/source
       - set-workflow-properties: true
       - source-audio: true
       - output-filename: wf.properties
+      - expected-type: Attachment
+
+  # Load workflow properties from metadata: update some workflow properties
+  - id: execute-once
+    max-attempts: 3
+    retry-strategy: hold
+    fail-on-error: true
+    exception-handler-workflow: partial-error
+    description: Load workflow properties from settings in series
+    configurations:
+      - exec: /opt/opencast/wfexec/wrapper-load-from-metadata.sh
+      - load: 0.1
+      - params: '#{id} #{out}'
+      - output-filename: metadata_workflow.txt
+      - set-workflow-properties: true
       - expected-type: Attachment

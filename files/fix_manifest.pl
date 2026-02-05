@@ -1,4 +1,4 @@
-#! /usr/bin/perl
+#!/usr/bin/perl
 
 # Change the manifest of a media package to refer to local urls
 #

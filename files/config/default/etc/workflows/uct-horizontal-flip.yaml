@@ -17,8 +17,8 @@ operations:
     exception-handler-workflow: partial-error
     description: Load workflow properties from settings in series
     configurations:
-      - exec: /opt/opencast/wfexec/load-from-metadata.pl
-      - load: '0.1'
+      - exec: /opt/opencast/wfexec/wrapper-load-from-metadata.sh
+      - load: 0.1
       - params: '#{id} #{out}'
       - output-filename: metadata_workflow.txt
       - set-workflow-properties: true

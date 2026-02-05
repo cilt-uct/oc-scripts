@@ -18,7 +18,7 @@ operations:
     exception-handler-workflow: partial-error
     description: Create My Videos
     configurations:
-      - exec: /opt/opencast/wfexec/create-my-videos.pl
+      - exec: /opt/opencast/wfexec/wrapper-create-my-videos.sh
       - load: '0.1'
       - params: '#{id} #{out}'
       - output-filename: my_videos.txt

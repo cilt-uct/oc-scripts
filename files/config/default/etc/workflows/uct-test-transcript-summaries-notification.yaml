@@ -23,6 +23,6 @@ operations:
     exception-handler-workflow: partial-error
     description: Notify Middleware of Lecture Summaries
     configurations:
-      - exec: /opt/opencast/wfexec/post-notification.pl
+      - exec: /opt/opencast/wfexec/wrapper-post-notification.sh
       - load: '0.1'
       - params: '#{id} oc-publish-captions'

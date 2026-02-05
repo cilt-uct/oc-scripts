@@ -20,23 +20,7 @@ operations:
       - overwrite: true
       - accept-no-media: false
       - accurate-frame-count: true
-  # Load workflow properties from metadata: update some workflow properties
-  # <operation
-  #       id="execute-once"
-  #       max-attempts="3"
-  #       retry-strategy="hold"
-  #       fail-on-error="true"
-  #       exception-handler-workflow="partial-error"
-  #       description="Load workflow properties from settings in series">
-  #       <configurations>
-  #         <configuration key="exec">/opt/opencast/wfexec/load-from-metadata.pl</configuration>
-  #         <configuration key="load">0.1</configuration>
-  #         <configuration key="params">#{id} #{out}</configuration>
-  #         <configuration key="output-filename">metadata_workflow.txt</configuration>
-  #         <configuration key="set-workflow-properties">true</configuration>
-  #         <configuration key="expected-type">Attachment</configuration>
-  #       </configurations>
-  #     </operation>
+
   # Apply access control lists from series to the mediapackage.
   #       Only runs if Event is linked to Series, SKIPPED if not.
   - id: series

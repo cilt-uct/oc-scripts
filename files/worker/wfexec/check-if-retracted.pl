@@ -1,4 +1,4 @@
-#! /usr/bin/perl
+#!/usr/bin/perl
 
 ## Check if a retract workflow was run on the event
 ## set workflow property called retracted_event = true/false
