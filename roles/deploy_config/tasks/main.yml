@@ -2,10 +2,10 @@
 # This playbook will run the deploy config script on the node
 
   - name: Copy script assembly
-    copy: src="{{ folder_config }}conf-{{ ansible_hostname }}.tar.gz" dest=/opt/deploy.tar.gz owner="{{ system_user }}" group="{{ system_group }}" mode=0644
+    copy: src="{{ folder_config }}conf-{{ ansible_facts['hostname'] }}.tar.gz" dest=/opt/deploy.tar.gz owner="{{ system_user }}" group="{{ system_group }}" mode=0644
 
   - name: Copy script configuration
-    copy: src="{{ folder_config }}conf-{{ ansible_hostname }}.cfg" dest=/opt/deploy.cfg owner="{{ system_user }}" group="{{ system_group }}" mode=0644
+    copy: src="{{ folder_config }}conf-{{ ansible_facts['hostname'] }}.cfg" dest=/opt/deploy.cfg owner="{{ system_user }}" group="{{ system_group }}" mode=0644
 
   - name: Copy script
     copy: src="{{ deploy_script }}" dest="/opt/deploy.sh" owner="{{ system_user }}" group="{{ system_group }}" mode=0775

@@ -8,7 +8,7 @@
     copy: src=files/worker/wfexec/check-perl-modules.pl dest=/opt/check.pl owner=root group=root mode=0775
 
   - name: Copy check configuration
-    copy: src=files/tmp/conf-{{ ansible_hostname }}.cfg dest=/opt/check.cfg owner=root group=root mode=0644
+    copy: src=files/tmp/conf-{{ ansible_facts['hostname'] }}.cfg dest=/opt/check.cfg owner=root group=root mode=0644
 
   # fire and forget
   - name: Run version check

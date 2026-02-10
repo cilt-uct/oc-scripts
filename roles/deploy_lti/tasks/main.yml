@@ -6,7 +6,7 @@
     copy: src={{ deploy_lti_static }} dest=/opt/lti.tar.gz owner="{{system_user}}" group="{{system_group}}" mode=0644
 
   - name: Copy deployment configuration
-    copy: src={{ folder_config }}conf-{{ ansible_hostname }}.cfg dest=/opt/lti.cfg owner="{{system_user}}" group="{{system_group}}" mode=0644
+    copy: src={{ folder_config }}conf-{{ ansible_facts['hostname'] }}.cfg dest=/opt/lti.cfg owner="{{system_user}}" group="{{system_group}}" mode=0644
 
   - name: Copy deploy script
     copy: src={{ deploy_lti_script }} dest=/opt/lti.sh owner="{{system_user}}" group="{{system_group}}" mode=0775
