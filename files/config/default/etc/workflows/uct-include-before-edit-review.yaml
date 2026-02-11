@@ -6,7 +6,7 @@ description: |-
         Flavors:
           */work
         Workflow Properties:
-          event_trim (true/false) [execute-once: event-timetable]
+          event_trim (true/false) [execute-once: event-timetable.pl]
           timetable_comment
           presenter_work_video (true/false) [analyze-tracks: */work]
           presentation_work_video

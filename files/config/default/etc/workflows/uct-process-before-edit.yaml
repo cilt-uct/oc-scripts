@@ -37,7 +37,7 @@ operations:
     exception-handler-workflow: partial-error
     description: Check timetable status
     configurations:
-      - exec: /opt/opencast/wfexec/wrapper-load-from-metadata.sh
+      - exec: /opt/opencast/wfexec/event-timetable.pl
       - load: 0.1
       - params: '#{id} #{out}'
       - output-filename: ttinfo.txt
