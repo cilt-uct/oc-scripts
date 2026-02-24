@@ -381,6 +381,7 @@
     <sec:intercept-url pattern="/transcripts/watson/results*" method="GET" access="ROLE_ANONYMOUS" />
     <sec:intercept-url pattern="/transcripts/watson/results*" method="POST" access="ROLE_ANONYMOUS" />
     <sec:intercept-url pattern="/transcripts/nibity/submission/*" access="ROLE_ANONYMOUS" />
+    <sec:intercept-url pattern="/transcripts/whisper/submission/*" access="ROLE_ANONYMOUS" />
     <sec:intercept-url pattern="/transcripts/googlespeech/*" method="GET" access="ROLE_ANONYMOUS" />
 
     <!-- Enable access to the redirect routes -->

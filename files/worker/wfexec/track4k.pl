@@ -30,6 +30,22 @@ if (-e $track4k_cfg) {
 
 my $data = decode_json($json);
 
+# # EARLY EXIT: If location not defined in JSON config
+# # ---------------------------------------------------
+# if (!defined($location) || !exists($data->{$location})) {
+
+#     system("/usr/bin/logger",
+#         "track4k: location '$location' not found in config - copying without processing");
+
+#     copy($track_in, $track_out)
+#         or die "Failed to copy $track_in to $track_out: $!";
+
+#     exit 0;
+# }
+
+# Normal processing continues below
+# ---------------------------------------------------
+
 # Default resolution
 (my $out_x, my $out_y) = (1920, 1080);
 

@@ -1,6 +1,7 @@
 id: uct-include-transcription-google
 title: Submit trimmed audio for Google Speech Transcription
-tags: []
+tags:
+  - archive
 description: |-
   Runs before real publishing of media
 operations:
@@ -8,7 +9,7 @@ operations:
   - id: defaults
     description: 'INIT: Applying default values'
     configurations:
-      - transcription_src_flavor: delivery
+      - transcription_src_flavor: source
       - skipFlavor: captions/source
       - source-tags:
           engage-download,generator-type:auto,generator:google-speech,lang:en

@@ -3,6 +3,7 @@ title: UCT - Process Upload
 tags:
   - upload
 operations:
+
   # Apply the default workflow configuration
   - id: defaults
     description: Applying default configuration values
@@ -12,6 +13,7 @@ operations:
       - hasPresentation: false
       - doCaptioning: true
       - downloadSourceflavorsExist: false
+
   # Load workflow properties from metadata: update some workflow properties
   - id: execute-once
     max-attempts: 3
@@ -26,6 +28,7 @@ operations:
       - output-filename: metadata_workflow.txt
       - set-workflow-properties: true
       - expected-type: Attachment
+
   # Apply access control lists from series to the mediapackage.
   #       Only runs if Event is linked to Series, SKIPPED if not.
   - id: series
@@ -34,6 +37,7 @@ operations:
     configurations:
       - attach: '*'
       - apply-acl: true
+
   # make sure to save ACL and dublincore
   - id: tag
     exception-handler-workflow: partial-error
@@ -41,12 +45,14 @@ operations:
     configurations:
       - source-flavors: dublincore/*,security/*
       - target-tags: archive
+
   # Tag the incoming metadata catalogs and captions for publishing
   - id: tag
     description: Tagging metadata catalogs and captions for publication
     configurations:
       - source-flavors: dublincore/*,*/captions
       - target-tags: +engage-download
+
   # Check if uploaded file is an audio-only file
   - id: execute-many
     max-attempts: 3
@@ -63,6 +69,7 @@ operations:
       - set-workflow-properties: true
       - expected-type: Attachment
       - load: '0.1'
+
   # Move track_presenter.0/* to presenter/source (LTI uploads)
   - id: encode
     if: NOT(${is_audio_upload})
@@ -74,6 +81,7 @@ operations:
       - target-flavor: presenter/source
       - target-tags: archive
       - encoding-profile: uct-copy.work
+
   # Move track_presentation.0/* to presentation/source (LTI uploads)
   - id: encode
     if: ${hasPresentation} AND NOT(${is_audio_upload})
@@ -85,6 +93,7 @@ operations:
       - target-flavor: presentation/source
       - target-tags: archive
       - encoding-profile: uct-copy.work
+
   # If upload is audio only, create video file with static image
   - id: execute-many
     if: ${is_audio_upload}

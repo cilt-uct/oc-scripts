@@ -161,5 +161,4 @@ operations:
       # Skip this operation if flavor already exists. Used for cases when mp already has captions.
       - skip-if-flavor-exists: captions/vtt+en
       # Audio to be translated, produced in the previous encode operation
-      - source-flavor: 'presenter/transcription'
-      - source-tag: archive
+      - source-flavor: '*/${preview_out_flavor}'
