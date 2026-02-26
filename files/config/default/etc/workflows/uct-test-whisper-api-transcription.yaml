@@ -10,7 +10,7 @@ operations:
     description: Applying default configuration values
     configurations:
       - workProfileChannel_left: true
-      - transcription_src_flavor: normalized-trimmed
+      - transcription_src_flavor: source
       - preview_src_flavor: transcription
       - preview_out_flavor: transcription-preview
       - preview_out_tags: transcription-preview
@@ -18,39 +18,6 @@ operations:
       - source-tags:
           engage-download,generator-type:auto,generator:whisper,lang:en
       - languageCode: en
-  - id: import-wf-properties
-    if: ${publishedChannel}
-    fail-on-error: true
-    exception-handler-workflow: partial-error
-    description: Load processing settings
-    configurations:
-      - source-flavor: processing/defaults
-      - keys: workProfileChannel
-  - id: defaults
-    if: ${workProfileChannel_left}
-    description: Use left audio channel
-    configurations:
-      - workProfileChannel: left
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  #         Prepare work versions of the source material for archive and processing.
-  #         Preview and Publish use Work versions. (*/work)
-
-  #         In: */source
-  #         Out: */work
-  - id: include
-    description: Prepare work version for processing (${workProfileChannel})
-    configurations:
-      - workflow-id: uct-partial-work-channel
-  - id: editor
-    fail-on-error: true
-    exception-handler-workflow: partial-error
-    description: Cut the recording according to the edit decision list
-    configurations:
-      - source-flavors: '*/work'
-      - smil-flavors: smil/cutting
-      - target-smil-flavor: smil/cutting
-      - target-flavor-subtype: trimmed
-      - interactive: false
   - id: clone
     fail-on-error: true
     exception-handler-workflow: partial-error
@@ -58,87 +25,31 @@ operations:
     configurations:
       - source-flavor: '*/${transcription_src_flavor}'
       - target-flavor: '*/transcription'
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  #         Encode or Composite previews, create waveform, tag and
-  #         publish internally (Editor).
+  - id: tag
+    exception-handler-workflow: partial-error
+    description: Add archive tags for */trimmed
+    configurations:
+      - source-flavors: '*/transcription'
+      - target-tags: archive
+  - id: analyze-tracks
+    exception-handler-workflow: partial-error
+    description: Analyze tracks in media package an set control variables
+    configurations:
+      - source-flavor: '*/transcription'
+      - source-tags: archive
   - id: encode
-    description: a. i. Create single-stream preview -
-      presenter_transcription_video / audio
-    if: ${presenter_transcription_video} AND
-      NOT(${presentation_transcription_video}) AND
-      NOT(${presentation2_transcription_video})
+    description: a. ii. Create audio only preview - presenter_source_audio
     fail-on-error: true
     exception-handler-workflow: partial-error
     configurations:
       - source-flavors: presenter/transcription
       - target-flavor: presenter/${preview_out_flavor}
-      - encoding-profile: uct-mp4-preview.http
-  - id: composite
-    description: d. Create dual-stream preview (Presenter + Presentation)
-    if: NOT(${presentation2_transcription_video}) AND
-      ${presenter_transcription_video} AND ${presentation_transcription_video}
-    fail-on-error: true
-    exception-handler-workflow: partial-error
+      - encoding-profile: copy.audio
+  - id: tag
+    description: Tagging cutting information for archival
     configurations:
-      - source-flavor-lower: presentation/transcription
-      - source-flavor-upper: presenter/transcription
-      - encoding-profile: uct-mp4-preview.dual.http
-      - target-flavor: composite/${preview_out_flavor}
-      - output-resolution: 2560x720
-      - output-background: '0x000000FF'
-      - layout: preview
-      - layout-single: '{"horizontalCoverage":1.0,"anchorOffset":{"referring":{"left":0.0,"top":0.0},"reference":{"left":0.0,"top":0.0},"offset":{"x":0,"y":0}}};'
-      - layout-preview: |-
-          {"horizontalCoverage":0.5,"anchorOffset":{"referring":{"left":1.0,"top":0.0},"reference":{"left":1.0,"top":0.0},"offset":{"x":0,"y":0}}};
-                        {"horizontalCoverage":0.5,"anchorOffset":{"referring":{"left":0.0,"top":0.0},"reference":{"left":0.0,"top":0.0},"offset":{"x":0,"y":0}}};
-  - id: composite
-    description: e. Create dual-stream preview (Presenter + Presentation2)
-    if: NOT(${presentation_transcription_video}) AND
-      ${presenter_transcription_video} AND ${presentation2_transcription_video}
-    fail-on-error: true
-    exception-handler-workflow: partial-error
-    configurations:
-      - source-flavor-lower: presentation2/transcription
-      - source-flavor-upper: presenter/transcription
-      - encoding-profile: mp4-preview.dual.http
-      - target-flavor: composite/${preview_out_flavor}
-      - output-resolution: 2560x720
-      - output-background: '0x000000FF'
-      - layout: preview
-      - layout-single: '{"horizontalCoverage":1.0,"anchorOffset":{"referring":{"left":0.0,"top":0.0},"reference":{"left":0.0,"top":0.0},"offset":{"x":0,"y":0}}};'
-      - layout-preview: |-
-          {"horizontalCoverage":0.5,"anchorOffset":{"referring":{"left":1.0,"top":0.0},"reference":{"left":1.0,"top":0.0},"offset":{"x":0,"y":0}}};
-                        {"horizontalCoverage":0.5,"anchorOffset":{"referring":{"left":0.0,"top":0.0},"reference":{"left":0.0,"top":0.0},"offset":{"x":0,"y":0}}};
-  - id: composite
-    description: f. Create dual-stream preview (Presentation + Presentation2)
-    if: NOT(${presenter_transcription_video}) AND
-      ${presentation_transcription_video} AND
-      ${presentation2_transcription_video}
-    fail-on-error: true
-    exception-handler-workflow: partial-error
-    configurations:
-      - source-flavor-lower: presentation2/transcription
-      - source-flavor-upper: presentation/transcription
-      - encoding-profile: mp4-preview.dual.http
-      - target-flavor: composite/${preview_out_flavor}
-      - output-resolution: 2560x720
-      - output-background: '0x000000FF'
-      - layout: preview
-      - layout-single: '{"horizontalCoverage":1.0,"anchorOffset":{"referring":{"left":0.0,"top":0.0},"reference":{"left":0.0,"top":0.0},"offset":{"x":0,"y":0}}};'
-      - layout-preview: |-
-          {"horizontalCoverage":0.5,"anchorOffset":{"referring":{"left":1.0,"top":0.0},"reference":{"left":1.0,"top":0.0},"offset":{"x":0,"y":0}}};
-                        {"horizontalCoverage":0.5,"anchorOffset":{"referring":{"left":0.0,"top":0.0},"reference":{"left":0.0,"top":0.0},"offset":{"x":0,"y":0}}};
-  - id: include
-    if: ${presenter_transcription_video} AND ${presentation_transcription_video}
-      AND ${presentation2_transcription_video}
-    description: g. Include composite for tri-stream
-    configurations:
-      - workflow-id: uct-include-partial-preview-abde
-  - id: analyze-tracks
-    exception-handler-workflow: partial-error
-    description: Analyze tracks in media package an set control variables
-    configurations:
-      - source-flavor: presenter/transcription
+      - source-flavors: smil/cutting
+      - target-tags: archive
   - id: whisper-start-transcription
     fail-on-error: true
     exception-handler-workflow: partial-error
@@ -148,4 +59,4 @@ operations:
       - skip-if-flavor-exists: captions/source
       - language-code: en
       # Audio to be translated, produced in the previous encode operation
-      - source-flavor: presenter/transcription
+      - source-flavor: '*/${preview_out_flavor}'

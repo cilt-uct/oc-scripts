@@ -8,6 +8,33 @@ operations:
   # Ingest the external elements, apply access control entries,
   # inspect the media and tag everything for archival.
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  # Untag track4k
+  # - id: tag
+  #   description: Exclude presenter + present4k source from archive
+  #   configurations:
+  #     - source-flavors: presenter/source,presenter4k/source
+  #     - target-tags: remove
+
+  # - id: encode
+  #   description: Err_detect (presenter/source)
+  #   fail-on-error: false
+  #   exception-handler-workflow: partial-error
+  #   configurations:
+  #     - source-flavors: presenter/source
+  #     - target-flavor: presenter/source
+  #     - target-tags: +archive
+  #     - encoding-profile: mkv.err_detect
+
+  # - id: encode
+  #   description: Err_detect (presenter4k/source)
+  #   fail-on-error: false
+  #   exception-handler-workflow: partial-error
+  #   configurations:
+  #     - source-flavors: presenter4k/source
+  #     - target-flavor: presenter4k/source
+  #     - encoding-profile: mkv.err_detect
+
   # Inspect the media
   - id: inspect
     exception-handler-workflow: partial-error
@@ -16,6 +43,7 @@ operations:
       - overwrite: true
       - accept-no-media: false
       - accurate-frame-count: false
+
   # Apply access control lists from series to the mediapackage.
   #       Only runs if Event is linked to Series, SKIPPED if not.
   - id: series
@@ -24,6 +52,7 @@ operations:
     configurations:
       - attach: '*'
       - apply-acl: true
+
   # Run track4k on presenter-4k/source to presenter/source
   - id: execute-many
     fail-on-error: true
@@ -40,6 +69,7 @@ operations:
       - target-tags: archive
       - expected-type: Track
       - load: '2.0'
+
   # Analyze Tracks: set flavor_source workflow properties
   - id: analyze-tracks
     fail-on-error: false
@@ -48,18 +78,21 @@ operations:
     configurations:
       - source-flavor: '*/source'
       - aspect-ratio: 4/3,16/9
+
   # Tag the sources for archival
   - id: tag
     description: Tagging source material for archival
     configurations:
       - source-flavors: '*/*'
       - target-tags: +archive
+
   # Untag track4k
   - id: tag
     description: Exclude 4K presenter source from archive
     configurations:
       - source-flavors: presenter4k/source
       - target-tags: -archive
+
   # Tag any optionally uploaded assets
   - id: tag
     if: ${downloadSourceflavorsExist}
@@ -68,6 +101,7 @@ operations:
     configurations:
       - source-flavors: ${download-source-flavors}
       - target-tags: +engage-download
+
   # make sure to save ACL and dublincore
   - id: tag
     exception-handler-workflow: partial-error
@@ -75,18 +109,21 @@ operations:
     configurations:
       - source-flavors: dublincore/*,security/*
       - target-tags: archive
+
   # Tag the incoming metadata catalogs for publishing
   - id: tag
     description: Tagging metadata catalogs for publication
     configurations:
       - source-flavors: dublincore/*
       - target-tags: +engage-download
+
   # Tagging captions for publication
   - id: tag
     description: Tagging captions for publication
     configurations:
       - source-flavors: '*/captions'
       - target-tags: +engage-download
+
   - id: snapshot
     description: Archive after ingest
     configurations:
