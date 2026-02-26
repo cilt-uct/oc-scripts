@@ -71,9 +71,21 @@ main() {
       chown -R mysql:mysql "$data/local/mysql"
     fi
   fi
-
+  chown -R opencast:opencast $bak_real/
   chown -R opencast:opencast $working_real/
   chmod g+w -R $working_real/
+
+  # make sure wfexec is executable
+  chmod +x $working_real/wfexec/*.sh
+  chmod +x $working_real/wfexec/*.pl
+
+  # check link to service
+  if [ ! -f "/lib/systemd/system/opencast.service" ]; then
+        if [ -d "/lib/systemd/system" ]; then
+            ln -f $working_real/docs/scripts/service/opencast.service /lib/systemd/system/opencast.service
+            systemctl enable opencast.service
+        fi
+  fi
 
   server_etc=$(awk '/org.opencastproject.server.url=http/ && /uct.ac/' $working/etc/custom.properties | cut -d "=" -f2)
 

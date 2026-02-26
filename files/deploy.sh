@@ -87,7 +87,7 @@ main() {
     echo " Done."
 
     printf "    Extracting Config / Encoding Profiles ..."
-    tar -zxf $DEPLOY_DIR/$CONFIG_FILES -C $working/
+    tar -pzxf $DEPLOY_DIR/$CONFIG_FILES -C $working/
 
     # Move some workflows back - used by default for some of the processes.
     cp $working/etc/workflows-default/delete.yaml $working/etc/workflows/delete.yaml

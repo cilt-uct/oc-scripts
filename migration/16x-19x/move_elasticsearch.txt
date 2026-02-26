@@ -44,3 +44,30 @@ green  open   opencast_theme   6PaqOBXpQHGVOjtPV0F05A   1   0          1        
 green  open   opencast_version H-RBdt3zRHaectTh1jBbAw   1   0          1            0      3.3kb          3.3kb
 green  open   opencast_search  torFiF-rRruXfFUCAdx5Xw   1   0     172538        23550      2.2gb          2.2gb
 green  open   opencast_event   6eIZJ1toQ4uiXsRzTJoTkA   1   0    2140325            0      1.7gb          1.7gb
+
+----
+2026-01-31 11:20
+
+health status index              uuid                   pri rep docs.count docs.deleted store.size pri.store.size
+green  open   .geoip_databases   vWkjVG2CQ0qFv2KWEllxQw   1   0         41           41     39.4mb         39.4mb
+green  open   opencast_event_new BzwjQdZPTa-VZY2ff-esfg   1   0      36180            0      1.9gb          1.9gb
+green  open   opencast_series    IAIYH4lTSxaN7XsoQ5gi2w   1   0      10124            0    579.2mb        579.2mb
+green  open   opencast_theme     6PaqOBXpQHGVOjtPV0F05A   1   0          1            0      6.6kb          6.6kb
+green  open   opencast_version   yI8hEFDvROuRF-fdcMqDzA   1   0          1            0      3.3kb          3.3kb
+green  open   opencast_search    torFiF-rRruXfFUCAdx5Xw   1   0     172539        23553      2.2gb          2.2gb
+green  open   opencast_event     8jCj_PWHTkGQbGL2KVhrvA   1   0      90189          600     91.3mb         91.3mb
+green  open   .tasks             9YVY1I3NSUSFGI7_3pIVAg   1   0          1            0      7.1kb          7.1kb
+
+----
+2026-02-02 08:59
+
+health status index              uuid                   pri rep docs.count docs.deleted store.size pri.store.size
+green  open   .geoip_databases   vWkjVG2CQ0qFv2KWEllxQw   1   0         41           41     39.5mb         39.5mb
+green  open   opencast_event_new BzwjQdZPTa-VZY2ff-esfg   1   0      36180            0      1.9gb          1.9gb
+green  open   opencast_series    IAIYH4lTSxaN7XsoQ5gi2w   1   0      10127            3    579.8mb        579.8mb
+green  open   opencast_theme     6PaqOBXpQHGVOjtPV0F05A   1   0          1            0      6.6kb          6.6kb
+green  open   opencast_version   yI8hEFDvROuRF-fdcMqDzA   1   0          1            0      3.3kb          3.3kb
+green  open   opencast_search    torFiF-rRruXfFUCAdx5Xw   1   0     172551        82586      2.9gb          2.9gb
+green  open   opencast_event     8jCj_PWHTkGQbGL2KVhrvA   1   0    2140437       274584        4gb            4gb
+green  open   .tasks             9YVY1I3NSUSFGI7_3pIVAg   1   0          1            0      7.1kb          7.1kb
+
