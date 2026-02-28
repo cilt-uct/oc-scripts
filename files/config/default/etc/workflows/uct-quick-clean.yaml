@@ -1,59 +1,42 @@
-id: uct-discard
-title: UCT - Discard Media
+id: uct-quick-clean
+title: UCT - Quick Clean
 tags:
   - archive
 description: |-
-  Discard all the media from this event.
+  Clean up previous snapshots and reset to current version
+
 operations:
   # Make sure the workflow contains at least a default configuration
   - id: defaults
     description: Applying default configuration values
     configurations:
-      - removeSource: true
-      - removePreview: true
+      - removeInput: true
+      - removePreview: false
       - removeWork: true
       - removeTrimmed: true
       - removeNormalizedTrimmed: true
-      - retractFromEngage: true
-      - retractFromApi: true
-      - retractPreview: true
-      - retractFromYouTube: true
-  # Retract from engage player
-  - id: retract-engage
-    fail-on-error: true
-    exception-handler-workflow: partial-error
-    if: ${retractFromEngage}
-    description: Retract recording from Engage
-  # Retract from external applications
-  - id: retract-configure
-    if: ${retractFromApi}
-    fail-on-error: true
-    exception-handler-workflow: partial-error
-    description: Retract recording from external application
-    configurations:
-      - channel-id: api
-  # Remove the internal publication if the mediapackage is being deleted.
-  - id: retract-configure
-    if: ${retractPreview}
-    exception-handler-workflow: partial-error
-    description: Retract from internal publication channel
-    configurations:
-      - channel-id: internal
-  # Retract from YouTube
-  - id: retract-youtube
-    if: ${retractFromYouTube}
-    fail-on-error: true
-    exception-handler-workflow: partial-error
-    description: Retract recording from YouTube
+      - removeTranscription: true
+
   - id: tag
     max-attempts: 2
     fail-on-error: true
-    if: ${removeSource}
+    if: ${removeInput}
     exception-handler-workflow: partial-error
-    description: Removing archive tags for */source
+    description: Removing archive tags for track_presenter.0/*
     configurations:
-      - source-flavors: '*/source'
+      - source-flavors: 'track_presenter.0/*'
       - target-tags: -archive
+
+  - id: tag
+    max-attempts: 2
+    fail-on-error: true
+    if: ${removeInput}
+    exception-handler-workflow: partial-error
+    description: Removing archive tags for */input
+    configurations:
+      - source-flavors: '*/input'
+      - target-tags: -archive
+
   - id: tag
     max-attempts: 2
     fail-on-error: true
@@ -63,6 +46,7 @@ operations:
     configurations:
       - source-flavors: '*/preview'
       - target-tags: -archive
+
   - id: tag
     max-attempts: 2
     fail-on-error: true
@@ -72,6 +56,7 @@ operations:
     configurations:
       - source-flavors: '*/work'
       - target-tags: -archive
+
   - id: tag
     max-attempts: 2
     fail-on-error: true
@@ -81,6 +66,7 @@ operations:
     configurations:
       - source-flavors: '*/trimmed'
       - target-tags: -archive
+
   - id: tag
     max-attempts: 2
     fail-on-error: true
@@ -90,10 +76,57 @@ operations:
     configurations:
       - source-flavors: '*/normalized-trimmed'
       - target-tags: -archive
+
+  - id: tag
+    max-attempts: 2
+    fail-on-error: true
+    if: ${removeNormalizedTrimmed}
+    exception-handler-workflow: partial-error
+    description: Removing archive tags for */trimmed-normalized
+    configurations:
+      - source-flavors: '*/trimmed-normalized'
+      - target-tags: -archive
+
+  - id: tag
+    max-attempts: 2
+    fail-on-error: true
+    if: ${removeTranscription}
+    exception-handler-workflow: partial-error
+    description: Removing archive tags for */transcription
+    configurations:
+      - source-flavors: '*/transcription'
+      - target-tags: -archive
+
+  # snapshot
   - id: snapshot
     description: Archive current state of recording
     configurations:
       - source-tags: archive
+
+  # clean older snapshots
+  - id: asset-delete
+    fail-on-error: true
+    exception-handler-workflow: error
+    description: Delete from AssetManager
+    configurations:
+      - keep-last-snapshot: true
+
+  # Comment that we cleaned up this recording
+  - id: comment
+    fail-on-error: false
+    description: Quick clean-up completed (create)
+    configurations:
+      - description: Quick clean-up completed.
+      - reason: EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.OTHER
+      - action: create
+
+  - id: comment
+    fail-on-error: false
+    description: Quick clean-up completed (resolve)
+    configurations:
+      - reason: EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.OTHER
+      - action: resolve
+
   # Clean up work artifacts
   - id: cleanup
     fail-on-error: false

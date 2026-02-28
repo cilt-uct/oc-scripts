@@ -19,12 +19,14 @@ operations:
       - retractFromEngage: true
       - retractFromApi: true
       - retractFromYouTube: false
+
   # Retract from engage player
   - id: retract-engage
     fail-on-error: true
     exception-handler-workflow: partial-error
     if: ${retractFromEngage}
     description: Retract recording from Engage
+
   # Retract from external applications
   - id: retract-configure
     if: ${retractFromApi}
@@ -33,6 +35,7 @@ operations:
     description: Retract recording from external application
     configurations:
       - channel-id: api
+
   # Remove the internal publication if the mediapackage is being deleted.
   - id: retract-configure
     if: ${retractPreview}
@@ -40,12 +43,14 @@ operations:
     description: Retract from internal publication channel
     configurations:
       - channel-id: internal
+
   # Retract from YouTube
   - id: retract-youtube
     if: ${retractFromYouTube}
     fail-on-error: true
     exception-handler-workflow: partial-error
     description: Retract recording from YouTube
+
   - id: tag
     max-attempts: 2
     fail-on-error: true
@@ -55,6 +60,7 @@ operations:
     configurations:
       - source-flavors: '*/source'
       - target-tags: -archive
+
   - id: tag
     max-attempts: 2
     fail-on-error: true
@@ -64,6 +70,7 @@ operations:
     configurations:
       - source-flavors: '*/preview'
       - target-tags: -archive
+
   - id: tag
     max-attempts: 2
     fail-on-error: true
@@ -73,6 +80,7 @@ operations:
     configurations:
       - source-flavors: '*/work'
       - target-tags: -archive
+
   - id: tag
     max-attempts: 2
     fail-on-error: true
@@ -82,6 +90,7 @@ operations:
     configurations:
       - source-flavors: '*/input'
       - target-tags: -archive
+
   - id: tag
     max-attempts: 2
     fail-on-error: true
@@ -91,6 +100,7 @@ operations:
     configurations:
       - source-flavors: '*/trimmed'
       - target-tags: -archive
+
   - id: tag
     max-attempts: 2
     fail-on-error: true
@@ -100,6 +110,7 @@ operations:
     configurations:
       - source-flavors: '*/normalized-trimmed'
       - target-tags: -archive
+
   - id: tag
     max-attempts: 2
     fail-on-error: true
@@ -109,6 +120,7 @@ operations:
     configurations:
       - source-flavors: '*/trimmed-normalized'
       - target-tags: -archive
+
   # Comment that we cleaned up this recording
   - id: comment
     fail-on-error: false
@@ -117,22 +129,26 @@ operations:
       - description: Retract a recording and clean out media files.
       - reason: EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.OTHER
       - action: create
+
   - id: comment
     fail-on-error: false
     description: Comment that we cleaned up this recording (resolve)
     configurations:
       - reason: EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.OTHER
       - action: resolve
+
   - id: snapshot
     description: Archive current state of recording
     configurations:
       - source-tags: archive
+
   - id: asset-delete
     fail-on-error: true
     exception-handler-workflow: error
     description: Delete from AssetManager
     configurations:
       - keep-last-snapshot: true
+
   # Clean up work artifacts
   - id: cleanup
     fail-on-error: false
