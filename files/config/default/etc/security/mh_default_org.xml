@@ -88,7 +88,7 @@
     <sec:intercept-url pattern="/admin-ng/groups/*" method="GET" access="ROLE_ADMIN, ROLE_UI_GROUPS_EDIT" />
     <sec:intercept-url pattern="/admin-ng/index/rebuild/states.json" method="GET" access="ROLE_ADMIN, ROLE_UI_SERVICES_VIEW" />
     <sec:intercept-url pattern="/admin-ng/job/jobs.json" method="GET" access="ROLE_ADMIN, ROLE_UI_JOBS_VIEW" />
-    <sec:intercept-url pattern="/admin-ng/series/series.json" method="GET" access="ROLE_ADMIN, ROLE_UI_SERIES_VIEW" />
+    <sec:intercept-url pattern="/admin-ng/series/series.json" method="GET" access="ROLE_ADMIN, ROLE_UI_SERIES_VIEW, ROLE_CAPTURE_AGENT" />
     <sec:intercept-url pattern="/admin-ng/series/new/metadata" method="GET" access="ROLE_ADMIN, ROLE_UI_SERIES_DETAILS_METADATA_VIEW" />
     <sec:intercept-url pattern="/admin-ng/series/new/themes" method="GET" access="ROLE_ADMIN, ROLE_UI_SERIES_DETAILS_THEMES_EDIT" />
     <sec:intercept-url pattern="/admin-ng/series/new/tobira/page" method="GET" access="ROLE_ADMIN, ROLE_UI_SERIES_DETAILS_TOBIRA_EDIT" />
