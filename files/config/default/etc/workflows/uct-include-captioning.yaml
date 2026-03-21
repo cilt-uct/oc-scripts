@@ -26,7 +26,7 @@ operations:
       - use_whisper: false
       - use_google: false
       - audio_trim_lapel: false
-      - transcription_src_flavor: trimmed
+      - transcription_src_flavor: normalized-trimmed
   # and ${audio_trim_lapel}
   - id: include
     if: ${use_watson}

@@ -22,7 +22,7 @@ operations:
     exception-handler-workflow: partial-error
     description: Removing tags for */normalized-trimmed
     configurations:
-      - source-flavors: '*/trimmed'
+      - source-flavors: '*/normalized-trimmed'
       - target-tags: -archive
   - id: tag
     description: Removing previous presenter-cover from download publication
@@ -80,7 +80,7 @@ operations:
 
   # Move if not normalizing
   - id: clone
-    if: NOT(${doNormalizeAudio})
+    # if: NOT(${doNormalizeAudio})
     fail-on-error: true
     exception-handler-workflow: partial-error
     description: Move trimmed to normalized-trimmed (if not normalizing audio)

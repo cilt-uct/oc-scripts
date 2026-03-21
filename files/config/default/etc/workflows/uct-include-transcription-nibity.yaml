@@ -8,7 +8,7 @@ operations:
   - id: defaults
     description: Applying default configuration values - Nibity Transcription
     configurations:
-      - transcription_src_flavor: trimmed
+      - transcription_src_flavor: normalized-trimmed
       - preview_src_flavor: transcription
       - preview_out_flavor: transcription-preview
       - preview_out_tags: transcription-preview
