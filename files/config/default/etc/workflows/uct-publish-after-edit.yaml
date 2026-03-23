@@ -169,10 +169,11 @@ operations:
   # Source: ${transcription_src_flavor} - normalized-trimmed
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   - id: include
-    if: ${doCaptioning}
+    if: ${doCaptioning} AND NOT ${use_whisper}
     description: Include Captioning
     configurations:
       - workflow-id: uct-include-captioning
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Clean up work artifacts
   - id: cleanup
     fail-on-error: false
@@ -180,5 +181,5 @@ operations:
     configurations:
       - delete-external: false
       # FixMe Don't clean up ACLs until workflow service no longer looks for them in the WFR.
-      - preserve-flavors: dublincore/*,security/*
+      - preserve-flavors: dublincore/*,security/*,captions/*
       - delay: 5

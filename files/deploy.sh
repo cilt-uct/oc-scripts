@@ -120,6 +120,7 @@ main() {
   # make sure wfexec is executable
   chmod +x $working_real/wfexec/*.sh
   chmod +x $working_real/wfexec/*.pl
+  chmod +x $working_real/wfexec/*.py
 
   # check link to service
   if [ ! -f "/lib/systemd/system/opencast.service" ]; then

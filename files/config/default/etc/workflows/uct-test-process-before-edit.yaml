@@ -1,5 +1,5 @@
-id: uct-process-before-edit
-title: UCT - Process for Editing
+id: uct-test-process-before-edit
+title: UCT - Test Process for Editing
 tags:
   - upload
   - schedule
@@ -20,11 +20,9 @@ operations:
       - downloadSourceflavorsExist: false
       - thumbnailType: 0
       - thumbnailPosition: 1
-      - isUpload: false
-      - doCaptioning: true
       - use_watson: false
       - use_nibity: false
-      - use_whisper: false
+      - use_whisper: true
       - timetabled: false
       - audio_trim_autotrim: false
       - audio_trim_valid_venue: false
@@ -43,20 +41,6 @@ operations:
       - load: 0.1
       - params: '#{id} #{out}'
       - output-filename: ttinfo.txt
-      - set-workflow-properties: true
-      - expected-type: Attachment
-  # Load workflow properties from metadata: update some workflow properties
-  - id: execute-once
-    max-attempts: 3
-    retry-strategy: hold
-    fail-on-error: true
-    exception-handler-workflow: partial-error
-    description: Load workflow properties from settings in series
-    configurations:
-      - exec: /opt/opencast/wfexec/wrapper-load-from-metadata.sh
-      - load: 0.1
-      - params: '#{id} #{out}'
-      - output-filename: metadata_workflow.txt
       - set-workflow-properties: true
       - expected-type: Attachment
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -84,16 +68,36 @@ operations:
     configurations:
       - workflow-id: uct-include-process-for-empty-venue
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Transcription / Caption Services
-  # Source: ${transcription_src_flavor} - normalized-trimmed
+  # Extract audio for transcription
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  - id: include
-    if: ${doCaptioning}
-    description: Include Captioning
+  - id: encode
+    description: Extract audio for transcript generation
+    fail-on-error: true
     configurations:
-      - workflow-id: uct-include-captioning
+      - source-flavor: presenter/source
+      - target-flavor: audio/source
+      - encoding-profile: audio-to-flac
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  #       Save, Archive and Cleanup
+  # Send to Whisper API for transcription
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  - id: execute-once
+    max-attempts: 3
+    retry-strategy: hold
+    fail-on-error: true
+    exception-handler-workflow: partial-error
+    description: Transcribe using Whisper API
+    configurations:
+      - exec: /opt/opencast/wfexec/wrapper-whisper-api-transcribe.sh
+      - load: '0.1'
+      - params: '#{flavor(audio/source)} #{out} #{id}'
+      - limit-to-one: true
+      - target-flavor: captions/source
+      - output-filename: captions.vtt
+      - expected-type: Track
+      - target-tags: archive,original-transcript,generator-type:auto,generator:whisper-api,lang:en
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Save, Archive and Cleanup
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Save workflow properties
   - id: export-wf-properties
     fail-on-error: true
@@ -121,5 +125,5 @@ operations:
     configurations:
       - delete-external: false
       # FixMe Don't clean up ACLs until workflow service no longer looks for them in the WFR.
-      - preserve-flavors: dublincore/*,security/*
+      - preserve-flavors: dublincore/*,security/*,captions/*
       - delay: 5
