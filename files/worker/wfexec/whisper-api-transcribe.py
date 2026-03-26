@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/opt/opencast/wfexec/venv/bin/python
 import os
 import sys
 import subprocess
@@ -139,28 +139,6 @@ def main():
 
             print(f"DEBUG: Wrote VTT to {output_vtt}")
 
-
-        #     for chunk_file, start_offset in chunks:
-        #         print(f"Transcribing chunk for verbose_json starting at {start_offset}s")
-        #         with open(chunk_file, "rb") as audio:
-        #             transcript_json = client.audio.transcriptions.create(
-        #                 file=audio,
-        #                 model="whisper-1",
-        #                 response_format="verbose_json"
-        #             )
-
-        #         # Offset timestamps and merge segments
-        #         # for segment in transcript_json.get("segments", []):
-        #         for segment in transcript_json.segments:
-        #             segment["start"] += start_offset
-        #             segment["end"] += start_offset
-        #             merged_json["segments"].append(segment)
-
-        #     # Write merged JSON
-        #     with open(output_json, "w", encoding="utf-8") as f:
-        #         json.dump(merged_json, f, indent=2)
-
-        # print(f"DEBUG: Wrote JSON to {output_json}")
         print("Transcription successful")
         sys.exit(0)
 

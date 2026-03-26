@@ -12,6 +12,9 @@ operations:
       - isUpload: true
       - hasPresentation: false
       - doCaptioning: true
+      - use_watson: false
+      - use_nibity: false
+      - use_whisper: false
       - downloadSourceflavorsExist: false
 
   # Load workflow properties from metadata: update some workflow properties
@@ -288,7 +291,7 @@ operations:
   # Source: ${transcription_src_flavor} - delivery
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   - id: include
-    if: ${doCaptioning}
+    if: ${doCaptioning} OR ${use_whisper}
     description: Include Captioning
     configurations:
       - workflow-id: uct-include-captioning
@@ -303,7 +306,7 @@ operations:
     exception-handler-workflow: partial-error
     description: Publishing to Opencast Media Module
     configurations:
-      - download-source-flavors: dublincore/*,security/*
+      - download-source-flavors: dublincore/*,security/*,captions/source
       - download-source-tags: engage-download,atom,rss,mobile
       - streaming-source-tags: engage-streaming
       - check-availability: true

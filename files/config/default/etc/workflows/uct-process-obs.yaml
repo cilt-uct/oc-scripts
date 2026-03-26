@@ -15,6 +15,10 @@ operations:
       - thumbnailType: 0
       - thumbnailPosition: 1
       - doPictureInPicture: true
+      - doCaptioning: true
+      - use_watson: false
+      - use_nibity: false
+      - use_whisper: false
       - result_publish_process: work
       - flipVideoHoriz: false
   - id: defaults
@@ -71,6 +75,20 @@ operations:
     configurations:
       - target-flavor: processing/defaults
       - target-tags: archive
+  # Load workflow properties from metadata: update some workflow properties
+  - id: execute-once
+    max-attempts: 3
+    retry-strategy: hold
+    fail-on-error: true
+    exception-handler-workflow: partial-error
+    description: Load workflow properties from settings in series
+    configurations:
+      - exec: /opt/opencast/wfexec/wrapper-load-from-metadata.sh
+      - load: 0.1
+      - params: '#{id} #{out}'
+      - output-filename: metadata_workflow.txt
+      - set-workflow-properties: true
+      - expected-type: Attachment
   # Tag the sources for archival
   - id: tag
     description: Tagging source material for archival
@@ -236,6 +254,15 @@ operations:
       - encoding-profile: player-preview.http
       - time: 1
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Transcription / Caption Services
+  # Source: ${transcription_src_flavor} - delivery
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  - id: include
+    if: ${use_whisper}
+    description: Include Captioning
+    configurations:
+      - workflow-id: uct-include-captioning
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Publish to publication channels
 
   # Send the encoded material along with the metadata to the
@@ -246,7 +273,7 @@ operations:
     exception-handler-workflow: partial-error
     description: Publishing to Opencast Media Module
     configurations:
-      - download-source-flavors: dublincore/*,security/*
+      - download-source-flavors: dublincore/*,security/*,captions/source
       - download-source-tags: engage-download,atom,rss,mobile
       - streaming-source-tags: engage-streaming
       - check-availability: true

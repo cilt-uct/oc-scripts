@@ -33,7 +33,7 @@ operations:
       - straightToPublishing: true
       - thumbnailType: 0
       - thumbnailPosition: 1
-      - doCaptioning: false
+      - doCaptioning: true
       - isUpload: true
   - id: inspect
     exception-handler-workflow: partial-error
@@ -248,6 +248,20 @@ operations:
     configurations:
       - source-flavor: presentation/prepared
       - target-tags: engage-download
+  # Load workflow properties from metadata: update some workflow properties
+  - id: execute-once
+    max-attempts: 3
+    retry-strategy: hold
+    fail-on-error: true
+    exception-handler-workflow: partial-error
+    description: Load workflow properties from settings in series
+    configurations:
+      - exec: /opt/opencast/wfexec/wrapper-load-from-metadata.sh
+      - load: 0.1
+      - params: '#{id} #{out}'
+      - output-filename: metadata_workflow.txt
+      - set-workflow-properties: true
+      - expected-type: Attachment
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Transcription / Caption Services
   # Source: ${transcription_src_flavor} - delivery
@@ -270,7 +284,7 @@ operations:
     exception-handler-workflow: partial-error
     description: Publishing to Opencast Media Module
     configurations:
-      - download-source-flavors: dublincore/*,security/*
+      - download-source-flavors: dublincore/*,security/*,captions/source
       - download-source-tags: engage-download,atom,rss,mobile
       - streaming-source-tags: engage-streaming
       - check-availability: true
