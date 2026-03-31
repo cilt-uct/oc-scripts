@@ -10,6 +10,7 @@ print("DEBUG: Python script started")
 
 CONFIG_FILE = "/opt/opencast/etc/org.opencastproject.transcription.whisper.WhisperTranscriptionService.cfg"
 CHUNK_SECONDS = 600  # 10 minutes
+OVERLAP_SECONDS = 30
 
 def load_api_key():
     if not os.path.exists(CONFIG_FILE):
@@ -37,8 +38,13 @@ def split_audio(input_file, temp_dir):
     duration = get_duration(input_file)
     chunks = []
 
-    for start in range(0, int(duration), CHUNK_SECONDS):
-        chunk_file = os.path.join(temp_dir, f"chunk_{start}.wav")
+    step = CHUNK_SECONDS - OVERLAP_SECONDS
+    if step <= 0:
+        raise ValueError("OVERLAP_SECONDS must be smaller than CHUNK_SECONDS")
+
+    start = 0
+    while start < duration:
+        chunk_file = os.path.join(temp_dir, f"chunk_{int(start)}.wav")
 
         cmd = [
             "ffmpeg",
@@ -53,6 +59,8 @@ def split_audio(input_file, temp_dir):
 
         subprocess.run(cmd, check=True)
         chunks.append((chunk_file, start))
+
+        start += step
 
     return chunks
 
