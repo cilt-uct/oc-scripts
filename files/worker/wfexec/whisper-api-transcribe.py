@@ -3,7 +3,6 @@ import os
 import sys
 import subprocess
 import tempfile
-import json
 from openai import OpenAI
 
 print("DEBUG: Python script started")
@@ -32,7 +31,23 @@ def get_duration(input_file):
         input_file
     ]
     result = subprocess.run(cmd, capture_output=True, text=True)
-    return float(result.stdout.strip())
+    # return float(result.stdout.strip())
+    if result.returncode != 0:
+        raise RuntimeError(
+            f"ffprobe failed with exit code {result.returncode}: {result.stderr.strip()}"
+        )
+    output = result.stdout.strip()
+    if not output:
+        raise RuntimeError(
+            f"ffprobe did not return a duration for '{input_file}'. Stderr: {result.stderr.strip()}"
+        )
+    try:
+        return float(output)
+    except ValueError as exc:
+        raise RuntimeError(
+            f"Unable to parse ffprobe duration output {output!r} for '{input_file}'. "
+            f"Stderr: {result.stderr.strip()}"
+        ) from exc
 
 def split_audio(input_file, temp_dir):
     duration = get_duration(input_file)
@@ -96,19 +111,21 @@ def offset_vtt(vtt_text, offset):
     return "\n".join(new_lines).strip()
 
 def main():
+    prog = os.path.basename(sys.argv[0]) if sys.argv and sys.argv[0] else "whisper-api-transcribe.py"
+
     if len(sys.argv) != 4:
+        print(f"Usage: {prog} <input_file> <output_vtt>", file=sys.stderr)
         sys.exit(1)
 
     input_file = sys.argv[1]
     output_vtt = sys.argv[2]
-    # output_json = sys.argv[2]
 
     print(f"Input file: {input_file}")
     print(f"Output file: {output_vtt}")
-    # print(f"Output file: {output_json}")
 
     if not os.path.exists(input_file):
-        sys.exit(1)
+        # sys.exit(1)
+        print(f"ERROR: Input file '{input_file}' does not exist or is not accessible.", file=sys.stderr)
 
     # Print file size
     try:
@@ -127,7 +144,6 @@ def main():
             chunks = split_audio(input_file, temp_dir)
 
             merged_vtt = "WEBVTT\n\n"
-            # merged_json = {"segments": []}
 
             for chunk_file, start_offset in chunks:
                 print(f"Transcribing chunk starting at {start_offset}s")
