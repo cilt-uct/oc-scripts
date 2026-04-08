@@ -1,0 +1,35 @@
+diff --git a/modules/capture-admin-service-api/src/main/java/org/opencastproject/capture/admin/api/AgentState.java b/modules/capture-admin-service-api/src/main/java/org/opencastproject/capture/admin/api/AgentState.java
+index eeedb0bc33..0738341291 100644
+--- a/modules/capture-admin-service-api/src/main/java/org/opencastproject/capture/admin/api/AgentState.java
++++ b/modules/capture-admin-service-api/src/main/java/org/opencastproject/capture/admin/api/AgentState.java
+@@ -51,8 +51,12 @@ public interface AgentState {
+   /** Constant <code>ERROR="error"</code> */
+   String ERROR = "error";
+ 
++  /** Constant <code>DISCONTINUED="error"</code> */
++  String DISCONTINUED = "discontinued";
++
+   /** The collection of all known states. TODO: Remove this when the states are replaced with enums */
+-  List<String> KNOWN_STATES = Arrays.asList(IDLE, SHUTTING_DOWN, CAPTURING, UPLOADING, ERROR, UNKNOWN, OFFLINE);
++  List<String> KNOWN_STATES = Arrays.asList(IDLE, SHUTTING_DOWN, CAPTURING, UPLOADING,
++                                            ERROR, UNKNOWN, OFFLINE, DISCONTINUED);
+ 
+   String TRANSLATION_PREFIX = "AGENTS.STATUS.";
+ 
+diff --git a/modules/capture-admin-service-impl/src/main/java/org/opencastproject/capture/admin/impl/CaptureAgentStateServiceImpl.java b/modules/capture-admin-service-impl/src/main/java/org/opencastproject/capture/admin/impl/CaptureAgentStateServiceImpl.java
+index 2a88167cf4..a35a8791da 100644
+--- a/modules/capture-admin-service-impl/src/main/java/org/opencastproject/capture/admin/impl/CaptureAgentStateServiceImpl.java
++++ b/modules/capture-admin-service-impl/src/main/java/org/opencastproject/capture/admin/impl/CaptureAgentStateServiceImpl.java
+@@ -582,7 +582,11 @@ public class CaptureAgentStateServiceImpl implements CaptureAgentStateService, M
+   protected void setupAgentCache(int count, TimeUnit unit) {
+     // Setup the agent cache
+     RemovalListener<String, Object> removalListener = new RemovalListener<String, Object>() {
+-      private Set<String> ignoredStates = new LinkedHashSet<>(Arrays.asList(AgentState.UNKNOWN, AgentState.OFFLINE));
++      private Set<String> ignoredStates = new LinkedHashSet<>(Arrays.asList(
++                                                                  AgentState.UNKNOWN,
++                                                                  AgentState.OFFLINE,
++                                                                  AgentState.DISCONTINUED
++                                                              ));
+       @Override
+       public void onRemoval(RemovalNotification<String, Object> removal) {
+         if (RemovalCause.EXPIRED.equals(removal.getCause())) {
