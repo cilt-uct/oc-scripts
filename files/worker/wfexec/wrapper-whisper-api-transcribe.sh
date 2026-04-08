@@ -9,9 +9,9 @@ SCRIPT="/opt/opencast/wfexec/whisper-api-transcribe.py"
 echo "Starting Whisper transcription wrapper"
 echo "Arguments received: $@"
 
-# ---- USAGE / ARGUMENT VALIDATION ----
+# ---- ARGUMENT VALIDATION ----
 if [ "$#" -lt 1 ]; then
-  echo "Usage: ${0##*/} <input_file> [additional whisper options...]"
+  echo "Usage: ${0##*/} <input_file> <output_file> <mediapackage_id>" >&2
   exit 1
 fi
 
