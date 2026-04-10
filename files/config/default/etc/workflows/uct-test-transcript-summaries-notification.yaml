@@ -5,24 +5,13 @@ tags:
 description: |-
   Notify Middleware of Lecture Summaries
 operations:
-  # <operation
-  #     id="http-notify"
-  #     description="Notify Middleware of Lecture Summaries">
-  #     <configurations>
-  #       <configuration key="url">https://srvubuclt002.uct.ac.za/d2l/api/notification</configuration>
-  #       <configuration key="subject">update-lecture-summary</configuration>
-  #       <configuration key="method">post</configuration>
-  #       <configuration key="max-retry">3</configuration>
-  #       <configuration key="timeout">5</configuration>
-  #     </configurations>
-  #    </operation>
-  - id: execute-once
-    max-attempts: 3
-    retry-strategy: hold
-    fail-on-error: true
-    exception-handler-workflow: partial-error
+
+  - id: http-notify
     description: Notify Middleware of Lecture Summaries
     configurations:
-      - exec: /opt/opencast/wfexec/wrapper-post-notification.sh
-      - load: '0.1'
-      - params: '#{id} oc-publish-captions'
+      - url: deploy_middleware_notification
+      - subject: oc-publish-captions
+      - message: immediate:0
+      - method: post
+      - max-retry: 3
+      - timeout: 5

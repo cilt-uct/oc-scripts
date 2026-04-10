@@ -18,6 +18,7 @@ deploy_server_workspace=tmpl_deploy_server_workspace
 
 # Karaf
 deploy_karaf_shutdown=tmpl_karaf_shutdown
+deploy_karaf_data=tmpl_karaf_data
 
 # Admin
 deploy_server_admin_url=tmpl_deploy_server_admin_url
@@ -67,8 +68,7 @@ deploy_hunspell_version=tmpl_deploy_hunspell_version
 deploy_maven_version=tmpl_deploy_maven_version
 deploy_python_version=tmpl_deploy_python_version
 
-deploy_karaf_data=tmpl_karaf_data
-
+# Sakai
 deploy_userdirectory_sakai_user=tmp_userdirectory_sakai_user
 deploy_userdirectory_sakai_password=tmp_userdirectory_sakai_password
 
@@ -128,5 +128,8 @@ deploy_whisper_api_on=tmpl_whisper_api_on
 deploy_whisper_api_key=tmpl_whisper_api_key
 deploy_whisper_api_secret=tmpl_whisper_api_secret
 deploy_whisper_api_workflow=tmpl_whisper_api_workflow
+
+# Middleware
+deploy_middleware_notification=tmpl_middleware_notification
 
 ## LAST LINE ##############################
