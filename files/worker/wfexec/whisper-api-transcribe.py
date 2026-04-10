@@ -263,12 +263,12 @@ def main():
 
     try:
         conn = create_db_connection()
-        # Fetch provider_id for 'whisper' from transcription_service_providers
+        # Fetch provider_id for 'whisper-api' from oc_transcription_service_provider
         with conn.cursor() as cursor:
-            cursor.execute("SELECT id FROM transcription_service_providers WHERE name = %s", ("whisper",))
+            cursor.execute("SELECT id FROM oc_transcription_service_provider WHERE provider = %(provider_name)s", {"provider_name": "whisper-api"})
             row = cursor.fetchone()
             if not row:
-                print("ERROR: No provider found with name 'whisper'", file=sys.stderr)
+                print("ERROR: No provider found with name 'whisper-api'", file=sys.stderr)
                 sys.exit(1)
             provider_id = row[0]
         print(f"DEBUG: Using provider_id = {provider_id}")

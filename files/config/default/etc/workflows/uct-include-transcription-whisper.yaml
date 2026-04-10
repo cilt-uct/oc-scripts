@@ -43,7 +43,7 @@ operations:
       - target-flavor: captions/source
       - output-filename: captions.vtt
       - expected-type: Track
-      - target-tags: archive,original-captions,lang:en,generator-type:auto,generator:whisper-api
+      - target-tags: archive,original-captions,lang:en,generator-type:auto,generator:whisper-api,type:closed-caption
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Archive
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
