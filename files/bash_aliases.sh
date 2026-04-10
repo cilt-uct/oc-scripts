@@ -9,9 +9,22 @@ alias tailopc='tail -f $opclog'
 alias pa='source .venv/bin/activate'
 alias pd='deactivate'
 
-
 useopc() {
   "$@" $opclog
+}
+
+# Convert bytes to human-readable
+human_readable() {
+    size=$1
+    if (( size >= 1024*1024*1024 )); then
+        printf "%.2f GB" "$(bc -l <<< "$size/1024/1024/1024")"
+    elif (( size >= 1024*1024 )); then
+        printf "%.2f MB" "$(bc -l <<< "$size/1024/1024")"
+    elif (( size >= 1024 )); then
+        printf "%.2f KB" "$(bc -l <<< "$size/1024")"
+    else
+        printf "%d B" "$size"
+    fi
 }
 
 dirUsed() {
@@ -25,13 +38,27 @@ dirUsed() {
 
 dirSizeAndTime() {
     dir=$1
-    size=$(du -B1 -sh --time $dir 2>/dev/null | awk '{print $1} {print $2} {print $3}');
+    size=$(du -B1 -s --time $dir 2>/dev/null | awk '{print $1} {print $2} {print $3}');
     if [ -z "$size" ]; then
         printf "0"
     else
-        printf "%7s" $(echo $size | cut -d' ' -f 1)
+        hl_size=$(human_readable "$(echo $size | cut -d' ' -f 1)")
+        printf "%12s" "$hl_size"
         printf "   $(echo $size | cut -d' ' -f 2) $(echo $size | cut -d' ' -f 3)"
     fi
+}
+
+getDirHardLinks() {
+    dir=$1
+
+    # Unique inodes size (sum of file sizes, counting each inode only once)
+    unique_size=$(find "$dir" -type f -printf "%i %s\n" | sort -u | awk '{sum+=$2} END{print sum}')
+
+    # Count unique files
+    file_count=$(find "$dir" -type f -printf "%i\n" | sort -u | wc -l)
+
+    hl_size=$(human_readable $unique_size)
+    printf "        HL:%12s   Unique files: %s\n" "$hl_size" "$file_count"
 }
 
 getFileTypes() {
@@ -83,92 +110,146 @@ checkForArchiveVariance () {
 }
 
 showmedia () {
+    skip_tree=false
+    # Parse -s flag
+    if [ "$1" = "-s" ]; then
+        skip_tree=true
+        shift
+    fi
 
-  if [ "$1" != "" ]; then
-    media=$1
-    printf "Mediapackage_id: $media\n"
-  else
-    printf "Mediapackage_id: "
-    read media
-  fi
+    if [ "$1" != "" ]; then
+        media=$1
+        printf "Mediapackage_id: $media\n"
+    else
+        printf "Mediapackage_id: "
+        read media
+    fi
 
-  # Workspace
-  dir_shared_workspace="/data/opencast/archive/shared/workspace/mediapackage/$media"
-  dir_shared_files="/data/opencast/archive/shared/files/mediapackage/$media"
+    # Workspace
+    dir_shared_workspace="/data/opencast/archive/shared/workspace/mediapackage/$media"
+    dir_shared_files="/data/opencast/archive/shared/files/mediapackage/$media"
 
-  # Archive
-  dir_archive="/data/opencast/archive/mh_default_org/$media"
-  # Engage
-  dir_engage="/data/opencast/distribution/downloads/mh_default_org/engage-player/$media"
-  # Internal
-  dir_internal="/data/opencast/distribution/downloads/mh_default_org/internal/$media"
-  # Stream
-  dir_stream="/data/opencast/distribution/streams/mh_default_org/engage-player/$media"
+    # Archive
+    dir_archive="/data/opencast/archive/mh_default_org/$media"
 
-  shared_workspace=$(dirUsed "$dir_shared_workspace")
-  shared_files=$(dirUsed "$dir_shared_files")
-  archive=$(dirUsed "$dir_archive")
-  engage=$(dirUsed "$dir_engage")
-  internal=$(dirUsed "$dir_internal")
-  stream=$(dirUsed "$dir_stream")
+    # Engage
+    dir_engage="/data/opencast/distribution/downloads/mh_default_org/engage-player/$media"
+    # Internal
+    dir_internal="/data/opencast/distribution/downloads/mh_default_org/internal/$media"
+    # Stream
+    dir_stream="/data/opencast/distribution/streams/mh_default_org/engage-player/$media"
+    # api
+    dir_api="/data/opencast/distribution/downloads/mh_default_org/api/$media"
 
-  if [ "$shared_workspace" -eq "1" ]; then
-    tree $dir_shared_workspace
-  fi
+    shared_workspace=$(dirUsed "$dir_shared_workspace")
+    shared_files=$(dirUsed "$dir_shared_files")
+    archive=$(dirUsed "$dir_archive")
+    engage=$(dirUsed "$dir_engage")
+    internal=$(dirUsed "$dir_internal")
+    stream=$(dirUsed "$dir_stream")
+    api=$(dirUsed "$dir_api")
 
-  if [ "$shared_files" -eq "1" ]; then
-    tree $dir_shared_files
-  fi
+    # Helper to print folder path and subfolder count
+    print_folder_and_count() {
+        local folder="$1"
+        if [ -d "$folder" ]; then
+        local count=$(find "$folder" -mindepth 1 -type d 2>/dev/null | wc -l)
+        echo "$folder (subfolders: $count)"
+        fi
+    }
 
-  if [ "$archive" -eq "1" ]; then
-    tree $dir_archive
-  fi
+    if $skip_tree; then
+        [ "$shared_workspace" -eq "1" ] && print_folder_and_count "$dir_shared_workspace"
+        [ "$shared_files" -eq "1" ] && print_folder_and_count "$dir_shared_files"
+        [ "$archive" -eq "1" ] && print_folder_and_count "$dir_archive"
+        [ "$engage" -eq "1" ] && print_folder_and_count "$dir_engage"
+        [ "$internal" -eq "1" ] && print_folder_and_count "$dir_internal"
+        [ "$stream" -eq "1" ] && print_folder_and_count "$dir_stream"
+        [ "$api" -eq "1" ] && print_folder_and_count "$dir_api"
 
-  if [ "$engage" -eq "1" ]; then
-    tree $dir_engage
-  fi
+    else
+        if [ "$shared_workspace" -eq "1" ]; then
+            tree $dir_shared_workspace
+        fi
 
-  if [ "$internal" -eq "1" ]; then
-    tree $dir_internal
-  fi
+        if [ "$shared_files" -eq "1" ]; then
+            tree $dir_shared_files
+        fi
 
-  if [ "$stream" -eq "1" ]; then
-    tree $dir_stream
-  fi
+        if [ "$archive" -eq "1" ]; then
+            tree $dir_archive
+        fi
 
-  # summary
-  if [ "$archive" -eq "1" ]; then
-    printf '%11s' "Archive:"
-    dirSizeAndTime $dir_archive
-    printf " "
-    getFileTypes $dir_archive
-    printf "   Var: "
-    checkForArchiveVariance $dir_archive
-  fi
+        if [ "$engage" -eq "1" ]; then
+            tree $dir_engage
+        fi
 
-  if [ "$engage" -eq "1" ]; then
-    printf '%11s' "Engage:"
-    dirSizeAndTime $dir_engage
-    printf " "
-    getFileTypes $dir_engage
-    printf "\n"
-  fi
+        if [ "$internal" -eq "1" ]; then
+            tree $dir_internal
+        fi
 
-  if [ "$internal" -eq "1" ]; then
-    printf '%11s' "Internal:"
-    dirSizeAndTime $dir_internal
-    printf " "
-    getFileTypes $dir_internal
-    printf "\n"
-  fi
+        if [ "$stream" -eq "1" ]; then
+            tree $dir_stream
+        fi
 
-  if [ "$stream" -eq "1" ]; then
-    printf '%11s' "Stream: "
-    dirSizeAndTime $dir_stream
-    printf " "
-    getFileTypes $dir_stream
-    printf "\n"
-  fi
+        if [ "$api" -eq "1" ]; then
+            tree $dir_api
+        fi
+    fi
+
+    # summary output helper
+    show_folder_summary() {
+        local label="$1"
+        local folder="$2"
+        local show_hardlinks="$3" # true/false
+
+        printf '%11s' "$label:"
+        dirSizeAndTime "$folder"
+
+        printf " "
+        getFileTypes "$folder"
+
+        if [ "$label" = "Archive" ]; then
+            printf "   Var: "
+            checkForArchiveVariance "$folder"
+        fi
+
+        if [ "$show_hardlinks" = true ]; then
+            getDirHardLinks "$folder"
+        else
+            printf "\n"
+        fi
+    }
+
+    printf "\nSummary:\n"
+
+    if [ "$archive" -eq "1" ]; then
+        show_folder_summary "Archive" "$dir_archive" true
+    fi
+
+    if [ "$engage" -eq "1" ]; then
+        show_folder_summary "Engage" "$dir_engage" false
+    fi
+
+    if [ "$internal" -eq "1" ]; then
+        show_folder_summary "Internal" "$dir_internal" false
+    fi
+
+    if [ "$stream" -eq "1" ]; then
+        show_folder_summary "Stream" "$dir_stream" false
+    fi
+
+    if [ "$api" -eq "1" ]; then
+        show_folder_summary "API" "$dir_api" false
+    fi
+
+    if [ "$shared_workspace" -eq "1" ]; then
+        show_folder_summary "Workspace" "$dir_shared_workspace" false
+    fi
+
+    if [ "$shared_files" -eq "1" ]; then
+        show_folder_summary "Files" "$dir_shared_files" false
+    fi
 }
 
 rmworkmedia() {
