@@ -77,7 +77,7 @@ operations:
     configurations:
       - source-flavors: captions/trimmed
       - target-flavor: captions/vtt
-      - target-tags: engage-download,generator-type:auto,generator:whisper-api,lang:en,trimmed
+      - target-tags: engage-download,generator-type:auto,generator:whisper-api,lang:en,trimmed,type:closed-caption
       - encoding-profile: uct-mkv-to-vtt
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Clean out any previously trimmed captions so they are not re-published
