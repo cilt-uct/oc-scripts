@@ -1,2 +1,2 @@
-lxml==6.0.2
+lxml==6.1.0
 ruamel.yaml==0.19.1
