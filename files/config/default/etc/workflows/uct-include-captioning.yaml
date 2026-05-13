@@ -4,7 +4,7 @@ tags: []
 description: |-
   REQUIRES:
           Flavors:
-          Source: ${transcription_src_flavor} - trimmed
+          Source: ${transcription_src_flavor} - normalized-trimmed
 operations:
   # Apply the default workflow configuration
   - id: defaults
@@ -18,7 +18,7 @@ operations:
       - audio_trim_lapel: false
       - transcription_src_flavor: delivery
   - id: defaults
-    if: NOT(${isUpload})
+    # if: NOT(${isUpload})
     description: Applying default configuration values for captions
     configurations:
       - use_watson: false
@@ -41,13 +41,13 @@ operations:
       - workflow-id: uct-include-transcription-nibity
   # and ${audio_trim_lapel}
   - id: include
-    if: ${use_google}
-    description: Do captioning with Google Speech-to-Text
-    configurations:
-      - workflow-id: uct-include-transcription-google
-  # and ${audio_trim_lapel}
-  - id: include
     if: ${use_whisper}
     description: Do captioning with Whisper API
     configurations:
       - workflow-id: uct-include-transcription-whisper
+
+  - id: include
+    if: NOT ${use_whisper} AND ${use_google}
+    description: Do captioning with Google Speech-to-Text
+    configurations:
+      - workflow-id: uct-include-transcription-google

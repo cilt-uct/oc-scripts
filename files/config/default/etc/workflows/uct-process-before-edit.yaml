@@ -20,6 +20,8 @@ operations:
       - downloadSourceflavorsExist: false
       - thumbnailType: 0
       - thumbnailPosition: 1
+      - isUpload: false
+      - doCaptioning: true
       - use_watson: false
       - use_nibity: false
       - use_whisper: false
@@ -41,6 +43,20 @@ operations:
       - load: 0.1
       - params: '#{id} #{out}'
       - output-filename: ttinfo.txt
+      - set-workflow-properties: true
+      - expected-type: Attachment
+  # Load workflow properties from metadata: update some workflow properties
+  - id: execute-once
+    max-attempts: 3
+    retry-strategy: hold
+    fail-on-error: true
+    exception-handler-workflow: partial-error
+    description: Load workflow properties from settings in series
+    configurations:
+      - exec: /opt/opencast/wfexec/wrapper-load-from-metadata.sh
+      - load: 0.1
+      - params: '#{id} #{out}'
+      - output-filename: metadata_workflow.txt
       - set-workflow-properties: true
       - expected-type: Attachment
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -67,6 +83,15 @@ operations:
     description: Include process for empty venue
     configurations:
       - workflow-id: uct-include-process-for-empty-venue
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Transcription / Caption Services
+  # Source: ${transcription_src_flavor} - normalized-trimmed
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  - id: include
+    if: ${doCaptioning}
+    description: Include Captioning
+    configurations:
+      - workflow-id: uct-include-captioning
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   #       Save, Archive and Cleanup
   # Save workflow properties

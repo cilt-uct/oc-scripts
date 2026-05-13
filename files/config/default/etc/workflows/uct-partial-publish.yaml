@@ -8,14 +8,14 @@ operations:
     configurations:
       - source-flavor: '*/work'
   # Tag smil/cutting for later re-use in case of re-publishing of the event
-  #          Note that WOH editor will re-use target-smil-flavor instead of adding a new one
+  # Note that WOH editor will re-use target-smil-flavor instead of adding a new one
   - id: tag
     description: Tagging cutting information for archival
     configurations:
       - source-flavors: smil/cutting
       - target-tags: archive
-  # Clean out any previous */normalized-trimmed media
-  #       because we might be re-publishing them.
+  # Clean out any previous */normalized-trimmed media and captions
+  # because we might be re-publishing them.
   - id: tag
     max-attempts: 2
     fail-on-error: true
@@ -29,6 +29,17 @@ operations:
     configurations:
       - source-flavors: presenter/player+preview
       - target-tags: -engage-download
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Clean out previous captions because we might be re-publishing them.
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  - id: retract-partial
+    max-attempts: 2
+    fail-on-error: false
+    exception-handler-workflow: partial-error
+    description: Retract previous trimmed captions from event
+    configurations:
+      - retract-flavors: captions/vtt
+      - retract-tags: engage-download,trimmed
   # Archive smil/cutting right now information to ensure we don't loose it in case later operations fail
   - id: snapshot
     description: Archive cutting information
@@ -49,12 +60,36 @@ operations:
     exception-handler-workflow: partial-error
     description: Cut the recording according to the edit decision list
     configurations:
-      - source-flavors: '*/work'
+      - source-flavors: '*/work,captions/source'
       - smil-flavors: smil/tmp
       - target-smil-flavor: smil/tmp
       - target-flavor-subtype: trimmed
       - interactive: false
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # The editor produces a video stream with mimetype 'text/s-matroska' that contains trimmed captions 
+  # rather than a VTT
 
+  # Extract trimmed captions from the video container after cutting
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  - id: encode
+    exception-handler-workflow: partial-error
+    description: Extract trimmed captions
+    configurations:
+      - source-flavors: captions/trimmed
+      - target-flavor: captions/vtt
+      - target-tags: engage-download,generator-type:auto,generator:whisper-api,lang:en,trimmed,type:closed-caption
+      - encoding-profile: uct-mkv-to-vtt
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Clean out any previously trimmed captions so they are not re-published
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  - id: tag
+    max-attempts: 2
+    fail-on-error: true
+    exception-handler-workflow: partial-error
+    description: Removing tags for previously trimmed captions
+    configurations:
+      - source-flavors: captions/trimmed
+      - target-tags: -archive,-engage-download,-lang:en
   ######################################################################
   # TODO:
   # Since OC18+ the normalize-audio workflow operation is no longer
@@ -109,7 +144,7 @@ operations:
     exception-handler-workflow: partial-error
     description: Creating search result default thumbnails
     configurations:
-      - source-flavor: presenter/trimmed
+      - source-flavor: presenter/normalized-trimmed
       - target-flavor: presenter/search+preview
       - target-tags: engage-download
       - encoding-profile: search-cover.http
@@ -120,7 +155,7 @@ operations:
     exception-handler-workflow: partial-error
     description: Creating search result default thumbnails
     configurations:
-      - source-flavor: presentation/trimmed
+      - source-flavor: presentation/normalized-trimmed
       - target-flavor: presentation/search+preview
       - target-tags: engage-download
       - encoding-profile: search-cover.http
@@ -162,7 +197,7 @@ operations:
     exception-handler-workflow: partial-error
     description: Creating player preview image
     configurations:
-      - source-flavor: '*/trimmed'
+      - source-flavor: '*/normalized-trimmed'
       - source-tags: ''
       - target-flavor: '*/player+preview'
       - target-tags: engage-download
@@ -191,19 +226,6 @@ operations:
   #     </operation>
 
   #     <operation
-  #       id="image"
-  #       exception-handler-workflow="partial-error"
-  #       description="Creating player preview image">
-  #       <configurations>
-  #         <configuration key="source-flavor">presenter/normalized-trimmed</configuration>
-  #         <configuration key="source-tags"></configuration>
-  #         <configuration key="target-flavor">presenter/coverbackground</configuration>
-  #         <configuration key="encoding-profile">player-preview.http</configuration>
-  #         <configuration key="time">1</configuration>
-  #       </configurations>
-  #     </operation>
-
-  #     <operation
   #       id="cover-image"
   #       fail-on-error="true"
   #       exception-handler-workflow="partial-error"
@@ -224,7 +246,7 @@ operations:
     exception-handler-workflow: error
     description: Creating timeline preview images (Presenter)
     configurations:
-      - source-flavor: 'presenter/trimmed'
+      - source-flavor: 'presenter/normalized-trimmed'
       - target-flavor: 'presenter/timeline+preview'
       - target-tags: engage-download
       - image-count: 100
@@ -234,7 +256,7 @@ operations:
     exception-handler-workflow: error
     description: Creating timeline preview images (Presentation)
     configurations:
-      - source-flavor: 'presentation/trimmed'
+      - source-flavor: 'presentation/normalized-trimmed'
       - target-flavor: 'presentation/timeline+preview'
       - target-tags: engage-download
       - image-count: 100
@@ -245,7 +267,7 @@ operations:
     exception-handler-workflow: error
     description: Creating timeline preview images (Presentation 2)
     configurations:
-      - source-flavor: 'presentation/trimmed'
+      - source-flavor: 'presentation/normalized-trimmed'
       - target-flavor: 'presentation/timeline+preview'
       - target-tags: engage-download
       - image-count: 100
@@ -281,7 +303,7 @@ operations:
     description: 'Encoding for player and feeds (MP4) [2160p, 1080p, 720p, 480p]:
       adaptive-parallel-2160-480.http'
     configurations:
-      - source-flavor: '*/trimmed'
+      - source-flavor: '*/normalized-trimmed'
       - target-flavor: '*/delivery'
       - target-tags: engage-download,engage-streaming,rss,atom
       - encoding-profile: adaptive-parallel-2160-480.http
@@ -292,7 +314,7 @@ operations:
     exception-handler-workflow: partial-error
     description: 'Encoding for player and feeds (MP4) [1080p, 720p, 480p]: adaptive-parallel-1080-480.http'
     configurations:
-      - source-flavor: '*/trimmed'
+      - source-flavor: '*/normalized-trimmed'
       - target-flavor: '*/delivery'
       - target-tags: engage-download,engage-streaming,rss,atom
       - encoding-profile: adaptive-parallel-1080-480.http
@@ -303,7 +325,7 @@ operations:
     exception-handler-workflow: partial-error
     description: 'Encoding for player and feeds (MP4) [720p, 480p]: adaptive-parallel-720-480.http'
     configurations:
-      - source-flavor: '*/trimmed'
+      - source-flavor: '*/normalized-trimmed'
       - target-flavor: '*/delivery'
       - target-tags: engage-download,engage-streaming,rss,atom
       - encoding-profile: adaptive-parallel-720-480.http
@@ -314,7 +336,7 @@ operations:
     exception-handler-workflow: partial-error
     description: 'Encoding for player and feeds (MP4) [480p]: adaptive-480p.http'
     configurations:
-      - source-flavor: '*/trimmed'
+      - source-flavor: '*/normalized-trimmed'
       - target-flavor: '*/delivery'
       - target-tags: engage-download,engage-streaming,rss,atom
       - encoding-profile: adaptive-480p.http
@@ -324,7 +346,7 @@ operations:
     exception-handler-workflow: partial-error
     description: 'Encoding for player and feeds (MP4) [other]: adaptive-360p.http'
     configurations:
-      - source-flavor: '*/trimmed'
+      - source-flavor: '*/normalized-trimmed'
       - target-flavor: '*/delivery'
       - target-tags: engage-download,engage-streaming,rss,atom
       - encoding-profile: adaptive-360p.http
@@ -339,7 +361,7 @@ operations:
     exception-handler-workflow: partial-error
     description: Encoding audio for Engage player (MP3)
     configurations:
-      - source-flavor: presenter/trimmed
+      - source-flavor: presenter/normalized-trimmed
       - target-flavor: presenter/delivery
       - target-tags: engage-download,engage-streaming,rss,atom
       - encoding-profile: mp3.http
@@ -350,7 +372,7 @@ operations:
   #   exception-handler-workflow: partial-error
   #   description: Encoding audio-only files to mp3 delivery format
   #   configurations:
-  #     - source-flavor: '*/trimmed'
+  #     - source-flavor: '*/normalized-trimmed'
   #     - target-flavor: '*/delivery'
   #     - target-tags: engage-download,engage-streaming
   #     - encoding-profile: audio-to-m4a.http
@@ -387,7 +409,7 @@ operations:
     if: ${presentation_work_video}
     description: Detecting slide transitions in presentation track
     configurations:
-      - source-flavor: presentation/trimmed
+      - source-flavor: presentation/normalized-trimmed
       - target-tags: engage-download
   # If there is a presentation2 video but not a presentation video
   - id: segment-video
@@ -395,7 +417,7 @@ operations:
     if: NOT(${presentation_work_video}) AND ${presentation2_work_video}
     description: Detecting slide transitions in presentation2 track
     configurations:
-      - source-flavor: presentation2/trimmed
+      - source-flavor: presentation2/normalized-trimmed
       - target-tags: engage-download
   # Generate segment preview images
   - id: segmentpreviews
@@ -403,7 +425,7 @@ operations:
     if: ${presentation_work_video}
     description: Creating preview images for presentation segments
     configurations:
-      - source-flavor: presentation/trimmed
+      - source-flavor: presentation/normalized-trimmed
       - target-flavor: 'presentation/segment+preview'
       - reference-flavor: presentation/delivery
       - reference-tags: engage-download
@@ -415,7 +437,7 @@ operations:
     if: NOT(${presentation_work_video}) AND ${presentation2_work_video}
     description: Creating preview images for presentation2 segments
     configurations:
-      - source-flavor: presentation2/trimmed
+      - source-flavor: presentation2/normalized-trimmed
       - target-flavor: 'presentation/segment+preview'
       - reference-flavor: presentation2/delivery
       - reference-tags: engage-download
@@ -427,14 +449,14 @@ operations:
     if: ${presentation_work_video}
     description: Extracting text from presentation segments
     configurations:
-      - source-flavor: presentation/trimmed
+      - source-flavor: presentation/normalized-trimmed
       - target-tags: engage-download,archive
   - id: extract-text
     fail-on-error: false
     if: ${presentation2_work_video} AND NOT(${presentation_work_video})
     description: Extracting text from presentation2 segments
     configurations:
-      - source-flavor: presentation2/trimmed
+      - source-flavor: presentation2/normalized-trimmed
       - target-tags: engage-download,archive
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -450,7 +472,7 @@ operations:
     exception-handler-workflow: partial-error
     description: Publishing to Opencast Media Module
     configurations:
-      - download-source-flavors: dublincore/*,security/*
-      - download-source-tags: engage-download,atom,rss,mobile
-      - streaming-source-tags: engage-streaming
+      - download-source-flavors: dublincore/*,security/*,captions/vtt
+      - download-source-tags: engage-download,atom,rss,mobile,trimmed
+      - streaming-source-tags: engage-streaming,trimmed
       - check-availability: true

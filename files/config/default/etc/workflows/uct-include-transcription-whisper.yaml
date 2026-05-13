@@ -1,222 +1,53 @@
 id: uct-include-transcription-whisper
-title: Submit audio for Whisper API Transcription
+title: Submit video for Whisper API Transcription
 tags:
   - archive
   - upload
 description: |-
-  Runs after real publishing of media
+  Runs before real publishing of media
 operations:
-  # Apply the default workflow configuration
-  - id: defaults
-    description: Applying default configuration values - Whisper API Transcription
-    configurations:
-      - transcription_src_flavor: source
-      - preview_src_flavor: transcription
-      - preview_out_flavor: transcription-preview
-      - preview_out_tags: transcription-preview
-  - id: clone
-    fail-on-error: true
-    exception-handler-workflow: partial-error
-    description: Clone from transcription_src_flavor to outr work flavor
-    configurations:
-      - source-flavor: '*/${transcription_src_flavor}'
-      - target-flavor: '*/transcription'
-  - id: tag
-    exception-handler-workflow: partial-error
-    description: Add archive tags for */trimmed
-    configurations:
-      - source-flavors: '*/transcription'
-      - target-tags: archive
-  - id: analyze-tracks
-    exception-handler-workflow: partial-error
-    description: Analyze tracks in media package an set control variables
-    configurations:
-      - source-flavor: '*/transcription'
-      - source-tags: archive
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  #       Encode or Composite previews, create waveform, tag and
-  #       publish internally (Editor).
+  # Inspect mediapackage elements
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  - id: inspect
+    description: Inspect mediapackage elements
+    configurations:
+      - overwrite: false
+      - accept-no-media: false
+      - accurate-frame-count: false
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Extract audio for transcription
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   - id: encode
-    description: a. i. Create single-stream preview -
-      presenter_transcription_video / audio
-    if: ${presenter_transcription_video} AND
-      NOT(${presentation_transcription_video}) AND
-      NOT(${presentation2_transcription_video})
+    description: Extract audio for transcript generation
     fail-on-error: true
-    exception-handler-workflow: partial-error
     configurations:
-      - source-flavors: presenter/transcription
-      - target-flavor: presenter/${preview_out_flavor}
-      - encoding-profile: uct-mp4-preview.http
-  - id: encode
-    description: a. ii. Create audio only preview - presenter_source_audio
-    if: ${presenter_source_audio} AND NOT(${presenter_transcription_video}) AND
-      NOT(${presentation_transcription_video}) AND
-      NOT(${presentation2_transcription_video})
-    fail-on-error: true
-    exception-handler-workflow: partial-error
-    configurations:
-      - source-flavors: presenter/transcription
-      - target-flavor: presenter/${preview_out_flavor}
-      - encoding-profile: copy.audio
-  - id: encode
-    description: b. Create single-stream preview -
-      presentation_transcription_video / audio
-    if: ${presentation_transcription_video} AND
-      NOT(${presenter_transcription_video}) AND
-      NOT(${presentation2_transcription_video})
-    fail-on-error: true
-    exception-handler-workflow: partial-error
-    configurations:
-      - source-flavors: presentation/transcription
-      - target-flavor: presentation/${preview_out_flavor}
-      - encoding-profile: uct-mp4-preview.http
-  - id: encode
-    description: c. Create single-stream preview -
-      presentation2_transcription_video / audio
-    if: ${presentation2_transcription_video} AND
-      NOT(${presentation_transcription_video}) AND
-      NOT(${presenter_transcription_video})
-    fail-on-error: true
-    exception-handler-workflow: partial-error
-    configurations:
-      - source-flavors: presentation2/transcription
-      - target-flavor: presentation2/${preview_out_flavor}
-      - encoding-profile: uct-mp4-preview.http
-  - id: composite
-    description: d. Create dual-stream preview (Presenter + Presentation)
-    if: NOT(${presentation2_transcription_video}) AND
-      ${presenter_transcription_video} AND ${presentation_transcription_video}
-    fail-on-error: true
-    exception-handler-workflow: partial-error
-    configurations:
-      - source-flavor-lower: presentation/transcription
-      - source-flavor-upper: presenter/transcription
-      - encoding-profile: uct-mp4-preview.dual.http
-      - target-flavor: composite/${preview_out_flavor}
-      - output-resolution: 2560x720
-      - output-background: '0x000000FF'
-      - layout: preview
-      - layout-single: '{"horizontalCoverage":1.0,"anchorOffset":{"referring":{"left":0.0,"top":0.0},"reference":{"left":0.0,"top":0.0},"offset":{"x":0,"y":0}}};'
-      - layout-preview: |-
-          {"horizontalCoverage":0.5,"anchorOffset":{"referring":{"left":1.0,"top":0.0},"reference":{"left":1.0,"top":0.0},"offset":{"x":0,"y":0}}};
-                    {"horizontalCoverage":0.5,"anchorOffset":{"referring":{"left":0.0,"top":0.0},"reference":{"left":0.0,"top":0.0},"offset":{"x":0,"y":0}}};
-  - id: composite
-    description: e. Create dual-stream preview (Presenter + Presentation2)
-    if: NOT(${presentation_transcription_video}) AND
-      ${presenter_transcription_video} AND ${presentation2_transcription_video}
-    fail-on-error: true
-    exception-handler-workflow: partial-error
-    configurations:
-      - source-flavor-lower: presentation2/transcription
-      - source-flavor-upper: presenter/transcription
-      - encoding-profile: mp4-preview.dual.http
-      - target-flavor: composite/${preview_out_flavor}
-      - output-resolution: 2560x720
-      - output-background: '0x000000FF'
-      - layout: preview
-      - layout-single: '{"horizontalCoverage":1.0,"anchorOffset":{"referring":{"left":0.0,"top":0.0},"reference":{"left":0.0,"top":0.0},"offset":{"x":0,"y":0}}};'
-      - layout-preview: |-
-          {"horizontalCoverage":0.5,"anchorOffset":{"referring":{"left":1.0,"top":0.0},"reference":{"left":1.0,"top":0.0},"offset":{"x":0,"y":0}}};
-                    {"horizontalCoverage":0.5,"anchorOffset":{"referring":{"left":0.0,"top":0.0},"reference":{"left":0.0,"top":0.0},"offset":{"x":0,"y":0}}};
-  - id: composite
-    description: f. Create dual-stream preview (Presentation + Presentation2)
-    if: NOT(${presenter_transcription_video}) AND
-      ${presentation_transcription_video} AND
-      ${presentation2_transcription_video}
-    fail-on-error: true
-    exception-handler-workflow: partial-error
-    configurations:
-      - source-flavor-lower: presentation2/transcription
-      - source-flavor-upper: presentation/transcription
-      - encoding-profile: mp4-preview.dual.http
-      - target-flavor: composite/${preview_out_flavor}
-      - output-resolution: 2560x720
-      - output-background: '0x000000FF'
-      - layout: preview
-      - layout-single: '{"horizontalCoverage":1.0,"anchorOffset":{"referring":{"left":0.0,"top":0.0},"reference":{"left":0.0,"top":0.0},"offset":{"x":0,"y":0}}};'
-      - layout-preview: |-
-          {"horizontalCoverage":0.5,"anchorOffset":{"referring":{"left":1.0,"top":0.0},"reference":{"left":1.0,"top":0.0},"offset":{"x":0,"y":0}}};
-                    {"horizontalCoverage":0.5,"anchorOffset":{"referring":{"left":0.0,"top":0.0},"reference":{"left":0.0,"top":0.0},"offset":{"x":0,"y":0}}};
-  - id: include
-    if: ${presenter_transcription_video} AND ${presentation_transcription_video}
-      AND ${presentation2_transcription_video}
-    description: g. Include composite for tri-stream
-    configurations:
-      - workflow-id: uct-include-partial-preview-abde
-  - id: tag
-    description: Tagging cutting information for archival
-    configurations:
-      - source-flavors: smil/cutting
-      - target-tags: archive
-  # Start Whisper API transcription job
-  - id: whisper-start-transcription
+      - source-flavors: presenter/source, presentation/source, track_presentation.0/*
+      - target-flavor: audio/source
+      - target-tags: transcript
+      - encoding-profile: audio-flac-whisper
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Send to Whisper API for transcription - vtt
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  - id: execute-once
     max-attempts: 3
     retry-strategy: hold
     fail-on-error: true
     exception-handler-workflow: partial-error
-    description: Start Whisper API captions job
+    description: Transcribe using Whisper API
     configurations:
-      # Skip this operation if flavor already exists. Used for cases when mp already has captions.
-      - skip-if-flavor-exists: captions/vtt+en
-      # Audio to be translated, produced in the previous encode operation
-      - source-flavor: '*/${preview_out_flavor}'
-    # Attach whisper API transcription
-  - id: whisper-attach-transcription
-    fail-on-error: true
-    exception-handler-workflow: partial-error
-    description: Attach Whisper captions/transcription
-    configurations:
+      - exec: /opt/opencast/wfexec/wrapper-whisper-api-transcribe.sh
+      - load: '0.1'
+      - params: '#{flavor(audio/source)} #{out} #{id}'
+      - limit-to-one: true
       - target-flavor: captions/source
-      - target-tags: +engage-download
-      - target-caption-format: vtt
-      - target-element-type: track
-  # Tag captions with laguage code
-  - id: tag
-    description: Tagging captions with language code
-    configurations:
-      - source-flavors: captions/source
-      - target-tags: +lang:en,+generator:whisperapi,+generator-type:auto
-  - id: tag
-    description: Mark captions for publication
-    configurations:
-      - source-flavors: captions/source
-      - target-tags: +engage-download
+      - output-filename: captions.vtt
+      - expected-type: Track
+      - target-tags: archive,original-captions,lang:en,generator-type:auto,generator:whisper-api,type:closed-caption
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Archive
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   - id: snapshot
     description: Archive publishing information
     configurations:
       - source-tags: archive
-  # Publish to engage player
-  - id: publish-engage
-    max-attempts: 2
-    exception-handler-workflow: partial-error
-    description: Publishing to Opencast Media Module
-    configurations:
-      - download-source-flavors: dublincore/*,security/*
-      - download-source-tags: engage-download,atom,rss,mobile
-      - streaming-source-tags: engage-streaming
-      - strategy: merge
-      - check-availability: true
-  - id: republish-oaipmh
-    if: NOT(${retracted_event})
-    exception-handler-workflow: partial-error
-    description: Update recording metadata in default OAI-PMH repository
-    configurations:
-      - source-flavors: dublincore/*,security/*
-      - download-source-tags: engage-download
-      - repository: default
-  # Archive media package
-  - id: snapshot
-    fail-on-error: true
-    exception-handler-workflow: partial-error
-    description: Archive media package
-    configurations:
-      - source-flavors: '*/*'
-  # Clean up work artifacts
-  - id: cleanup
-    fail-on-error: false
-    description: Remove temporary processing artifacts
-    configurations:
-      - delete-external: true
-      # FixMe Don't clean up ACLs until workflow service no longer looks for them in the WFR.
-      - preserve-flavors: security/*
