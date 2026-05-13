@@ -288,7 +288,8 @@ def main():
                     transcript = client.audio.transcriptions.create(
                         file=audio,
                         model="whisper-1",
-                        response_format="vtt"
+                        response_format="vtt",
+                        language="en"
                     )
 
                 adjusted_vtt = offset_vtt(transcript, start_offset)

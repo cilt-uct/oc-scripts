@@ -9,6 +9,12 @@ SCRIPT="/opt/opencast/wfexec/whisper-api-transcribe.py"
 echo "Starting Whisper transcription wrapper"
 echo "Arguments received: $@"
 
+# ---- TEMP LOG FILE ----
+TMPDIR="${TMPDIR:-/tmp}"
+LOGFILE="$(mktemp "$TMPDIR/whisper.XXXXXXXXXX.log")"
+chmod 600 "$LOGFILE"
+trap 'rm -f "$LOGFILE"' EXIT
+
 # ---- ARGUMENT VALIDATION ----
 if [ "$#" -lt 1 ]; then
   echo "Usage: ${0##*/} <input_file> <output_file> <mediapackage_id>" >&2
@@ -39,11 +45,11 @@ if [ ! -r "$SCRIPT" ]; then
 fi
 
 # ---- CALL PYTHON SCRIPT ----
-python3 "$SCRIPT" "$@" > /tmp/whisper.log 2>&1
+python3 "$SCRIPT" "$@" > "$LOGFILE" 2>&1
 EXIT_CODE=$?
 
 echo "Python script exited with code $EXIT_CODE"
 echo "Last 20 lines of log:"
-tail -n 20 /tmp/whisper.log
+tail -n 20 "$LOGFILE"
 
 exit $EXIT_CODE

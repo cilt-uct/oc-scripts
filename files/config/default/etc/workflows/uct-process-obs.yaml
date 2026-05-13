@@ -15,10 +15,7 @@ operations:
       - thumbnailType: 0
       - thumbnailPosition: 1
       - doPictureInPicture: true
-      - doCaptioning: true
-      - use_watson: false
-      - use_nibity: false
-      - use_whisper: false
+      - use_whisper: true
       - result_publish_process: work
       - flipVideoHoriz: false
   - id: defaults
@@ -254,8 +251,7 @@ operations:
       - encoding-profile: player-preview.http
       - time: 1
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Transcription / Caption Services
-  # Source: ${transcription_src_flavor} - delivery
+  # Whisper Transcription
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   - id: include
     if: ${use_whisper}
