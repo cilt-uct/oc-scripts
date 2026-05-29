@@ -12,6 +12,7 @@
 # See: changelog.md
 
 source config-dist.sh
+source $(dirname "$0")/lib.sh
 
 # Before we start let's make sure all the XML is well-formed, don't want to deploy broken Workflows
 xml_files=$(find . -name "*.xml" -type f)
@@ -39,6 +40,7 @@ CLEAN=false
 DEPLOY=false
 FORCE_DEPLOY=false
 LTI=false
+INSTALL=false
 LIST=false
 UPDATE=false
 RECONFIGURE=false
@@ -98,210 +100,6 @@ showServers() {
     echo
 }
 
-displayTime() {
-  T=$1
-  D=$((T/60/60/24))
-  H=$((T/60/60%24))
-  M=$((T/60%60))
-  S=$((T%60))
-  [ $D -ge 1 ] && printf '%d d ' $D
-  [ $H -ge 1 ] && printf '%d h ' $H
-  [ $M -ge 1 ] && printf '%d m ' $M
-  printf '%d sec\n' $S
-}
-
-writeConfiguration() {
-  INPUT=$1
-  OUTPUT=$2
-
-  while read line
-  do
-      [[ $line = \#* ]] && continue
-
-      if [ ! -z "$line" ]; then
-
-        IFS="=" read find replace <<< "$line"
-
-        sed -i -e "/#.*/! s;$find;$replace;" $OUTPUT
-      fi
-
-  done < $INPUT
-}
-
-packageConfigurationFile() {
-    name=$1
-    filename=$2
-    out=$3
-
-    build_file="$FILES/config/build-$name.cfg"
-    if [ ! -f "$build_file" ]; then
-        echo "deploy_server_name=http://$name.uct.ac.za:8080" > $build_file
-        echo "deploy_server_nodename=$name.uct.ac.za" > $build_file
-        echo "" > $build_file
-    fi
-
-    # replace the server specific settings
-    writeConfiguration $build_file $file
-
-    # replace generic
-    writeConfiguration $FILES/config/build-default.cfg $file
-
-    if $out; then
-        printf "."
-    fi
-}
-
-packageConfiguration() {
-    name=$1
-    tmp="$TMP_DIR/$name"
-
-    if [ "$CONFIG_DIR" != "$name" ]; then
-
-        # make sure that the files exist for the server so that packaging them is easier next time
-        cfg_dir="$FILES/config/$name"
-        cfg_file="$FILES/config/conf-$name.cfg"
-        build_file="$FILES/config/build-$name.cfg"
-
-        if [ ! -f "$cfg_file" ]; then
-            cp "$FILES/conf-server.template" "$cfg_file"
-            sed -i -e "/#.*/! s;NNNN;$name;" "$cfg_file"
-        fi
-
-        if [ ! -f "$build_file" ]; then
-            echo "deploy_server_name=http://$name.uct.ac.za:8080" > $build_file
-            echo "deploy_server_nodename=$name.uct.ac.za" > $build_file
-            echo "" > $build_file
-        fi
-
-        if [ ! -d "$cfg_dir" ]; then
-            mkdir -p "$cfg_dir/etc"
-            mkdir -p "$cfg_dir/bin"
-            touch "$cfg_dir/etc/.keep"
-            touch "$cfg_dir/bin/.keep"
-        fi
-
-        mkdir -p $tmp
-
-        # copy default configuration files to tmp
-        cp -r $FILES/config/default/* $tmp
-
-        # overwrite with server specific configuration files
-        cp -r $FILES/config/$name/* $tmp
-
-        for file in $(find $tmp -type f -type f -not -name ".keep" -not -name "*.jks" -not -name "*.swp")
-        do
-            packageConfigurationFile $name $file false &
-        done
-        wait
-
-        cd $tmp
-        tar -zcpf $FILES/config/conf-$name.tar.gz .
-        rm -rf $tmp
-        printf "."
-    fi
-}
-
-require_clean_work_tree () {
-    local __result=$1
-    local __desc=$2
-    local __msg=""
-    local valid=true
-    local err=0
-
-    #git fetch
-    git rev-parse --verify HEAD >/dev/null || exit 1
-    git update-index -q --ignore-submodules --refresh
-
-    if ! git diff-files --quiet --ignore-submodules
-    then
-        msg="$__desc has unstaged changes."
-        err=1
-    fi
-
-    if ! git diff-index --cached --quiet --ignore-submodules HEAD --
-    then
-        msg="$__desc contains uncommitted changes."
-        err=1
-    fi
-
-    if [ $err = 0 ]; then
-        err=`git ls-files --exclude-standard --others| wc -l`
-
-        if [ $err = 1 ]; then
-            msg="$__desc contains untracked files ($err)."
-        fi
-    fi
-
-    if [ $err = 1 ]; then
-
-        # valid=false
-        echo "    $msg"
-    fi
-
-    eval $__result="'$valid'"
-}
-
-# Get the display name of the user
-# params:
-# $1 -- the section (if any)
-# $2 -- the key
-getCurrentUser() {
-
-  section="users"
-  key=$CURRENT_USER
-
-  value=$(
-    if [ -n "$section" ]; then
-      sed -n "/^\[$section\]/, /^\[/p" $DEPLOY_CFG_FOLDER/users.cfg
-    else
-      cat $DEPLOY_CFG_FOLDER/users.cfg
-    fi |
-
-    egrep "^ *\b$key\b *=" |
-
-    head -1 | cut -f2 -d'=' |
-    sed 's/^[ "'']*//g' |
-    sed 's/[ ",'']*$//g' )
-
-  if [ -n "$value" ]; then
-    echo $value
-    return
-  else
-    echo $key
-    return
-  fi
-}
-
-addDeploymentMarker() {
-    local production=$1
-    local type=$2
-    local gitlog=$3
-    local branch=$4
-
-    if $NEWRELIC_USE && $production; then
-
-        printf "Set deploy marker: "
-        result=$(curl --write-out '%{http_code}' --silent --output /dev/null -X POST "https://api.newrelic.com/v2/applications/$NEWRELIC_APP/deployments.json" \
-                -H "X-Api-Key:$NEWRELIC_API" -i \
-                -H 'Content-Type: application/json' \
-                -d \
-            "{
-                \"deployment\": {
-                    \"revision\": \"$branch\",
-                    \"changelog\": \"$DEPLOY_TYPE-$type\",
-                    \"description\": \"$gitlog\",
-                    \"user\": \"$(getCurrentUser)\"
-                }
-            }")
-        if [ $result = "201" ]; then
-            echo "done"
-        else
-            echo "error [$result]"
-        fi
-        echo
-    fi
-}
-
 main() {
 
     echo #$ACTIONS
@@ -343,6 +141,9 @@ main() {
 
     $LTI && printf "Deploy LTI Tool"
     $LTI && [ "$ACTIONS" -gt "1" ] && printf " - " && ACTIONS=$((ACTIONS-1))
+
+    $INSTALL && printf "Install ALL Packages"
+    $INSTALL && [ "$ACTIONS" -gt "1" ] && printf " - " && ACTIONS=$((ACTIONS-1))
 
     $VERSION && printf "Check dependencies"
     $VERSION && [ "$ACTIONS" -gt "1" ] && printf " - " && ACTIONS=$((ACTIONS-1))
@@ -498,6 +299,13 @@ main() {
     # For Jira comment date
     st=$(date +'%Y-%m-%d %H-%M-%S')
     extra_vars="production=$([ $DEPLOY_TYPE = "prod" ] && echo "true" || echo "false") deploy_date_time=\"$st\" by=\"$(getCurrentUser)\" "
+
+    if $INSTALL; then
+        cd $YML
+        echo "Install ALL Packages: ($HOSTS_FILE)"
+        $LIVE && ansible-playbook -i $HOSTS_FILE ansible-install-packages.yml --extra-vars "$extra_vars gitbranch=\"$branch\" gitlog=\"$gitlog\" "
+        $LIVE && echo $(addDeploymentMarker $production "Install Packages" $gitlog $branch)
+    fi
 
     # the script folder is valid or we are just doing dev OR forced to deploy or rollback
     if [[ $FORCE_DEPLOY == true || $ROLLBACK == true || $valid_script == true || $DEPLOY_TYPE == "dev" ]]; then
@@ -768,6 +576,9 @@ usage() {
     echo "  -d, --deploy"
     echo "      Deploy the currently build assemblies to their respective servers - only if source code is 'clean' or 'dev'."
     echo
+    echo "  -i, --install"
+    echo "      Install ALL packages and create Opencast User (ffmpeg hunspell sox tesseract-ocr, perl, python, OpenJDK)."
+    echo
     echo "  -f, --force"
     echo "      Force deploy the currently build assemblies to their respective servers."
     echo
@@ -828,7 +639,7 @@ usage() {
 ## TODO: Add optional parameters to
 ##       - build: 0 (default) Do All, 1 build src, 2 build cfg
 #        - clean: 0 (default) Do All, 1 clean only db, 2 clean shared+archive+distribution
-ARGS=$(getopt -o ":abcdhlrstuvxz" -l ":one,all,build,clean,deploy,help,list,reconfig,rollback,update-git,status,version,xtop,ztart,lti-deploy,alias,test,track4k,audiotrim,emptyvenue,ocr,sox" -n "$PROGNAME" -- "$@")
+ARGS=$(getopt -o ":abcdhilrstuvxz" -l ":one,all,build,clean,deploy,help,install,list,reconfig,rollback,update-git,status,version,xtop,ztart,lti-deploy,alias,test,track4k,audiotrim,emptyvenue,ocr,sox" -n "$PROGNAME" -- "$@")
 
 if [ $? -ne 0 ] || [ $# -eq 0 ]; then
     # if error in parsing args display usage
@@ -877,6 +688,11 @@ while true; do
         -f|--force)
             $MORE && FORCE_DEPLOY=true
             $MORE && DEPLOY=true
+            $MORE && ACTIONS=$((ACTIONS+1))
+            shift
+            ;;
+        -i|--install)
+            $MORE && INSTALL=true
             $MORE && ACTIONS=$((ACTIONS+1))
             shift
             ;;

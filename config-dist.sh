@@ -6,6 +6,13 @@ if [ "$BASH" = "" ] ;then echo "Please run with bash"; exit 1; fi
 
 echo
 
+# Activate project-local virtualenv when available.
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+if [ -f "$SCRIPT_DIR/.venv/bin/activate" ]; then
+    # shellcheck disable=SC1091
+    source "$SCRIPT_DIR/.venv/bin/activate"
+fi
+
 # Check to see if we are overriden - but only do it once
 if [ -f "config.sh" ]
 then
@@ -41,6 +48,7 @@ YML="/usr/local/src/scripts"
 DEPLOY_CFG_FOLDER="."
 
 FILES=$YML"/files"
+DISTFILES=$FILES"/dist"
 HOSTS_FOLDER=$YML"/hosts/"
 LOG_DIR=$YML"/log"
 TMP_DIR=$FILES"/tmp"

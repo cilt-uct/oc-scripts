@@ -57,7 +57,11 @@ deploy_server_track4k_cropvid=tmpl_deploy_server_track4k_cropvid
 deploy_python_path=tmpl_deploy_python_path
 deploy_server_pytrimpoints=tmpl_deploy_server_pytrimpoints
 
-# expected versions
+# Distribution versions
+deploy_dist_ffmpeg_version=tmpl_deploy_dist_ffmpeg_version
+deploy_dist_ffmpeg_sha=tmpl_deploy_dist_ffmpeg_sha
+
+# Expected versions
 deploy_java_version=tmpl_deploy_java_version
 deploy_ffmpeg_version=tmpl_deploy_ffmpeg_version
 deploy_ffprobe_version=tmpl_deploy_ffprobe_version

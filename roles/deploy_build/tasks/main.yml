@@ -1,6 +1,20 @@
 ---
 # This playbook will copy over the build of each node type and deploy the build on each node
 
+  - name: create opencast group
+    group:
+      name: opencast
+      gid: 1004
+      state: present
+
+  - name: create opencast user
+    user:
+      name: opencast
+      group: opencast
+      createhome: true
+      uid: 1004
+      state: present
+
   - name: Copy allinone assembly
     copy: src={{ deploy_assembly_allinone }} dest=/opt/opencast-dist-allinone.tar.gz owner=opencast group=opencast mode=0644
     when: "'allinone' in group_names"

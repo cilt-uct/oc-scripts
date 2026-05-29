@@ -28,6 +28,8 @@ migration/16x-23x/cleanacl.txt
 log/*
 files/config/default/wfexec/*
 !files/config/default/wfexec/.keep
+files/dist/*
+!files/dist/.keep
 callback_plugins/human_log.pyc
 files/shell_variable.sh
 .idea/modules.xml

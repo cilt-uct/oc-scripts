@@ -1,4 +1,5 @@
-# Deploy OCR
+# Deploy All Dependencies Playbook
+# This playbook installs all necessary packages for the deployment.
 ---
 - name: Install ALL packages
   hosts: all

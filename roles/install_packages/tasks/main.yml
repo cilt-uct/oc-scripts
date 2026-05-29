@@ -1,47 +1,18 @@
 ---
-# This playbook will install package dependencies
+# This playbook will install package dependencies for Opencast
 
 ###
-# Create opencast user and directory
-
-  - name: create opencast group
-    group:
-      name: opencast
-      gid: 1004
-      state: present
-
-  - name: create opencast user
-    user:
-      name: opencast
-      group: opencast
-      createhome: true
-      uid: 1004
-      state: present
-
-  # - name: Create archive directory
-  #   file:
-  #     path: "/data/opencast/archive"
-  #     owner: "{{system_user}}"
-  #     group: "{{system_group}}"
-  #     mode: "u=rw,g=r,o=r"
-  #     state: directory
-
-  # - name: Create distribution directory
-  #   file:
-  #     path: "/data/opencast/distribution"
-  #     owner: "{{system_user}}"
-  #     group: "{{system_group}}"
-  #     mode: "u=rw,g=r,o=r"
-  #     state: directory
-
   - name: Install ALL dependencies
-    apt:
+    ansible.builtin.apt:
+      update_cache: true
+      state: latest
       pkg:
+        - cpanminus
         - net-tools
         - tree
         - htop
         - synfig
-        - netcat
+        - netcat-openbsd
         - libwww-mechanize-perl
         - libtry-tiny-perl
         - libjson-perl
@@ -61,12 +32,9 @@
         - hunspell-en-gb
         - hunspell-en-med
         - hunspell-en-us
-        - hunspell-en-za
         - tesseract-ocr-eng
-        - openjdk-8-jdk
+        - openjdk-21-jdk
         - python3-pip
-      state: latest
-      update_cache: true
     register: result
 
   - name: Hold ffmpeg hunspell sox tesseract-ocr
@@ -79,26 +47,64 @@
       - sox
       - tesseract-ocr
 
-  # requires: ansible-galaxy collection install community.general
+  - name: Validate ffmpeg deploy selector variables
+    assert:
+      that:
+        - deploy_type is defined or production is defined
+        - deploy_type is not defined or deploy_type in ['dev', 'prod', 'development', 'production']
+      fail_msg: "Provide deploy_type (dev/development/prod/production) or production (true/false)"
+
+  - name: Select ffmpeg archive based on deploy_type or production
+    set_fact:
+      ffmpeg_archive_name: "{{ 'ffmpeg-prod.tar.xz' if (deploy_type is defined and deploy_type in ['prod', 'production']) or (deploy_type is not defined and (production | default(false) | bool)) else 'ffmpeg-dev.tar.xz' }}"
+
+  - name: Ensure ffmpeg extraction directory exists
+    file:
+      path: /opt/ffmpeg-latest
+      state: directory
+      mode: '0755'
+
+  - name: Copy ffmpeg archive to target server
+    copy:
+      src: "{{ playbook_dir }}/files/dist/{{ ffmpeg_archive_name }}"
+      dest: "/tmp/{{ ffmpeg_archive_name }}"
+      mode: '0644'
+
+  - name: Extract ffmpeg archive on target server
+    unarchive:
+      src: "/tmp/{{ ffmpeg_archive_name }}"
+      dest: /opt/ffmpeg-latest
+      remote_src: true
+
+  - name: Set ownership for ffmpeg directory and contents
+    file:
+      path: /opt/ffmpeg-latest
+      state: directory
+      owner: opencast
+      group: opencast
+      recurse: true
+
+  # requires: ansible-galaxy collection install community.general --upgrade
   - name: Install Attempt perl package
     community.general.cpanm:
       name: Attempt
     ignore_errors: True
 
-  - name: Install python packages
-    pip:
-      name:
-        - numpy
-        - matplotlib
-        - scipy
-        - sklearn
-        - hmmlearn
-        - simplejson
-        - eyed3
-        - pydub
-        - soundfile
-        - moviepy
-      executable: pip3
+  # - name: Install python packages
+  #   pip:
+  #     name:
+  #       - numpy
+  #       - matplotlib
+  #       - scipy
+  #       - sklearn
+  #       - hmmlearn
+  #       - simplejson
+  #       - eyed3
+  #       - pydub
+  #       - soundfile
+  #       - moviepy
+  #     executable: pip3
+  #     extra_args: --break-system-packages
 
   - name: Append Deployment
     local_action: shell echo "* {{inventory_hostname}} (Dependencies)" >> "{{ deploy_logfile }}"
