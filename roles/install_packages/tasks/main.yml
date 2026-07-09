@@ -21,9 +21,7 @@
         - libdatetime-format-w3cdtf-perl
         - libfile-find-rule-perl
         - libclass-unload-perl
-        - ffmpeg
         - hunspell
-        - sox
         - tesseract-ocr
         - hunspell-af
         - hunspell-en-za
@@ -37,52 +35,53 @@
         - python3-pip
     register: result
 
-  - name: Hold ffmpeg hunspell sox tesseract-ocr
+  - name: Hold hunspell tesseract-ocr
     dpkg_selections:
       name: "{{item}}"
       selection: hold
     loop:
-      - ffmpeg
       - hunspell
-      - sox
       - tesseract-ocr
 
-  - name: Validate ffmpeg deploy selector variables
+  - name: Validate deploy selector variables
     assert:
       that:
         - deploy_type is defined or production is defined
         - deploy_type is not defined or deploy_type in ['dev', 'prod', 'development', 'production']
       fail_msg: "Provide deploy_type (dev/development/prod/production) or production (true/false)"
 
-  - name: Select ffmpeg archive based on deploy_type or production
-    set_fact:
-      ffmpeg_archive_name: "{{ 'ffmpeg-prod.tar.xz' if (deploy_type is defined and deploy_type in ['prod', 'production']) or (deploy_type is not defined and (production | default(false) | bool)) else 'ffmpeg-dev.tar.xz' }}"
+  - name: Run ffmpeg tasks for selected host groups only
+    block:
+      - name: Select ffmpeg archive based on deploy_type or production
+        set_fact:
+          ffmpeg_archive_name: "{{ 'ffmpeg-prod.tar.xz' if (deploy_type is defined and deploy_type in ['prod', 'production']) or (deploy_type is not defined and (production | default(false) | bool)) else 'ffmpeg-dev.tar.xz' }}"
 
-  - name: Ensure ffmpeg extraction directory exists
-    file:
-      path: /opt/ffmpeg-latest
-      state: directory
-      mode: '0755'
+      - name: Ensure ffmpeg extraction directory exists
+        file:
+          path: /opt/ffmpeg-latest
+          state: directory
+          mode: '0755'
 
-  - name: Copy ffmpeg archive to target server
-    copy:
-      src: "{{ playbook_dir }}/files/dist/{{ ffmpeg_archive_name }}"
-      dest: "/tmp/{{ ffmpeg_archive_name }}"
-      mode: '0644'
+      - name: Copy ffmpeg archive to target server
+        copy:
+          src: "{{ playbook_dir }}/files/dist/{{ ffmpeg_archive_name }}"
+          dest: "/tmp/{{ ffmpeg_archive_name }}"
+          mode: '0644'
 
-  - name: Extract ffmpeg archive on target server
-    unarchive:
-      src: "/tmp/{{ ffmpeg_archive_name }}"
-      dest: /opt/ffmpeg-latest
-      remote_src: true
+      - name: Extract ffmpeg archive on target server
+        unarchive:
+          src: "/tmp/{{ ffmpeg_archive_name }}"
+          dest: /opt/ffmpeg-latest
+          remote_src: true
 
-  - name: Set ownership for ffmpeg directory and contents
-    file:
-      path: /opt/ffmpeg-latest
-      state: directory
-      owner: opencast
-      group: opencast
-      recurse: true
+      - name: Set ownership for ffmpeg directory and contents
+        file:
+          path: /opt/ffmpeg-latest
+          state: directory
+          owner: opencast
+          group: opencast
+          recurse: true
+    when: (group_names | intersect(['adminpresentation', 'worker', 'workernoexec', 'workergpu']) | length) > 0
 
   # requires: ansible-galaxy collection install community.general --upgrade
   - name: Install Attempt perl package
@@ -90,21 +89,24 @@
       name: Attempt
     ignore_errors: True
 
-  # - name: Install python packages
-  #   pip:
-  #     name:
-  #       - numpy
-  #       - matplotlib
-  #       - scipy
-  #       - sklearn
-  #       - hmmlearn
-  #       - simplejson
-  #       - eyed3
-  #       - pydub
-  #       - soundfile
-  #       - moviepy
-  #     executable: pip3
-  #     extra_args: --break-system-packages
+  - name: Install python packages
+    ansible.builtin.pip:
+      name:
+        - numpy
+        - matplotlib
+        - scipy
+        - scikit-learn
+        - hmmlearn
+        - simplejson
+        - eyed3
+        - pydub
+        - soundfile
+        - moviepy
+      executable: pip3
+      extra_args: --break-system-packages
+      state: present
+    tags:
+      - python-packages
 
   - name: Append Deployment
     local_action: shell echo "* {{inventory_hostname}} (Dependencies)" >> "{{ deploy_logfile }}"
