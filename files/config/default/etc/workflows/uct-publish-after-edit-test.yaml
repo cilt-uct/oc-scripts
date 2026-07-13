@@ -1,0 +1,191 @@
+id: uct-test-publish-after-edit
+title: UCT (Test) - Publish
+tags:
+  - archive
+state-mappings:
+  - state: running
+    value: EVENTS.EVENTS.STATE_MAPPING.PUBLISHING
+  - state: failing
+    value: EVENTS.EVENTS.STATE_MAPPING.PUBLISHING
+operations:
+  # Apply the default workflow configuration
+  - id: defaults
+    description: Applying default configuration values
+    configurations:
+      - publishToEngage: true
+      - publishToAws: false
+      - publishToApi: false
+      - publishToOaiPmh: false
+      - publishToYouTube: false
+      - thumbnailType: 0
+      - thumbnailPosition: 1
+      - presenter_work_video: false
+      - presenter_source_resolution_y: 1080
+      - presentation_work_video: false
+      - presentation2_work_video: false
+      - doCaptioning: true
+      - use_watson: false
+      - use_nibity: false
+      - use_whisper: false
+      - audio_trim_lapel: false
+      - transcription_src_flavor: normalized-trimmed
+      - doNormalizeAudio: false
+      - doPictureInPicture: true
+      - workProfileChannel_left: true
+      - workProfileChannel_right: false
+      - workProfileChannel_stereo: false
+      - result_publish_process: normalized-trimmed
+      - flipVideoHoriz: false
+  - id: defaults
+    if: ${workProfileChannel_left} AND NOT ${flipVideoHoriz}
+    description: Use left audio channel
+    configurations:
+      - workProfileChannel: left
+  - id: defaults
+    if: ${workProfileChannel_left} AND ${flipVideoHoriz}
+    description: Use left audio channel and flip
+    configurations:
+      - workProfileChannel: left-hflip
+  - id: defaults
+    if: ${workProfileChannel_right} AND NOT ${flipVideoHoriz}
+    description: Use right audio channel
+    configurations:
+      - workProfileChannel: right
+  - id: defaults
+    if: ${workProfileChannel_right} AND ${flipVideoHoriz}
+    description: Use right audio channel and flip
+    configurations:
+      - workProfileChannel: right-hflip
+  - id: defaults
+    if: ${workProfileChannel_stereo} AND NOT ${flipVideoHoriz}
+    description: Use stereo
+    configurations:
+      - workProfileChannel: stereo
+  - id: defaults
+    if: ${workProfileChannel_stereo} AND ${flipVideoHoriz}
+    description: Use stereo and flip
+    configurations:
+      - workProfileChannel: stereo-hflip
+  # load the values from before
+  # operation
+  #       id="import-wf-properties"
+  #       fail-on-error="true"
+  #       exception-handler-workflow="partial-error"
+  #       description="Load processing settings">
+  #       <configurations>
+  #         <configuration key="source-flavor">processing/defaults</configuration>
+  #       </configurations>
+  #     </operation
+  # Tag smil/cutting for later re-use in case of re-publishing of the event
+  #          Note that WOH editor will re-use target-smil-flavor instead of adding a new one
+  # - id: tag
+  #   description: Tagging cutting information for archival
+  #   configurations:
+  #     - source-flavors: smil/cutting
+  #     - target-tags: archive
+  # # Archive smil/cutting right now information to ensure we don't loose it in case later operations fail
+  # - id: snapshot
+  #   description: Archive cutting information
+  #   configurations:
+  #     - source-tags: archive
+  # Load workflow properties from metadata: update some workflow properties
+  - id: execute-once
+    max-attempts: 3
+    retry-strategy: hold
+    fail-on-error: true
+    exception-handler-workflow: partial-error
+    description: Load workflow properties from settings in series
+    configurations:
+      - exec: /opt/opencast/wfexec/wrapper-load-from-metadata.sh
+      - load: 0.1
+      - params: '#{id} #{out}'
+      - output-filename: metadata_workflow.txt
+      - set-workflow-properties: true
+      - expected-type: Attachment
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Remove tag for cutting
+
+  # Remove the comments that marked the recording for cutting.
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  - id: comment
+    description: Resolve the cutting flag
+    configurations:
+      - reason: EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.CUTTING
+      - action: resolve
+  # Resolve the consent flag if present (OPENCAST-1836)
+  - id: comment
+    description: Resolve the consent flag
+    configurations:
+      - reason: EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.CONSENT
+      - action: resolve
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  #       Prepare work versions of the source material for archive and processing.
+  #       Preview and Publish use Work versions. (*/work)
+  - id: include
+    description: Prepare work version for processing (${workProfileChannel})
+    configurations:
+      - workflow-id: uct-partial-work-channel
+
+  - id: include
+    description: Include auto trimming using webvtt cutmarks
+    configurations:
+      - workflow-id: uct-whisper-transcription-cutmarks
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Publish
+
+  # Encode and publish the recording to the selected publication
+  # channels, unless review for cutting has been selected.
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  - id: include
+    description: Publish the recording
+    configurations:
+      - workflow-id: uct-partial-publish-test
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Republish metadata
+
+  # Fixes issue (OPENCAST-3340) where recordings remained listed in
+  # the original personal series after being moved.
+  # Republishing metadata again resolves the inconsistency.
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # - id: include
+  #   description: Republish metadata
+  #   configurations:
+  #     - workflow-id: republish-metadata
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Archive
+
+  # Download from external ingest nodes, tag, inspect and and prepare
+  # source recording and metadata catalogs.
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Save workflow properties
+  - id: export-wf-properties
+    fail-on-error: true
+    exception-handler-workflow: partial-error
+    description: Export workflow settings to Java properties file
+    configurations:
+      - target-flavor: processing/defaults
+      - target-tags: archive
+  - id: snapshot
+    description: Archive publishing information
+    configurations:
+      - source-tags: archive
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Transcription / Caption Services
+  # Source: ${transcription_src_flavor} - normalized-trimmed
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # - id: include
+  #   if: ${doCaptioning} AND NOT ${use_whisper}
+  #   description: Include Captioning
+  #   configurations:
+  #     - workflow-id: uct-include-captioning
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Clean up work artifacts
+  # - id: cleanup
+  #   fail-on-error: false
+  #   description: Cleaning up - remove temp processing artifacts
+  #   configurations:
+  #     - delete-external: false
+  #     # FixMe Don't clean up ACLs until workflow service no longer looks for them in the WFR.
+  #     - preserve-flavors: dublincore/*,security/*,captions/*
+  #     - delay: 5
