@@ -72,4 +72,5 @@ deploy_assembly_adminworker: "{{ folder_src }}build/opencast-dist-adminworker-{{
 deploy_assembly_presentation: "{{ folder_src }}build/opencast-dist-presentation-{{ oc_version }}.tar.gz"
 deploy_assembly_ingest: "{{ folder_src }}build/opencast-dist-ingest-{{ oc_version }}.tar.gz"
 deploy_assembly_worker: "{{ folder_src }}build/opencast-dist-worker-{{ oc_version }}.tar.gz"
+deploy_assembly_workergpu: "{{ folder_src }}build/opencast-dist-workergpu-{{ oc_version }}.tar.gz"
 deploy_assembly_workernoexec: "{{ folder_src }}build/opencast-dist-workernoexec-{{ oc_version }}.tar.gz"
