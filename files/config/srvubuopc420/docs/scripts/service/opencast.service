@@ -14,8 +14,8 @@ Restart=always
 User=opencast
 
 # Remove implicit memory limits
-MemoryMax=110G
-MemoryHigh=100G
+MemoryMax=400G
+MemoryHigh=350G
 
 # Specifies the maximum file descriptor number that can be opened by this process
 # Opencast (especially larger workers) may be greedy and it makes sense to increase this number
