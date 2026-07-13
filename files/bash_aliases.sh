@@ -55,10 +55,37 @@ getDirHardLinks() {
     unique_size=$(find "$dir" -type f -printf "%i %s\n" | sort -u | awk '{sum+=$2} END{print sum}')
 
     # Count unique files
+    folder_count=$(ls -1d "$dir"/*/ 2>/dev/null | wc -l)
     file_count=$(find "$dir" -type f -printf "%i\n" | sort -u | wc -l)
 
+    track_0=$(find "$dir" -type f -name "track-0*" -printf "%i\n" | sort -u | wc -l)
+    track_1=$(find "$dir" -type f -name "track-1*" -printf "%i\n" | sort -u | wc -l)
+    track_2=$(find "$dir" -type f -name "track-2*" -printf "%i\n" | sort -u | wc -l)
+    track_3=$(find "$dir" -type f -name "track-3*" -printf "%i\n" | sort -u | wc -l)
+    other_media=$(find "$dir" -type f \
+    \( -iname "*.mp4" -o \
+       -iname "*.avi" -o \
+       -iname "*.mkv" -o \
+       -iname "*.mov" -o \
+       -iname "*.mp3" -o \
+       -iname "*.wav" -o \
+       -iname "*.flac" -o \
+       -iname "*.m4a" -o \
+       -iname "*.aac" -o \
+       -iname "*.ogg" -o \
+       -iname "*.webm" -o \
+       -iname "*.m4v" -o \
+       -iname "*.mpeg" -o \
+       -iname "*.mpg" -o \
+       -iname "*.ts" -o \
+       -iname "*.mts" \) \
+    ! -name "track-*" \
+    -printf "%i\n" | sort -u | wc -l)
+
     hl_size=$(human_readable $unique_size)
-    printf "        HL:%12s   Unique files: %s\n" "$hl_size" "$file_count"
+    printf "        HL:%12s   Files: %5d\n" "$hl_size" "$file_count"
+    printf "            Folders:%4d\n" "$folder_count"
+    printf "            track-0:%4d   1:%4d   2:%4d   3:%4d   x:%4d\n" "$track_0" "$track_1" "$track_2" "$track_3" "$other_media"
 }
 
 getFileTypes() {
