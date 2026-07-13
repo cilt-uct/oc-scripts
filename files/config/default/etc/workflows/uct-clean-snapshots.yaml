@@ -1,0 +1,40 @@
+id: uct-clean-snapshots
+title: UCT - Clean previous snapshots
+tags:
+  - archive
+description: |-
+  Clean up previous snapshots and leave only the last one
+operations:
+  # clean previous snapshots
+  - id: asset-delete
+    fail-on-error: true
+    exception-handler-workflow: error
+    description: Delete from AssetManager
+    configurations:
+      - keep-last-snapshot: true
+
+ # Comment that we cleaned up this recording
+  - id: comment
+    fail-on-error: false
+    description: Comment that we cleaned up previous snapshots (create)
+    configurations:
+      - description: Clean up previous snapshots.
+      - reason: EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.OTHER
+      - action: create
+
+  - id: comment
+    fail-on-error: false
+    description: Comment that we cleaned up previous snapshots (resolve)
+    configurations:
+      - reason: EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.OTHER
+      - action: resolve
+
+  # Clean up work artifacts
+  - id: cleanup
+    fail-on-error: false
+    description: Cleaning up - remove temp processing artifacts
+    configurations:
+      - delete-external: true
+      # FixMe Don't clean up ACLs until workflow service no longer looks for them in the WFR.
+      - preserve-flavors: security/*
+      - delay: 5
