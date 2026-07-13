@@ -1,0 +1,91 @@
+id: uct-clean-transcripts
+title: UCT- Clean Nibity Transcripts
+tags:
+  - archive
+description: |-
+  Clean out Nibity transcription files
+operations:
+  - id: tag
+    max-attempts: 2
+    fail-on-error: true
+    exception-handler-workflow: partial-error
+    description: Removing archive tags for */transcription
+    configurations:
+      - source-flavors: '*/transcription'
+      - target-tags: -archive,-engage-download
+
+  - id: tag
+    max-attempts: 2
+    fail-on-error: true
+    exception-handler-workflow: partial-error
+    description: Removing archive tags for captions/*
+    configurations:
+      - source-flavors: captions/*
+      - target-tags: -archive,-engage-download
+
+  - id: tag
+    max-attempts: 2
+    fail-on-error: true
+    exception-handler-workflow: partial-error
+    description: Removing archive tags for application/zip
+    configurations:
+      - source-flavors: application/zip
+      - target-tags: -archive,-engage-download
+
+  - id: retract-partial
+    fail-on-error: false
+    description: Retract WayWithWords transcript from event
+    configurations:
+      - retract-flavors: captions/*
+      - source-tags: archive,engage-download,generator:waywithwords,lang:en
+
+  # # snapshot
+  - id: snapshot
+    description: Archive current state of recording
+    configurations:
+      - source-tags: archive
+
+  # Publish to engage player
+  - id: publish-engage
+    max-attempts: 2
+    exception-handler-workflow: partial-error
+    description: Publishing to Opencast Media Module
+    configurations:
+      - download-source-flavors: dublincore/*,security/*
+      - streaming-source-tags: engage-streaming
+      - strategy: merge
+      - check-availability: true
+
+  # clean older snapshots
+  - id: asset-delete
+    fail-on-error: true
+    exception-handler-workflow: error
+    description: Delete from AssetManager
+    configurations:
+      - keep-last-snapshot: true
+  
+  # Comment that we cleaned up this recording
+  - id: comment
+    fail-on-error: false
+    description: Comment to say Removed nibity transcription files (create)
+    configurations:
+      - description: Removed nibity transcription files.
+      - reason: EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.OTHER
+      - action: create
+
+  - id: comment
+    fail-on-error: false
+    description: Comment to say Removed nibity transcription files (resolve)
+    configurations:
+      - reason: EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.OTHER
+      - action: resolve
+
+  # Clean up work artifacts
+  - id: cleanup
+    fail-on-error: false
+    description: Cleaning up - remove temp processing artifacts
+    configurations:
+      - delete-external: true
+      # FixMe Don't clean up ACLs until workflow service no longer looks for them in the WFR.
+      - preserve-flavors: dublincore/*,security/*
+      - delay: 5
