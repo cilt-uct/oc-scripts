@@ -30,9 +30,9 @@ srvubuopc424.uct.ac.za
 srvubuopc425.uct.ac.za
 srvubuopc426.uct.ac.za
 srvubuopc427.uct.ac.za
-srvubuopc500.uct.ac.za
-srvubuopc501.uct.ac.za
 
 [workergpu]
+# srvubuopc500.uct.ac.za
+# srvubuopc501.uct.ac.za
 
 [workernoexec]
