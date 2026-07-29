@@ -14,11 +14,30 @@ operations:
       - start-treatment: USE_FOR_MIN_TIME
       - end-treatment: USE_FOR_MIN_TIME
 
+  # Cut recording according to whisper json cut-marks
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  - id: execute-once
+    max-attempts: 3
+    retry-strategy: hold
+    fail-on-error: true
+    exception-handler-workflow: partial-error
+    description: Generate cutmarks from Whisper JSON
+    configurations:
+      - exec: /opt/opencast/wfexec/wrapper-whisper-json-to-cutmarks.sh
+      - load: '0.1'
+      - params: '#{flavor(captions/json)} #{out} #{id}'
+      - limit-to-one: true
+      - target-flavor: cut-marks/json
+      - output-filename: cutmarks.json
+      - expected-type: Attachment
+      - target-tags: archive,generator-type:auto,generator:whisper-json
+
   - id: cut-marks-to-smil
     description: Process ingested cut marks by applying them to current tracks
     fail-on-error: true
     exception-handler-workflow: partial-error
     configurations:
-      - source-media-flavors: presenter/source,presentation/source
+      - source-media-flavors: presenter/work,presentation/work
       - source-json-flavor: cut-marks/json
       - target-smil-flavor: smil/cutting
+      - target-tags: archive
