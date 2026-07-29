@@ -1,21 +1,20 @@
 id: uct-whisper-transcription-cutmarks
-title: Create cutmarks based on Whisper's transcription
+title: Create cutmarks based on Whisper transcripts
 tags:
   - archive
-
 operations:
-  - id: webvtt-to-cutmarks        # copied from OpenCast docs
+  - id: webvtt-to-cutmarks
     description: Use WebVTT as a silence detection
     configurations:
       - source-flavor: captions/source
       - target-flavor: cut-marks/json
-      - min-time-silence-in-ms: 3500  # ADJUST - must be at least 2x value of buffer-time
+      - min-time-silence-in-ms: 3500
       - buffer-time-around-subtitle: 1500
-      - track-flavor: audio/source  # tried changing to presenter/source but didn't fix
+      - track-flavor: audio/source
       - start-treatment: USE_FOR_MIN_TIME
       - end-treatment: USE_FOR_MIN_TIME
 
-  - id: cut-marks-to-smil           # copied from OpenCast docs
+  - id: cut-marks-to-smil
     description: Process ingested cut marks by applying them to current tracks
     fail-on-error: true
     exception-handler-workflow: partial-error

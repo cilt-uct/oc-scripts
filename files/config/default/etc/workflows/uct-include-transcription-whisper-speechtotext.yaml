@@ -1,0 +1,44 @@
+id: uct-include-transcription-whisper-speechtotext
+title: Submit video for Whisper (Speech-to-text) Transcription
+tags: []
+description: |-
+  Runs before real publishing of media
+operations:
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Inspect mediapackage elements
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  - id: inspect
+    description: Inspect mediapackage elements
+    configurations:
+      - overwrite: false
+      - accept-no-media: false
+      - accurate-frame-count: false
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Extract audio for transcription
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  - id: encode
+    description: Extract audio for transcript generation
+    fail-on-error: true
+    configurations:
+      - source-flavors: presenter/work, presentation/work, track_presentation.0/*
+      - target-flavor: audio/source
+      - target-tags: transcript
+      - encoding-profile: audio-flac-whisper
+
+  - id: speechtotext
+    description: Generate subtitles for video and audio files
+    fail-on-error: true
+    configurations:
+    - source-flavor: audio/source
+    - target-flavor: captions/source
+    - target-tags: archive
+    - limit-to-one: true
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Archive
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  - id: snapshot
+    description: Archive publishing information
+    configurations:
+      - source-tags: archive

@@ -1,33 +1,40 @@
-id: uct-test-publish-after-edit
-title: UCT (Test) - Publish
+id: uct-process-and-publish
+title: UCT - Process And Publish (incl auto-trim)
 tags:
-  - archive
-state-mappings:
-  - state: running
-    value: EVENTS.EVENTS.STATE_MAPPING.PUBLISHING
-  - state: failing
-    value: EVENTS.EVENTS.STATE_MAPPING.PUBLISHING
+  - upload
+  - schedule
 operations:
   # Apply the default workflow configuration
   - id: defaults
     description: Applying default configuration values
     configurations:
+      - straightToPublishing: true
       - publishToEngage: true
       - publishToAws: false
       - publishToApi: false
       - publishToOaiPmh: false
       - publishToYouTube: false
+      - flagForCutting: false
+      - flagForReview: false
+      - uploadedSearchPreview: false
+      - downloadSourceflavorsExist: false
       - thumbnailType: 0
       - thumbnailPosition: 1
       - presenter_work_video: false
       - presenter_source_resolution_y: 1080
       - presentation_work_video: false
       - presentation2_work_video: false
+      - isUpload: false
       - doCaptioning: true
       - use_watson: false
       - use_nibity: false
-      - use_whisper: false
+      - use_whisper: true
+      - timetabled: false
+      - audio_trim_autotrim: false
+      - audio_trim_valid_venue: false
       - audio_trim_lapel: false
+      - audio_trim_ishour: false
+      - empty_venue: false
       - transcription_src_flavor: normalized-trimmed
       - doNormalizeAudio: false
       - doPictureInPicture: true
@@ -36,6 +43,7 @@ operations:
       - workProfileChannel_stereo: false
       - result_publish_process: normalized-trimmed
       - flipVideoHoriz: false
+
   - id: defaults
     if: ${workProfileChannel_left} AND NOT ${flipVideoHoriz}
     description: Use left audio channel
@@ -66,28 +74,22 @@ operations:
     description: Use stereo and flip
     configurations:
       - workProfileChannel: stereo-hflip
-  # load the values from before
-  # operation
-  #       id="import-wf-properties"
-  #       fail-on-error="true"
-  #       exception-handler-workflow="partial-error"
-  #       description="Load processing settings">
-  #       <configurations>
-  #         <configuration key="source-flavor">processing/defaults</configuration>
-  #       </configurations>
-  #     </operation
-  # Tag smil/cutting for later re-use in case of re-publishing of the event
-  #          Note that WOH editor will re-use target-smil-flavor instead of adding a new one
-  # - id: tag
-  #   description: Tagging cutting information for archival
-  #   configurations:
-  #     - source-flavors: smil/cutting
-  #     - target-tags: archive
-  # # Archive smil/cutting right now information to ensure we don't loose it in case later operations fail
-  # - id: snapshot
-  #   description: Archive cutting information
-  #   configurations:
-  #     - source-tags: archive
+
+  # Check whether this is a timetabled course event and get location
+  - id: execute-once
+    max-attempts: 3
+    retry-strategy: hold
+    fail-on-error: true
+    exception-handler-workflow: partial-error
+    description: Check timetable status
+    configurations:
+      - exec: /opt/opencast/wfexec/event-timetable.pl
+      - load: 0.1
+      - params: '#{id} #{out}'
+      - output-filename: ttinfo.txt
+      - set-workflow-properties: true
+      - expected-type: Attachment
+
   # Load workflow properties from metadata: update some workflow properties
   - id: execute-once
     max-attempts: 3
@@ -102,32 +104,81 @@ operations:
       - output-filename: metadata_workflow.txt
       - set-workflow-properties: true
       - expected-type: Attachment
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Remove tag for cutting
 
-  # Remove the comments that marked the recording for cutting.
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  - id: comment
-    description: Resolve the cutting flag
+  #  Finalize ingest
+  #  Make sure all elements are downloaded from external sources,
+  #  inspect, analyze tracks (*/*), apply series access control
+  #  archive */source, and tag metadata for archive and publish.
+
+  - id: include
+    description: Finalize upload and ingest
     configurations:
-      - reason: EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.CUTTING
-      - action: resolve
-  # Resolve the consent flag if present (OPENCAST-1836)
-  - id: comment
-    description: Resolve the consent flag
+      - workflow-id: uct-partial-ingest
+
+  # Check if empty venue
+  - id: include
+    description: Detect empty venue
     configurations:
-      - reason: EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.CONSENT
+      - workflow-id: uct-detect-empty-venue
+
+  # Resolve the recording failure comment if this was a missed ingest (OPENCAST-1836)
+  - id: comment
+    description: Resolve recording failure (if present)
+    configurations:
+      - reason: EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.RECORDING_FAILURE
       - action: resolve
+
+  - id: include
+    description: Include process for empty venue
+    configurations:
+      - workflow-id: uct-include-process-for-empty-venue
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  #       Prepare work versions of the source material for archive and processing.
-  #       Preview and Publish use Work versions. (*/work)
+  # Save, Archive and Cleanup
+  # Save workflow properties
+  - id: export-wf-properties
+    fail-on-error: true
+    exception-handler-workflow: partial-error
+    description: Export workflow settings to Java properties file
+    configurations:
+      - target-flavor: processing/defaults
+      - target-tags: archive
+
+  # make sure to save ACL and dublincore
+  - id: tag
+    exception-handler-workflow: partial-error
+    description: Add archive tags for dublincore/*,security/*
+    configurations:
+      - source-flavors: dublincore/*,security/*
+      - target-tags: archive
+
+  # # Archive generated items
+  - id: snapshot
+    description: Archive current state of the recording
+    configurations:
+      - source-tags: archive
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Prepare work versions of the source material for archive and processing.
+  # Preview and Publish use Work versions. (*/work)
   - id: include
     description: Prepare work version for processing (${workProfileChannel})
     configurations:
       - workflow-id: uct-partial-work-channel
 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Transcription / Caption Services
+  # Source: ${transcription_src_flavor} - normalized-trimmed
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   - id: include
-    description: Include auto trimming using webvtt cutmarks
+    if: ${doCaptioning}
+    description: Include Captioning
+    configurations:
+      - workflow-id: uct-include-captioning
+
+  - id: include
+    description: Include auto trimming using whisper cutmarks
     configurations:
       - workflow-id: uct-whisper-transcription-cutmarks
 
@@ -140,7 +191,8 @@ operations:
   - id: include
     description: Publish the recording
     configurations:
-      - workflow-id: uct-partial-publish-test
+      - workflow-id: uct-partial-publish
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Republish metadata
 
@@ -166,26 +218,23 @@ operations:
     configurations:
       - target-flavor: processing/defaults
       - target-tags: archive
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Archive
+
   - id: snapshot
     description: Archive publishing information
     configurations:
       - source-tags: archive
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Transcription / Caption Services
-  # Source: ${transcription_src_flavor} - normalized-trimmed
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # - id: include
-  #   if: ${doCaptioning} AND NOT ${use_whisper}
-  #   description: Include Captioning
-  #   configurations:
-  #     - workflow-id: uct-include-captioning
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   # Clean up work artifacts
-  # - id: cleanup
-  #   fail-on-error: false
-  #   description: Cleaning up - remove temp processing artifacts
-  #   configurations:
-  #     - delete-external: false
-  #     # FixMe Don't clean up ACLs until workflow service no longer looks for them in the WFR.
-  #     - preserve-flavors: dublincore/*,security/*,captions/*
-  #     - delay: 5
+  - id: cleanup
+    fail-on-error: false
+    description: Cleaning up - remove temp processing artifacts
+    configurations:
+      - delete-external: false
+      # FixMe Don't clean up ACLs until workflow service no longer looks for them in the WFR.
+      - preserve-flavors: dublincore/*,security/*
+      - delay: 5
