@@ -1,0 +1,146 @@
+id: uct-process-and-autotrim
+title: UCT - Process and Autotrim
+tags:
+  - upload
+  - schedule
+operations:
+  # Apply the default workflow configuration
+  - id: defaults
+    description: Applying default configuration values
+    configurations:
+      - straightToPublishing: false
+      - publishToEngage: true
+      - publishToAws: false
+      - publishToApi: false
+      - publishToOaiPmh: false
+      - publishToYouTube: false
+      - flagForCutting: false
+      - flagForReview: false
+      - uploadedSearchPreview: false
+      - downloadSourceflavorsExist: false
+      - thumbnailType: 0
+      - thumbnailPosition: 1
+      - isUpload: false
+      - doCaptioning: true
+      - use_watson: false
+      - use_nibity: false
+      - use_whisper: true
+      - timetabled: false
+      - audio_trim_autotrim: false
+      - audio_trim_valid_venue: false
+      - audio_trim_lapel: false
+      - audio_trim_ishour: false
+      - empty_venue: false
+  # Check whether this is a timetabled course event and get location
+  - id: execute-once
+    max-attempts: 3
+    retry-strategy: hold
+    fail-on-error: true
+    exception-handler-workflow: partial-error
+    description: Check timetable status
+    configurations:
+      - exec: /opt/opencast/wfexec/event-timetable.pl
+      - load: 0.1
+      - params: '#{id} #{out}'
+      - output-filename: ttinfo.txt
+      - set-workflow-properties: true
+      - expected-type: Attachment
+  # Load workflow properties from metadata: update some workflow properties
+  - id: execute-once
+    max-attempts: 3
+    retry-strategy: hold
+    fail-on-error: true
+    exception-handler-workflow: partial-error
+    description: Load workflow properties from settings in series
+    configurations:
+      - exec: /opt/opencast/wfexec/wrapper-load-from-metadata.sh
+      - load: 0.1
+      - params: '#{id} #{out}'
+      - output-filename: metadata_workflow.txt
+      - set-workflow-properties: true
+      - expected-type: Attachment
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  #       Finalize ingest
+  #       Make sure all elements are downloaded from external sources,
+  #       inspect, analyze tracks (*/*), apply series access control
+  #       archive */source, and tag metadata for archive and publish.
+  - id: include
+    description: Finalize upload and ingest
+    configurations:
+      - workflow-id: uct-partial-ingest
+  # Check if empty venue
+  - id: include
+    description: Detect empty venue
+    configurations:
+      - workflow-id: uct-detect-empty-venue
+  # Resolve the recording failure comment if this was a missed ingest (OPENCAST-1836)
+  - id: comment
+    description: Resolve recording failure (if present)
+    configurations:
+      - reason: EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.RECORDING_FAILURE
+      - action: resolve
+  - id: include
+    description: Include process for empty venue
+    configurations:
+      - workflow-id: uct-include-process-for-empty-venue
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Extract audio for transcription
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  - id: encode
+    description: Extract audio for transcript generation
+    fail-on-error: true
+    configurations:
+      - source-flavors: presenter/source, presentation/source, track_presentation.0/*
+      - target-flavor: audio/source
+      - target-tags: transcript
+      - encoding-profile: audio-flac-whisper
+
+  - id: speechtotext
+    description: Generates subtitles for video and audio files
+    max-attempts: 3
+    retry-strategy: hold
+    fail-on-error: true
+    configurations:
+    - source-flavor: audio/source
+    - target-flavor: captions/source
+    - target-tags: archive
+    - limit-to-one: true
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  
+  # Save, Archive and Cleanup
+  # Save workflow properties
+  - id: export-wf-properties
+    fail-on-error: true
+    exception-handler-workflow: partial-error
+    description: Export workflow settings to Java properties file
+    configurations:
+      - target-flavor: processing/defaults
+      - target-tags: archive
+  # # make sure to save ACL and dublincore
+  - id: tag
+    exception-handler-workflow: partial-error
+    description: Add archive tags for dublincore/*,security/*
+    configurations:
+      - source-flavors: dublincore/*,security/*
+      - target-tags: archive
+  # # Archive generated items
+  - id: snapshot
+    description: Archive all at the end of workflow
+    configurations:
+      - source-tags: archive
+
+  - id: include
+    description: Include publish after edit workflow
+    configurations:
+      - workflow-id: uct-test-publish-after-edit
+
+  # # Clean up work artifacts
+  - id: cleanup
+    fail-on-error: false
+    description: Cleaning up - remove temp processing artifacts
+    configurations:
+      - delete-external: false
+      # FixMe Don't clean up ACLs until workflow service no longer looks for them in the WFR.
+      - preserve-flavors: dublincore/*,security/*
+      - delay: 5
