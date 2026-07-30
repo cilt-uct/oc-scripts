@@ -40,17 +40,11 @@ operations:
     configurations:
       - workflow-id: uct-include-transcription-nibity
   # and ${audio_trim_lapel}
-  # - id: include
-  #   if: ${use_whisper}
-  #   description: Do captioning with Whisper API
-  #   configurations:
-  #     - workflow-id: uct-include-transcription-whisper
-
   - id: include
     if: ${use_whisper}
-    description: Do captioning with Whisper (Speech-to-text)
+    description: Do captioning with Whisper API
     configurations:
-      - workflow-id: uct-include-transcription-whisper-speechtotext
+      - workflow-id: uct-include-transcription-whisper
 
   - id: include
     if: NOT ${use_whisper} AND ${use_google}

@@ -171,16 +171,39 @@ operations:
   # Transcription / Caption Services
   # Source: ${transcription_src_flavor} - normalized-trimmed
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # - id: include
+  #   if: ${doCaptioning}
+  #   description: Include Captioning
+  #   configurations:
+  #     - workflow-id: uct-include-captioning
+
   - id: include
-    if: ${doCaptioning}
-    description: Include Captioning
+    description: Do captioning with Whisper (Speech-to-text)
     configurations:
-      - workflow-id: uct-include-captioning
+      - workflow-id: uct-include-transcription-whisper-speechtotext
 
   - id: include
     description: Include auto trimming using whisper cutmarks
     configurations:
       - workflow-id: uct-whisper-transcription-cutmarks
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Remove tag for cutting
+
+  # Remove the comments that marked the recording for cutting.
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  - id: comment
+    description: Resolve the cutting flag
+    configurations:
+      - reason: EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.CUTTING
+      - action: resolve
+      
+  # Resolve the consent flag if present (OPENCAST-1836)
+  - id: comment
+    description: Resolve the consent flag
+    configurations:
+      - reason: EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.CONSENT
+      - action: resolve
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Publish
