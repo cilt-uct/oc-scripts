@@ -1,0 +1,23 @@
+id: uct-include-whisper-translations
+title: UCT - Translate Whisper VTT to african languages
+tags:
+  - archive
+  - upload
+description: |-
+  Translate whisper transcripts into isiXhosa and Afrikaans using OpenAI GPT-4 model
+operations:
+  # Translate subtitles
+  - id: execute-once
+    max-attempts: 3
+    retry-strategy: hold
+    fail-on-error: true
+    exception-handler-workflow: partial-error
+    description: Translate subtitle file using OpenAI GPT-4 model
+    configurations:
+      - exec: /opt/opencast/wfexec/wrapper-translate-whisper-subtitles.sh
+      - load: 0.1
+      - params: '#{flavor(captions/source)} IsiXhosa #{out} #{id}'
+      - output-filename: captions.vtt
+      - expected-type: Track
+      - target-flavor: captions/vtt
+      - target-tags: archive,lang:xh,generator-type:auto,generator:OpenAI-GPT,type:closed-caption,engage-download
