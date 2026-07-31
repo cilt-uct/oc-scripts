@@ -17,6 +17,6 @@ devubuopc003.uct.ac.za
 
 [workergpu]
 srvubuopc500.uct.ac.za
-srvubuopc501.uct.ac.za
+#srvubuopc501.uct.ac.za
 
 [workernoexec]
