@@ -30,10 +30,10 @@ operations:
     description: Generate subtitles for video and audio files
     fail-on-error: true
     configurations:
-    - source-flavor: audio/source
-    - target-flavor: captions/source
-    - target-tags: archive
-    - limit-to-one: true
+      - source-flavor: audio/source
+      - target-flavor: captions/source
+      - target-tags: archive
+      - limit-to-one: true
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Archive
