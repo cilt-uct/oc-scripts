@@ -9,11 +9,12 @@ SCRIPT="/opt/opencast/wfexec/whisper-api-transcribe.py"
 echo "Starting Whisper transcription wrapper"
 echo "Arguments received: $@"
 
-# ---- TEMP LOG FILE ----
+# ---- LOG FILE ----
 TMPDIR="${TMPDIR:-/tmp}"
-LOGFILE="$(mktemp "$TMPDIR/whisper.XXXXXXXXXX.log")"
+LOGFILE="$TMPDIR/whisper-transcription.log"
+rm -f "$LOGFILE"
+touch "$LOGFILE"
 chmod 600 "$LOGFILE"
-trap 'rm -f "$LOGFILE"' EXIT
 
 # ---- ARGUMENT VALIDATION ----
 if [ "$#" -lt 1 ]; then
