@@ -80,7 +80,7 @@ main() {
   chmod +x $working_real/wfexec/*.pl
   chmod +x $working_real/wfexec/*.py
 
-  find $working_real -name "sed*" -exec rm {} \;
+  find "$working_real" -type f -name 'sed*' -exec rm -f -- {} +
 
   # check link to service
   if [ ! -f "/lib/systemd/system/opencast.service" ]; then
