@@ -158,16 +158,7 @@ operations:
     description: Archive current state of the recording
     configurations:
       - source-tags: archive
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Prepare work versions of the source material for archive and processing.
-  # Preview and Publish use Work versions. (*/work)
-  - id: include
-    description: Prepare work version for processing (${workProfileChannel})
-    configurations:
-      - workflow-id: uct-partial-work-channel
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Transcription / Caption Services
   # Source: ${transcription_src_flavor} - normalized-trimmed
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -178,14 +169,14 @@ operations:
   #     - workflow-id: uct-include-captioning
 
   - id: include
-    description: Do captioning with Whisper (Speech-to-text)
+    description: Do captioning with Speech-to-text (Whisper)
     configurations:
-      - workflow-id: uct-include-transcription-whisper-speechtotext
+      - workflow-id: uct-include-speechtotext-whisper-transcription
 
   - id: include
     description: Include auto trimming using whisper cutmarks
     configurations:
-      - workflow-id: uct-whisper-transcription-cutmarks
+      - workflow-id: uct-include-whisper-transcription-cutmarks
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Remove tag for cutting

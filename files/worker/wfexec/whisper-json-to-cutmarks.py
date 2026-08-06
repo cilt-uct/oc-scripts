@@ -2,8 +2,14 @@
 import json
 import sys
 
-MIN_SILENCE = 4.0
-BUFFER = 0.75
+MIN_SILENCE = 60.0                  # seconds - for internal cuts
+BUFFER = 0.75                       # seconds - to avoid cutting too close to speech
+EDGE_SILENCE_THRESHOLD  = 120.0     # seconds - to trim beginning/end sections
+MIN_BLOCK_DURATION = 30.0           # seconds - to ignore very short chatter / speech bursts
+MIN_WORD_PROB = 0.45
+MIN_AVG_LOGPROB = -1.0
+MAX_NO_SPEECH_PROB = 0.8
+EDGE_CONFIDENCE = 0.70              # seconds - confidence threshold for edge blocks
 
 input_file = sys.argv[1]
 output_file = sys.argv[2]
@@ -11,61 +17,130 @@ output_file = sys.argv[2]
 with open(input_file) as f:
     data = json.load(f)
 
+# -------------------------
+# Extract reliable words
+# -------------------------
 words = []
 
-for segment in data["segments"]:
-    # ignore unreliable segments
-    if segment.get("no_speech_prob", 0) > 0.8:
+for segment in data.get("segments", []):
+
+    # Ignore likely silence
+    if segment.get("no_speech_prob", 0) > MAX_NO_SPEECH_PROB:
         continue
 
-    if "words" not in segment:
+    # Ignore poor transcription
+    if segment.get("avg_logprob", 0) < MIN_AVG_LOGPROB:
         continue
 
-    for word in segment["words"]:
+    if "words" in segment:
+        for word in segment["words"]:
+            probability = word.get("probability", 1.0)
+            if probability < MIN_WORD_PROB:
+                continue
+
+            words.append({
+                "start": float(word["start"]),
+                "end": float(word["end"]),
+                "confidence": probability
+            })
+
+    else:
         words.append({
-            "start": word["start"],
-            "end": word["end"]
+            "start": float(segment["start"]),
+            "end": float(segment["end"]),
+            "confidence": 1.0
         })
 
-cuts = []
+# No speech found
+if not words:
+    with open(output_file, "w") as f:
+        json.dump([], f, indent=2)
+    sys.exit(0)
+
+# -------------------------
+# Build speech blocks
+# -------------------------
+blocks = []
+
+current_block = {
+    "start": words[0]["start"],
+    "end": words[0]["end"],
+    "confidences": [words[0]["confidence"]]
+}
 
 for current, nxt in zip(words, words[1:]):
     silence = nxt["start"] - current["end"]
 
     if silence >= MIN_SILENCE:
-        cut_start = current["end"] + BUFFER
-        cut_end = nxt["start"] - BUFFER
+        current_block["confidence"] = (sum(current_block["confidences"]) / len(current_block["confidences"]))
+        blocks.append(current_block)
 
-        if cut_end > cut_start:
-            cuts.append({
-                "begin": int(round(cut_start * 1000)),
-                "end": int(round(cut_end * 1000)),
-                "duration": int(round(cut_end-cut_start * 1000))
-            })
-
-# merge adjacent cuts
-
-merged=[]
-
-for cut in cuts:
-    if not merged:
-        merged.append(cut)
-        continue
-
-    previous=merged[-1]
-
-    if cut["begin"] <= previous["end"] + 1000:
-        previous["end"] = max(previous["end"], cut["end"])
+        current_block = {
+            "start": nxt["start"],
+            "end": nxt["end"],
+            "confidences": [nxt["confidence"]]
+        }
 
     else:
-        merged.append(cut)
+        current_block["end"] = nxt["end"]
+        current_block["confidences"].append(nxt["confidence"])
 
-for cut in merged:
-    cut["duration"] = cut["end"] - cut["begin"]
+# add final block
+current_block["confidence"] = (sum(current_block["confidences"]) / len(current_block["confidences"]))
+blocks.append(current_block)
 
+# -------------------------
+# Remove tiny blocks
+# -------------------------
+blocks = [b for b in blocks if (b["end"] - b["start"]) >= MIN_BLOCK_DURATION]
+
+if not blocks:
+    with open(output_file, "w") as f:
+        json.dump([], f, indent=2)
+
+    sys.exit(0)
+
+# -------------------------
+# Trim the beginning
+# -------------------------
+while len(blocks) > 1:
+    gap = blocks[1]["start"] - blocks[0]["end"]
+
+    if (gap >= EDGE_SILENCE_THRESHOLD and blocks[0]["confidence"] < EDGE_CONFIDENCE):
+        blocks.pop(0)
+    else:
+        break
+
+# -------------------------
+# Trim the end
+# -------------------------
+while len(blocks) > 1:
+    gap = blocks[-1]["start"] - blocks[-2]["end"]
+
+    if (gap >= EDGE_SILENCE_THRESHOLD and blocks[-1]["confidence"] < EDGE_CONFIDENCE):
+        blocks.pop()
+    else:
+        break
+
+# -------------------------
+# Convert blocks to cuts
+# -------------------------
+cuts = []
+
+for block in blocks:
+    cuts.append({
+        "begin": int((block["start"] + BUFFER) * 1000),
+        "end": int((block["end"] - BUFFER) * 1000)
+    })
+
+cuts[0]["begin"] = int(blocks[0]["start"] * 1000)
+cuts[-1]["end"] = int(blocks[-1]["end"] * 1000)
+
+for cut in cuts:
+    cut["duration"] = (cut["end"] - cut["begin"])
+
+# -------------------------
+# Write cutmarks
+# -------------------------
 with open(output_file,"w") as f:
-    json.dump(
-        merged,
-        f,
-        indent=2
-    )
+    json.dump(cuts, f, indent=2)

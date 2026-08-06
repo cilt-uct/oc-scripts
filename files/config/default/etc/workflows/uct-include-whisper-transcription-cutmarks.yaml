@@ -1,4 +1,4 @@
-id: uct-whisper-transcription-cutmarks
+id: uct-include-whisper-transcription-cutmarks
 title: Create cutmarks based on Whisper transcripts
 tags:
   - archive

@@ -1,5 +1,5 @@
-id: uct-include-transcription-whisper-speechtotext
-title: Submit video for Whisper (Speech-to-text) Transcription
+id: uct-include-speechtotext-whisper-transcription
+title: Submit video for Speech-to-text (Whisper) Transcription
 tags: []
 description: |-
   Runs before real publishing of media

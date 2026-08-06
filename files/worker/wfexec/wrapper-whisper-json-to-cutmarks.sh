@@ -9,11 +9,12 @@ SCRIPT="/opt/opencast/wfexec/whisper-json-to-cutmarks.py"
 echo "Starting Whisper json to cutmarks wrapper"
 echo "Arguments received: $@"
 
-# ---- TEMP LOG FILE ----
+# ---- LOG FILE ----
 TMPDIR="${TMPDIR:-/tmp}"
-LOGFILE="$(mktemp "$TMPDIR/whisper-cutmarks.XXXXXXXXXX.log")"
+LOGFILE="$TMPDIR/whisper-cutmarks.log"
+rm -f "$LOGFILE"
+touch "$LOGFILE"
 chmod 600 "$LOGFILE"
-trap 'rm -f "$LOGFILE"' EXIT
 
 # ---- ARGUMENT VALIDATION ----
 if [ "$#" -lt 1 ]; then
