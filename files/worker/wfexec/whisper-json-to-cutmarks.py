@@ -9,7 +9,7 @@ MIN_BLOCK_DURATION = 30.0           # seconds - to ignore very short chatter / s
 MIN_WORD_PROB = 0.45
 MIN_AVG_LOGPROB = -1.0
 MAX_NO_SPEECH_PROB = 0.8
-EDGE_CONFIDENCE = 0.70              # seconds - confidence threshold for edge blocks
+EDGE_CONFIDENCE = 0.70              # probability threshold for edge blocks
 
 input_file = sys.argv[1]
 output_file = sys.argv[2]
