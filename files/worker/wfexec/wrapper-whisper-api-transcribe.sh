@@ -17,7 +17,7 @@ touch "$LOGFILE"
 chmod 600 "$LOGFILE"
 
 # ---- ARGUMENT VALIDATION ----
-if [ "$#" -lt 1 ]; then
+if [ "$#" -lt 3 ]; then
   echo "Usage: ${0##*/} <input_file> <output_file> <mediapackage_id>" >&2
   exit 1
 fi
