@@ -1,7 +1,7 @@
 # Deploy Track4k to the various nodes
 ---
 - name: Deploy Track4K binary
-  hosts: worker
+  hosts: worker, workergpu
   become: true
   vars:
     script_action: "Deploy-track4k"
@@ -13,7 +13,7 @@
       run_once: True
 
   roles:
-    - { role: deploy_track4k, when: "'worker' in group_names or 'adminpresentation' in group_names or 'allinone' in group_names or 'adminworker' in group_names" }
+    - { role: deploy_track4k, when: "'worker' in group_names or 'workergpu' in group_names or 'adminpresentation' in group_names or 'allinone' in group_names or 'adminworker' in group_names" }
 
   post_tasks:
     - include_role:

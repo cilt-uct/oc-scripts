@@ -1,17 +1,17 @@
 #!/bin/bash
-# wrapper-whisper-api-transcribe.sh
-# Wrapper to safely run whisper-api-transcribe.py as the opencast user
+# wrapper-whisper-json-to-cutmarks.sh
+# Wrapper to safely run whisper-json-to-cutmarks.py as the opencast user
 
 # ---- CONFIG ----
-SCRIPT="/opt/opencast/wfexec/whisper-api-transcribe.py"
+SCRIPT="/opt/opencast/wfexec/whisper-json-to-cutmarks.py"
 
 # ---- LOGGING ----
-echo "Starting Whisper transcription wrapper"
+echo "Starting Whisper json to cutmarks wrapper"
 echo "Arguments received: $@"
 
 # ---- LOG FILE ----
 TMPDIR="${TMPDIR:-/tmp}"
-LOGFILE="$TMPDIR/whisper-transcription.log"
+LOGFILE="$TMPDIR/whisper-cutmarks.log"
 rm -f "$LOGFILE"
 touch "$LOGFILE"
 chmod 600 "$LOGFILE"

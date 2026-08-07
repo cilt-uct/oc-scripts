@@ -8,7 +8,7 @@
         clone: yes
         update: yes
       register: result
-      when: "'worker' in group_names or 'workernoexec' in group_names"
+      when: "'worker' in group_names or 'workergpu' in group_names or 'workernoexec' in group_names"
 
     - name: Set User
       file:
@@ -17,7 +17,7 @@
         owner: "{{system_user}}"
         group: "{{system_group}}"
         recurse: yes
-      when: "'worker' in group_names or 'workernoexec' in group_names"
+      when: "'worker' in group_names or 'workergpu' in group_names or 'workernoexec' in group_names"
 
     - name: Create log directory
       file:
@@ -26,11 +26,11 @@
         group: "{{system_group}}"
         mode: "u=rw,g=rw,o=rw"
         state: directory
-      when: "'worker' in group_names or 'workernoexec' in group_names"
+      when: "'worker' in group_names or 'workergpu' in group_names or 'workernoexec' in group_names"
 
     # - name: install requirements.txt
     #   shell: pip3 install -r {{ repo_dest }}/requirements.txt
-    #   when: "'worker' in group_names or 'workernoexec' in group_names"
+    #   when: "'worker' in group_names or 'workergpu' in group_names or 'workernoexec' in group_names"
 
     - name: Append Deployment
       local_action: shell echo "* {{inventory_hostname}}" >> "{{ deploy_logfile }}"

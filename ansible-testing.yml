@@ -1,7 +1,7 @@
 # Deploy Testing Script to the various nodes
 ---
 - name: Deploy Testing binary
-  hosts: worker
+  hosts: worker, workergpu
   become: true
   vars:
     script_action: "Deploy-Testing-Script"

@@ -1,7 +1,7 @@
 # Deploy/Update trimpointdetector on the worker nodes
 ---
 - name: Deploy/Update trimpointdetector on the worker nodes
-  hosts: worker
+  hosts: worker, workergpu
   become: true
   vars:
     script_action: "Deploy-trimpointdetector"
