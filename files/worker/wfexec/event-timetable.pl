@@ -48,6 +48,7 @@ my $timetabled = "false";
 my $visibility = "unknown";
 my $course = "none";
 my $caption_provider = "unknown";
+my $auto_trim = "false";
 my $location = "unknown";
 my $title = "unknown";
 my $series = "";
@@ -68,8 +69,8 @@ if ((index(lc($title), "[backup]") != -1) || (index(lc($title), "[hold]") != -1)
 # Get the series info - ignore if we are running on media
 if ((index($server, "media.uct.ac.za") != -1) && defined($series) && $series ne "")  {
 
-    ($visibility, $course, $caption_provider) = getSeriesDetails($mech, $server, $series);
-    print Dumper($visibility, $course, $caption_provider) if $debug;
+    ($visibility, $course, $caption_provider, $auto_trim) = getSeriesDetails($mech, $server, $series);
+    print Dumper($visibility, $course, $caption_provider, $auto_trim) if $debug;
 
     if (!defined($course) || $course eq "") {
       $course = "none";
@@ -120,6 +121,7 @@ print $fh "use_watson=". ( $caption_provider eq "watson" ? "true" : "false" ) ."
 print $fh "use_nibity=". ( $caption_provider eq "nibity" ? "true" : "false" ) ."\n";
 print $fh "use_whisper=". ( $caption_provider eq "whisper" ? "true" : "false" ) ."\n";
 print $fh "use_google=". ( $caption_provider eq "google" ? "true" : "false" ) ."\n";
+print $fh "auto_trim=$auto_trim\n";
 close $fh;
 
 exit 0;
@@ -160,7 +162,7 @@ sub getSeriesDetails($$$) {
     my $series_id = shift;
 
     my $meta;
-    my ($visibility, $course, $caption_provider, $series_acl) = ("vula", "", "", "");
+    my ($visibility, $course, $caption_provider, $auto_trim, $series_acl) = ("vula", "", "", "", "");
 
     attempt {
         $series_acl = getMetadata($mech, "$server/api/series/$series/acl", 0) =~ /ROLE_ANONYMOUS/;
@@ -176,9 +178,10 @@ sub getSeriesDetails($$$) {
     if (defined($meta)) {
         $course = getSeriesField($meta, "course");
         $caption_provider = getSeriesField($meta, "caption-type");
+        $auto_trim = getSeriesField($meta, "auto-trimming");
     }
 
-    return ($visibility, $course, $caption_provider)
+    return ($visibility, $course, $caption_provider, $auto_trim);
 }
 
 # Event Metadata

@@ -23,6 +23,7 @@ if (!defined($filename)) {
 # Series fields
 my $course = "";
 my $caption_provider = "unknown";
+my $auto_trim = "false";
 my $process_completed = 1;
 my $process_result = "none";
 my $is_personal_series = "false";
@@ -58,6 +59,7 @@ try {
                 my $series_title = getSeriesField($series_m, "title");
                 $course = getSeriesField($series_m, "course");
                 $caption_provider = getSeriesField($series_m, "caption-type");
+                $auto_trim = getSeriesField($series_m, "auto-trimming");
                 $is_personal_series = ( begins_with($series_title, "Personal Series") ? "true" : "false" );
 
                 $process_completed = 1;
@@ -82,6 +84,7 @@ try {
     print $fh "use_watson=". ( $caption_provider eq "watson" ? "true" : "false" ) ."\n";
     print $fh "use_nibity=". ( $caption_provider eq "nibity" ? "true" : "false" ) ."\n";
     print $fh "use_whisper=". ( $caption_provider eq "whisper" ? "true" : "false" ) ."\n";
+    print $fh "auto_trim=$auto_trim\n";
     print $fh "is_personal_series=". $is_personal_series ."\n";
     print $fh "metadata_result=" . $final_result . "\n" if ($final_result ne "");
     close $fh;
