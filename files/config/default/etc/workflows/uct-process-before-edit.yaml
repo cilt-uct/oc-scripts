@@ -87,11 +87,25 @@ operations:
   # Transcription / Caption Services
   # Source: ${transcription_src_flavor} - normalized-trimmed
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # - id: include
+  #   if: ${doCaptioning}
+  #   description: Include Captioning
+  #   configurations:
+  #     - workflow-id: uct-include-captioning
+
   - id: include
-    if: ${doCaptioning}
-    description: Include Captioning
+    if: ${doCaptioning} AND ${use_whisper}
+    description: Do captioning with Speech-to-text (Whisper)
     configurations:
-      - workflow-id: uct-include-captioning
+      - workflow-id: uct-include-speechtotext-whisper-transcription
+
+  # auto trim using whisper cutmarks
+  - id: include
+    if: ${auto_trim}
+    description: Include auto trimming using whisper cutmarks
+    configurations:
+      - workflow-id: uct-include-whisper-transcription-cutmarks
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   #       Save, Archive and Cleanup
   # Save workflow properties
