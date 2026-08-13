@@ -1,5 +1,5 @@
 id: uct-process-and-publish
-title: UCT - Process And Publish (incl auto-trim)
+title: UCT - Process And Publish
 tags:
   - upload
   - schedule
@@ -29,6 +29,7 @@ operations:
       - use_watson: false
       - use_nibity: false
       - use_whisper: true
+      - auto_trim: false
       - timetabled: false
       - audio_trim_autotrim: false
       - audio_trim_valid_venue: false
@@ -174,6 +175,7 @@ operations:
       - workflow-id: uct-include-speechtotext-whisper-transcription
 
   - id: include
+    if: ${auto_trim}
     description: Include auto trimming using whisper cutmarks
     configurations:
       - workflow-id: uct-include-whisper-transcription-cutmarks
@@ -184,6 +186,7 @@ operations:
   # Remove the comments that marked the recording for cutting.
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   - id: comment
+    if: ${auto_trim}
     description: Resolve the cutting flag
     configurations:
       - reason: EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.CUTTING
@@ -191,6 +194,7 @@ operations:
       
   # Resolve the consent flag if present (OPENCAST-1836)
   - id: comment
+    if: ${auto_trim}
     description: Resolve the consent flag
     configurations:
       - reason: EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.CONSENT
@@ -203,6 +207,7 @@ operations:
   # channels, unless review for cutting has been selected.
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   - id: include
+    if: ${auto_trim}
     description: Publish the recording
     configurations:
       - workflow-id: uct-partial-publish
@@ -235,7 +240,6 @@ operations:
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Archive
-
   - id: snapshot
     description: Archive publishing information
     configurations:
