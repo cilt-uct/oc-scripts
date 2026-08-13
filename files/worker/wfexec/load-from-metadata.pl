@@ -59,7 +59,8 @@ try {
                 my $series_title = getSeriesField($series_m, "title");
                 $course = getSeriesField($series_m, "course");
                 $caption_provider = getSeriesField($series_m, "caption-type");
-                $auto_trim = getSeriesField($series_m, "auto-trimming");
+                my $raw_auto_trim = getSeriesField($series_m, "auto-trimming");
+                $auto_trim = (defined($raw_auto_trim) && $raw_auto_trim ne '' && $raw_auto_trim ne 'false' && $raw_auto_trim ne '0') ? "true" : "false";
                 $is_personal_series = ( begins_with($series_title, "Personal Series") ? "true" : "false" );
 
                 $process_completed = 1;
