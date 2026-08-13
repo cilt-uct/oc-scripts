@@ -31,6 +31,7 @@ operations:
       - audio_trim_lapel: false
       - audio_trim_ishour: false
       - empty_venue: false
+
   # Check whether this is a timetabled course event and get location
   - id: execute-once
     max-attempts: 3
@@ -45,6 +46,7 @@ operations:
       - output-filename: ttinfo.txt
       - set-workflow-properties: true
       - expected-type: Attachment
+
   # Load workflow properties from metadata: update some workflow properties
   - id: execute-once
     max-attempts: 3
@@ -60,39 +62,37 @@ operations:
       - set-workflow-properties: true
       - expected-type: Attachment
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  #       Finalize ingest
-  #       Make sure all elements are downloaded from external sources,
-  #       inspect, analyze tracks (*/*), apply series access control
-  #       archive */source, and tag metadata for archive and publish.
+  # Finalize ingest
+  # Make sure all elements are downloaded from external sources,
+  # inspect, analyze tracks (*/*), apply series access control
+  # archive */source, and tag metadata for archive and publish.
   - id: include
     description: Finalize upload and ingest
     configurations:
       - workflow-id: uct-partial-ingest
+
   # Check if empty venue
   - id: include
     description: Detect empty venue
     configurations:
       - workflow-id: uct-detect-empty-venue
+
   # Resolve the recording failure comment if this was a missed ingest (OPENCAST-1836)
   - id: comment
     description: Resolve recording failure (if present)
     configurations:
       - reason: EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.RECORDING_FAILURE
       - action: resolve
+      
   - id: include
     description: Include process for empty venue
     configurations:
       - workflow-id: uct-include-process-for-empty-venue
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Transcription / Caption Services
   # Source: ${transcription_src_flavor} - normalized-trimmed
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # - id: include
-  #   if: ${doCaptioning}
-  #   description: Include Captioning
-  #   configurations:
-  #     - workflow-id: uct-include-captioning
-
   - id: include
     if: ${doCaptioning} AND ${use_whisper}
     description: Do captioning with Speech-to-text (Whisper)
@@ -100,7 +100,7 @@ operations:
       - workflow-id: uct-include-speechtotext-whisper-transcription
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  #       Save, Archive and Cleanup
+  # Save, Archive and Cleanup
   # Save workflow properties
   - id: export-wf-properties
     fail-on-error: true
@@ -109,6 +109,7 @@ operations:
     configurations:
       - target-flavor: processing/defaults
       - target-tags: archive
+
   # make sure to save ACL and dublincore
   - id: tag
     exception-handler-workflow: partial-error
@@ -116,6 +117,7 @@ operations:
     configurations:
       - source-flavors: dublincore/*,security/*
       - target-tags: archive
+
   # Archive generated items
   - id: snapshot
     description: Archive all at the end of workflow
