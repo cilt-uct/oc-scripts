@@ -26,6 +26,7 @@ operations:
       - use_nibity: false
       - use_whisper: false
       - timetabled: false
+      - auto_trim: false
       - audio_trim_autotrim: false
       - audio_trim_valid_venue: false
       - audio_trim_lapel: false
