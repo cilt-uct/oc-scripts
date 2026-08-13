@@ -178,7 +178,8 @@ sub getSeriesDetails($$$) {
     if (defined($meta)) {
         $course = getSeriesField($meta, "course");
         $caption_provider = getSeriesField($meta, "caption-type");
-        $auto_trim = getSeriesField($meta, "auto-trimming");
+        my $raw_auto_trim = getSeriesField($meta, "auto-trimming");
+        $auto_trim = (defined($raw_auto_trim) && $raw_auto_trim ne '' && $raw_auto_trim ne 'false' && $raw_auto_trim ne '0') ? "true" : "false";
     }
 
     return ($visibility, $course, $caption_provider, $auto_trim);
