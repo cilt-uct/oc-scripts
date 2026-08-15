@@ -64,7 +64,7 @@ main() {
   if $found_tar; then
 
     # extract the assembly tar file to /opt folder then move content to the correct folder
-    tar -pzxf opencast-dist-*.tar.gz -C $opt && mv opencast-dist-*/* $working/
+    tar -pzxf opencast-dist-*.tar.gz -C "$opt" --warning=no-timestamp && mv "$opt"/opencast-dist-*/* "$working/"
     printf "."
 
     # remove the now empty extract folder
@@ -87,7 +87,7 @@ main() {
     echo " Done."
 
     printf "    Extracting Config / Encoding Profiles ..."
-    tar -pzxf $DEPLOY_DIR/$CONFIG_FILES -C $working/
+    tar -pzxf $DEPLOY_DIR/$CONFIG_FILES -C $working/ --warning=no-timestamp
 
     # Move some workflows back - used by default for some of the processes.
     cp $working/etc/workflows-default/delete.yaml $working/etc/workflows/delete.yaml

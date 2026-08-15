@@ -2,6 +2,10 @@
 #
 # This file is sourced by run.sh and deploy-single.sh
 
+# Enable timing output (set to 1 to see timings)
+TIMING_DEBUG="${TIMING_DEBUG:-0}"
+export TIMING_DEBUG
+
 # Print a human-readable duration
 # Usage: displayTime <seconds>
 displayTime() {
@@ -32,71 +36,134 @@ writeConfiguration() {
   done < $INPUT
 }
 
-# Update a config file for a server
-packageConfigurationFile() {
-    name=$1
-    filename=$2
-    out=$3
+# Create server-specific build config file if missing
+createBuildFile() {
+    local name="$1"
+    local build_file="$FILES/config/build-$name.cfg"
 
-    build_file="$FILES/config/build-$name.cfg"
-    if [ ! -f "$build_file" ]; then
-        echo "deploy_server_name=http://$name.uct.ac.za:8080" > $build_file
-        echo "deploy_server_nodename=$name.uct.ac.za" > $build_file
-        echo "" > $build_file
+    if [[ ! -f "$build_file" ]]; then
+        cat > "$build_file" <<EOF
+deploy_server_name=http://$name.uct.ac.za:8080
+deploy_server_nodename=$name.uct.ac.za
+
+EOF
+    fi
+}
+
+# Process a single configuration file (now no build-file creation)
+packageConfigurationFile() {
+    local name="$1"
+    local filename="$2"
+    local out="$3"
+
+    local build_file="$FILES/config/build-$name.cfg"
+    local default_file="$FILES/config/build-default.cfg"
+    local sed_expr=()
+
+    # Helper function to read a config file and build sed expressions
+    build_sed_expressions() {
+        local input_file="$1"
+        while IFS= read -r line; do
+            # Skip comment lines and empty lines (same as original)
+            [[ $line =~ ^[[:space:]]*# ]] && continue
+            [[ -z "$line" ]] && continue
+
+            # Split on first '='
+            local find replace
+            IFS="=" read -r find replace <<< "$line"
+            # Escape any '/' in find/replace if needed, but keep original behavior
+            # Using ';' as sed delimiter (matches original s;find;replace;)
+            sed_expr+=(-e "/#.*/! s;$find;$replace;")
+        done < "$input_file"
+    }
+
+    # First read build-specific, then default (default overrides)
+    build_sed_expressions "$build_file"
+    build_sed_expressions "$default_file"
+
+    # Apply all substitutions in one go
+    if [[ ${#sed_expr[@]} -gt 0 ]]; then
+        sed -i "${sed_expr[@]}" "$filename"
     fi
 
-    # replace the server specific settings
-    writeConfiguration $build_file $file
-
-    # replace generic
-    writeConfiguration $FILES/config/build-default.cfg $file
-
-    if $out; then
+    if [[ "$out" == "true" ]]; then
         printf "."
     fi
 }
 
-# Prepare config packaging for a server
+# Package all configurations for one server
 packageConfiguration() {
-    name=$1
-    tmp="$TMP_DIR/$name"
+    local name="$1"
+    local tmp="$TMP_DIR/$name"
+    local cfg_dir="$FILES/config/$name"
+    local cfg_file="$FILES/config/conf-$name.cfg"
+    local build_file="$FILES/config/build-$name.cfg"
 
-    if [ "$CONFIG_DIR" != "$name" ]; then
-        cfg_dir="$FILES/config/$name"
-        cfg_file="$FILES/config/conf-$name.cfg"
-        build_file="$FILES/config/build-$name.cfg"
+    # Record overall start
+    local total_start=$(date +%s)
+    local step_start=$total_start
 
-        if [ ! -f "$cfg_file" ]; then
+    if [[ "$CONFIG_DIR" != "$name" ]]; then
+
+        # Create conf-$name.cfg from template if missing
+        if [[ ! -f "$cfg_file" ]]; then
             cp "$FILES/conf-server.template" "$cfg_file"
             sed -i -e "/#.*/! s;NNNN;$name;" "$cfg_file"
         fi
 
-        if [ ! -f "$build_file" ]; then
-            echo "deploy_server_name=http://$name.uct.ac.za:8080" > $build_file
-            echo "deploy_server_nodename=$name.uct.ac.za" > $build_file
-            echo "" > $build_file
+        # Create build file once
+        createBuildFile "$name"
+
+        # Ensure cfg_dir exists
+        if [[ ! -d "$cfg_dir" ]]; then
+            mkdir -p "$cfg_dir/etc" "$cfg_dir/bin"
+            touch "$cfg_dir/etc/.keep" "$cfg_dir/bin/.keep"
         fi
 
-        if [ ! -d "$cfg_dir" ]; then
-            mkdir -p "$cfg_dir/etc"
-            mkdir -p "$cfg_dir/bin"
-            touch "$cfg_dir/etc/.keep"
-            touch "$cfg_dir/bin/.keep"
+        # Prepare temp workspace
+        mkdir -p "$tmp"
+        cp -r "$FILES/config/default/"* "$tmp/"
+        local step_end=$(date +%s)
+        if [[ "$TIMING_DEBUG" -eq 1 ]]; then
+            echo "package $name: copy default took $((step_end - step_start))s" >&2
         fi
+        step_start=$step_end
 
-        mkdir -p $tmp
-        cp -r $FILES/config/default/* $tmp
-        cp -r $FILES/config/$name/* $tmp
+        cp -r "$FILES/config/$name/"* "$tmp/"
+        step_end=$(date +%s)
+        if [[ "$TIMING_DEBUG" -eq 1 ]]; then
+            echo "package $name: copy server-specific took $((step_end - step_start))s" >&2
+        fi
+        step_start=$step_end
 
-        for file in $(find $tmp -type f -type f -not -name ".keep" -not -name "*.jks" -not -name "*.swp")
-        do
-            packageConfigurationFile $name $file false &
-        done
-        wait
+        # Process all files in parallel, limiting concurrency to 4
+        find "$tmp" -type f ! -name ".keep" ! -name "*.jks" ! -name "*.swp" -print0 |
+            xargs -0 -P 4 -I {} bash -c 'packageConfigurationFile "'"$name"'" "{}" false'
+        step_end=$(date +%s)
+        if [[ "$TIMING_DEBUG" -eq 1 ]]; then
+            echo "package $name: file processing (find+xargs) took $((step_end - step_start))s" >&2
+        fi
+        step_start=$step_end
 
-        cd $tmp
-        tar -zcpf $FILES/config/conf-$name.tar.gz .
-        rm -rf $tmp
+        # Archive (use pigz if available for faster compression)
+        cd "$tmp" || return
+        if command -v pigz >/dev/null 2>&1; then
+            tar -cf - . | pigz > "$FILES/config/conf-$name.tar.gz"
+        else
+            tar -zcf "$FILES/config/conf-$name.tar.gz" .
+        fi
+        cd - >/dev/null || return
+        step_end=$(date +%s)
+        if [[ "$TIMING_DEBUG" -eq 1 ]]; then
+            echo "package $name: archiving took $((step_end - step_start))s" >&2
+        fi
+        step_start=$step_end
+
+        # rm -rf "$tmp"
+        local total_end=$(date +%s)
+        if [[ "$TIMING_DEBUG" -eq 1 ]]; then
+            echo "package $name: TOTAL time $((total_end - total_start))s" >&2
+        fi
         printf "."
     fi
 }

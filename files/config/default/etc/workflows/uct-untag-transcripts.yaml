@@ -12,11 +12,13 @@ operations:
           archive,engage-download,generator-type:auto,generator:google-speech,lang:en
       - source-flavors: captions/source
       - target-tags: -engage-download
+
   # Archive the current state of the mediapackage
   - id: snapshot
     description: Archive the current state
     configurations:
       - source-flavors: '*/*'
+
   # Publish updated Google Speech transcript tag
   - id: publish-engage
     exception-handler-workflow: partial-error
@@ -26,6 +28,7 @@ operations:
       - download-source-tags: engage-download
       - strategy: merge
       - check-availability: true
+
   # Clean up work artifacts
   - id: cleanup
     fail-on-error: false

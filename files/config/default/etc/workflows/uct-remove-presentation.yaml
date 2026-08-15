@@ -9,22 +9,26 @@ operations:
     configurations:
       - source-flavor: presentation/source
       - target-flavor: presentation/backup
+
   # untag presentation-source
   - id: tag
     description: Exclude presentation-source from archive
     configurations:
       - source-flavors: presentation/source
       - target-tags: -archive
+
   - id: tag
     description: Include presentation-backup from archive
     configurations:
       - source-flavors: presentation/backup
       - target-tags: +archive
+
   # snapshot
   - id: snapshot
     description: Archive current state of recording
     configurations:
       - source-tags: archive
+
   # clean older snapshots
   - id: asset-delete
     fail-on-error: true
@@ -32,6 +36,7 @@ operations:
     description: Delete from AssetManager
     configurations:
       - keep-last-snapshot: true
+
   # Comment that we cleaned up this recording
   - id: comment
     fail-on-error: false
@@ -40,12 +45,14 @@ operations:
       - description: Removed presentation-source.
       - reason: EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.OTHER
       - action: create
+
   - id: comment
     fail-on-error: false
     description: Comment to say Removed presentation-source (resolve)
     configurations:
       - reason: EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.OTHER
       - action: resolve
+
   # Clean up work artifacts
   - id: cleanup
     fail-on-error: false

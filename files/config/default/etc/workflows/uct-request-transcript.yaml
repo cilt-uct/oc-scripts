@@ -12,6 +12,7 @@ operations:
       - action: create
       - reason: EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.TRANSCRIPT
       - description: Recording has a transcript request.
+
   # Send notification to series owner that a transcript request has been sent to nibity
   - id: execute-once
     max-attempts: 3
@@ -26,6 +27,7 @@ operations:
       - output-filename: series_organizer.txt
       - set-workflow-properties: true
       - expected-type: Attachment
+
   - id: send-email
     fail-on-error: true
     if: ${organizer_email_valid} AND ${get_organizer_success} AND
@@ -40,6 +42,7 @@ operations:
           been submitted
       - body-html-template-file: nibity_request_sent
       - use-html: true
+
   - id: send-email
     fail-on-error: true
     if: ${organizer_email_valid} AND ${get_organizer_success} AND

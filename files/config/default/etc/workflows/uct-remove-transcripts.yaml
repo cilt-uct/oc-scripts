@@ -14,6 +14,7 @@ operations:
       - whisperTranscript: false
       - uploadedTranscript: false
       - languageCode: en-US
+
   # Remove google transcript with language code
   - id: retract-partial
     fail-on-error: false
@@ -22,6 +23,7 @@ operations:
     configurations:
       - retract-flavors: captions/*
       - source-tags: engage-download,generator:google-speech,lang:en
+
   - id: retract-partial
     fail-on-error: false
     if: ${nibityTranscript}
@@ -29,6 +31,7 @@ operations:
     configurations:
       - retract-flavors: captions/*
       - source-tags: engage-download,generator:waywithwords,lang:en
+
   - id: retract-partial
     fail-on-error: false
     if: ${whisperTranscript}
@@ -36,6 +39,7 @@ operations:
     configurations:
       - retract-flavors: captions/*
       - source-tags: engage-download,generator:whisperapi,lang:en
+
   # Remove uploaded transcript with language code
   - id: retract-partial
     fail-on-error: false
@@ -43,6 +47,7 @@ operations:
     description: Retract uploaded transcript from event (with language code)
     configurations:
       - retract-flavors: captions/upload+${languageCode}
+
   # Remove uploaded transcript
   - id: retract-partial
     fail-on-error: false

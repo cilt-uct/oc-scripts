@@ -176,7 +176,7 @@ TODO: Add and review [https://docs.opencast.org/latest/admin/upgrade/](https://d
 | ID | Title | Description | UCT | Tag |
 |----|-------|-------------|-----|-----|
 | partial-cleanup | Cleanup after processing | |:x:| - |
-| partial-watermark | Render watermark into presenter and presentation tracks | |:x:| - |
+| partial-theming-watermark | Render watermark into presenter and presentation tracks | |:x:| - |
 | uct-clean | UCT - Retract and Cleanup | Retract a recording and clean out media files. |:heavy_check_mark:| archive |
 | uct-detect-empty-venue | UCT - Empty venue detection | Run VAD script, to analyse speech segments and in turn identify if venue is empty. | | |
 | uct-discard | UCT - Discard Media | Discard all the media from this event. |:heavy_check_mark:| archive |

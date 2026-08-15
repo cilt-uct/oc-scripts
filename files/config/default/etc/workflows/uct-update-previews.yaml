@@ -17,6 +17,7 @@ operations:
     configurations:
       - thumbnailType: 0
       - thumbnailPosition: 1
+
   # Apply access control lists from series to the mediapackage.
   #       Only runs if Event is linked to Series, SKIPPED if not.
   - id: series
@@ -25,27 +26,33 @@ operations:
     configurations:
       - attach: '*'
       - apply-acl: true
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  #       Prepare work versions of the source material for archive and processing.
-  #       Preview and Publish use Work versions. (*/work)
+  # Prepare work versions of the source material for archive and processing.
+  # Preview and Publish use Work versions. (*/work)
   - id: include
     description: Prepare work version for processing
     configurations:
       - workflow-id: uct-partial-work
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  #       Do the work to prepare for editing. (*/preview)
+  # Do the work to prepare for editing. (*/preview)
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   - id: include
     description: Prepare preview versions for Editing
     configurations:
       - workflow-id: uct-partial-preview
+
   - id: comment
     description: Updated previews and ready for editing
     configurations:
       - description: Updated previews and ready for editing
       - action: create
       - reason: EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.CUTTING
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  #       Save, Archive and Cleanup
+  # Save, Archive and Cleanup
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Save workflow properties
   - id: export-wf-properties
     fail-on-error: true
@@ -54,11 +61,13 @@ operations:
     configurations:
       - target-flavor: processing/defaults
       - target-tags: archive
+
   # Archive generated items
   - id: snapshot
     description: Archive work and preview information
     configurations:
       - source-tags: archive
+
   # Clean up work artifacts
   - id: cleanup
     fail-on-error: false

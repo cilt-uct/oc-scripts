@@ -16,6 +16,7 @@ operations:
       - output-filename: eventinfo.txt
       - set-workflow-properties: true
       - expected-type: Attachment
+
   - id: execute-many
     fail-on-error: true
     exception-handler-workflow: partial-error
@@ -28,6 +29,7 @@ operations:
       - set-workflow-properties: true
       - output-filename: wf.properties
       - expected-type: Attachment
+
   # Run track4k on presenter/source to presenter/tracked ${event_location}
   - id: execute-many
     fail-on-error: true
@@ -42,11 +44,13 @@ operations:
       - target-flavor: presenter/tracked
       - target-tags: archive
       - expected-type: Track
+
   # Archive generated items
   - id: snapshot
     description: Archive work and preview information
     configurations:
       - source-tags: archive
+
   # Clean up work artifacts
   - id: cleanup
     fail-on-error: false

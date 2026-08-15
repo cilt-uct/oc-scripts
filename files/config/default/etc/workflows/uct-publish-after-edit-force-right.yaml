@@ -36,6 +36,7 @@ operations:
       - workProfileChannel_stereo: false
       - workProfileChannel: right
       - result_publish_process: normalized-trimmed
+
   # Tag smil/cutting for later re-use in case of re-publishing of the event
   #          Note that WOH editor will re-use target-smil-flavor instead of adding a new one
   - id: tag
@@ -43,11 +44,13 @@ operations:
     configurations:
       - source-flavors: smil/cutting
       - target-tags: archive
+
   # Archive smil/cutting right now information to ensure we don't loose it in case later operations fail
   - id: snapshot
     description: Archive cutting information
     configurations:
       - source-tags: archive
+
   # Load workflow properties from metadata: update some workflow properties
   - id: execute-once
     max-attempts: 3
@@ -62,9 +65,9 @@ operations:
       - output-filename: metadata_workflow.txt
       - set-workflow-properties: true
       - expected-type: Attachment
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Remove tag for cutting
-
   # Remove the comments that marked the recording for cutting.
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   - id: comment
@@ -72,22 +75,24 @@ operations:
     configurations:
       - reason: EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.CUTTING
       - action: resolve
+
   # Resolve the consent flag if present (OPENCAST-1836)
   - id: comment
     description: Resolve the consent flag
     configurations:
       - reason: EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.CONSENT
       - action: resolve
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  #       Prepare work versions of the source material for archive and processing.
-  #       Preview and Publish use Work versions. (*/work)
+  # Prepare work versions of the source material for archive and processing.
+  # Preview and Publish use Work versions. (*/work)
   - id: include
     description: Prepare work version for processing (${workProfileChannel})
     configurations:
       - workflow-id: uct-partial-work-channel
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Publish
-
   # Encode and publish the recording to the selected publication
   # channels, unless review for cutting has been selected.
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -95,12 +100,13 @@ operations:
     description: Publish the recording
     configurations:
       - workflow-id: uct-partial-publish
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Archive
-
   # Download from external ingest nodes, tag, inspect and and prepare
   # source recording and metadata catalogs.
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
   # Save workflow properties
   - id: export-wf-properties
     fail-on-error: true
@@ -113,6 +119,7 @@ operations:
     description: Archive publishing information
     configurations:
       - source-tags: archive
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Transcription / Caption Services
   # Source: ${transcription_src_flavor} - normalized-trimmed
@@ -122,6 +129,7 @@ operations:
     description: Include Captioning
     configurations:
       - workflow-id: uct-include-captioning
+
   # Clean up work artifacts
   - id: cleanup
     fail-on-error: false

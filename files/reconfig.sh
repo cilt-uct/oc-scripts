@@ -48,7 +48,7 @@ main() {
   if [ -f "$DEPLOY_DIR/$CONFIG_FILES" ]; then
 
     printf "    Extracting Config / Encoding Profiles ..."
-    tar -pzxf $DEPLOY_DIR/$CONFIG_FILES -C $working/
+    tar -pzxf $DEPLOY_DIR/$CONFIG_FILES -C $working/ --warning=no-timestamp
 
     # Move some workflows back - used by default for some of the processes.
     cp $working/etc/workflows-default/delete.yaml $working/etc/workflows/delete.yaml

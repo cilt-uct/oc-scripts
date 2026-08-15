@@ -17,6 +17,7 @@ operations:
       - output-filename: series_organizer.txt
       - set-workflow-properties: true
       - expected-type: Attachment
+
   - id: send-email
     fail-on-error: true
     if: ${organizer_email_valid} AND ${get_organizer_success}
@@ -28,6 +29,7 @@ operations:
       - subject: 'Requesting consent: ${series_title}'
       - body-html-template-file: request_consent
       - use-html: true
+
   # Requesting consent
   - id: comment
     fail-on-error: false
@@ -38,6 +40,7 @@ operations:
           CC: $notification_list'
       - reason: EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.CONSENT
       - action: create
+
   # Requesting consent
   - id: comment
     fail-on-error: false

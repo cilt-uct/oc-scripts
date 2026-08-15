@@ -3,6 +3,12 @@
 source config-dist.sh
 source $(dirname "$0")/lib.sh
 
+SCRIPT_DIR=$(cd "$(dirname "$0")" && pwd)
+ANSIBLE_PLAYBOOK="ansible-playbook"
+if [[ -x "$SCRIPT_DIR/.venv/bin/ansible-playbook" ]]; then
+    ANSIBLE_PLAYBOOK="$SCRIPT_DIR/.venv/bin/ansible-playbook"
+fi
+
 # internal configuration
 CONFIG_DIR="config"
 SRC_VERSION=$(xmlstarlet sel -t -v "/_:project/_:version" $SRC/pom.xml)
@@ -133,7 +139,7 @@ main() {
     if $INSTALL; then
         cd $YML
         echo "Install ALL Packages: ($HOSTS_FILE)"
-        $LIVE && ansible-playbook -i $HOSTS_FILE ansible-install-packages.yml --extra-vars "$extra_vars gitbranch=\"$branch\" gitlog=\"$gitlog\" "
+        $LIVE && "$ANSIBLE_PLAYBOOK" -i $HOSTS_FILE ansible-install-packages.yml --extra-vars "$extra_vars gitbranch=\"$branch\" gitlog=\"$gitlog\" "
         $LIVE && echo $(addDeploymentMarker $production "Install Packages" $gitlog $branch)
     fi
 
@@ -149,14 +155,21 @@ main() {
             rm -rf $FILES/config/default/wfexec/*
             cp -pr $FILES/worker/wfexec/* $FILES/config/default/wfexec/
 
+            # Main loop – process servers with limited concurrency (e.g., 4 at a time)
             echo "    Packaging configurations:"
             printf "       "
-            for name in "${ACTIVE_SERVER_LIST[@]}"; do
-                if [ "$CONFIG_DIR" != "$name" ]; then
-                   packageConfiguration $name &
-                fi
-            done
-            wait
+
+            # Export the functions so subshells can see them
+            export -f packageConfiguration createBuildFile packageConfigurationFile writeConfiguration
+
+            # Export the variables
+            export FILES TMP_DIR CONFIG_DIR
+
+            # Process servers in parallel, max 4 at a time
+            printf "%s\n" "${ACTIVE_SERVER_LIST[@]}" | \
+                xargs -P 4 -I {} bash -c 'packageConfiguration "$@"' _ {}
+
+            printf "\n"
             echo
             echo "    Done."
             echo
@@ -166,7 +179,7 @@ main() {
 
             cd $YML
             echo "Deploy: ($HOSTS_FILE)"
-            $LIVE && ansible-playbook -i $HOSTS_FILE ansible-deploy.yml --extra-vars "$extra_vars gitbranch=\"$branch\" gitlog=\"$gitlog\" "
+            $LIVE && "$ANSIBLE_PLAYBOOK" -i $HOSTS_FILE ansible-deploy.yml --extra-vars "$extra_vars gitbranch=\"$branch\" gitlog=\"$gitlog\" "
             $LIVE && echo $(addDeploymentMarker $production "Deploy" $gitlog $branch)
         fi
 
@@ -175,7 +188,7 @@ main() {
 
             cd $YML
             echo "Reconfigure: ($HOSTS_FILE)"
-            $LIVE && ansible-playbook -i $HOSTS_FILE ansible-reconfig.yml --extra-vars "$extra_vars gitbranch=\"$branch\" gitlog=\"$gitlog\" "
+            $LIVE && "$ANSIBLE_PLAYBOOK" -i $HOSTS_FILE ansible-reconfig.yml --extra-vars "$extra_vars gitbranch=\"$branch\" gitlog=\"$gitlog\" "
             $LIVE && echo $(addDeploymentMarker $production "Reconfigure" $gitlog $branch)
         fi
 
@@ -183,7 +196,7 @@ main() {
 
             cd $YML
             echo "Rollback: ($HOSTS_FILE)"
-            $LIVE && ansible-playbook -i $HOSTS_FILE ansible-rollback.yml --extra-vars "$extra_vars gitbranch=\"$branch\" gitlog=\"$gitlog\" "
+            $LIVE && "$ANSIBLE_PLAYBOOK" -i $HOSTS_FILE ansible-rollback.yml --extra-vars "$extra_vars gitbranch=\"$branch\" gitlog=\"$gitlog\" "
             $LIVE && echo $(addDeploymentMarker $production "Rollback" $gitlog $branch)
         fi
 
@@ -199,7 +212,7 @@ main() {
 
     if $LTI; then
 
-        #hope that TMP_DIR != '/'
+        # Hope that TMP_DIR != '/'
         rm -rf $TMP_DIR/*
 
         echo "Creating tarball for LTI"
@@ -211,13 +224,14 @@ main() {
         #Versioning of static assets (e.g. css, js)
         find . -type f -print0 | xargs -0 sed -i -e "s/%version%/$current_date/g"
 
-        tar -zcf ../lti.tar.gz .
+        tar -zcf $FILES/lti.tar.gz .
 
         rm -rf $TMP_DIR/*
 
         cd $YML
-        $LIVE && ansible-playbook -i $HOSTS_FILE ansible-lti.yml --extra-vars "$extra_vars gitbranch=\"$branch\" gitlog=\"$gitlog\" "
+        $LIVE && "$ANSIBLE_PLAYBOOK" -i $HOSTS_FILE ansible-lti.yml --extra-vars "$extra_vars gitbranch=\"$branch\" gitlog=\"$gitlog\" "
         $LIVE && echo $(addDeploymentMarker $production "LTI" $gitlog $branch)
+        rm $FILES/lti.tar.gz
     fi
 
     if $VERSION; then
@@ -236,6 +250,7 @@ main() {
                 file=$TMP_DIR/conf-$name.cfg
                 cp $FILES/check.template $file
 
+                createBuildFile $name
                 packageConfigurationFile $name $file true &
             fi
         done
@@ -245,7 +260,7 @@ main() {
         echo
 
         cd $YML
-        ansible-playbook -i $HOSTS_FILE ansible-check.yml
+        "$ANSIBLE_PLAYBOOK" -i $HOSTS_FILE ansible-check.yml
 
         # clean out tmp directory
         rm -rf $TMP_DIR/*
@@ -254,25 +269,25 @@ main() {
     if $STOP; then
 
         cd $YML
-        $LIVE && ansible-playbook -i $HOSTS_FILE ansible-stop_service.yml
+        $LIVE && "$ANSIBLE_PLAYBOOK" -i $HOSTS_FILE ansible-stop_service.yml
     fi
 
     if $STARTUP && [ $compiled -eq 1 ]; then
 
         cd $YML
-        $LIVE && ansible-playbook -i $HOSTS_FILE ansible-start_service.yml
+        $LIVE && "$ANSIBLE_PLAYBOOK" -i $HOSTS_FILE ansible-start_service.yml
     fi
 
     if $ALIAS; then
 
         cd $YML
-        $LIVE && ansible-playbook -i $HOSTS_FILE ansible-alias.yml
+        $LIVE && "$ANSIBLE_PLAYBOOK" -i $HOSTS_FILE ansible-alias.yml
     fi
 
     if $TEST; then
         cd $YML
         echo "Deploy Testing Script: ($HOSTS_FILE)"
-        $LIVE && ansible-playbook -i $HOSTS_FILE ansible-testing.yml --extra-vars "$extra_vars gitbranch=\"$branch\" gitlog=\"$gitlog\" "
+        $LIVE && "$ANSIBLE_PLAYBOOK" -i $HOSTS_FILE ansible-testing.yml --extra-vars "$extra_vars gitbranch=\"$branch\" gitlog=\"$gitlog\" "
     fi
 
     if $TRACK4K; then
@@ -281,7 +296,7 @@ main() {
 
         cd $YML
         echo "Deploy Track4K: ($HOSTS_FILE)"
-        $LIVE && ansible-playbook -i $HOSTS_FILE ansible-track4k.yml --extra-vars "$extra_vars gitbranch=\"$track_branch\" gitlog=\"$track_log\" "
+        $LIVE && "$ANSIBLE_PLAYBOOK" -i $HOSTS_FILE ansible-track4k.yml --extra-vars "$extra_vars gitbranch=\"$track_branch\" gitlog=\"$track_log\" "
         $LIVE && echo $(addDeploymentMarker $production "Track4K" $track_log $track_branch)
     fi
 
@@ -291,7 +306,7 @@ main() {
 
         cd $YML
         echo "Deploy Empty Venue: ($HOSTS_FILE)"
-        $LIVE && ansible-playbook -i $HOSTS_FILE ansible-emptyvenuedetector.yml --extra-vars "$extra_vars gitbranch=\"$empty_branch\" gitlog=\"$empty_log\" "
+        $LIVE && "$ANSIBLE_PLAYBOOK" -i $HOSTS_FILE ansible-emptyvenuedetector.yml --extra-vars "$extra_vars gitbranch=\"$empty_branch\" gitlog=\"$empty_log\" "
         $LIVE && echo $(addDeploymentMarker $production "EmptyVenueDetect" $empty_log $empty_branch)
     fi
 
@@ -301,21 +316,21 @@ main() {
 
         cd $YML
         echo "Deploy Audio Trim Point Detector: ($HOSTS_FILE)"
-        $LIVE && ansible-playbook -i $HOSTS_FILE ansible-trimpointdetector.yml --extra-vars "$extra_vars gitbranch=\"$trim_branch\" gitlog=\"$trim_log\" "
+        $LIVE && "$ANSIBLE_PLAYBOOK" -i $HOSTS_FILE ansible-trimpointdetector.yml --extra-vars "$extra_vars gitbranch=\"$trim_branch\" gitlog=\"$trim_log\" "
         $LIVE && echo $(addDeploymentMarker $production "AudioTrimPoint" $trim_log $trim_branch)
     fi
 
     if $OCR; then
         cd $YML
         echo "Deploy OCR: ($HOSTS_FILE)"
-        $LIVE && ansible-playbook -i $HOSTS_FILE ansible-deploy-ocr.yml --extra-vars "$extra_vars gitbranch=\"$branch\" gitlog=\"$gitlog\" "
+        $LIVE && "$ANSIBLE_PLAYBOOK" -i $HOSTS_FILE ansible-deploy-ocr.yml --extra-vars "$extra_vars gitbranch=\"$branch\" gitlog=\"$gitlog\" "
         $LIVE && echo $(addDeploymentMarker $production "OCR" $gitlog $branch)
     fi
 
     if $SOX; then
         cd $YML
         echo "Deploy Sox: ($HOSTS_FILE)"
-        $LIVE && ansible-playbook -i $HOSTS_FILE ansible-deploy-sox.yml --extra-vars "$extra_vars gitbranch=\"$branch\" gitlog=\"$gitlog\" "
+        $LIVE && "$ANSIBLE_PLAYBOOK" -i $HOSTS_FILE ansible-deploy-sox.yml --extra-vars "$extra_vars gitbranch=\"$branch\" gitlog=\"$gitlog\" "
         $LIVE && echo $(addDeploymentMarker $production "Sox" $gitlog $branch)
     fi
 
@@ -608,7 +623,7 @@ cp $FILES/dbservers.template group_vars/dbservers
 cp $FILES/all.template group_vars/all
 cp $FILES/shell_variable.template $FILES/shell_variable.sh
 
-writeConfiguration "$DEPLOY_CFG_FOLDER/deploy-$DEPLOY_TYPE.cfg" files/config/build-default.cfg
+writeConfiguration "$DEPLOY_CFG_FOLDER/deploy-$DEPLOY_TYPE.cfg" $FILES/config/build-default.cfg
 writeConfiguration "$DEPLOY_CFG_FOLDER/deploy-$DEPLOY_TYPE.cfg" group_vars/dbservers
 writeConfiguration "$DEPLOY_CFG_FOLDER/deploy-$DEPLOY_TYPE.cfg" group_vars/all
 writeConfiguration "$DEPLOY_CFG_FOLDER/deploy-$DEPLOY_TYPE.cfg" $FILES/shell_variable.sh
@@ -627,3 +642,9 @@ cd $CURRENT_DIR
 
 # run main code
 main
+
+# Post clean-up of temporary files
+rm -rf $TMP_DIR/*
+find "$FILES/config" -type f -name "*.tar.gz" -delete
+rm $FILES/config/build-default.cfg
+rm $FILES/shell_variable.sh

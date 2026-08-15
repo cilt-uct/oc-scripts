@@ -11,12 +11,14 @@ operations:
     description: Applying default configuration values
     configurations:
       - downloadSourceflavorsExist: false
+
   # Make sure all elements are downloaded from external sources and
   # inside of Opencast, Inspect and Apply Series Access Control
   - id: include
     description: Finalize upload and ingest
     configurations:
       - workflow-id: uct-partial-ingest
+
   # Archive with previews generated
   - id: export-wf-properties
     fail-on-error: true
@@ -25,10 +27,12 @@ operations:
     configurations:
       - target-flavor: processing/defaults
       - target-tags: archive
+
   - id: snapshot
     description: Archive work and preview information
     configurations:
       - source-tags: archive
+
   # Clean up work artifacts
   - id: cleanup
     fail-on-error: false

@@ -57,6 +57,7 @@ configuration_panel_json: |2-
           ]
 
 operations:
+
   # Apply the default workflow configuration
   - id: defaults
     description: Applying default configuration values
@@ -64,6 +65,7 @@ operations:
       - usePresenter: true
       - usePresentation: true
       - usePresentation2: true
+
   # None : 0|0|0
   - id: defaults
     if: NOT(${usePresenter}) AND NOT(${usePresentation}) AND
@@ -71,48 +73,56 @@ operations:
     description: Use everything
     configurations:
       - copy_flavor: none/none
+
   # 0|0|1
   - id: defaults
     if: NOT(${usePresenter}) AND NOT(${usePresentation}) AND ${usePresentation2}
     description: Use everything
     configurations:
       - copy_flavor: presentation2/source
+
   # 0|1|0
   - id: defaults
     if: NOT(${usePresenter}) AND ${usePresentation} AND NOT(${usePresentation2})
     description: Use everything
     configurations:
       - copy_flavor: presentation/source
+
   # 0|1|1
   - id: defaults
     if: NOT(${usePresenter}) AND ${usePresentation} AND ${usePresentation2}
     description: Use everything
     configurations:
       - copy_flavor: presentation/source,presentation2/source
+
   # 1|0|0
   - id: defaults
     if: ${usePresenter} AND NOT(${usePresentation}) AND NOT(${usePresentation2})
     description: Use everything
     configurations:
       - copy_flavor: presenter/source
+
   # 1|0|1
   - id: defaults
     if: ${usePresenter} AND NOT(${usePresentation}) AND ${usePresentation2}
     description: Use everything
     configurations:
       - copy_flavor: presenter/source,presentation2/source
+
   # 1|1|0
   - id: defaults
     if: ${usePresenter} AND ${usePresentation} AND NOT(${usePresentation2})
     description: Use everything
     configurations:
       - copy_flavor: presenter/source,presentation/source
+
   # ALL : 1|1|1
   - id: defaults
     if: ${usePresenter} AND ${usePresentation} AND ${usePresentation2}
     description: Use everything
     configurations:
       - copy_flavor: '*/*'
+
   # Create the new events
   - id: duplicate-event
     exception-handler-workflow: partial-error
@@ -128,14 +138,7 @@ operations:
           org.opencastproject.assetmanager.security,org.opencastproject.workflow.configuration
       - no-suffix: ${noCopySuffix}
       - copy-number-prefix: copy
-  # To activate and test post OC14 upgrade
-  # <operation
-  #             id="start-workflow">
-  #             <configurations>
-  #                 <configuration key="media-packages">${duplicate_media_package_ids}</configuration>
-  #                 <configuration key="workflow-definition">fast</configuration>
-  #             </configurations>
-  #         </operation>
+
   # Clean up work artifacts
   - id: cleanup
     fail-on-error: false
@@ -143,7 +146,7 @@ operations:
     configurations:
       # On systems with shared workspace or working file repository
       # you want to set this option to false.
-      - delete-external: false
+      - delete-external: true
       # FixMe Don't clean up ACLs until workflow service no longer looks for them in the WFR.
       # ACLs are required again when working through ActiveMQ messages
       - preserve-flavors: dublincore/*,security/*
