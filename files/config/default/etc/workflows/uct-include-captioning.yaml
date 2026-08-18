@@ -42,9 +42,9 @@ operations:
   # and ${audio_trim_lapel}
   - id: include
     if: ${use_whisper}
-    description: Do captioning with Whisper API
+    description: Do captioning with Speech-to-text (Whisper)
     configurations:
-      - workflow-id: uct-include-transcription-whisper
+      - workflow-id: uct-include-speechtotext-whisper-transcription
 
   - id: include
     if: NOT ${use_whisper} AND ${use_google}
