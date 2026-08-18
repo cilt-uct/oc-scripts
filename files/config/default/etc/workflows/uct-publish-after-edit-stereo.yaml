@@ -11,6 +11,7 @@ operations:
       - workProfileChannel_right: false
       - workProfileChannel_stereo: true
       - workProfileChannel: stereo
+
   - id: include
     description: Process publish - stereo
     configurations:

@@ -30,7 +30,7 @@ operations:
       - audio_trim_autotrim: false
       - audio_trim_valid_venue: false
       - audio_trim_lapel: false
-      - audio_trim_ishour: false
+      - audio_trim_is_hour: false
       - empty_venue: false
 
   # Check whether this is a timetabled course event and get location
@@ -62,6 +62,7 @@ operations:
       - output-filename: metadata_workflow.txt
       - set-workflow-properties: true
       - expected-type: Attachment
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Finalize ingest
   # Make sure all elements are downloaded from external sources,
@@ -84,7 +85,7 @@ operations:
     configurations:
       - reason: EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.RECORDING_FAILURE
       - action: resolve
-      
+
   - id: include
     description: Include process for empty venue
     configurations:

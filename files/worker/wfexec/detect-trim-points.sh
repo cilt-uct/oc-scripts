@@ -4,7 +4,7 @@
 ## (see https://github.com/cilt-uct/TrimPointDetector for explanation)
 # audio_trim_duration=3300000
 # audio_trim_autotrim=false
-# audio_trim_ishour=true
+# audio_trim_is_hour=true
 # audio_trim_good_start=true
 # audio_trim_good_end=true
 # audio_trim_detected=24-3089-3252-3254

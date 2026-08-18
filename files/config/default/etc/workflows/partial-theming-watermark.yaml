@@ -1,59 +1,66 @@
-id: partial-watermark
-title: Render watermark
-tags: []
+id: partial-theming-watermark
+title: Render watermark into trimmed video (UCT)
 description: |-
   Render watermark into presenter and presentation tracks
 operations:
+  # Replace trimmed with branded variants
+  - id: tag
+    description: Select tracks for watermarking
+    configurations:
+      - source-flavors: 'presenter/trimmed,presentation/trimmed,presentation2/trimmed'
+      - target-flavor: '*/branding'
+
   - id: analyze-tracks
     exception-handler-workflow: partial-error
     description: Analyze trimmed tracks
     configurations:
       - source-flavor: '*/trimmed'
+
+  # Render watermark into presenter and presentation tracks
   - id: composite
-    description: Render watermark into presenter track
     if: ${presenter_trimmed_video}
-    fail-on-error: true
     exception-handler-workflow: partial-error
+    description: Render watermark into presenter track
     configurations:
-      - source-flavor-lower: presenter/trimmed
+      - source-flavor-lower: presenter/branding
       - source-flavor-upper: not/available
       - source-flavor-watermark: branding/watermark
       - encoding-profile: composite.http
-      - target-flavor: presenter/branded
+      - target-flavor: presenter/trimmed
       - output-resolution: lower
-      - output-background: '0x000000FF'
+      - output-background: 0x000000FF
       - layout-single: |-
           {"horizontalCoverage":1.0,"anchorOffset":{"referring":{"left":1.0,"top":0.0},"reference":{"left":1.0,"top":0.0},"offset":{"x":0,"y":0}}};
-                      ${theme_watermark_layout_variable}
+                    ${theme_watermark_layout_variable}
+
   - id: composite
-    description: Render watermark into presentation track
     if: ${presentation_trimmed_video}
-    fail-on-error: true
     exception-handler-workflow: partial-error
+    description: Render watermark into presentation track
     configurations:
-      - source-flavor-lower: presentation/trimmed
+      - source-flavor-lower: presentation/branding
       - source-flavor-upper: not/available
       - source-flavor-watermark: branding/watermark
       - encoding-profile: composite.http
-      - target-flavor: presentation/branded
+      - target-flavor: presentation/trimmed
       - output-resolution: lower
-      - output-background: '0x000000FF'
+      - output-background: 0x000000FF
       - layout-single: |-
           {"horizontalCoverage":1.0,"anchorOffset":{"referring":{"left":1.0,"top":0.0},"reference":{"left":1.0,"top":0.0},"offset":{"x":0,"y":0}}};
-                      ${theme_watermark_layout_variable}
+                    ${theme_watermark_layout_variable}
+
   - id: composite
-    description: Render watermark into presentation2 track
     if: ${presentation2_trimmed_video}
-    fail-on-error: true
     exception-handler-workflow: partial-error
+    description: Render watermark into presentation2 track
     configurations:
-      - source-flavor-lower: presentation2/trimmed
+      - source-flavor-lower: presentation2/branding
       - source-flavor-upper: not/available
       - source-flavor-watermark: branding/watermark
       - encoding-profile: composite.http
-      - target-flavor: presentation/branded
+      - target-flavor: presentation2/trimmed
       - output-resolution: lower
-      - output-background: '0x000000FF'
+      - output-background: 0x000000FF
       - layout-single: |-
           {"horizontalCoverage":1.0,"anchorOffset":{"referring":{"left":1.0,"top":0.0},"reference":{"left":1.0,"top":0.0},"offset":{"x":0,"y":0}}};
-                      ${theme_watermark_layout_variable}
+                    ${theme_watermark_layout_variable}

@@ -4,7 +4,6 @@ tags: []
 operations:
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Encode for publication to feeds
-
   # Encode audio and video formats to the distribution formats that
   # are required by the feeds publication channel.
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -12,14 +11,15 @@ operations:
     description: Include publishing for downloads
     configurations:
       - workflow-id: uct-partial-publish-downloads
+
   - id: tag
     description: Tagging metadata catalogs for archival and publication
     configurations:
       - source-flavors: dublincore/*
       - target-tags: +archive,+engage-download,+rss,+atom
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Archive
-
   # Download from external ingest nodes, tag, inspect and and prepare
   # source recording and metadata catalogs.
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -28,6 +28,7 @@ operations:
     description: Archive publishing information
     configurations:
       - source-tags: archive
+
   # Clean up work artifacts
   - id: cleanup
     fail-on-error: false

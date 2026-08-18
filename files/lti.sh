@@ -40,14 +40,14 @@ main() {
 
     printf "    Extracting $DEPLOY_DIR/$CONFIG_FILES as $USER"
 
-    tar -zxf $DEPLOY_DIR/$CONFIG_FILES -C $lti/
+    tar -zxf $DEPLOY_DIR/$CONFIG_FILES -C $lti/ --warning=no-timestamp
 
     chown -R $USER:$USER $lti
 
-    echo "    Cleaning..."
-    rm lti.tar.gz
-    rm lti.cfg
-    rm lti.sh
+    echo "    Cleaning up deployment..."
+    rm $DEPLOY_DIR/lti.tar.gz
+    rm $DEPLOY_DIR/lti.cfg
+    rm $DEPLOY_DIR/lti.sh
 
     echo " Done."
   else

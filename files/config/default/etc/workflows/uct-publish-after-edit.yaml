@@ -36,46 +36,46 @@ operations:
       - workProfileChannel_stereo: false
       - result_publish_process: normalized-trimmed
       - flipVideoHoriz: false
+
   - id: defaults
     if: ${workProfileChannel_left} AND NOT ${flipVideoHoriz}
     description: Use left audio channel
     configurations:
       - workProfileChannel: left
+
   - id: defaults
     if: ${workProfileChannel_left} AND ${flipVideoHoriz}
     description: Use left audio channel and flip
     configurations:
       - workProfileChannel: left-hflip
+
   - id: defaults
     if: ${workProfileChannel_right} AND NOT ${flipVideoHoriz}
     description: Use right audio channel
     configurations:
       - workProfileChannel: right
+
   - id: defaults
     if: ${workProfileChannel_right} AND ${flipVideoHoriz}
     description: Use right audio channel and flip
     configurations:
       - workProfileChannel: right-hflip
+
   - id: defaults
     if: ${workProfileChannel_stereo} AND NOT ${flipVideoHoriz}
     description: Use stereo
     configurations:
       - workProfileChannel: stereo
+
   - id: defaults
     if: ${workProfileChannel_stereo} AND ${flipVideoHoriz}
     description: Use stereo and flip
     configurations:
       - workProfileChannel: stereo-hflip
+
   # load the values from before
-  # operation
-  #       id="import-wf-properties"
-  #       fail-on-error="true"
-  #       exception-handler-workflow="partial-error"
-  #       description="Load processing settings">
-  #       <configurations>
-  #         <configuration key="source-flavor">processing/defaults</configuration>
-  #       </configurations>
-  #     </operation
+  # operation id="import-wf-properties"
+
   # Tag smil/cutting for later re-use in case of re-publishing of the event
   #          Note that WOH editor will re-use target-smil-flavor instead of adding a new one
   - id: tag
@@ -83,11 +83,13 @@ operations:
     configurations:
       - source-flavors: smil/cutting
       - target-tags: archive
+
   # Archive smil/cutting right now information to ensure we don't loose it in case later operations fail
   - id: snapshot
     description: Archive cutting information
     configurations:
       - source-tags: archive
+
   # Load workflow properties from metadata: update some workflow properties
   - id: execute-once
     max-attempts: 3
@@ -102,9 +104,9 @@ operations:
       - output-filename: metadata_workflow.txt
       - set-workflow-properties: true
       - expected-type: Attachment
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Remove tag for cutting
-
   # Remove the comments that marked the recording for cutting.
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   - id: comment
@@ -112,22 +114,24 @@ operations:
     configurations:
       - reason: EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.CUTTING
       - action: resolve
+
   # Resolve the consent flag if present (OPENCAST-1836)
   - id: comment
     description: Resolve the consent flag
     configurations:
       - reason: EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.CONSENT
       - action: resolve
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  #       Prepare work versions of the source material for archive and processing.
-  #       Preview and Publish use Work versions. (*/work)
+  # Prepare work versions of the source material for archive and processing.
+  # Preview and Publish use Work versions. (*/work)
   - id: include
     description: Prepare work version for processing (${workProfileChannel})
     configurations:
       - workflow-id: uct-partial-work-channel
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Publish
-
   # Encode and publish the recording to the selected publication
   # channels, unless review for cutting has been selected.
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -135,9 +139,9 @@ operations:
     description: Publish the recording
     configurations:
       - workflow-id: uct-partial-publish
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Republish metadata
-
   # Fixes issue (OPENCAST-3340) where recordings remained listed in
   # the original personal series after being moved.
   # Republishing metadata again resolves the inconsistency.
@@ -146,9 +150,10 @@ operations:
   #   description: Republish metadata
   #   configurations:
   #     - workflow-id: republish-metadata
+
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Archive
-
   # Download from external ingest nodes, tag, inspect and and prepare
   # source recording and metadata catalogs.
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -160,10 +165,12 @@ operations:
     configurations:
       - target-flavor: processing/defaults
       - target-tags: archive
+
   - id: snapshot
     description: Archive publishing information
     configurations:
       - source-tags: archive
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Transcription / Caption Services
   # Source: ${transcription_src_flavor} - normalized-trimmed
@@ -173,6 +180,7 @@ operations:
     description: Include Captioning
     configurations:
       - workflow-id: uct-include-captioning
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Clean up work artifacts
   - id: cleanup

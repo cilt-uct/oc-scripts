@@ -14,6 +14,7 @@ operations:
       - encoding-profile: audio.wav
       # If there is more than one file that match the source-tags, use only the first one
       - process-first-match-only: true
+
   # Analyze Tracks
   - id: analyze-tracks
     fail-on-error: false
@@ -21,6 +22,7 @@ operations:
     description: 'Analyze: Trim/Detect'
     configurations:
       - source-flavor: trim/detect
+
   # Analyze Tracks
   - id: execute-once
     max-attempts: 3
@@ -36,12 +38,13 @@ operations:
       - output-filename: segments.txt
       - set-workflow-properties: true
       - expected-type: Attachment
+
   # Create a smil/cutting description file if the recording has segments and is less than 01:12:00
   - id: execute-once
     max-attempts: 3
     retry-strategy: retry
     fail-on-error: true
-    if: ${trim_detect_media} AND ${trim_detect_audio} AND ${audio_trim_ishour}
+    if: ${trim_detect_media} AND ${trim_detect_audio} AND ${audio_trim_is_hour}
     exception-handler-workflow: partial-error
     description: Construct SMIL
     configurations:

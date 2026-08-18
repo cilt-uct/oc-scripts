@@ -10,6 +10,7 @@ operations:
       - description: Recording has failed with a partial error.
       - reason: EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.PROCESSING_FAILURE
       - action: create
+
   # Archive the current state of the media package
   - id: snapshot
     fail-on-error: false
@@ -17,6 +18,7 @@ operations:
     configurations:
       - source-flavors: '*/source,dublincore/*,security/*,captions/*'
       - source-tags: archive
+
   # Clean up the temporary files from the working file repository
   - id: cleanup
     fail-on-error: false

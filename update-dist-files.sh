@@ -308,7 +308,7 @@ cp $FILES/dbservers.template group_vars/dbservers
 cp $FILES/all.template group_vars/all
 cp $FILES/shell_variable.template $FILES/shell_variable.sh
 
-writeConfiguration "$DEPLOY_CFG_FOLDER/deploy-$DEPLOY_TYPE.cfg" files/config/build-default.cfg
+writeConfiguration "$DEPLOY_CFG_FOLDER/deploy-$DEPLOY_TYPE.cfg" $FILES/config/build-default.cfg
 writeConfiguration "$DEPLOY_CFG_FOLDER/deploy-$DEPLOY_TYPE.cfg" group_vars/dbservers
 writeConfiguration "$DEPLOY_CFG_FOLDER/deploy-$DEPLOY_TYPE.cfg" group_vars/all
 writeConfiguration "$DEPLOY_CFG_FOLDER/deploy-$DEPLOY_TYPE.cfg" $FILES/shell_variable.sh
@@ -320,25 +320,17 @@ sed -i -e "/#.*/! s;tmpl_folder_script;$YML/;" group_vars/all
 # source the shell variables that we are going to use
 source $FILES/shell_variable.sh
 
-  # Read the hosts file for the profile and populate a list of servers that will be
-  # used to build configuration files for and deploy/reconfigure
-  while read line
-  do
-      [[ $line = \#* ]] && continue
-
-      if [ ! -z "$line" ]; then
-
-        if [[ $line != \[* ]]; then
-           name=$( echo $line | cut -d'.' -f 1)
-           ACTIVE_LIST+=($name)
-        fi
-      fi
-
-  done < "$HOSTS_FILE"
-
-  ACTIVE_SERVER_LIST=($(echo "${ACTIVE_LIST[@]}" | tr ' ' '\n' | sort -u | tr '\n' ' '))
+# Read the hosts file for the profile and populate a list of servers that will be
+# used to build configuration files for and deploy/reconfigure
+ACTIVE_SERVER_LIST=($(grep -vE '^[[:space:]]*(#|$|\[.*\]|.*=)' "$HOSTS_FILE" | cut -d. -f1 | sort -u))
 
 cd $CURRENT_DIR
 
 # run main code
 main "$DEPLOY_CFG_FOLDER/deploy-$DEPLOY_TYPE.cfg"
+
+# Post clean-up of temporary files
+rm -rf $TMP_DIR/*
+find "$FILES/config" -type f -name "*.tar.gz" -delete
+rm $FILES/config/build-default.cfg
+rm $FILES/shell_variable.sh
