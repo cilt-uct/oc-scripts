@@ -35,6 +35,7 @@ operations:
       - thumbnailPosition: 1
       - doCaptioning: true
       - isUpload: true
+      - transcription_src_flavor: delivery
 
   - id: inspect
     exception-handler-workflow: partial-error
