@@ -34,6 +34,8 @@ operations:
       - thumbnailType: 0
       - thumbnailPosition: 1
       - doCaptioning: true
+      - use_nibity: false
+      - use_whisper: false
       - isUpload: true
       - transcription_src_flavor: delivery
 
@@ -291,10 +293,16 @@ operations:
   # Source: ${transcription_src_flavor} - delivery
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   - id: include
-    if: ${doCaptioning}
-    description: Include Captioning
+    if: ${use_nibity}
+    description: Do captioning with Way with Words (nibity)
     configurations:
-      - workflow-id: uct-include-captioning
+      - workflow-id: uct-include-transcription-nibity
+
+  - id: include
+    if: NOT ${use_nibity}
+    description: Do captioning with Speech-to-text (Whisper)
+    configurations:
+      - workflow-id: uct-include-speechtotext-whisper-transcription
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Publish to publication channels

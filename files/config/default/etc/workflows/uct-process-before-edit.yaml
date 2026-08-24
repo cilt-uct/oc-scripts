@@ -97,7 +97,7 @@ operations:
   # Source: ${transcription_src_flavor} - normalized-trimmed
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   - id: include
-    if: ${doCaptioning} AND ${use_whisper}
+    if: NOT ${use_nibity}
     description: Do captioning with Speech-to-text (Whisper)
     configurations:
       - workflow-id: uct-include-speechtotext-whisper-transcription
