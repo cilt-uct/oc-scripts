@@ -48,6 +48,8 @@ operations:
       - source-flavors: '*/*'
   # Attach caption/transcript
   - id: nibity-attach-transcription
+    max-attempts: 3
+    retry-strategy: retry
     fail-on-error: true
     exception-handler-workflow: partial-error
     description: Attach captions/transcription
