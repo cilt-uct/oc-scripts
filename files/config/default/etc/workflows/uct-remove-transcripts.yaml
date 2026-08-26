@@ -16,13 +16,13 @@ operations:
       - languageCode: en-US
 
   # Remove google transcript with language code
-  - id: retract-partial
-    fail-on-error: false
-    if: ${googleTranscript}
-    description: Retract Google Speech transcript from event
-    configurations:
-      - retract-flavors: captions/*
-      - source-tags: engage-download,generator:google-speech,lang:en
+  # - id: retract-partial
+  #   fail-on-error: false
+  #   if: ${googleTranscript}
+  #   description: Retract Google Speech transcript from event
+  #   configurations:
+  #     - retract-flavors: captions/*
+  #     - source-tags: engage-download,generator:google-speech,lang:en
 
   - id: retract-partial
     fail-on-error: false

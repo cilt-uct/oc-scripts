@@ -1,69 +1,69 @@
-id: uct-transcript-watson
-title: Submit trimmed audio for Watson Transcription
-tags:
-  - archive
-description: |-
-  Submit trimmed audio for Watson Transcription
-operations:
-  # Apply the default workflow configuration
-  - id: defaults
-    description: Applying default configuration values
-    configurations:
-      - workProfileChannel_left: true
-      - workProfileChannel_right: false
-      - workProfileChannel_stereo: false
-      - transcription_src_flavor: trimmed
+# id: uct-transcript-watson
+# title: Submit trimmed audio for Watson Transcription
+# tags:
+#   - archive
+# description: |-
+#   Submit trimmed audio for Watson Transcription
+# operations:
+#   # Apply the default workflow configuration
+#   - id: defaults
+#     description: Applying default configuration values
+#     configurations:
+#       - workProfileChannel_left: true
+#       - workProfileChannel_right: false
+#       - workProfileChannel_stereo: false
+#       - transcription_src_flavor: trimmed
 
-  - id: defaults
-    if: ${workProfileChannel_left}
-    description: Use left audio channel
-    configurations:
-      - workProfileChannel: left
+#   - id: defaults
+#     if: ${workProfileChannel_left}
+#     description: Use left audio channel
+#     configurations:
+#       - workProfileChannel: left
 
-  - id: defaults
-    if: ${workProfileChannel_right}
-    description: Use right audio channel
-    configurations:
-      - workProfileChannel: right
+#   - id: defaults
+#     if: ${workProfileChannel_right}
+#     description: Use right audio channel
+#     configurations:
+#       - workProfileChannel: right
 
-  - id: defaults
-    if: ${workProfileChannel_stereo}
-    description: Use stereo
-    configurations:
-      - workProfileChannel: stereo
+#   - id: defaults
+#     if: ${workProfileChannel_stereo}
+#     description: Use stereo
+#     configurations:
+#       - workProfileChannel: stereo
 
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Prepare work versions of the source material for archive and processing.
-  # Preview and Publish use Work versions. (*/work)
-  #     In: */source
-  #    Out: */work
-  - id: include
-    description: Prepare work version for processing (${workProfileChannel})
-    configurations:
-      - workflow-id: uct-partial-work-channel
+#   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#   # Prepare work versions of the source material for archive and processing.
+#   # Preview and Publish use Work versions. (*/work)
+#   #     In: */source
+#   #    Out: */work
+#   - id: include
+#     description: Prepare work version for processing (${workProfileChannel})
+#     configurations:
+#       - workflow-id: uct-partial-work-channel
 
-  - id: editor
-    fail-on-error: true
-    exception-handler-workflow: partial-error
-    description: Cut the recording according to the edit decision list
-    configurations:
-      - source-flavors: '*/work'
-      - smil-flavors: smil/cutting
-      - target-smil-flavor: smil/cutting
-      - target-flavor-subtype: trimmed
-      - interactive: false
+#   - id: editor
+#     fail-on-error: true
+#     exception-handler-workflow: partial-error
+#     description: Cut the recording according to the edit decision list
+#     configurations:
+#       - source-flavors: '*/work'
+#       - smil-flavors: smil/cutting
+#       - target-smil-flavor: smil/cutting
+#       - target-flavor-subtype: trimmed
+#       - interactive: false
 
-  - id: include
-    description: Do captioning with IBM Watson
-    configurations:
-      - workflow-id: uct-include-transcription-watson
+#   - id: include
+#     description: Do captioning with IBM Watson
+#     configurations:
+#       - workflow-id: uct-include-transcription-watson
 
-  # Clean up work artifacts
-  - id: cleanup
-    fail-on-error: false
-    description: Cleaning up - remove temp processing artifacts
-    configurations:
-      - delete-external: false
-      # FixMe Don't clean up ACLs until workflow service no longer looks for them in the WFR.
-      - preserve-flavors: dublincore/*,security/*
-      - delay: 5
+#   # Clean up work artifacts
+#   - id: cleanup
+#     fail-on-error: false
+#     description: Cleaning up - remove temp processing artifacts
+#     configurations:
+#       - delete-external: false
+#       # FixMe Don't clean up ACLs until workflow service no longer looks for them in the WFR.
+#       - preserve-flavors: dublincore/*,security/*
+#       - delay: 5

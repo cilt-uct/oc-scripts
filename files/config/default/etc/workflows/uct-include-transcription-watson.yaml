@@ -1,35 +1,35 @@
-id: uct-include-transcription-watson
-title: Submit trimmed audio for Watson Transcription
-tags: []
-description: |-
-  Runs after real publishing of media
-operations:
-  # Apply the default workflow configuration
-  - id: defaults
-    description: Applying default configuration values - Watson Transcription
-    configurations:
-      - transcription_src_flavor: normalized-trimmed
-  # Extract audio from video in ogg/opus format
-  - id: encode
-    fail-on-error: true
-    exception-handler-workflow: partial-error
-    description: Extract audio for transcript generation
-    configurations:
-      - source-flavor: '*/${transcription_src_flavor}'
-      - target-flavor: audio/ogg
-      - target-tags: transcript
-      - encoding-profile: audio-opus
-      # If there is more than one file that match the source-tags, use only the first one
-      - process-first-match-only: true
-  # Start IBM Watson recognitions job : ASYNC return in
-  - id: start-watson-transcription
-    max-attempts: 3
-    retry-strategy: hold
-    fail-on-error: true
-    exception-handler-workflow: partial-error
-    description: Start IBM Watson transcription job
-    configurations:
-      # Skip this operation if flavor already exists. Used for cases when mp already has captions.
-      - skip-if-flavor-exists: captions/vtt+en
-      # Audio to be translated, produced in the previous encode operation
-      - source-tag: transcript
+# id: uct-include-transcription-watson
+# title: Submit trimmed audio for Watson Transcription
+# tags: []
+# description: |-
+#   Runs after real publishing of media
+# operations:
+#   # Apply the default workflow configuration
+#   - id: defaults
+#     description: Applying default configuration values - Watson Transcription
+#     configurations:
+#       - transcription_src_flavor: normalized-trimmed
+#   # Extract audio from video in ogg/opus format
+#   - id: encode
+#     fail-on-error: true
+#     exception-handler-workflow: partial-error
+#     description: Extract audio for transcript generation
+#     configurations:
+#       - source-flavor: '*/${transcription_src_flavor}'
+#       - target-flavor: audio/ogg
+#       - target-tags: transcript
+#       - encoding-profile: audio-opus
+#       # If there is more than one file that match the source-tags, use only the first one
+#       - process-first-match-only: true
+#   # Start IBM Watson recognitions job : ASYNC return in
+#   - id: start-watson-transcription
+#     max-attempts: 3
+#     retry-strategy: hold
+#     fail-on-error: true
+#     exception-handler-workflow: partial-error
+#     description: Start IBM Watson transcription job
+#     configurations:
+#       # Skip this operation if flavor already exists. Used for cases when mp already has captions.
+#       - skip-if-flavor-exists: captions/vtt+en
+#       # Audio to be translated, produced in the previous encode operation
+#       - source-tag: transcript

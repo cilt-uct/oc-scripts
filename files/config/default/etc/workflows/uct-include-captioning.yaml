@@ -28,11 +28,11 @@ operations:
       - audio_trim_lapel: false
       - transcription_src_flavor: normalized-trimmed
   # and ${audio_trim_lapel}
-  - id: include
-    if: ${use_watson}
-    description: Do captioning with IBM Watson
-    configurations:
-      - workflow-id: uct-include-transcription-watson
+  # - id: include
+  #   if: ${use_watson}
+  #   description: Do captioning with IBM Watson
+  #   configurations:
+  #     - workflow-id: uct-include-transcription-watson
   # and ${audio_trim_lapel}
   - id: include
     if: ${use_nibity}
@@ -46,8 +46,8 @@ operations:
     configurations:
       - workflow-id: uct-include-speechtotext-whisper-transcription
 
-  - id: include
-    if: NOT ${use_whisper} AND ${use_google}
-    description: Do captioning with Google Speech-to-Text
-    configurations:
-      - workflow-id: uct-include-transcription-google
+  # - id: include
+  #   if: NOT ${use_whisper} AND ${use_google}
+  #   description: Do captioning with Google Speech-to-Text
+  #   configurations:
+  #     - workflow-id: uct-include-transcription-google
