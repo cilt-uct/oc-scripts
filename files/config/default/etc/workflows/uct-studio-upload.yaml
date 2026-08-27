@@ -316,7 +316,7 @@ operations:
     description: Create a publish version of captions/source
     configurations:
       - source-flavor: captions/source
-      - target-flavor: captions/vtt'
+      - target-flavor: captions/vtt
 
   # Publish to engage player
   - id: publish-engage
