@@ -3,6 +3,7 @@ title: UCT - Process And Publish
 tags:
   - upload
   - schedule
+  - archive
 operations:
   # Apply the default workflow configuration
   - id: defaults
@@ -36,7 +37,7 @@ operations:
       - audio_trim_lapel: false
       - audio_trim_is_hour: false
       - empty_venue: false
-      - transcription_src_flavor: normalized-trimmed
+      - transcription_src_flavor: source
       - doNormalizeAudio: false
       - doPictureInPicture: true
       - workProfileChannel_left: true
