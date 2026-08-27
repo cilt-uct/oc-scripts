@@ -122,18 +122,23 @@ operations:
     configurations:
       - workflow-id: uct-partial-ingest
 
-  # Check if empty venue
-  - id: include
-    description: Detect empty venue
-    configurations:
-      - workflow-id: uct-detect-empty-venue
-
   # Resolve the recording failure comment if this was a missed ingest (OPENCAST-1836)
   - id: comment
     description: Resolve recording failure (if present)
     configurations:
       - reason: EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.RECORDING_FAILURE
       - action: resolve
+
+  - id: include
+    description: Do captioning with Speech-to-text (Whisper)
+    configurations:
+      - workflow-id: uct-include-speechtotext-whisper-transcription
+
+  # Check if empty venue
+  - id: include
+    description: Detect empty venue
+    configurations:
+      - workflow-id: uct-detect-empty-venue-whisper
 
   - id: include
     description: Include process for empty venue
@@ -164,20 +169,6 @@ operations:
     description: Archive current state of the recording
     configurations:
       - source-tags: archive
-  # # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Transcription / Caption Services
-  # Source: ${transcription_src_flavor} - normalized-trimmed
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # - id: include
-  #   if: ${doCaptioning}
-  #   description: Include Captioning
-  #   configurations:
-  #     - workflow-id: uct-include-captioning
-
-  - id: include
-    description: Do captioning with Speech-to-text (Whisper)
-    configurations:
-      - workflow-id: uct-include-speechtotext-whisper-transcription
 
   - id: include
     if: ${auto_trim}
