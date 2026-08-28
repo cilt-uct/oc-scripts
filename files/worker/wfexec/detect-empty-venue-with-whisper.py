@@ -13,10 +13,10 @@ import sys
 CONFIDENCE_THRESHOLD = 0.60
 
 # Minimum number of segments containing reliable words.
-MIN_SEGMENTS = 3
+MIN_SEGMENTS = 10
 
 # Minimum number of reliable words across the recording.
-MIN_WORDS = 10
+MIN_WORDS = 100
 
 def load_whisper_json(filename):
   """Load and return the Whisper JSON."""
@@ -91,7 +91,7 @@ def analyse_whisper_json(data, confidence_threshold, min_segments, min_words):
     # ---------------------------------------------------------------
     # Word-level confidence
     # ---------------------------------------------------------------
-    if word in words:
+    for word in words:
       text = word.get("word", "").strip()
       if not text:
         continue
@@ -148,20 +148,13 @@ def analyse_whisper_json(data, confidence_threshold, min_segments, min_words):
     "segment_results": segment_results
   }
 
-def write_result(output_directory, result):
+def write_result(output_file, result):
   """
   Write the detection result to segments.txt.
 
   The output file is intended to be attached to the MediaPackage by
   the execute-once workflow operation.
   """
-
-  output_file = os.path.join(output_directory, "segments.txt")
-
-  if result["empty_venue"]:
-    detection_result = "EMPTY_VENUE"
-  else:
-    detection_result = "SPEECH_DETECTED"
 
   with open(output_file, "w", encoding="utf-8") as f:
     f.write(f"empty_venue={str(result['empty_venue']).lower()}\n")
@@ -181,26 +174,26 @@ def main():
   #
   # $1 = Whisper JSON input file
   # $2 = MediaPackage ID
-  # $3 = output directory
+  # $3 = output file
   # -----------------------------------------------------------------------
 
   if len(sys.argv) < 4:
     print(
       f"Usage: {os.path.basename(sys.argv[0])} "
-      "<input_file> <mediapackage_id> <output_directory>",
+      "<input_file> <mediapackage_id> <output_file>",
       file=sys.stderr
     )
     sys.exit(1)
 
   input_file = sys.argv[1]
   mediapackage_id = sys.argv[2]
-  output_directory = sys.argv[3]
+  output_file = sys.argv[3]
 
   print("Whisper empty venue detection")
   print("--------------------------------")
   print(f"MediaPackage ID:       {mediapackage_id}")
   print(f"Input file:            {input_file}")
-  print(f"Output directory:      {output_directory}")
+  print(f"Output file:           {output_file}")
   print(f"Confidence threshold:  {CONFIDENCE_THRESHOLD}")
   print(f"Minimum segments:      {MIN_SEGMENTS}")
   print(f"Minimum words:         {MIN_WORDS}")
@@ -224,33 +217,10 @@ def main():
     sys.exit(2)
 
   # -----------------------------------------------------------------------
-  # Validate output directory
-  # -----------------------------------------------------------------------
-  if not os.path.isdir(output_directory):
-    print(
-      f"ERROR: Output directory does not exist: {output_directory}",
-      file=sys.stderr
-    )
-    sys.exit(2)
-
-  if not os.access(output_directory, os.W_OK):
-    print(
-      f"ERROR: Output directory is not writable: {output_directory}",
-      file=sys.stderr
-    )
-    sys.exit(2)
-
-  # -----------------------------------------------------------------------
   # Load and analyse Whisper JSON
   # -----------------------------------------------------------------------
   data = load_whisper_json(input_file)
-
-  result = analyse_whisper_json(
-    data,
-    CONFIDENCE_THRESHOLD,
-    MIN_SEGMENTS,
-    MIN_WORDS
-  )
+  result = analyse_whisper_json(data, CONFIDENCE_THRESHOLD, MIN_SEGMENTS, MIN_WORDS)
 
   # -----------------------------------------------------------------------
   # Display result
@@ -269,7 +239,7 @@ def main():
   # -----------------------------------------------------------------------
   # Write output
   # -----------------------------------------------------------------------
-  output_file = write_result(output_directory, result)
+  output_file = write_result(output_file, result)
   print(f"Result written to:    {output_file}")
 
   sys.exit(0)

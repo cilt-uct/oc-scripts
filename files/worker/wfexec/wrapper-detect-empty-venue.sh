@@ -18,7 +18,7 @@ chmod 600 "$LOGFILE"
 
 # ---- ARGUMENT VALIDATION ----
 if [ "$#" -lt 3 ]; then
-  echo "Usage: ${0##*/} <input_file> <mediapackage_id> <output_directory>" >&2
+  echo "Usage: ${0##*/} <input_file> <mediapackage_id> <output_file>" >&2
   exit 1
 fi
 
@@ -55,17 +55,6 @@ fi
 
 if [ ! -r "$1" ]; then
   echo "ERROR: Whisper JSON input file at $1 is not readable"
-  exit 1
-fi
-
-# Ensure the output directory exists
-if [ ! -d "$3" ]; then
-  echo "ERROR: Output directory not found at $3"
-  exit 1
-fi
-
-if [ ! -w "$3" ]; then
-  echo "ERROR: Output directory at $3 is not writable"
   exit 1
 fi
 
