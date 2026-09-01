@@ -10,13 +10,13 @@ import sys
 # ---------------------------------------------------------------------------
 
 # Minimum confidence/probability for a word to be considered reliable speech.
-CONFIDENCE_THRESHOLD = 0.60
+CONFIDENCE_THRESHOLD = 0.75
 
 # Minimum number of segments containing reliable words.
-MIN_SEGMENTS = 10
+MIN_SEGMENTS = 2500
 
 # Minimum number of reliable words across the recording.
-MIN_WORDS = 100
+MIN_WORDS = 5000
 
 def load_whisper_json(filename):
   """Load and return the Whisper JSON."""
