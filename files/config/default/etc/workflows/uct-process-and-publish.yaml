@@ -139,7 +139,7 @@ operations:
   - id: include
     description: Detect empty venue
     configurations:
-      - workflow-id: uct-detect-empty-venue-whisper
+      - workflow-id: uct-detect-empty-venue
 
   - id: include
     description: Include process for empty venue

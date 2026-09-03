@@ -74,12 +74,6 @@ operations:
     configurations:
       - workflow-id: uct-partial-ingest
 
-  # Check if empty venue
-  - id: include
-    description: Detect empty venue
-    configurations:
-      - workflow-id: uct-detect-empty-venue
-
   # Resolve the recording failure comment if this was a missed ingest (OPENCAST-1836)
   - id: comment
     description: Resolve recording failure (if present)
@@ -87,20 +81,24 @@ operations:
       - reason: EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.RECORDING_FAILURE
       - action: resolve
 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Transcribe with Whisper
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  - id: include
+    description: Do captioning with Speech-to-text (Whisper)
+    configurations:
+      - workflow-id: uct-include-speechtotext-whisper-transcription
+
+   # Check if empty venue
+  - id: include
+    description: Detect empty venue
+    configurations:
+      - workflow-id: uct-detect-empty-venue
+
   - id: include
     description: Include process for empty venue
     configurations:
       - workflow-id: uct-include-process-for-empty-venue
-
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Transcription / Caption Services
-  # Source: ${transcription_src_flavor} - normalized-trimmed
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  - id: include
-    if: NOT ${use_nibity}
-    description: Do captioning with Speech-to-text (Whisper)
-    configurations:
-      - workflow-id: uct-include-speechtotext-whisper-transcription
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Save, Archive and Cleanup
@@ -121,18 +119,18 @@ operations:
       - source-flavors: dublincore/*,security/*
       - target-tags: archive
 
-  # Archive generated items
-  - id: snapshot
-    description: Archive all at the end of workflow
-    configurations:
-      - source-tags: archive
-
   # auto trim using whisper cutmarks
   - id: include
     if: ${auto_trim}
     description: Include auto trimming using whisper cutmarks
     configurations:
       - workflow-id: uct-include-whisper-transcription-cutmarks
+
+  # Archive generated items
+  - id: snapshot
+    description: Archive all at the end of workflow
+    configurations:
+      - source-tags: archive
 
   # Publish after auto trim
   - id: include
