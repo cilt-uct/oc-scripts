@@ -50,7 +50,7 @@ def get_word_confidence(word):
       except (TypeError, ValueError):
         return None
 
-    return None
+  return None
 
 def analyse_whisper_json(data, confidence_threshold, min_segments, min_words):
   """
