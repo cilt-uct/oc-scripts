@@ -48,7 +48,7 @@ def get_word_confidence(word):
           return value
 
       except (TypeError, ValueError):
-        pass
+        return None
 
     return None
 
