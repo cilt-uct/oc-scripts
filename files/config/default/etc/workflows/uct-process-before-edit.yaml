@@ -32,7 +32,7 @@ operations:
       - audio_trim_lapel: false
       - audio_trim_is_hour: false
       - empty_venue: false
-      - transcription_src_flavor: work
+      - transcription_src_flavor: source
 
   # Check whether this is a timetabled course event and get location
   - id: execute-once
