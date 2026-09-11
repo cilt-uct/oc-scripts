@@ -1,9 +1,9 @@
 id: uct-clean-transcripts
-title: UCT- Clean Nibity Transcripts
+title: UCT- Clean Transcripts
 tags:
   - archive
 description: |-
-  Clean out Nibity transcription files
+  Clean out transcription files
 operations:
   - id: tag
     max-attempts: 2
@@ -34,10 +34,10 @@ operations:
 
   - id: retract-partial
     fail-on-error: false
-    description: Retract WayWithWords transcript from event
+    description: Retract transcripts from event
     configurations:
       - retract-flavors: captions/*
-      - source-tags: archive,engage-download,generator:waywithwords,lang:en
+      - source-tags: archive,engage-download,lang:en
 
   # # snapshot
   - id: snapshot
