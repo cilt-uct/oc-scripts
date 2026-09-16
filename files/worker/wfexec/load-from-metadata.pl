@@ -82,7 +82,6 @@ try {
     print $fh "metadata_load_success=" . ($process_completed ? 'true' : 'false') . "\n";
     print $fh "metadata_load_result=" . $process_result . "\n";
     print $fh "caption_provider=$caption_provider\n";
-    print $fh "use_watson=". ( $caption_provider eq "watson" ? "true" : "false" ) ."\n";
     print $fh "use_nibity=". ( $caption_provider eq "nibity" ? "true" : "false" ) ."\n";
     print $fh "use_whisper=". ( $caption_provider eq "whisper" ? "true" : "false" ) ."\n";
     print $fh "auto_trim=$auto_trim\n";

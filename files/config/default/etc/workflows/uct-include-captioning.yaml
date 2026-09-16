@@ -11,9 +11,7 @@ operations:
     if: ${isUpload}
     description: Applying default configuration values for captions
     configurations:
-      - use_watson: false
       - use_nibity: false
-      - use_google: true
       - use_whisper: false
       - audio_trim_lapel: false
       - transcription_src_flavor: delivery
@@ -21,18 +19,10 @@ operations:
     # if: NOT(${isUpload})
     description: Applying default configuration values for captions
     configurations:
-      - use_watson: false
       - use_nibity: false
       - use_whisper: false
-      - use_google: false
       - audio_trim_lapel: false
       - transcription_src_flavor: normalized-trimmed
-  # and ${audio_trim_lapel}
-  # - id: include
-  #   if: ${use_watson}
-  #   description: Do captioning with IBM Watson
-  #   configurations:
-  #     - workflow-id: uct-include-transcription-watson
   # and ${audio_trim_lapel}
   - id: include
     if: ${use_nibity}
@@ -45,9 +35,3 @@ operations:
     description: Do captioning with Speech-to-text (Whisper)
     configurations:
       - workflow-id: uct-include-speechtotext-whisper-transcription
-
-  # - id: include
-  #   if: NOT ${use_whisper} AND ${use_google}
-  #   description: Do captioning with Google Speech-to-Text
-  #   configurations:
-  #     - workflow-id: uct-include-transcription-google

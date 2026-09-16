@@ -12,7 +12,6 @@ operations:
       - isUpload: true
       - hasPresentation: false
       - doCaptioning: true
-      - use_watson: false
       - use_nibity: false
       - use_whisper: false
       - downloadSourceflavorsExist: false

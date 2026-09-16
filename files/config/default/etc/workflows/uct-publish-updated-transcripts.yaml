@@ -8,7 +8,6 @@ operations:
   - id: defaults
     description: Applying default configuration values
     configurations:
-      - googleTranscript: true
       - nibityTranscript: true
       - uploadedTranscript: true
       - whisperTranscript: true

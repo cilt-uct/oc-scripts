@@ -9,7 +9,6 @@ operations:
   - id: defaults
     description: Applying default configuration values
     configurations:
-      - googleTranscript: true
       - uploadedTranscript: true
       - has-vtt: true
       - download-source-flavors: text/*,captions/*
@@ -28,13 +27,6 @@ operations:
       - target-flavor: text/plain
       - set-workflow-properties: true
       - expected-type: Attachment
-  # Untag Google Speech captions
-  # - id: tag
-  #   description: Untag Google Speech captions
-  #   configurations:
-  #     - source-flavors: captions/*
-  #     - source-tags: engage-download,generator:google-speech,lang:en
-  #     - target-tags: -engage-download
   # Remove published transcripts
   - id: include
     exception-handler-workflow: partial-error

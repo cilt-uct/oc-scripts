@@ -25,7 +25,6 @@ operations:
       - presentation_work_video: false
       - presentation2_work_video: false
       - doCaptioning: true
-      - use_watson: false
       - use_nibity: false
       - use_whisper: false
       - audio_trim_lapel: false
