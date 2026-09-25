@@ -32,6 +32,7 @@ operations:
       - audio_trim_lapel: false
       - audio_trim_is_hour: false
       - empty_venue: false
+      - has_audio: false
       - transcription_src_flavor: source
 
   # Check whether this is a timetabled course event and get location
@@ -81,23 +82,35 @@ operations:
       - reason: EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.RECORDING_FAILURE
       - action: resolve
 
+  # Check if audio exists
+  - id: include
+    description: Detect audio signal
+    configurations:
+      - workflow-id: uct-detect-audio
+
+  - id: include
+    description: Include process for no audio
+    configurations:
+      - workflow-id: uct-include-process-for-no-audio
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Transcribe with Whisper
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   - id: include
-    if: NOT ${use_nibity}
+    if: ${has_audio} AND NOT ${use_nibity}
     description: Do captioning with Speech-to-text (Whisper)
     configurations:
       - workflow-id: uct-include-speechtotext-whisper-transcription
 
    # Check if empty venue
   - id: include
-    if: NOT ${use_nibity}
+    if: ${has_audio} AND NOT ${use_nibity}
     description: Detect empty venue
     configurations:
       - workflow-id: uct-detect-empty-venue
 
   - id: include
+    if: ${has_audio}
     description: Include process for empty venue
     configurations:
       - workflow-id: uct-include-process-for-empty-venue
@@ -123,7 +136,7 @@ operations:
 
   # auto trim using whisper cutmarks
   - id: include
-    if: ${auto_trim}
+    if: ${has_audio} AND ${auto_trim}
     description: Include auto trimming using whisper cutmarks
     configurations:
       - workflow-id: uct-include-whisper-transcription-cutmarks
@@ -136,7 +149,7 @@ operations:
 
   # Publish after auto trim
   - id: include
-    if: ${auto_trim}
+    if: ${has_audio} AND ${auto_trim}
     description: Include publish after auto trimming
     configurations:
       - workflow-id: uct-publish-after-edit

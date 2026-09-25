@@ -1,0 +1,20 @@
+id: uct-detect-audio
+title: UCT - Audio detection
+tags:
+  - archive
+description: |-
+  Use FFmpeg to analyse presenter source audio streams and identify if an audio signal is present.
+operations:
+  - id: execute-many
+    fail-on-error: true
+    exception-handler-workflow: partial-error
+    description: Analyse presenter source audio
+    configurations:
+      - exec: /opt/opencast/wfexec/wrapper-detect-audio.sh
+      - source-flavor: presenter/source
+      - source-audio: true
+      - params: '#{in} #{out}'
+      - set-workflow-properties: true
+      - output-filename: wf.properties
+      - expected-type: Attachment
+      - load: 0.1
