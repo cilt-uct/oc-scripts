@@ -23,7 +23,7 @@ def has_sound_signal(media_file):
             FFMPEG_BIN,
             "-v", "info",
             "-i", media_file,
-            "-map", "0:a:0",
+            "-map", "0:a",
             "-af", "astats=metadata=1:reset=1",
             "-f", "null",
             "-"
