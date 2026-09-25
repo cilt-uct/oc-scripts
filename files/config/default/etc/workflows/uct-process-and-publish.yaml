@@ -253,7 +253,6 @@ operations:
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Archive
   - id: snapshot
-    if: ${has_audio} AND ${auto_trim}
     description: Archive publishing information
     configurations:
       - source-tags: archive
