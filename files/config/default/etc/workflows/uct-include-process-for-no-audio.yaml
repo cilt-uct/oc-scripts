@@ -1,0 +1,26 @@
+id: uct-include-process-for-no-audio
+title: UCT - Include process for no audio
+tags: []
+description: |-
+  REQUIRES:
+        Flavors:
+          */source
+        Workflow Properties:
+          has_audio
+operations:
+  # Add RESOLVED comment for no audio
+  - id: comment
+    if: NOT (${has_audio}) 
+    description: Mark as no audio
+    configurations:
+      - description: No audio
+      - reason: EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.AUDIO_ISSUE
+      - action: create
+
+  - id: comment
+    if: NOT (${has_audio}) 
+    description: Mark as no audio (resolve)
+    configurations:
+      - description: No audio.
+      - reason: EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.AUDIO_ISSUE
+      - action: resolve
