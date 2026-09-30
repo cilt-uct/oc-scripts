@@ -22,7 +22,6 @@ operations:
       - thumbnailPosition: 1
       - isUpload: false
       - doCaptioning: true
-      - use_watson: false
       - use_nibity: false
       - use_whisper: false
       - timetabled: false

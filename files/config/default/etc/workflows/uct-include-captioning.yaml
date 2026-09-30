@@ -11,9 +11,7 @@ operations:
     if: ${isUpload}
     description: Applying default configuration values for captions
     configurations:
-      - use_watson: false
       - use_nibity: false
-      - use_google: false
       - use_whisper: false
       - audio_trim_lapel: false
       - transcription_src_flavor: delivery
