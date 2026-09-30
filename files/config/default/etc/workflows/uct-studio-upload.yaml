@@ -34,7 +34,10 @@ operations:
       - thumbnailType: 0
       - thumbnailPosition: 1
       - doCaptioning: true
+      - use_nibity: false
+      - use_whisper: false
       - isUpload: true
+      - transcription_src_flavor: delivery
 
   - id: inspect
     exception-handler-workflow: partial-error
@@ -290,16 +293,30 @@ operations:
   # Source: ${transcription_src_flavor} - delivery
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   - id: include
-    if: ${doCaptioning}
-    description: Include Captioning
+    if: ${use_nibity}
+    description: Do captioning with Way with Words (nibity)
     configurations:
-      - workflow-id: uct-include-captioning
+      - workflow-id: uct-include-transcription-nibity
+
+  - id: include
+    if: NOT ${use_nibity}
+    description: Do captioning with Speech-to-text (Whisper)
+    configurations:
+      - workflow-id: uct-include-speechtotext-whisper-transcription
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Publish to publication channels
   # Send the encoded material along with the metadata to the
   # publication channels.
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  - id: clone
+    fail-on-error: true
+    exception-handler-workflow: partial-error
+    description: Create a publish version of captions/source
+    configurations:
+      - source-flavor: captions/source
+      - target-flavor: captions/vtt
 
   # Publish to engage player
   - id: publish-engage
@@ -308,7 +325,7 @@ operations:
     exception-handler-workflow: partial-error
     description: Publishing to Opencast Media Module
     configurations:
-      - download-source-flavors: dublincore/*,security/*
+      - download-source-flavors: dublincore/*,security/*,captions/vtt
       - download-source-tags: engage-download,atom,rss,mobile
       - streaming-source-tags: engage-streaming
       - check-availability: true

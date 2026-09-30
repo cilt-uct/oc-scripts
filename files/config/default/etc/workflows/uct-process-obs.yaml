@@ -16,6 +16,7 @@ operations:
       - thumbnailPosition: 1
       - doPictureInPicture: true
       - use_whisper: true
+      - transcription_src_flavor: work
       - result_publish_process: work
       - flipVideoHoriz: false
   - id: defaults
@@ -254,10 +255,9 @@ operations:
   # Whisper Transcription
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   - id: include
-    if: ${use_whisper}
-    description: Include Captioning
+    description: Do captioning with Speech-to-text (Whisper)
     configurations:
-      - workflow-id: uct-include-captioning
+      - workflow-id: uct-include-speechtotext-whisper-transcription
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Publish to publication channels
 

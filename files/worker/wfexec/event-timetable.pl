@@ -55,9 +55,17 @@ my $series = "";
 my $tt_info = "none";
 my $event_trim = "true"; # Should this event be marked for trimming?
 
-my ($series, $event_date, $duration, $title, $start_time, $end_time) = ("","","","","","");
-($series, $event_date, $duration, $title, $start_time, $end_time) = getEventDetails($mech, $server, $mpid);
-print Dumper($series, $event_date, $duration, $title, $start_time, $end_time) if $debug;
+# OPENCAST-3470
+my $do_detect_empty_venue = "true";
+my @excluded = ("hahn1", "james3a", "jordan3a");
+
+my ($series, $event_date, $duration, $title, $start_time, $end_time, $location) = ("","","","","","","");
+($series, $event_date, $duration, $title, $start_time, $end_time, $location) = getEventDetails($mech, $server, $mpid);
+print Dumper($series, $event_date, $duration, $title, $start_time, $end_time, $location) if $debug;
+
+if (grep { $_ eq $location } @excluded) {
+    $do_detect_empty_venue = "false";
+}
 
 # Don't mark for trim if this is a backup event
 if ((index(lc($title), "[backup]") != -1) || (index(lc($title), "[hold]") != -1) ||
@@ -120,6 +128,7 @@ print $fh "caption_provider=$caption_provider\n";
 print $fh "use_nibity=". ( $caption_provider eq "nibity" ? "true" : "false" ) ."\n";
 print $fh "use_whisper=". ( $caption_provider eq "whisper" ? "true" : "false" ) ."\n";
 print $fh "auto_trim=$auto_trim\n";
+print $fh "do_detect_empty_venue=$do_detect_empty_venue\n";
 close $fh;
 
 exit 0;
@@ -192,7 +201,7 @@ sub getEventDetails($$$) {
 
     ## Get the mediapackage info from api / admin-ng
     my $event_m;
-    my ($series, $event_date, $duration, $title, $start_time, $end_time) = ("","","","","","");
+    my ($series, $event_date, $duration, $title, $start_time, $end_time, $location) = ("","","","","","","");
 
     # if the database goes away while we're using it, just try again...
     attempt {
@@ -214,7 +223,7 @@ sub getEventDetails($$$) {
         $end_time   = $local_end_time->strftime("%H:%M");
     }
 
-    return ($series, $event_date, $duration, $title, $start_time, $end_time);
+    return ($series, $event_date, $duration, $title, $start_time, $end_time, $location);
 }
 
 # Do a REST call to OC and retrieve JSON based on the URL

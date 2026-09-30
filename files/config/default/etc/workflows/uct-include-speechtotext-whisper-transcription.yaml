@@ -20,8 +20,9 @@ operations:
   - id: encode
     description: Extract audio for transcript generation
     fail-on-error: true
+    exception-handler-workflow: partial-error
     configurations:
-      - source-flavors: presenter/work, presentation/work, track_presentation.0/*
+      - source-flavors: presenter/${transcription_src_flavor}, presentation/${transcription_src_flavor}, track_presentation.0/*
       - target-flavor: audio/source
       - target-tags: transcript
       - encoding-profile: audio-flac-whisper
@@ -29,6 +30,7 @@ operations:
   - id: speechtotext
     description: Generate subtitles for video and audio files
     fail-on-error: true
+    exception-handler-workflow: partial-error
     configurations:
       - source-flavor: audio/source
       - target-flavor: captions/source

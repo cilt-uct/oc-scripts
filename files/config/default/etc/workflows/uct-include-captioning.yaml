@@ -31,7 +31,7 @@ operations:
       - workflow-id: uct-include-transcription-nibity
   # and ${audio_trim_lapel}
   - id: include
-    if: ${use_whisper}
+    if: NOT ${use_nibity}
     description: Do captioning with Speech-to-text (Whisper)
     configurations:
       - workflow-id: uct-include-speechtotext-whisper-transcription

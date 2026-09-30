@@ -111,7 +111,7 @@ operations:
     configurations:
       - source-flavor-lower: presentation2/transcription
       - source-flavor-upper: presenter/transcription
-      - encoding-profile: mp4-preview.dual.http
+      - encoding-profile: uct-mp4-preview.dual.http
       - target-flavor: composite/${preview_out_flavor}
       - output-resolution: 2560x720
       - output-background: '0x000000FF'
@@ -130,7 +130,7 @@ operations:
     configurations:
       - source-flavor-lower: presentation2/transcription
       - source-flavor-upper: presentation/transcription
-      - encoding-profile: mp4-preview.dual.http
+      - encoding-profile: uct-mp4-preview.dual.http
       - target-flavor: composite/${preview_out_flavor}
       - output-resolution: 2560x720
       - output-background: '0x000000FF'

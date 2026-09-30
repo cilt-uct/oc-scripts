@@ -80,13 +80,13 @@ operations:
     if: ${empty_venue}
     description: Mark as empty venue
     configurations:
-      - description: Empty venue.
-      - reason: EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.REVIEW
+      - description: No lecture in venue.
+      - reason: EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.OTHER
       - action: create
   - id: comment
     if: ${empty_venue}
     description: Mark as empty venue (resolve)
     configurations:
-      - description: Empty venue.
-      - reason: EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.REVIEW
+      - description: No lecture in venue.
+      - reason: EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.OTHER
       - action: resolve

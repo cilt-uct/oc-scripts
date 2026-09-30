@@ -3,6 +3,7 @@ title: UCT - Process And Publish
 tags:
   - upload
   - schedule
+  - archive
 operations:
   # Apply the default workflow configuration
   - id: defaults
@@ -35,7 +36,8 @@ operations:
       - audio_trim_lapel: false
       - audio_trim_is_hour: false
       - empty_venue: false
-      - transcription_src_flavor: normalized-trimmed
+      - has_audio: false
+      - transcription_src_flavor: source
       - doNormalizeAudio: false
       - doPictureInPicture: true
       - workProfileChannel_left: true
@@ -43,6 +45,7 @@ operations:
       - workProfileChannel_stereo: false
       - result_publish_process: normalized-trimmed
       - flipVideoHoriz: false
+      - do_detect_empty_venue: true
 
   - id: defaults
     if: ${workProfileChannel_left} AND NOT ${flipVideoHoriz}
@@ -121,12 +124,6 @@ operations:
     configurations:
       - workflow-id: uct-partial-ingest
 
-  # Check if empty venue
-  - id: include
-    description: Detect empty venue
-    configurations:
-      - workflow-id: uct-detect-empty-venue
-
   # Resolve the recording failure comment if this was a missed ingest (OPENCAST-1836)
   - id: comment
     description: Resolve recording failure (if present)
@@ -134,7 +131,32 @@ operations:
       - reason: EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.RECORDING_FAILURE
       - action: resolve
 
+  # Check if audio exists
   - id: include
+    description: Detect audio signal
+    configurations:
+      - workflow-id: uct-detect-audio
+
+  - id: include
+    description: Include process for no audio
+    configurations:
+      - workflow-id: uct-include-process-for-no-audio
+
+  - id: include
+    if: ${has_audio}
+    description: Do captioning with Speech-to-text (Whisper)
+    configurations:
+      - workflow-id: uct-include-speechtotext-whisper-transcription
+
+  # Check if empty venue
+  - id: include
+    if: ${has_audio} AND ${do_detect_empty_venue}
+    description: Detect empty venue
+    configurations:
+      - workflow-id: uct-detect-empty-venue
+
+  - id: include
+    if: ${has_audio}
     description: Include process for empty venue
     configurations:
       - workflow-id: uct-include-process-for-empty-venue
@@ -163,23 +185,9 @@ operations:
     description: Archive current state of the recording
     configurations:
       - source-tags: archive
-  # # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Transcription / Caption Services
-  # Source: ${transcription_src_flavor} - normalized-trimmed
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # - id: include
-  #   if: ${doCaptioning}
-  #   description: Include Captioning
-  #   configurations:
-  #     - workflow-id: uct-include-captioning
 
   - id: include
-    description: Do captioning with Speech-to-text (Whisper)
-    configurations:
-      - workflow-id: uct-include-speechtotext-whisper-transcription
-
-  - id: include
-    if: ${auto_trim}
+    if: ${has_audio} AND ${auto_trim}
     description: Include auto trimming using whisper cutmarks
     configurations:
       - workflow-id: uct-include-whisper-transcription-cutmarks
@@ -190,7 +198,7 @@ operations:
   # Remove the comments that marked the recording for cutting.
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   - id: comment
-    if: ${auto_trim}
+    if: ${has_audio} AND ${auto_trim}
     description: Resolve the cutting flag
     configurations:
       - reason: EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.CUTTING
@@ -198,7 +206,7 @@ operations:
 
   # Resolve the consent flag if present (OPENCAST-1836)
   - id: comment
-    if: ${auto_trim}
+    if: ${has_audio} AND ${auto_trim}
     description: Resolve the consent flag
     configurations:
       - reason: EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.CONSENT
@@ -211,7 +219,7 @@ operations:
   # channels, unless review for cutting has been selected.
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   - id: include
-    if: ${auto_trim}
+    if: ${has_audio} AND ${auto_trim}
     description: Publish the recording
     configurations:
       - workflow-id: uct-partial-publish
