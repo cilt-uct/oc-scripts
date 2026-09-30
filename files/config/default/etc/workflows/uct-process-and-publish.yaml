@@ -46,6 +46,7 @@ operations:
       - workProfileChannel_stereo: false
       - result_publish_process: normalized-trimmed
       - flipVideoHoriz: false
+      - do_detect_empty_venue: true
 
   - id: defaults
     if: ${workProfileChannel_left} AND NOT ${flipVideoHoriz}
@@ -150,7 +151,7 @@ operations:
 
   # Check if empty venue
   - id: include
-    if: ${has_audio}
+    if: ${has_audio} AND ${do_detect_empty_venue}
     description: Detect empty venue
     configurations:
       - workflow-id: uct-detect-empty-venue

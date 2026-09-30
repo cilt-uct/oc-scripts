@@ -34,6 +34,7 @@ operations:
       - empty_venue: false
       - has_audio: false
       - transcription_src_flavor: source
+      - do_detect_empty_venue: true
 
   # Check whether this is a timetabled course event and get location
   - id: execute-once
@@ -104,7 +105,7 @@ operations:
 
    # Check if empty venue
   - id: include
-    if: ${has_audio} AND NOT ${use_nibity}
+    if: ${has_audio} AND ${do_detect_empty_venue} AND NOT ${use_nibity}
     description: Detect empty venue
     configurations:
       - workflow-id: uct-detect-empty-venue
