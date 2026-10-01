@@ -166,11 +166,7 @@
                                                 <p>
                                                     <span>Captions and a transcript by WayWithWords for the following recording are now available on your </span>
                                                     <#if workflowConfig['site_id']?has_content>
-                                                        <#if workflowConfig['site_id']?matches("^[0-9]+$")>
-                                                            <a href="https://amathuba.uct.ac.za/d2l/home/${workflowConfig['site_id']}">Amathuba site</a>:
-                                                        <#else>
-                                                            <a href="https://vula.uct.ac.za/portal/site/${workflowConfig['site_id']}">Vula site</a>:
-                                                        </#if>
+                                                        <a href="https://amathuba.uct.ac.za/d2l/home/${workflowConfig['site_id']}">Amathuba site</a>:
                                                     <#else>
                                                         site:
                                                     </#if>
