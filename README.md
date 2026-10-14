@@ -168,7 +168,7 @@ By opening [http://mediadev.uct.ac.za/admin-ng/index/recreateIndex](http://media
 
 By using the REST documentation, open "Admin UI - Index Endpoint" and use the testing form on  /recreateIndex. The resulting page is empty but should return an HTTP status 200 (OK). You can find the REST documentation in the help-section of the Admin UI behind the ?-symbol.
 
-TODO: Add and review [https://docs.opencast.org/latest/admin/upgrade/](https://docs.opencast.org/latest/admin/upgrade/).
+TODO: Add and review [https://docs.opencast.org/r/19.x/admin/#upgrade/](https://docs.opencast.org/r/19.x/admin/#upgrade/).
 
 
 ## Workflows
