@@ -300,26 +300,6 @@ main() {
         $LIVE && echo $(addDeploymentMarker $production "Track4K" $track_log $track_branch)
     fi
 
-    if $EMPTYVENUE; then
-        empty_log=$(git -C $EMPTY_VENUE_SRC show --oneline | head -n 1)
-        empty_branch=$(git -C $EMPTY_VENUE_SRC rev-parse --symbolic-full-name --abbrev-ref HEAD)
-
-        cd $YML
-        echo "Deploy Empty Venue: ($HOSTS_FILE)"
-        $LIVE && "$ANSIBLE_PLAYBOOK" -i $HOSTS_FILE ansible-emptyvenuedetector.yml --extra-vars "$extra_vars gitbranch=\"$empty_branch\" gitlog=\"$empty_log\" "
-        $LIVE && echo $(addDeploymentMarker $production "EmptyVenueDetect" $empty_log $empty_branch)
-    fi
-
-    if $TRIMPOINT; then
-        trim_log=$(git -C $AUDIO_TRIM_SRC show --oneline | head -n 1)
-        trim_branch=$(git -C $AUDIO_TRIM_SRC rev-parse --symbolic-full-name --abbrev-ref HEAD)
-
-        cd $YML
-        echo "Deploy Audio Trim Point Detector: ($HOSTS_FILE)"
-        $LIVE && "$ANSIBLE_PLAYBOOK" -i $HOSTS_FILE ansible-trimpointdetector.yml --extra-vars "$extra_vars gitbranch=\"$trim_branch\" gitlog=\"$trim_log\" "
-        $LIVE && echo $(addDeploymentMarker $production "AudioTrimPoint" $trim_log $trim_branch)
-    fi
-
     if $OCR; then
         cd $YML
         echo "Deploy OCR: ($HOSTS_FILE)"

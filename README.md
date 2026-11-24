@@ -178,9 +178,8 @@ TODO: Add and review [https://docs.opencast.org/r/19.x/admin/#upgrade/](https://
 | partial-cleanup | Cleanup after processing | |:x:| - |
 | partial-theming-watermark | Render watermark into presenter and presentation tracks | |:x:| - |
 | uct-clean | UCT - Retract and Cleanup | Retract a recording and clean out media files. |:heavy_check_mark:| archive |
-| uct-detect-empty-venue | UCT - Empty venue detection | Run VAD script, to analyse speech segments and in turn identify if venue is empty. | | |
+| uct-detect-empty-venue | UCT - Empty venue detection | Use  Whisper to analyse speech segments and in turn identify if venue is empty. | | |
 | uct-discard | UCT - Discard Media | Discard all the media from this event. |:heavy_check_mark:| archive |
-| uct-include-autotrim-detection | Audio trim point detection | Run the audio analysis for (possible) autotrimming of the recording |:heavy_check_mark:| archive |
 | uct-include-before-edit-auto-trim | UCT - Process for Editing (Auto Trim) | Publish directly from ingest process using autodetected trimpoints. |:heavy_check_mark:| - |
 | uct-include-before-edit-review | UCT - Process for Editing (Review) | Using the work flavors this workflow creates */preview versions for review. |:heavy_check_mark:| - |
 | uct-include-partial-download-abde | Download for ABDE | |:heavy_check_mark:| - |

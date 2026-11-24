@@ -3,7 +3,7 @@ title: UCT - Empty venue detection
 tags:
   - archive
 description: |-
-  Run VAD script, to analyse speech segments and in turn identify if venue is empty.
+  Use Whisper to analyse speech segments and in turn identify if venue is empty.
 operations:
   # Inspect the media
   - id: inspect
