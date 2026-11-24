@@ -11,7 +11,6 @@ operations:
     if: ${isUpload}
     description: Applying default configuration values for captions
     configurations:
-      - use_nibity: false
       - use_whisper: false
       - audio_trim_lapel: false
       - transcription_src_flavor: delivery
@@ -19,19 +18,11 @@ operations:
     # if: NOT(${isUpload})
     description: Applying default configuration values for captions
     configurations:
-      - use_nibity: false
       - use_whisper: false
       - audio_trim_lapel: false
       - transcription_src_flavor: normalized-trimmed
   # and ${audio_trim_lapel}
   - id: include
-    if: ${use_nibity}
-    description: Do captioning with Way with Words (nibity)
-    configurations:
-      - workflow-id: uct-include-transcription-nibity
-  # and ${audio_trim_lapel}
-  - id: include
-    if: NOT ${use_nibity}
     description: Do captioning with Speech-to-text (Whisper)
     configurations:
       - workflow-id: uct-include-speechtotext-whisper-transcription

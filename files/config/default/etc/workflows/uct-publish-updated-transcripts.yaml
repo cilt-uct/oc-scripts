@@ -8,7 +8,6 @@ operations:
   - id: defaults
     description: Applying default configuration values
     configurations:
-      - nibityTranscript: true
       - uploadedTranscript: true
       - whisperTranscript: true
       - download-source-flavors: text/*,captions/*

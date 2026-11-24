@@ -185,7 +185,6 @@ TODO: Add and review [https://docs.opencast.org/r/19.x/admin/#upgrade/](https://
 | uct-include-before-edit-review | UCT - Process for Editing (Review) | Using the work flavors this workflow creates */preview versions for review. |:heavy_check_mark:| - |
 | uct-include-partial-download-abde | Download for ABDE | |:heavy_check_mark:| - |
 | uct-include-partial-preview-abde | Preview for ABDE | |:heavy_check_mark:| - |
-| uct-include-transcription-nibity | Submit trimmed audio for Nibity Transcription | Runs after real publishing of media |:heavy_check_mark:| - |
 | uct-ingest-only | UCT - Ingest Only | Ingest source material |:heavy_check_mark:| schedule |
 | uct-partial-ingest | UCT - Ingest asset | |:heavy_check_mark:| - |
 | uct-partial-preview | Prepare preview artifacts (*/work > */preview) | |:heavy_check_mark:| - |
@@ -203,5 +202,4 @@ TODO: Add and review [https://docs.opencast.org/r/19.x/admin/#upgrade/](https://
 | uct-publish-feed | UCT - Publish feed | |:heavy_check_mark:| - |
 | uct-request-consent | Request consent | |:heavy_check_mark:| - |
 | uct-test | Testing workflow | Various |:heavy_check_mark:| various |
-| uct-transcript-nibity | Submit trimmed audio for Nibity Transcription | |:heavy_check_mark:| archive |
 | uct-update-previews | Update previews | |:heavy_check_mark:| archive |

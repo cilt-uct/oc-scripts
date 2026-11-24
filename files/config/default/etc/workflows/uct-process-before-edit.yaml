@@ -22,7 +22,6 @@ operations:
       - thumbnailPosition: 1
       - isUpload: false
       - doCaptioning: true
-      - use_nibity: false
       - use_whisper: false
       - timetabled: false
       - auto_trim: false
@@ -97,14 +96,14 @@ operations:
   # Transcribe with Whisper
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   - id: include
-    if: ${has_audio} AND NOT ${use_nibity}
+    if: ${has_audio}
     description: Do captioning with Speech-to-text (Whisper)
     configurations:
       - workflow-id: uct-include-speechtotext-whisper-transcription
 
    # Check if empty venue
   - id: include
-    if: ${has_audio} AND ${do_detect_empty_venue} AND NOT ${use_nibity}
+    if: ${has_audio} AND ${do_detect_empty_venue}
     description: Detect empty venue
     configurations:
       - workflow-id: uct-detect-empty-venue
